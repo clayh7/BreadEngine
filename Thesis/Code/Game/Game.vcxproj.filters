@@ -227,7 +227,9 @@
     <Xml Include="..\..\Run_Win32\Data\Sprites\SpriteResources.Sprite.xml">
       <Filter>Data\Sprites</Filter>
     </Xml>
-    <Xml Include="..\..\Run_Win32\Data\UI\CommunicationHUD.UI.xml" />
+    <Xml Include="..\..\Run_Win32\Data\UI\CommunicationHUD.UI.xml">
+      <Filter>Data\UI</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\Run_Win32\Data\Sprites\ThesisSpriteSheet.png">
