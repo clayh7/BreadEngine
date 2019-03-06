@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<UISystem>
+	<UIWidget name="classSelectScreen">
+		<Hidden value="false"/>
+
+		<!-------------------------------------------------------------------------------------------->
+		<UIWidget name="lines">
+			<UIBox>
+				<Width value="150"/>
+				<Height value="5"/>
+				<Offset value="-120,100"/>
+			</UIBox>
+			<UIBox>
+				<Width value="150"/>
+				<Height value="5"/>
+				<Offset value="120,100"/>
+			</UIBox>
+			<UIBox>
+				<Width value="5"/>
+				<Height value="150"/>
+				<Offset value="-192,25"/>
+			</UIBox>
+			<UIBox>
+				<Width value="5"/>
+				<Height value="150"/>
+				<Offset value="193,25"/>
+			</UIBox>
+			<UIBox>
+				<Width value="300"/>
+				<Height value="5"/>
+				<Offset value="0,-50"/>
+			</UIBox>
+		</UIWidget>
+
+		<!-------------------------------------------------------------------------------------------->
+		<UIButton name="fighterClassButton">
+			<Text value="Fighter"/>
+			<OnPressed value="ChooseFighterEvent"/>
+			<Offset value="0,100"/>
+			<Width value="150"/>
+			<BackgroundColor value="255,0,0,255" state="highlighted"/>
+			<BackgroundColor value="128,0,0,255" state="pressed"/>
+		</UIButton>
+
+		<!-------------------------------------------------------------------------------------------->
+		<UIButton name="wizardClassButton">
+			<Text value="Wizard"/>
+			<OnPressed value="ChooseWizardEvent"/>
+			<Offset value="-200,-50"/>
+			<Width value="150"/>
+			<BackgroundColor value="0,0,255,255" state="highlighted"/>
+			<BackgroundColor value="0,0,128,255" state="pressed"/>
+		</UIButton>
+
+		<!-------------------------------------------------------------------------------------------->
+		<UIButton name="rogueClassButton">
+			<Text value="Rogue"/>
+			<OnPressed value="ChooseRogueEvent"/>
+			<Offset value="200,-50"/>
+			<Width value="150"/>
+			<BackgroundColor value="0,255,0,255" state="highlighted"/>
+			<BackgroundColor value="0,128,0,255" state="pressed"/>
+		</UIButton>
+
+	</UIWidget>
+</UISystem>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-------------------------------------------------->
+<UISystem>
+
+	<!-------------------------------------------------->
+	<UIBox>
+		<Width value="350"/>
+		<Height value="400"/>
+		<BorderSize value="2"/>
+		<BackgroundColor value="128,128,128,255"/>
+		<UILabel>
+			<Dock value="top"/>
+		</UILabel>
+	</UIBox>
+
+	<!-------------------------------------------------->
+	<UIButton>
+		<Offset value="0,100"/>
+		<Width value="160" state="highlighted"/>
+		<Height value="60" state="highlighted"/>
+		<OnPressed value="ToggleBackground"/>
+	</UIButton>
+
+	<!-------------------------------------------------->
+	<UIWidget>
+		<UIProgressBar>
+			<BarColor value="0,0,255,255"/>
+			<AmountBindEvent value="UpdateBar"/>
+		</UIProgressBar>
+		<UIButton>
+			<Width value="50"/>
+			<Height value="50"/>
+			<Offset value="-130,0"/>
+			<BorderSize value="-2"/>
+			<Text value="&lt;"/>
+			<OnPressed value="DecreaseBar"/>
+		</UIButton>
+		<UIButton>
+			<Width value="50"/>
+			<Height value="50"/>
+			<Offset value="130,0"/>
+			<BorderSize value="-2"/>
+			<Text value="&gt;"/>
+			<OnPressed value="IncreaseBar"/>
+		</UIButton>
+	</UIWidget>
+
+	<!-------------------------------------------------->
+	<UITextField>
+		<Offset value="0,-100"/>
+	</UITextField>
+
+	<!-------------------------------------------------->
+	<UIContainer>
+		<GridSize value="3,3"/>
+		<BorderSize value="2"/>
+		<Offset value="-250,0"/>
+		<UIItem>
+			<SpriteID value="heart"/>
+		</UIItem>
+		<UIItem>
+			<SpriteID value="energy"/>
+		</UIItem>
+		<UIItem>
+			<SpriteID value="energy"/>
+		</UIItem>
+		<UIItem>
+			<SpriteID value="shield"/>
+		</UIItem>
+	</UIContainer>
+
+	<!-------------------------------------------------->
+	<UIContainer>
+		<BorderSize value="2"/>
+		<Offset value="250,0"/>
+		<UIItem>
+			<SpriteID value="heart"/>
+		</UIItem>
+		<UIItem>
+			<SpriteID value="shield"/>
+		</UIItem>
+	</UIContainer>
+
+</UISystem>

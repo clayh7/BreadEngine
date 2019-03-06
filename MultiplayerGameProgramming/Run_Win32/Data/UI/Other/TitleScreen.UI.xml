@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<UISystem>
+	<UIWidget name="titleScreen">
+		<!-------------------------------------------------------------------------------------------->
+		<UIButton name="hostButton">
+			<Text value="Host"/>
+			<OnPressed value="HostGameEvent"/>
+			<Offset value="0,100"/>
+		</UIButton>
+
+		<!-------------------------------------------------------------------------------------------->
+		<UITextField name="addressField">
+			<Hint value="IP Address..."/>
+			<Offset value="0,0"/>
+		</UITextField>
+
+		<!-------------------------------------------------------------------------------------------->
+		<UIButton name="joinButton">
+			<Text value="Join"/>
+			<OnPressed value="JoinGameEvent"/>
+			<Offset value="0,-100"/>
+		</UIButton>
+	</UIWidget>
+</UISystem>

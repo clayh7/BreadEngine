@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SpriteResources>
+	<SpriteResource id="circle" filename="Data/Sprites/circle.png"/>
+	<SpriteResource id="triangle" filename="Data/Sprites/triangle.png"/>
+	<SpriteResource id="square" filename="Data/Sprites/square.png"/>
+	
+	<SpriteSheetResource id="thesisSS" filename="Data/Sprites/ThesisSpriteSheet.png" size="16,16"/>
+	<SpriteResource id="fighterShip" index="0" spriteSheet="thesisSS"/>
+	<SpriteResource id="heart" index="48" spriteSheet="thesisSS"/>
+	<SpriteResource id="shield" index="49" spriteSheet="thesisSS"/>
+	<SpriteResource id="energy" index="50" spriteSheet="thesisSS"/>
+	<SpriteResource id="agility" index="51" spriteSheet="thesisSS"/>
+</SpriteResources>
