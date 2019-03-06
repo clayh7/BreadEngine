@@ -5,6 +5,7 @@
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Net/NetworkSystem.hpp"
+#include "Engine/Net/RCS/RemoteCommandServer.hpp"
 #include "Engine/DebugSystem/BProfiler.hpp"
 #include "Engine/DebugSystem/Console.hpp"
 #include "Engine/InputSystem/Input.hpp"
@@ -136,9 +137,9 @@ void App::Render( ) const
 //-------------------------------------------------------------------------------------------------
 void App::StartClientServer( )
 {
-	if( !NetworkSystem::Join( NetworkSystem::GetLocalHostName( ) ) )
+	if( !RemoteCommandServer::Join( NetworkUtils::GetLocalHostName( ) ) )
 	{
-		if( NetworkSystem::Host( ) )
+		if(RemoteCommandServer::Host( ) )
 		{
 			g_ConsoleSystem->AddLog( "Started Hosting", Console::GOOD );
 		}

@@ -43,7 +43,7 @@ void SessionStopCommand( Command const & )
 //-------------------------------------------------------------------------------------------------
 void SessionHostCommand( Command const & command )
 {
-	std::string username = NetworkSystem::GetLocalHostName( );
+	std::string username = NetworkUtils::GetLocalHostName( );
 	username = command.GetArg( 0, username );
 	std::string password = command.GetArg( 1, "" );
 	g_GameSystem->AttemptCreateHost( username, password );
@@ -56,7 +56,7 @@ void SessionJoinCommand( Command const & command )
 	if( command.HasArg( 0 ) )
 	{
 		std::string addressString = command.GetArg( 0, "error" );
-		std::string username = NetworkSystem::GetLocalHostName( );
+		std::string username = NetworkUtils::GetLocalHostName( );
 		username = command.GetArg( 1, username );
 		std::string password = command.GetArg( 2, "" );
 		g_GameSystem->AttemptCreateClient( addressString, username, password );
@@ -87,7 +87,7 @@ void SessionCreateConnectionCommand( Command const & command )
 		if( SockAddrFromString( &address, addressString.c_str( ) ) )
 		{
 			//#TODO: Allow specification of username when manually making a connection... or remove this function entirely
-			NetConnection * newConnection = Game::s_netSession->CreateConnection( id, address, guid, NetworkSystem::GetLocalHostName( ) );
+			NetConnection * newConnection = Game::s_netSession->CreateConnection( id, address, guid, NetworkUtils::GetLocalHostName( ) );
 			if( newConnection )
 			{
 				Game::s_netSession->Connect( newConnection );

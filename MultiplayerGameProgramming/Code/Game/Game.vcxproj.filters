@@ -16,9 +16,6 @@
     <Filter Include="Data\Sprites">
       <UniqueIdentifier>{17dcb38e-f77a-4ff4-bdce-2c1e8b4ea010}</UniqueIdentifier>
     </Filter>
-    <Filter Include="AdventOfCode">
-      <UniqueIdentifier>{43d2c714-5fb8-4c67-b98b-c54e03c89017}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main_Win32.cpp">
@@ -37,9 +34,6 @@
     </ClInclude>
     <ClInclude Include="Game.hpp">
       <Filter>Singletons</Filter>
-    </ClInclude>
-    <ClInclude Include="DayOne.hpp">
-      <Filter>AdventOfCode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

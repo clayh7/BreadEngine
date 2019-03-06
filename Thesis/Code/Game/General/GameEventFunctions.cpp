@@ -280,7 +280,7 @@ void Game::OnGameHostButton( NamedProperties & )
 	m_isDedicatedServer = false;
 
 	//Get username from username field
-	std::string defaultUsername = NetworkSystem::GetLocalHostName( );
+	std::string defaultUsername = NetworkUtils::GetLocalHostName( );
 	UITextField * usernameField = g_UISystem->GetWidgetByName<UITextField>( UI_USERNAME_FIELD );
 	std::string username = usernameField->GetText( );
 
@@ -312,7 +312,7 @@ void Game::OnGameJoinButton( NamedProperties & )
 	//If the player did not type in a username, use the default username
 	if( strcmp( username.c_str( ), "" ) == 0 )
 	{
-		username = NetworkSystem::GetLocalHostName( );
+		username = NetworkUtils::GetLocalHostName( );
 	}
 
 	//Get password from password field

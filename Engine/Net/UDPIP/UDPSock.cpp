@@ -164,9 +164,10 @@ bool UDPSock::IsConnected( ) const
 //-------------------------------------------------------------------------------------------------
 char const * UDPSock::GetAddressString( ) const
 {
-	//return StringFromSockAddr( &m_addr );
-	return nullptr;
-	//#TODO: fix
+	return StringFromSockAddr( &m_addr );
+	//return nullptr;
+	//#TODO: This function needs to use the updated modern style from the book I'm reading
+	//It's been a while so I don't remember why I needed to change this
 }
 
 
