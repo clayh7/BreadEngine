@@ -13,9 +13,9 @@ class Material;
 //-------------------------------------------------------------------------------------------------
 class TextRenderer : public MeshRenderer
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	std::string m_content;
 	size_t m_contentHash;
@@ -28,22 +28,22 @@ private:
 	Mesh * m_textMesh;
 	Material * m_textMaterial;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	TextRenderer( std::string const & content, Vector2f const & screenPosition, float size = 12.f, BitmapFont const * font = nullptr );
-	~TextRenderer( );
+	TextRenderer(std::string const & content, Vector2f const & screenPosition, float size = 12.f, BitmapFont const * font = nullptr);
+	~TextRenderer();
 
-	void SetText( std::string const & content );
-	void SetSize( float size );
-	void SetFont( BitmapFont const * font );
-	void SetPosition( Vector2f const & screenPosition );
-	void SetColor( Color const & color );
-	void SetAlignment( eAlignment const & alignment );
+	void SetText(std::string const & content);
+	void SetSize(float size);
+	void SetFont(BitmapFont const * font);
+	void SetPosition(Vector2f const & screenPosition);
+	void SetColor(Color const & color);
+	void SetAlignment(eAlignment const & alignment);
 
-	std::string const & GetContent( ) const;
+	std::string const & GetContent() const;
 
 private:
-	void SetPositionWithAlignment( );
+	void SetPositionWithAlignment();
 };

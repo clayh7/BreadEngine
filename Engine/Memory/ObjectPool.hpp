@@ -15,25 +15,25 @@ public:
 template <typename Type>
 class ObjectPool
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	Type * m_nextFreePtr;
 	Type * m_buffer;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	ObjectPool( size_t blockCount )
+	ObjectPool(size_t blockCount)
 	{
-		size_t bufferSize = sizeof( Type ) * blockCount;
-		bool check = sizeof( Type ) >= sizeof( BlockNode );
-		ASSERT_RECOVERABLE( check, "ObjectPool type not large enough" );
-		m_buffer = (Type*)malloc( bufferSize );
+		size_t bufferSize = sizeof(Type) * blockCount;
+		bool check = sizeof(Type) >= sizeof(BlockNode);
+		ASSERT_RECOVERABLE(check, "ObjectPool type not large enough");
+		m_buffer = (Type*)malloc(bufferSize);
 		m_nextFreePtr = nullptr;
-		for( int blockIndex = blockCount - 1; blockIndex >= 0; --blockIndex )
+		for (int blockIndex = blockCount - 1; blockIndex >= 0; --blockIndex)
 		{
 			Type * blockPtr = &m_buffer[blockIndex];
 			BlockNode * node = (BlockNode*)blockPtr;
@@ -42,25 +42,25 @@ public:
 		}
 	}
 
-	Type * Alloc( )
+	Type * Alloc()
 	{
-		Type * objectBlock = (Type*) m_nextFreePtr;
-		m_nextFreePtr = (Type*) ( ( (BlockNode*) m_nextFreePtr )->next );
-		ASSERT_RECOVERABLE( m_nextFreePtr != nullptr, "Out of memory in ObjectPool" );
-		new ( objectBlock ) Type( );
+		Type * objectBlock = (Type*)m_nextFreePtr;
+		m_nextFreePtr = (Type*)(((BlockNode*)m_nextFreePtr)->next);
+		ASSERT_RECOVERABLE(m_nextFreePtr != nullptr, "Out of memory in ObjectPool");
+		new (objectBlock) Type();
 		return objectBlock;
 	}
 
-	void Delete( Type * objectBlock )
+	void Delete(Type * objectBlock)
 	{
-		objectBlock->~Type( );
-		BlockNode * freed = (BlockNode*) objectBlock;
-		freed->next = (BlockNode*) m_nextFreePtr;
-		m_nextFreePtr = (Type*) freed;
+		objectBlock->~Type();
+		BlockNode * freed = (BlockNode*)objectBlock;
+		freed->next = (BlockNode*)m_nextFreePtr;
+		m_nextFreePtr = (Type*)freed;
 	}
 
-	void Destroy( )
+	void Destroy()
 	{
-		free( m_buffer );
+		free(m_buffer);
 	}
 };

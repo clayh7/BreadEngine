@@ -17,7 +17,7 @@ char const * const ENGINE_RENDER_EVENT = "EngineRender";
 //-------------------------------------------------------------------------------------------------
 // Global Functions
 //-------------------------------------------------------------------------------------------------
-Vector2i GetWindowDimensions( )
+Vector2i GetWindowDimensions()
 {
-	return Engine::GetWindowDimensions( );
+	return Engine::GetWindowDimensions();
 }

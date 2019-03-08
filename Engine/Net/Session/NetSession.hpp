@@ -21,12 +21,12 @@ class NetSender;
 
 
 //---------------------------------------------------------------------------------------------
-void OnPing( NetSender const &, NetMessage const & );
-void OnPong( NetSender const &, NetMessage const & );
-void OnJoinRequest( NetSender const &, NetMessage const & );
-void OnJoinDeny( NetSender const &, NetMessage const & );
-void OnJoinAccept( NetSender const &, NetMessage const & );
-void OnLeave( NetSender const &, NetMessage const & );
+void OnPing(NetSender const &, NetMessage const &);
+void OnPong(NetSender const &, NetMessage const &);
+void OnJoinRequest(NetSender const &, NetMessage const &);
+void OnJoinDeny(NetSender const &, NetMessage const &);
+void OnJoinAccept(NetSender const &, NetMessage const &);
+void OnLeave(NetSender const &, NetMessage const &);
 
 
 //-------------------------------------------------------------------------------------------------
@@ -72,9 +72,9 @@ public:
 //-------------------------------------------------------------------------------------------------
 class NetSession
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	static int const PORT_RANGE = 12; //default
 	static int const MAX_CONNECTIONS = 255; //largest number possible of Byte - 1
@@ -95,9 +95,9 @@ public:
 	static char const * ON_JOIN_DENY_EVENT;
 	static DebugLog m_NetworkTrafficActivity;
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	PacketChannel m_channel;
 	NetConnection * m_connections[MAX_CONNECTIONS];
@@ -117,65 +117,65 @@ public:
 	int m_invalidMessageCount;
 	eNetSessionError m_lastError;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	NetSession( uint16_t gameVersion = 0U );
-	~NetSession( );
+	NetSession(uint16_t gameVersion = 0U);
+	~NetSession();
 
-	void OnUpdate( NamedProperties & );
-	void ProcessIncomingPackets( );
-	void ProcessOutgoingPackets( );
-	void CheckForDisconnect( );
+	void OnUpdate(NamedProperties &);
+	void ProcessIncomingPackets();
+	void ProcessOutgoingPackets();
+	void CheckForDisconnect();
 
-	void RegisterMessage( eNetMessageType const & type, MessageCallback * cb, byte_t const & setTypeFlags = 0, byte_t const & setOptionFlags = 0, byte_t const & setChannel = 0 );
-	bool Start( unsigned int port, unsigned int range = PORT_RANGE );
-	void Stop( );
-	void Host( char const * username, size_t password = 0 );
-	void Join( sockaddr_in const & hostAddress, char const * username, size_t password = 0 );
-	void Leave( );
-	NetConnection * CreateConnection( ConnectionInfo const & connInfo ) const;
-	NetConnection * CreateConnection( byte_t index, sockaddr_in const & addr, std::string const & guid, std::string const & username ) const;
-	void DisconnectOtherClientConnections( );
-	void Connect( NetConnection * connection );
-	void Disconnect( NetConnection ** connection );
-	void AddMessageToAllClients( NetMessage & message );
-	void SendDirect( sockaddr_in const & address, NetMessage & message ) const;
-	void SendDeny( sockaddr_in const & address, eNetSessionError const & reason, uint32_t nuonce ) const;
-	void SendAccept( NetConnection * connInfo, uint32_t nuonce ) const;
-	void SendPacket( sockaddr_in const & address, byte_t const * data, size_t dataSize ) const;
-	void ProcessPacket( NetPacket & packet );
-	void ReadMessage( NetPacket const & packet, NetMessage * out_message );
-	void PrintError( eNetSessionError const & error );
+	void RegisterMessage(eNetMessageType const & type, MessageCallback * cb, byte_t const & setTypeFlags = 0, byte_t const & setOptionFlags = 0, byte_t const & setChannel = 0);
+	bool Start(unsigned int port, unsigned int range = PORT_RANGE);
+	void Stop();
+	void Host(char const * username, size_t password = 0);
+	void Join(sockaddr_in const & hostAddress, char const * username, size_t password = 0);
+	void Leave();
+	NetConnection * CreateConnection(ConnectionInfo const & connInfo) const;
+	NetConnection * CreateConnection(byte_t index, sockaddr_in const & addr, std::string const & guid, std::string const & username) const;
+	void DisconnectOtherClientConnections();
+	void Connect(NetConnection * connection);
+	void Disconnect(NetConnection ** connection);
+	void AddMessageToAllClients(NetMessage & message);
+	void SendDirect(sockaddr_in const & address, NetMessage & message) const;
+	void SendDeny(sockaddr_in const & address, eNetSessionError const & reason, uint32_t nuonce) const;
+	void SendAccept(NetConnection * connInfo, uint32_t nuonce) const;
+	void SendPacket(sockaddr_in const & address, byte_t const * data, size_t dataSize) const;
+	void ProcessPacket(NetPacket & packet);
+	void ReadMessage(NetPacket const & packet, NetMessage * out_message);
+	void PrintError(eNetSessionError const & error);
 
-	void ChangeState( eNetSessionState const & newState );
-	void EnterState( eNetSessionState const & state );
-	void LeaveState( eNetSessionState const & state );
-	void UpdateState( eNetSessionState const & state );
+	void ChangeState(eNetSessionState const & newState);
+	void EnterState(eNetSessionState const & state);
+	void LeaveState(eNetSessionState const & state);
+	void UpdateState(eNetSessionState const & state);
 
-	NetConnection * GetNetConnection( sockaddr_in const & address ) const;
-	NetConnection * GetNetConnection( uint8_t netIndex );
-	PacketChannel const & GetPacketChannel( ) const;
-	UDPSock const & GetSocket( ) const;
-	char const * GetAddressString( ) const;
-	NetMessageDefinition const * GetDefinition( eNetMessageType const & type ) const;
-	NetConnection * GetSelf( ) const;
-	NetConnection * GetHost( ) const;
-	eNetSessionState GetState( ) const;
-	float GetSimDropRate( ) const;
-	Range<double> const GetLatency( ) const;
-	uint64_t GetNetSessionVersion( ) const;
-	uint32_t GetNuonce( ) const;
-	byte_t GetNextFreeIndex( ) const;
-	bool IsConnected( ) const;
-	bool IsValidPacket( NetPacket const & packet, size_t packetSize ) const;
-	bool IsValidMessage( NetSender const & senderInfo, NetMessage const & message ) const;
-	bool IsValidConnectionIndex( byte_t index ) const;
-	bool IsDuplicateGUID( std::string const & check ) const;
-	bool IsHost( ) const;
+	NetConnection * GetNetConnection(sockaddr_in const & address) const;
+	NetConnection * GetNetConnection(uint8_t netIndex);
+	PacketChannel const & GetPacketChannel() const;
+	UDPSock const & GetSocket() const;
+	char const * GetAddressString() const;
+	NetMessageDefinition const * GetDefinition(eNetMessageType const & type) const;
+	NetConnection * GetSelf() const;
+	NetConnection * GetHost() const;
+	eNetSessionState GetState() const;
+	float GetSimDropRate() const;
+	Range<double> const GetLatency() const;
+	uint64_t GetNetSessionVersion() const;
+	uint32_t GetNuonce() const;
+	byte_t GetNextFreeIndex() const;
+	bool IsConnected() const;
+	bool IsValidPacket(NetPacket const & packet, size_t packetSize) const;
+	bool IsValidMessage(NetSender const & senderInfo, NetMessage const & message) const;
+	bool IsValidConnectionIndex(byte_t index) const;
+	bool IsDuplicateGUID(std::string const & check) const;
+	bool IsHost() const;
 
-	void SetDropRate( float dropRate );
-	void SetLatency( Range<double> latency );
-	bool ToggleTimeouts( );
+	void SetDropRate(float dropRate);
+	void SetLatency(Range<double> latency);
+	bool ToggleTimeouts();
 };

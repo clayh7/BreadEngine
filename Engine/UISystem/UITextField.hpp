@@ -15,9 +15,9 @@ struct XMLNode;
 //-------------------------------------------------------------------------------------------------
 class UITextField : public UIWidget
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	static UIWidgetRegistration s_UITextFieldRegistration;
 	static char const * PROPERTY_BORDER_COLOR;
@@ -34,15 +34,15 @@ public:
 	static char const * PROPERTY_PASSWORD;
 	static float const BLINK_DELAY_SECONDS;
 
-//-------------------------------------------------------------------------------------------------
-// Static Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	static UIWidget * CreateWidgetFromXML( XMLNode const & node );
+	static UIWidget * CreateWidgetFromXML(XMLNode const & node);
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	Mesh * m_borderMesh;
 	MeshRenderer * m_border;
@@ -55,29 +55,29 @@ private:
 	float m_blinkTimer;
 	bool m_showBlinkingLine;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	UITextField( std::string const & name = "" );
-	UITextField( XMLNode const & node );
-	virtual ~UITextField( ) override;
+	UITextField(std::string const & name = "");
+	UITextField(XMLNode const & node);
+	virtual ~UITextField() override;
 
-	virtual void Update( ) override;
-	virtual void Render( ) const override;
-	std::string const & GetText( ) const;
-	void SetText( std::string const & text );
-	void Select( ) const;
+	virtual void Update() override;
+	virtual void Render() const override;
+	std::string const & GetText() const;
+	void SetText(std::string const & text);
+	void Select() const;
 
 protected:
-	void UpdateBlinkingLine( );
-	void SetupRenderers( );
-	void UpdateRenderers( );
-	void CreateBorderMesh( Mesh * out_mesh );
-	Transform CalcBackgroundTransform( );
-	std::string GetDisplayContent( ) const;
-	void PopulateFromXML( XMLNode const & node );
-	
-	void OnAddChar( NamedProperties & charTypedEvent );
-	void OnRemoveChar( NamedProperties & );
+	void UpdateBlinkingLine();
+	void SetupRenderers();
+	void UpdateRenderers();
+	void CreateBorderMesh(Mesh * out_mesh);
+	Transform CalcBackgroundTransform();
+	std::string GetDisplayContent() const;
+	void PopulateFromXML(XMLNode const & node);
+
+	void OnAddChar(NamedProperties & charTypedEvent);
+	void OnRemoveChar(NamedProperties &);
 };

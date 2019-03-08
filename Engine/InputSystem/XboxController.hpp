@@ -82,9 +82,9 @@ public:
 //-------------------------------------------------------------------------------------------------
 class XboxController
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	static const float STICK_DEADZONE_MIN;
 	static const float STICK_DEADZONE_MAX;
@@ -92,9 +92,9 @@ public:
 	static const float HEAVY_VIBRATE_AMOUNT;
 	static const float LIGHT_VIBRATE_AMOUNT;
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	int m_currentFrameNumber;
 	ButtonState m_buttons[XboxButton_Count];
@@ -106,23 +106,23 @@ private:
 	float m_rightStickRadians;
 	bool m_isConnected;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	XboxController( );
-	~XboxController( );
-	void Update( int controllerIndex, int currentFrame );
-	void SetButtonStatus( int buttonInput );
-	void ParseInputSetTo( XboxHexCode const & hexToCheck, XboxButton const & setButton, int checkButton );
-	void SetStickStatus( const float& leftStickXRaw, const float& leftStickYRaw, const float& rightStickXRaw, const float& rightStickYRaw );
+	XboxController();
+	~XboxController();
+	void Update(int controllerIndex, int currentFrame);
+	void SetButtonStatus(int buttonInput);
+	void ParseInputSetTo(XboxHexCode const & hexToCheck, XboxButton const & setButton, int checkButton);
+	void SetStickStatus(const float& leftStickXRaw, const float& leftStickYRaw, const float& rightStickXRaw, const float& rightStickYRaw);
 	bool IsConnected() const;
-	bool WasButtonJustPressed( XboxButton const & checkButton ) const;
-	bool IsButtonDown( XboxButton const & checkButton ) const;
-	bool WasButtonJustReleased( XboxButton const & checkButton ) const;
-	float GetTrigger( XboxTrigger const & checkTrigger ) const;
-	bool IsStickMoving( XboxStick const & checkStick ) const;
-	Vector2f GetStickPosition( XboxStick const & checkStick ) const;
-	float GetStickDirectionRadians( XboxStick const & checkStick ) const;
-	static void Vibrate( int playerNum, int leftVal, int rightVal );
+	bool WasButtonJustPressed(XboxButton const & checkButton) const;
+	bool IsButtonDown(XboxButton const & checkButton) const;
+	bool WasButtonJustReleased(XboxButton const & checkButton) const;
+	float GetTrigger(XboxTrigger const & checkTrigger) const;
+	bool IsStickMoving(XboxStick const & checkStick) const;
+	Vector2f GetStickPosition(XboxStick const & checkStick) const;
+	float GetStickDirectionRadians(XboxStick const & checkStick) const;
+	static void Vibrate(int playerNum, int leftVal, int rightVal);
 };

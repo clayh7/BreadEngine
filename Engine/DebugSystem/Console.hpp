@@ -13,7 +13,7 @@
 
 
 //-------------------------------------------------------------------------------------------------
-typedef void ( EventCallback )( NamedProperties & );
+typedef void (EventCallback)(NamedProperties &);
 class Console;
 class Command;
 class Mesh;
@@ -28,19 +28,19 @@ extern Console * g_ConsoleSystem;
 
 
 //-------------------------------------------------------------------------------------------------
-typedef void ( CommandCallback )( Command const & );
-void HelpCommand( Command const & );
-void ClearCommand( Command const & );
-void QuitCommand( Command const & );
-void LogCommand( Command const & );
-void ServerEchoCommand( Command const & );
+typedef void (CommandCallback)(Command const &);
+void HelpCommand(Command const &);
+void ClearCommand(Command const &);
+void QuitCommand(Command const &);
+void LogCommand(Command const &);
+void ServerEchoCommand(Command const &);
 
 
 //-----------------------------------------------------------------------------------------------
 class CommandBase
 {
 public:
-	virtual void Execute( Command & ) const = 0;
+	virtual void Execute(Command &) const = 0;
 };
 
 
@@ -53,9 +53,9 @@ public:
 	T_FunctionType m_function;
 
 public:
-	virtual void Execute( Command & command ) const override
+	virtual void Execute(Command & command) const override
 	{
-		( m_object->*m_function )( command );
+		(m_object->*m_function)(command);
 	}
 };
 
@@ -67,9 +67,9 @@ public:
 	CommandCallback * m_function;
 
 public:
-	virtual void Execute( Command & command ) const override
+	virtual void Execute(Command & command) const override
 	{
-		( m_function )( command );
+		(m_function)(command);
 	}
 };
 
@@ -83,11 +83,11 @@ public:
 	T_FunctionType m_function;
 
 public:
-	virtual void Execute( Command & command ) const override
+	virtual void Execute(Command & command) const override
 	{
 		NamedProperties commandEvent;
-		commandEvent.Set( "Command", command );
-		( m_object->*m_function )( commandEvent );
+		commandEvent.Set("Command", command);
+		(m_object->*m_function)(commandEvent);
 	}
 };
 
@@ -99,11 +99,11 @@ public:
 	EventCallback * m_event;
 
 public:
-	virtual void Execute( Command & command ) const override
+	virtual void Execute(Command & command) const override
 	{
 		NamedProperties commandEvent;
-		commandEvent.Set( "Command", command );
-		( m_event )( commandEvent );
+		commandEvent.Set("Command", command);
+		(m_event)(commandEvent);
 	}
 };
 
@@ -111,28 +111,28 @@ public:
 //-------------------------------------------------------------------------------------------------
 class ConsoleLog
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	std::string m_log;
 	Color m_color;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	ConsoleLog( std::string const & log, Color const & color );
-	~ConsoleLog( );
+	ConsoleLog(std::string const & log, Color const & color);
+	~ConsoleLog();
 };
 
 
 //-------------------------------------------------------------------------------------------------
 class Console
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	static float OPEN_SPEED;
 	static float BLINK_SPEED;
@@ -157,9 +157,9 @@ public:
 
 	static bool s_serverEchoEnabled;
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	bool m_open;
 	float m_openAmount;
@@ -177,82 +177,82 @@ private:
 	std::map<size_t, CommandBase*> m_commands;
 	std::map<std::string, char*> m_commandDescriptions;
 
-//-------------------------------------------------------------------------------------------------
-// Static Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	static void Startup( );
-	static void Shutdown( );
-	static void RegisterCommand( std::string const & commandName, CommandCallback * callback, std::string const & commandDescription );
+	static void Startup();
+	static void Shutdown();
+	static void RegisterCommand(std::string const & commandName, CommandCallback * callback, std::string const & commandDescription);
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	Console( );
-	~Console( );
-	void Update( );
-	void Render( ) const;
-	void Register( std::string const & commandName, CommandCallback * callback, std::string const & commandDescription );
-	void RegisterCommandEvent( std::string const & commandName, EventCallback * callback, std::string const & commandDescription );
-	void RunCommand( std::string const & commandString, bool remote = false );
-	void AddLog( std::string const & log, Color const & color = DEFAULT, bool remote = false, bool debug = true );
-	void ClearConsoleLogs( );
-	std::string const BuildLogFile( );
+	Console();
+	~Console();
+	void Update();
+	void Render() const;
+	void Register(std::string const & commandName, CommandCallback * callback, std::string const & commandDescription);
+	void RegisterCommandEvent(std::string const & commandName, EventCallback * callback, std::string const & commandDescription);
+	void RunCommand(std::string const & commandString, bool remote = false);
+	void AddLog(std::string const & log, Color const & color = DEFAULT, bool remote = false, bool debug = true);
+	void ClearConsoleLogs();
+	std::string const BuildLogFile();
 
-	void ShowHelp( );
-	void PressKey( unsigned char asKey );
-	void ReleaseKey( unsigned char asKey );
-	void MoveMouseWheel( int wheelDelta );
-	void SetShadow( unsigned char shadowAmount );
+	void ShowHelp();
+	void PressKey(unsigned char asKey);
+	void ReleaseKey(unsigned char asKey);
+	void MoveMouseWheel(int wheelDelta);
+	void SetShadow(unsigned char shadowAmount);
 
-	int GetLogSize( ) const;
-	bool IsOpen( ) const { return m_open; }
+	int GetLogSize() const;
+	bool IsOpen() const { return m_open; }
 
 private:
-	void ToggleOpen( );
-	void AddChar( unsigned char newChar );
-	void RemoveLastChar( );
-	void ClearConsoleLine( );
-	void OnAddChar( NamedProperties & charTypedEvent );
+	void ToggleOpen();
+	void AddChar(unsigned char newChar);
+	void RemoveLastChar();
+	void ClearConsoleLine();
+	void OnAddChar(NamedProperties & charTypedEvent);
 
-//-------------------------------------------------------------------------------------------------
-// Function Templates
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Function Templates
+	//-------------------------------------------------------------------------------------------------
 public:
 	template<typename T_ObjectType, typename T_FunctionType>
-	void RegisterCommand( std::string const & commandName, T_ObjectType * object, T_FunctionType function, std::string const & commandDescription )
+	void RegisterCommand(std::string const & commandName, T_ObjectType * object, T_FunctionType function, std::string const & commandDescription)
 	{
 		//Make new command
-		CommandObjectFunction<T_ObjectType, T_FunctionType> * registerCommand = new CommandObjectFunction<T_ObjectType, T_FunctionType>( );
+		CommandObjectFunction<T_ObjectType, T_FunctionType> * registerCommand = new CommandObjectFunction<T_ObjectType, T_FunctionType>();
 		registerCommand->m_object = object;
 		registerCommand->m_function = function;
 
 		//Add new command
-		size_t commandHash = std::hash<std::string>{ }( commandName );
-		m_commands.insert( std::pair<size_t, CommandBase*>( commandHash, registerCommand ) );
+		size_t commandHash = std::hash<std::string>{}(commandName);
+		m_commands.insert(std::pair<size_t, CommandBase*>(commandHash, registerCommand));
 
 		//Add command description
-		std::string fullDescription = Stringf( "%s%s", commandName.c_str( ), commandDescription.c_str( ) );
-		char * descriptionString = CreateNewCString( fullDescription );
-		m_commandDescriptions.insert( std::pair<std::string, char*>( commandName, descriptionString ) );
+		std::string fullDescription = Stringf("%s%s", commandName.c_str(), commandDescription.c_str());
+		char * descriptionString = CreateNewCString(fullDescription);
+		m_commandDescriptions.insert(std::pair<std::string, char*>(commandName, descriptionString));
 	}
 
 	template<typename T_ObjectType, typename T_FunctionType>
-	void RegisterCommandEvent( std::string const & commandName, T_ObjectType * object, T_FunctionType function, std::string const & commandDescription )
+	void RegisterCommandEvent(std::string const & commandName, T_ObjectType * object, T_FunctionType function, std::string const & commandDescription)
 	{
 		//Make new command
-		EventObjectFunction<T_ObjectType, T_FunctionType> * registerCommand = new EventObjectFunction<T_ObjectType, T_FunctionType>( );
+		EventObjectFunction<T_ObjectType, T_FunctionType> * registerCommand = new EventObjectFunction<T_ObjectType, T_FunctionType>();
 		registerCommand->m_object = object;
 		registerCommand->m_function = function;
 
 		//Add new command
-		size_t commandHash = std::hash<std::string>{ }( commandName );
-		m_commands.insert( std::pair<size_t, CommandBase*>( commandHash, registerCommand ) );
+		size_t commandHash = std::hash<std::string>{}(commandName);
+		m_commands.insert(std::pair<size_t, CommandBase*>(commandHash, registerCommand));
 
 		//Add command description
-		std::string fullDescription = Stringf( "%s%s", commandName.c_str( ), commandDescription.c_str( ) );
-		char * descriptionString = CreateNewCString( fullDescription );
-		m_commandDescriptions.insert( std::pair<std::string, char*>( commandName, descriptionString ) );
+		std::string fullDescription = Stringf("%s%s", commandName.c_str(), commandDescription.c_str());
+		char * descriptionString = CreateNewCString(fullDescription);
+		m_commandDescriptions.insert(std::pair<std::string, char*>(commandName, descriptionString));
 	}
 };

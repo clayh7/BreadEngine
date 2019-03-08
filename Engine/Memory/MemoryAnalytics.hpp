@@ -19,9 +19,9 @@
 template <typename T>
 class UntrackedAllocator
 {
-//-------------------------------------------------------------------------------------------------
-// Typedefs
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Typedefs
+	//-------------------------------------------------------------------------------------------------
 public:
 	typedef T value_type;
 	typedef value_type* pointer;
@@ -31,9 +31,9 @@ public:
 	typedef size_t size_type;
 	typedef std::ptrdiff_t difference_type;
 
-//-------------------------------------------------------------------------------------------------
-// Rebinding
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Rebinding
+	//-------------------------------------------------------------------------------------------------
 public:
 	// convert an allocator<T> to allocator<U>
 	template<typename U>
@@ -42,78 +42,78 @@ public:
 		typedef UntrackedAllocator<U> other;
 	};
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	inline explicit UntrackedAllocator( )
+	inline explicit UntrackedAllocator()
 	{
 	}
 
-	inline ~UntrackedAllocator( )
+	inline ~UntrackedAllocator()
 	{
 	}
 
-	inline explicit UntrackedAllocator( UntrackedAllocator const & )
+	inline explicit UntrackedAllocator(UntrackedAllocator const &)
 	{
 	}
 
 	template<typename U>
-	inline explicit UntrackedAllocator( UntrackedAllocator<U> const & )
+	inline explicit UntrackedAllocator(UntrackedAllocator<U> const &)
 	{
 
 	}
 
 	// address
-	inline pointer address( reference r )
+	inline pointer address(reference r)
 	{
 		return &r;
 	}
 
-	inline const_pointer address( const_reference r )
+	inline const_pointer address(const_reference r)
 	{
 		return &r;
 	}
 
 	// memory allocation
-	inline pointer allocate( size_type cnt, typename std::allocator<void>::const_pointer = 0 )
+	inline pointer allocate(size_type cnt, typename std::allocator<void>::const_pointer = 0)
 	{
-		T *ptr = (T*) malloc( cnt * sizeof( T ) );
+		T *ptr = (T*)malloc(cnt * sizeof(T));
 		return ptr;
 	}
 
-	inline void deallocate( pointer p, size_type cnt )
+	inline void deallocate(pointer p, size_type cnt)
 	{
-		UNREFERENCED( cnt );
-		free( p );
+		UNREFERENCED(cnt);
+		free(p);
 	}
 
 	// size
-	inline size_type max_size( ) const
+	inline size_type max_size() const
 	{
-		return std::numeric_limits<size_type>::max( ) / sizeof( T );
+		return std::numeric_limits<size_type>::max() / sizeof(T);
 	}
 
 	// construction/destruction
-	inline void construct( pointer p, T const & t )
+	inline void construct(pointer p, T const & t)
 	{
-		new( p ) T( t );
+		new(p) T(t);
 	}
 
-	inline void destroy( pointer p )
+	inline void destroy(pointer p)
 	{
-		UNREFERENCED( p );
-		p->~T( );
+		UNREFERENCED(p);
+		p->~T();
 	}
 
-	inline bool operator==( UntrackedAllocator const & a )
+	inline bool operator==(UntrackedAllocator const & a)
 	{
 		return this == &a;
 	}
 
-	inline bool operator!=( UntrackedAllocator const & a )
+	inline bool operator!=(UntrackedAllocator const & a)
 	{
-		return !operator==( a );
+		return !operator==(a);
 	}
 };
 
@@ -121,9 +121,9 @@ public:
 //-------------------------------------------------------------------------------------------------
 class CallstackStats
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	size_t totalAllocations;
 	size_t totalBytes;
@@ -156,9 +156,9 @@ extern MemoryAnalytics* g_MemoryAnalyticsSystem;
 //-------------------------------------------------------------------------------------------------
 class MemoryAnalytics
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	bool m_trackMemory;
 	size_t m_startupAllocations;
@@ -178,22 +178,22 @@ public:
 	UntrackedCallstackStatsMap m_callstackStatsMap;
 	CriticalSection criticalSection_callstackMap;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	MemoryAnalytics( );
-	~MemoryAnalytics( );
-	
-	void Update( );
+	MemoryAnalytics();
+	~MemoryAnalytics();
 
-	void MemoryAnalyticsStartUp( );
-	void MemoryAnalyticsShutDown( );
-	std::string GetMemoryAllocationsString( ) const;
-	std::string GetMemoryAveragesString( ) const;
-	void Flush( );
-	void PopulateCallstackStats( );
-	void CleanUpCallstackStats( );
-	void LockCallstackMap( );
-	void UnlockCallstackMap( );
+	void Update();
+
+	void MemoryAnalyticsStartUp();
+	void MemoryAnalyticsShutDown();
+	std::string GetMemoryAllocationsString() const;
+	std::string GetMemoryAveragesString() const;
+	void Flush();
+	void PopulateCallstackStats();
+	void CleanUpCallstackStats();
+	void LockCallstackMap();
+	void UnlockCallstackMap();
 };

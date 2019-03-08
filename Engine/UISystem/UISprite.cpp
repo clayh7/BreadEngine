@@ -13,42 +13,42 @@
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC UIWidgetRegistration UISprite::s_UISpriteRegistration( "UISprite", &UISprite::CreateWidgetFromXML );
+STATIC UIWidgetRegistration UISprite::s_UISpriteRegistration("UISprite", &UISprite::CreateWidgetFromXML);
 STATIC char const * UISprite::DEFAULT_SPRITE_ID = "square";
 STATIC char const * UISprite::PROPERTY_SPRITE_ID = "SpriteID";
 STATIC char const * UISprite::PROPERTY_ROTATION_DEGREES = "RotationDegrees";
 
 
 //-------------------------------------------------------------------------------------------------
-UIWidget * UISprite::CreateWidgetFromXML( XMLNode const & node )
+UIWidget * UISprite::CreateWidgetFromXML(XMLNode const & node)
 {
-	return new UISprite( node );
+	return new UISprite(node);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-UISprite::UISprite( std::string const & name /*= ""*/ )
-	: UIWidget( name )
-	, m_spriteData( nullptr )
+UISprite::UISprite(std::string const & name /*= ""*/)
+	: UIWidget(name)
+	, m_spriteData(nullptr)
 {
-	SetProperty( PROPERTY_SPRITE_ID, DEFAULT_SPRITE_ID );
-	SetProperty( PROPERTY_ROTATION_DEGREES, 0.f );
+	SetProperty(PROPERTY_SPRITE_ID, DEFAULT_SPRITE_ID);
+	SetProperty(PROPERTY_ROTATION_DEGREES, 0.f);
 
-	SetupRenderers( );
+	SetupRenderers();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-UISprite::UISprite( XMLNode const & node )
-	: UISprite( )
+UISprite::UISprite(XMLNode const & node)
+	: UISprite()
 {
-	UIWidget::PopulateFromXML( node );
-	PopulateFromXML( node );
+	UIWidget::PopulateFromXML(node);
+	PopulateFromXML(node);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-UISprite::~UISprite( )
+UISprite::~UISprite()
 {
 	delete m_quad;
 	m_quad = nullptr;
@@ -59,116 +59,116 @@ UISprite::~UISprite( )
 
 
 //-------------------------------------------------------------------------------------------------
-void UISprite::Update( )
+void UISprite::Update()
 {
-	if( m_hidden )
+	if (m_hidden)
 	{
 		return;
 	}
 
-	if( m_dirty )
+	if (m_dirty)
 	{
-		UpdateRenderers( );
+		UpdateRenderers();
 		m_dirty = false;
 	}
 
-	UIWidget::Update( );
+	UIWidget::Update();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void UISprite::Render( ) const
+void UISprite::Render() const
 {
-	if( m_hidden )
+	if (m_hidden)
 	{
 		return;
 	}
 
-	m_quad->Render( );
-	UIWidget::Render( );
+	m_quad->Render();
+	UIWidget::Render();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void UISprite::SetupRenderers( )
+void UISprite::SetupRenderers()
 {
-	m_spriteData = g_SpriteRenderSystem->GetSpriteResource( DEFAULT_SPRITE_ID );
+	m_spriteData = g_SpriteRenderSystem->GetSpriteResource(DEFAULT_SPRITE_ID);
 
 	//Dummy values to get them set up
 	MeshBuilder quadBuilder;
-	quadBuilder.AddTriangle( Vector3f( -0.5f, 5.f, 0.f ), Vector3f( -0.5f, -0.5f, 0.f ), Vector3f( 0.5f, -0.5f, 0.f ) );
-	quadBuilder.AddTriangle( Vector3f( -0.5f, 5.f, 0.f ), Vector3f( 0.5f, -0.5f, 0.f ), Vector3f( 0.5f, 0.5f, 0.f ) );
+	quadBuilder.AddTriangle(Vector3f(-0.5f, 5.f, 0.f), Vector3f(-0.5f, -0.5f, 0.f), Vector3f(0.5f, -0.5f, 0.f));
+	quadBuilder.AddTriangle(Vector3f(-0.5f, 5.f, 0.f), Vector3f(0.5f, -0.5f, 0.f), Vector3f(0.5f, 0.5f, 0.f));
 
-	Material * spriteMaterial = m_spriteData->GetMaterial( );
-	m_quadMesh = new Mesh( &quadBuilder, eVertexType_PCU );
-	m_quad = new MeshRenderer( eMeshShape_QUAD, Transform( ), RenderState::BASIC_2D );
-	CreateSpriteMesh( m_quadMesh );
-	m_quad->SetMeshAndMaterial( m_quadMesh, spriteMaterial );
-	m_quad->SetUniform( "uTexDiffuse", m_spriteData->GetTexture( ) );
+	Material * spriteMaterial = m_spriteData->GetMaterial();
+	m_quadMesh = new Mesh(&quadBuilder, eVertexType_PCU);
+	m_quad = new MeshRenderer(eMeshShape_QUAD, Transform(), RenderState::BASIC_2D);
+	CreateSpriteMesh(m_quadMesh);
+	m_quad->SetMeshAndMaterial(m_quadMesh, spriteMaterial);
+	m_quad->SetUniform("uTexDiffuse", m_spriteData->GetTexture());
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void UISprite::UpdateRenderers( )
+void UISprite::UpdateRenderers()
 {
 	//Update Sprite Quad
 	std::string currentSpriteID;
-	GetProperty( PROPERTY_SPRITE_ID, currentSpriteID );
-	if( currentSpriteID != m_spriteData->m_id )
+	GetProperty(PROPERTY_SPRITE_ID, currentSpriteID);
+	if (currentSpriteID != m_spriteData->m_id)
 	{
-		m_spriteData = g_SpriteRenderSystem->GetSpriteResource( currentSpriteID );
-		m_quad->SetUniform( "uTexDiffuse", m_spriteData->GetTexture( ) );
+		m_spriteData = g_SpriteRenderSystem->GetSpriteResource(currentSpriteID);
+		m_quad->SetUniform("uTexDiffuse", m_spriteData->GetTexture());
 	}
 
 	//Update Mesh & Material
-	CreateSpriteMesh( m_quadMesh );
-	Material * spriteMaterial = m_spriteData->GetMaterial( );
-	m_quad->SetMeshAndMaterial( m_quadMesh, spriteMaterial );
+	CreateSpriteMesh(m_quadMesh);
+	Material * spriteMaterial = m_spriteData->GetMaterial();
+	m_quad->SetMeshAndMaterial(m_quadMesh, spriteMaterial);
 
 	//Update Quad Transform
-	Transform quadTransform = CalcQuadTransform( );
-	m_quad->SetTransform( quadTransform );
-	m_quad->Update( );
+	Transform quadTransform = CalcQuadTransform();
+	m_quad->SetTransform(quadTransform);
+	m_quad->Update();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void UISprite::CreateSpriteMesh( Mesh * out_mesh )
+void UISprite::CreateSpriteMesh(Mesh * out_mesh)
 {
 	MeshBuilder spriteBuilder;
-	AABB2f uvCoords = m_spriteData->GetUVBounds( );
-	spriteBuilder.AddQuad( Vector2f( -0.5f ), Vector2f( 0.5f ), uvCoords );
-	out_mesh->Update( &spriteBuilder );
+	AABB2f uvCoords = m_spriteData->GetUVBounds();
+	spriteBuilder.AddQuad(Vector2f(-0.5f), Vector2f(0.5f), uvCoords);
+	out_mesh->Update(&spriteBuilder);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Transform UISprite::CalcQuadTransform( )
+Transform UISprite::CalcQuadTransform()
 {
-	Vector3f position = GetWorldPosition( eAnchor_CENTER );
-	Vector3f scale = GetSize( );
-	return Transform( position, Matrix4f::IDENTITY, scale );
+	Vector3f position = GetWorldPosition(eAnchor_CENTER);
+	Vector3f scale = GetSize();
+	return Transform(position, Matrix4f::IDENTITY, scale);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void UISprite::PopulateFromXML( XMLNode const & node )
+void UISprite::PopulateFromXML(XMLNode const & node)
 {
 	//Set properties from XML
-	for( int childPropertyIndex = 0; childPropertyIndex < node.nChildNode( ); ++childPropertyIndex )
+	for (int childPropertyIndex = 0; childPropertyIndex < node.nChildNode(); ++childPropertyIndex)
 	{
-		XMLNode childProperty = node.getChildNode( childPropertyIndex );
-		if( strcmp( childProperty.getName( ), PROPERTY_SPRITE_ID ) == 0 )
+		XMLNode childProperty = node.getChildNode(childPropertyIndex);
+		if (strcmp(childProperty.getName(), PROPERTY_SPRITE_ID) == 0)
 		{
-			std::string spriteID = ReadXMLAttribute( childProperty, STRING_VALUE, DEFAULT_SPRITE_ID );
-			std::string state = ReadXMLAttribute( childProperty, STRING_STATE, "" );
-			SetProperty( PROPERTY_SPRITE_ID, spriteID, ParseState( state ) );
+			std::string spriteID = ReadXMLAttribute(childProperty, STRING_VALUE, DEFAULT_SPRITE_ID);
+			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
+			SetProperty(PROPERTY_SPRITE_ID, spriteID, ParseState(state));
 		}
-		else if( strcmp( childProperty.getName( ), PROPERTY_ROTATION_DEGREES ) == 0 )
+		else if (strcmp(childProperty.getName(), PROPERTY_ROTATION_DEGREES) == 0)
 		{
-			float spriteRotation = ReadXMLAttribute( childProperty, STRING_VALUE, 0.f );
-			std::string state = ReadXMLAttribute( childProperty, STRING_STATE, "" );
-			SetProperty( PROPERTY_ROTATION_DEGREES, spriteRotation, ParseState( state ) );
+			float spriteRotation = ReadXMLAttribute(childProperty, STRING_VALUE, 0.f);
+			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
+			SetProperty(PROPERTY_ROTATION_DEGREES, spriteRotation, ParseState(state));
 		}
 	}
 }

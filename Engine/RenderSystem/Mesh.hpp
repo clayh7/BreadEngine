@@ -30,24 +30,24 @@ enum eMeshShape
 //-------------------------------------------------------------------------------------------------
 class Mesh
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	//Static Memory Allocation
 	static std::vector<Mesh*, UntrackedAllocator<Mesh*>> s_defaultMeshes;
 
-//-------------------------------------------------------------------------------------------------
-// Static Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	static void InitializeDefaultMeshes( );
-	static void DestroyDefaultMeshes( );
-	static Mesh const * GetMeshShape( eMeshShape const & meshShape );
+	static void InitializeDefaultMeshes();
+	static void DestroyDefaultMeshes();
+	static Mesh const * GetMeshShape(eMeshShape const & meshShape);
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	unsigned int m_vboID;
 	unsigned int m_iboID;
@@ -55,26 +55,26 @@ private:
 	std::vector<VertexDefinition> m_layout;
 	std::vector<DrawInstruction> m_drawInstructions;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 private:
-	Mesh( eMeshShape const &shape );
+	Mesh(eMeshShape const &shape);
 
 public:
-	Mesh( );
-	Mesh( eVertexType const & vertexType );
-	Mesh( std::string const & textString, float scale = 12.f, BitmapFont const * font = nullptr );
-	Mesh( MeshBuilder const *meshBuilder, eVertexType const & vertexType );
-	~Mesh( );
+	Mesh();
+	Mesh(eVertexType const & vertexType);
+	Mesh(std::string const & textString, float scale = 12.f, BitmapFont const * font = nullptr);
+	Mesh(MeshBuilder const *meshBuilder, eVertexType const & vertexType);
+	~Mesh();
 
-	unsigned int GetVBOID( ) const { return m_vboID; }
-	unsigned int GetIBOID( ) const { return m_iboID; }
-	std::vector< VertexDefinition > const & GetLayout( ) const;
-	std::vector< DrawInstruction > const & GetDrawInstructions( ) const;
-	int GetVertexSize( ) const;
-	void SetVertexLayout( eVertexType const &vertexType );
+	unsigned int GetVBOID() const { return m_vboID; }
+	unsigned int GetIBOID() const { return m_iboID; }
+	std::vector< VertexDefinition > const & GetLayout() const;
+	std::vector< DrawInstruction > const & GetDrawInstructions() const;
+	int GetVertexSize() const;
+	void SetVertexLayout(eVertexType const &vertexType);
 	//Returns the extents of the string mesh
-	Vector3f Update( std::string const & newText, float scale = 12.f, BitmapFont const * font = nullptr );
-	void Update( MeshBuilder const * meshBuilder );
+	Vector3f Update(std::string const & newText, float scale = 12.f, BitmapFont const * font = nullptr);
+	void Update(MeshBuilder const * meshBuilder);
 };

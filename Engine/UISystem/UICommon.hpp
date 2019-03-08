@@ -14,7 +14,7 @@ enum eAlignment
 
 
 //-------------------------------------------------------------------------------------------------
-eAlignment ParseAlignment( std::string const & alignment );
+eAlignment ParseAlignment(std::string const & alignment);
 
 
 //-------------------------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ enum eAnchor
 
 
 //-------------------------------------------------------------------------------------------------
-eAnchor ParseAnchor( std::string const & anchor );
+eAnchor ParseAnchor(std::string const & anchor);
 
 
 //-------------------------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ enum eDock
 
 
 //-------------------------------------------------------------------------------------------------
-eDock ParseDock( std::string const & dock );
+eDock ParseDock(std::string const & dock);
 
 
 //-------------------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ enum eFillDirection
 
 
 //-------------------------------------------------------------------------------------------------
-eFillDirection ParseFillDirection( std::string const & fillDirection );
+eFillDirection ParseFillDirection(std::string const & fillDirection);
 
 
 //-------------------------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ enum eWidgetState
 
 
 //-------------------------------------------------------------------------------------------------
-eWidgetState ParseState( std::string const & state );
+eWidgetState ParseState(std::string const & state);
 
 
 //-------------------------------------------------------------------------------------------------

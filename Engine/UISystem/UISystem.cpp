@@ -24,61 +24,61 @@ UISystem * g_UISystem = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
-UIWidgetRegistration::UIWidgetRegistration( std::string const & widgetName, WidgetCreationFunc * creationFunc )
+UIWidgetRegistration::UIWidgetRegistration(std::string const & widgetName, WidgetCreationFunc * creationFunc)
 {
-	UISystem::RegisterWidget( widgetName, creationFunc );
+	UISystem::RegisterWidget(widgetName, creationFunc);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC Vector2f UISystem::ClipToUISystemPosition( Vector3f const & clipVector )
+STATIC Vector2f UISystem::ClipToUISystemPosition(Vector3f const & clipVector)
 {
-	float x = RangeMap( -1.f, 1.f, clipVector.x, 0.f, (float) VIRTUAL_WIDTH );
-	float y = RangeMap( -1.f, 1.f, clipVector.y, 0.f, (float) VIRTUAL_HEIGHT );
-	return Vector2f( x, y );
+	float x = RangeMap(-1.f, 1.f, clipVector.x, 0.f, (float)VIRTUAL_WIDTH);
+	float y = RangeMap(-1.f, 1.f, clipVector.y, 0.f, (float)VIRTUAL_HEIGHT);
+	return Vector2f(x, y);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::RegisterWidget( std::string const & widgetName, WidgetCreationFunc * creationFunc )
+void UISystem::RegisterWidget(std::string const & widgetName, WidgetCreationFunc * creationFunc)
 {
 	//Create it if it does not exist
-	if( !s_registeredWidgets )
+	if (!s_registeredWidgets)
 	{
-		s_registeredWidgets = new std::map<size_t, WidgetCreationFunc *>( );
+		s_registeredWidgets = new std::map<size_t, WidgetCreationFunc *>();
 	}
 
-	size_t widgetNameHash = std::hash<std::string>{ }( widgetName );
-	s_registeredWidgets->insert( std::pair<size_t, WidgetCreationFunc*>( widgetNameHash, creationFunc ) );
+	size_t widgetNameHash = std::hash<std::string>{}(widgetName);
+	s_registeredWidgets->insert(std::pair<size_t, WidgetCreationFunc*>(widgetNameHash, creationFunc));
 }
 
 
 //-------------------------------------------------------------------------------------------------
-UIWidget * UISystem::CreateWidgetFromName( std::string const & name, XMLNode const & data )
+UIWidget * UISystem::CreateWidgetFromName(std::string const & name, XMLNode const & data)
 {
-	size_t widgetNameHash = std::hash<std::string>{ }( name );
-	auto foundRegisteredWidget = s_registeredWidgets->find( widgetNameHash );
-	if( foundRegisteredWidget != s_registeredWidgets->end( ) )
+	size_t widgetNameHash = std::hash<std::string>{}(name);
+	auto foundRegisteredWidget = s_registeredWidgets->find(widgetNameHash);
+	if (foundRegisteredWidget != s_registeredWidgets->end())
 	{
-		return ( foundRegisteredWidget->second )( data );
+		return (foundRegisteredWidget->second)(data);
 	}
 	return nullptr;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Vector2f UISystem::GetCursorUIPosition( )
+Vector2f UISystem::GetCursorUIPosition()
 {
-	Vector2f cursorPosition = g_InputSystem->GetMousePosition( true );
+	Vector2f cursorPosition = g_InputSystem->GetMousePosition(true);
 	Vector3f cursorClipPosition;// = ScreenToClipPosition( cursorPosition );
-	Vector2i windowDimensions = GetWindowDimensions( );
-	float x = RangeMap( 0.f, (float) windowDimensions.x, cursorPosition.x, -1.f, 1.f );
-	float y = RangeMap( 0.f, (float) windowDimensions.y, cursorPosition.y, -1.f, 1.f );
-	cursorClipPosition = Vector3f( x, y, 0.f );
+	Vector2i windowDimensions = GetWindowDimensions();
+	float x = RangeMap(0.f, (float)windowDimensions.x, cursorPosition.x, -1.f, 1.f);
+	float y = RangeMap(0.f, (float)windowDimensions.y, cursorPosition.y, -1.f, 1.f);
+	cursorClipPosition = Vector3f(x, y, 0.f);
 	//Matrix4f projectionMatrix = g_RenderSystem->GetActiveCamera( )->GetProjectionMatrix( );
 	//invert projMat
 	//multiply
-	return ClipToUISystemPosition( cursorClipPosition );
+	return ClipToUISystemPosition(cursorClipPosition);
 }
 
 
@@ -93,46 +93,46 @@ Vector2f UISystem::GetCursorUIPosition( )
 #include "Engine/UISystem/UIProgressBar.hpp"
 #include "Engine/UISystem/UISprite.hpp"
 #include "Engine/UISystem/UITextField.hpp"
-void WakeUpUISystem( )
+void WakeUpUISystem()
 {
 	static bool doOnce = true;
-	if( doOnce )
+	if (doOnce)
 	{
-		UIWidget( );
-		UIButton( );
-		UIBox( );
-		UIContainer( );
-		UIItem( );
-		UILabel( );
-		UIProgressBar( );
-		UISprite( );
-		UITextField( );
+		UIWidget();
+		UIButton();
+		UIBox();
+		UIContainer();
+		UIItem();
+		UILabel();
+		UIProgressBar();
+		UISprite();
+		UITextField();
 		doOnce = false;
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-UISystem::UISystem( )
-	: m_root( new UIWidget( ) )
-	, m_highlightedWidget( nullptr )
-	, m_selectedWidget( nullptr )
-	, m_uiSpriteRenderer( new SpriteGameRenderer( ) )
-	, m_heldItem( nullptr )
+UISystem::UISystem()
+	: m_root(new UIWidget())
+	, m_highlightedWidget(nullptr)
+	, m_selectedWidget(nullptr)
+	, m_uiSpriteRenderer(new SpriteGameRenderer())
+	, m_heldItem(nullptr)
 {
-	WakeUpUISystem( );
-	UpdateUISpriteRenderer( );
+	WakeUpUISystem();
+	UpdateUISpriteRenderer();
 
 	//#TODO: Set root to have size of the virtual dimensions
 	//#TODO: Maybe also set the aspect ratio some how?
-	Vector2i windowDimensions = GetWindowDimensions( );
-	m_root->SetProperty( UIWidget::PROPERTY_WIDTH, (float) VIRTUAL_WIDTH );
-	m_root->SetProperty( UIWidget::PROPERTY_HEIGHT, (float) VIRTUAL_HEIGHT );
+	Vector2i windowDimensions = GetWindowDimensions();
+	m_root->SetProperty(UIWidget::PROPERTY_WIDTH, (float)VIRTUAL_WIDTH);
+	m_root->SetProperty(UIWidget::PROPERTY_HEIGHT, (float)VIRTUAL_HEIGHT);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-UISystem::~UISystem( )
+UISystem::~UISystem()
 {
 	delete m_root;
 	m_root = nullptr;
@@ -146,117 +146,117 @@ UISystem::~UISystem( )
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::UpdateUISpriteRenderer( )
+void UISystem::UpdateUISpriteRenderer()
 {
-	Vector2i windowDimensions = GetWindowDimensions( );
-	m_uiSpriteRenderer->SetAspectRatio( (float) windowDimensions.x, (float) windowDimensions.y );
+	Vector2i windowDimensions = GetWindowDimensions();
+	m_uiSpriteRenderer->SetAspectRatio((float)windowDimensions.x, (float)windowDimensions.y);
 	//m_uiSpriteRenderer->SetImportSize( 220000.f ); //256
-	m_uiSpriteRenderer->SetImportSize( 900.f );
-	m_uiSpriteRenderer->SetVirtualSize( (float) windowDimensions.y );
-	m_uiSpriteRenderer->SetClearColor( Color::WHITE );
+	m_uiSpriteRenderer->SetImportSize(900.f);
+	m_uiSpriteRenderer->SetVirtualSize((float)windowDimensions.y);
+	m_uiSpriteRenderer->SetClearColor(Color::WHITE);
 	Matrix4f view;
-	view.MakeView( -Vector3f( (float) windowDimensions.x/2.f, (float) windowDimensions.y/2.f, 0.f ) );
-	m_uiSpriteRenderer->SetView( view );
+	view.MakeView(-Vector3f((float)windowDimensions.x / 2.f, (float)windowDimensions.y / 2.f, 0.f));
+	m_uiSpriteRenderer->SetView(view);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::Update( )
+void UISystem::Update()
 {
 	//Update root dimensions to match screen
 	//Only update if they've changed so we don't dirty everything every frame
-	Vector2f windowDimensions = (Vector2f) GetWindowDimensions( );
-	Vector2f rootSize = m_root->GetSize( );
-	if( rootSize != windowDimensions )
+	Vector2f windowDimensions = (Vector2f)GetWindowDimensions();
+	Vector2f rootSize = m_root->GetSize();
+	if (rootSize != windowDimensions)
 	{
 		//UpdateUISpriteRenderer( );
 		//m_root->SetProperty( UIWidget::PROPERTY_WIDTH, windowDimensions.x );
 		//m_root->SetProperty( UIWidget::PROPERTY_HEIGHT, windowDimensions.y );
 	}
-	
+
 	//Update entire UI tree
-	m_root->Update( );
+	m_root->Update();
 
 	//No highlighting widgets if you're holding an item
-	if( !IsHoldingAnItem( ) )
+	if (!IsHoldingAnItem())
 	{
 		//Highlight widget
-		UIWidget * currentHighlightedWidget = GetWidgetUnderCursor( );
-		if( m_highlightedWidget != currentHighlightedWidget )
+		UIWidget * currentHighlightedWidget = GetWidgetUnderCursor();
+		if (m_highlightedWidget != currentHighlightedWidget)
 		{
-			if( m_highlightedWidget )
+			if (m_highlightedWidget)
 			{
-				m_highlightedWidget->Unhighlight( );
+				m_highlightedWidget->Unhighlight();
 			}
 			m_highlightedWidget = currentHighlightedWidget;
-			if( m_highlightedWidget )
+			if (m_highlightedWidget)
 			{
-				m_highlightedWidget->Highlight( );
+				m_highlightedWidget->Highlight();
 			}
 		}
 	}
 
 	//Pressed widget
-	if( g_InputSystem->WasKeyJustPressed( eMouseButton_LEFT ) )
+	if (g_InputSystem->WasKeyJustPressed(eMouseButton_LEFT))
 	{
-		if( m_highlightedWidget )
+		if (m_highlightedWidget)
 		{
-			m_highlightedWidget->Press( );
-			Select( m_highlightedWidget );
+			m_highlightedWidget->Press();
+			Select(m_highlightedWidget);
 		}
 	}
 
 	//Released widget
-	if( g_InputSystem->WasKeyJustReleased( eMouseButton_LEFT ) )
+	if (g_InputSystem->WasKeyJustReleased(eMouseButton_LEFT))
 	{
-		if( m_highlightedWidget )
+		if (m_highlightedWidget)
 		{
-			m_highlightedWidget->Release( );
+			m_highlightedWidget->Release();
 		}
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::Render( ) const
+void UISystem::Render() const
 {
-	m_root->Render( );
-	if( m_heldItem )
+	m_root->Render();
+	if (m_heldItem)
 	{
-		m_heldItem->Render( );
+		m_heldItem->Render();
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-UIWidget * UISystem::CreateWidget( )
+UIWidget * UISystem::CreateWidget()
 {
-	UIWidget * widget = new UIWidget( );
-	m_root->AddChild( widget );
+	UIWidget * widget = new UIWidget();
+	m_root->AddChild(widget);
 	return widget;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::RemoveWidget( UIWidget * widget )
+void UISystem::RemoveWidget(UIWidget * widget)
 {
 	//Sorry, you can't remove the root
-	if( widget == m_root )
+	if (widget == m_root)
 	{
 		return;
 	}
 
-	UIWidget * parent = widget->GetParent( );
-	parent->RemoveChild( widget );
-	if( widget == m_highlightedWidget )
+	UIWidget * parent = widget->GetParent();
+	parent->RemoveChild(widget);
+	if (widget == m_highlightedWidget)
 	{
 		m_highlightedWidget = nullptr;
 	}
-	if( widget == m_selectedWidget )
+	if (widget == m_selectedWidget)
 	{
 		m_selectedWidget = nullptr;
 	}
-	if( widget == m_heldItem )
+	if (widget == m_heldItem)
 	{
 		m_heldItem = nullptr;
 	}
@@ -265,46 +265,46 @@ void UISystem::RemoveWidget( UIWidget * widget )
 
 
 //-------------------------------------------------------------------------------------------------
-UIWidget * UISystem::GetHighlightedWidget( ) const
+UIWidget * UISystem::GetHighlightedWidget() const
 {
 	return m_highlightedWidget;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-UIWidget * UISystem::GetSelectedWidget( ) const
+UIWidget * UISystem::GetSelectedWidget() const
 {
 	return m_selectedWidget;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-UIItem * UISystem::GetHeldItem( ) const
+UIItem * UISystem::GetHeldItem() const
 {
 	return m_heldItem;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool UISystem::IsHoldingAnItem( ) const
+bool UISystem::IsHoldingAnItem() const
 {
-	return GetHeldItem( ) != nullptr;
+	return GetHeldItem() != nullptr;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-SpriteGameRenderer const * UISystem::GetRenderer( ) const
+SpriteGameRenderer const * UISystem::GetRenderer() const
 {
 	return m_uiSpriteRenderer;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-UIWidget * UISystem::GetWidgetUnderCursor( ) const
+UIWidget * UISystem::GetWidgetUnderCursor() const
 {
-	Vector2f cursorUIPosition = GetCursorUIPosition( );
-	UIWidget * widget = m_root->FindWidgetUnderPosition( cursorUIPosition );
-	if( widget == nullptr )
+	Vector2f cursorUIPosition = GetCursorUIPosition();
+	UIWidget * widget = m_root->FindWidgetUnderPosition(cursorUIPosition);
+	if (widget == nullptr)
 	{
 		return m_root;
 	}
@@ -316,77 +316,77 @@ UIWidget * UISystem::GetWidgetUnderCursor( ) const
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::SetHeldItem( UIItem * item )
+void UISystem::SetHeldItem(UIItem * item)
 {
 	m_heldItem = item;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::Select( UIWidget * selectedWidget )
+void UISystem::Select(UIWidget * selectedWidget)
 {
 	//UIWidget * lastSelected = m_selectedWidget;
 	//m_selectedWidget = selectedWidget;
-	if( m_selectedWidget )
+	if (m_selectedWidget)
 	{
-		m_selectedWidget->Dirty( );
+		m_selectedWidget->Dirty();
 	}
 	m_selectedWidget = selectedWidget;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::LoadUIFromXML( )
+void UISystem::LoadUIFromXML()
 {
-	std::vector<std::string> uiFiles = EnumerateFilesInFolder( "Data/UI/", "*.UI.xml" );
+	std::vector<std::string> uiFiles = EnumerateFilesInFolder("Data/UI/", "*.UI.xml");
 
 	//First: Load skins
-	for( std::string const & uiFile : uiFiles )
+	for (std::string const & uiFile : uiFiles)
 	{
 		//Have to get the first child to get into the XML structure
-		XMLNode uiLayoutXML = XMLNode::openFileHelper( uiFile.c_str( ) ).getChildNode( 0 );
-		int skinNodeCount = uiLayoutXML.nChildNode( UI_SKIN );
-		for( int skinIndex = 0; skinIndex < skinNodeCount; ++skinIndex )
+		XMLNode uiLayoutXML = XMLNode::openFileHelper(uiFile.c_str()).getChildNode(0);
+		int skinNodeCount = uiLayoutXML.nChildNode(UI_SKIN);
+		for (int skinIndex = 0; skinIndex < skinNodeCount; ++skinIndex)
 		{
-			XMLNode skinNode = uiLayoutXML.getChildNode( UI_SKIN, skinIndex );
-			AddSkinFromXML( skinNode );
+			XMLNode skinNode = uiLayoutXML.getChildNode(UI_SKIN, skinIndex);
+			AddSkinFromXML(skinNode);
 		}
 	}
 
 	//Second: Load widgets
-	for( std::string const & uiFile : uiFiles )
+	for (std::string const & uiFile : uiFiles)
 	{
 		//Have to get the first child to get into the XML structure
-		XMLNode uiLayoutXML = XMLNode::openFileHelper( uiFile.c_str( ) ).getChildNode( 0 );
-		int childNodeCount = uiLayoutXML.nChildNode( );
-		for( int childIndex = 0; childIndex < childNodeCount; ++childIndex )
+		XMLNode uiLayoutXML = XMLNode::openFileHelper(uiFile.c_str()).getChildNode(0);
+		int childNodeCount = uiLayoutXML.nChildNode();
+		for (int childIndex = 0; childIndex < childNodeCount; ++childIndex)
 		{
-			XMLNode widgetNode = uiLayoutXML.getChildNode( childIndex );
-			AddWidgetFromXML( widgetNode );
+			XMLNode widgetNode = uiLayoutXML.getChildNode(childIndex);
+			AddWidgetFromXML(widgetNode);
 		}
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::AddSkinFromXML( XMLNode const & node )
+void UISystem::AddSkinFromXML(XMLNode const & node)
 {
 	//Hash the name and store it in our skin map
-	std::string skinName = ReadXMLAttribute( node, "name", "" );
-	size_t skinHash = std::hash<std::string>{ }( skinName );
-	
+	std::string skinName = ReadXMLAttribute(node, "name", "");
+	size_t skinHash = std::hash<std::string>{}(skinName);
+
 	//Add to skin dictionary
-	m_skins.insert( std::pair<size_t, XMLNode>( skinHash, node ) );
+	m_skins.insert(std::pair<size_t, XMLNode>(skinHash, node));
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::AddWidgetFromXML( XMLNode const & node )
+void UISystem::AddWidgetFromXML(XMLNode const & node)
 {
-	std::string childName = node.getName( );
-	UIWidget * childWidget = UISystem::CreateWidgetFromName( childName, node );
-	if( childWidget )
+	std::string childName = node.getName();
+	UIWidget * childWidget = UISystem::CreateWidgetFromName(childName, node);
+	if (childWidget)
 	{
-		m_root->AddChild( childWidget );
+		m_root->AddChild(childWidget);
 	}
 }

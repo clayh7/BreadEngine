@@ -6,16 +6,16 @@
 //-------------------------------------------------------------------------------------------------
 class RenderState
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	static const RenderState BASIC_3D;
 	static const RenderState BASIC_2D;
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	bool m_backfaceCullingEnabled;
 	bool m_depthTestingEnabled;
@@ -36,6 +36,6 @@ public:
 // Functions
 //-------------------------------------------------------------------------------------------------
 public:
-	RenderState( bool backfaceCulling, bool depthTesting, bool depthWriting, eBlending const & blendingMode, eDrawMode const & drawMode, bool windingClockwise );
-	~RenderState( );
+	RenderState(bool backfaceCulling, bool depthTesting, bool depthWriting, eBlending const & blendingMode, eDrawMode const & drawMode, bool windingClockwise);
+	~RenderState();
 };

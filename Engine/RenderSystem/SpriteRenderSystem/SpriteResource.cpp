@@ -9,42 +9,42 @@
 
 
 //-------------------------------------------------------------------------------------------------
-SpriteResource::SpriteResource( std::string const & id, std::string const & filename )
-	: m_id( CreateNewCString( id ) )
-	, m_filename( CreateNewCString( filename ) )
-	, m_texture( Texture::CreateOrLoadTexture( filename ) )
-	, m_material( new Material( "Data/Shaders/sprite.vert", "Data/Shaders/sprite.frag" ) )
-	, m_spriteSheetResource( nullptr )
-	, m_spriteSheetIndex( 0 )
+SpriteResource::SpriteResource(std::string const & id, std::string const & filename)
+	: m_id(CreateNewCString(id))
+	, m_filename(CreateNewCString(filename))
+	, m_texture(Texture::CreateOrLoadTexture(filename))
+	, m_material(new Material("Data/Shaders/sprite.vert", "Data/Shaders/sprite.frag"))
+	, m_spriteSheetResource(nullptr)
+	, m_spriteSheetIndex(0)
 {
 	//Nothing
 }
 
 
 //-------------------------------------------------------------------------------------------------
-SpriteResource::SpriteResource( std::string const & id, SpriteSheetResource const * spriteSheetResource, int index )
-	: m_id( CreateNewCString( id ) )
-	, m_filename( nullptr )
-	, m_texture( nullptr )
-	, m_material( nullptr )
-	, m_spriteSheetResource( spriteSheetResource )
-	, m_spriteSheetIndex( index )
+SpriteResource::SpriteResource(std::string const & id, SpriteSheetResource const * spriteSheetResource, int index)
+	: m_id(CreateNewCString(id))
+	, m_filename(nullptr)
+	, m_texture(nullptr)
+	, m_material(nullptr)
+	, m_spriteSheetResource(spriteSheetResource)
+	, m_spriteSheetIndex(index)
 {
 	//Nothing
 }
 
 
 //-------------------------------------------------------------------------------------------------
-SpriteResource::~SpriteResource( )
+SpriteResource::~SpriteResource()
 {
 	//These may not have been set, may only be in SpriteSheetResources
-	if( m_material )
+	if (m_material)
 	{
 		delete m_material;
 	}
 	m_material = nullptr;
 
-	if( m_filename )
+	if (m_filename)
 	{
 		delete m_filename;
 	}
@@ -56,11 +56,11 @@ SpriteResource::~SpriteResource( )
 
 
 //-------------------------------------------------------------------------------------------------
-Material * SpriteResource::GetMaterial( ) const
+Material * SpriteResource::GetMaterial() const
 {
-	if( m_spriteSheetResource )
+	if (m_spriteSheetResource)
 	{
-		return m_spriteSheetResource->GetMaterial( );
+		return m_spriteSheetResource->GetMaterial();
 	}
 	else
 	{
@@ -70,11 +70,11 @@ Material * SpriteResource::GetMaterial( ) const
 
 
 //-------------------------------------------------------------------------------------------------
-Texture const * SpriteResource::GetTexture( ) const
+Texture const * SpriteResource::GetTexture() const
 {
-	if( m_spriteSheetResource )
+	if (m_spriteSheetResource)
 	{
-		return m_spriteSheetResource->GetTexture( );
+		return m_spriteSheetResource->GetTexture();
 	}
 	else
 	{
@@ -84,11 +84,11 @@ Texture const * SpriteResource::GetTexture( ) const
 
 
 //-------------------------------------------------------------------------------------------------
-AABB2f SpriteResource::GetUVBounds( ) const
+AABB2f SpriteResource::GetUVBounds() const
 {
-	if( m_spriteSheetResource )
+	if (m_spriteSheetResource)
 	{
-		return m_spriteSheetResource->GetTexCoordsForSpriteIndex( m_spriteSheetIndex );
+		return m_spriteSheetResource->GetTexCoordsForSpriteIndex(m_spriteSheetIndex);
 	}
 	else
 	{

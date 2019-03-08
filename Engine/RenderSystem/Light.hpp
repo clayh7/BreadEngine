@@ -7,9 +7,9 @@
 //-------------------------------------------------------------------------------------------------
 class Light
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	Vector3f m_position;
 	Vector3f m_lightDirection;
@@ -27,16 +27,16 @@ public:
 	float m_strengthInside;
 	float m_strengthOutside;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
 	//Point Light
-	Light( Vector3f const & position, Color const & color, float radius, float falloff, bool global = false );
+	Light(Vector3f const & position, Color const & color, float radius, float falloff, bool global = false);
 
 	//Directional Light
-	Light( Vector3f const & position, Color const & color, Vector3f const & lightDirection, float radius, float falloff, bool global = false );
+	Light(Vector3f const & position, Color const & color, Vector3f const & lightDirection, float radius, float falloff, bool global = false);
 
 	//Spot Light
-	Light( Vector3f const & position, Color const & color, Vector3f const & lightDirection, float radius, float falloff, float innerDegrees, float outerDegrees, bool global = false );
+	Light(Vector3f const & position, Color const & color, Vector3f const & lightDirection, float radius, float falloff, float innerDegrees, float outerDegrees, bool global = false);
 };

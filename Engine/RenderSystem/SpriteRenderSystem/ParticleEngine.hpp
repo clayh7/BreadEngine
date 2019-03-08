@@ -18,24 +18,24 @@ extern ParticleEngine * g_ParticleEngine;
 //-------------------------------------------------------------------------------------------------
 class ParticleEngine
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	std::map<size_t, ParticleSystemResource*> m_particleSystemResourceDatabase;
 	std::vector<ParticleSystem*> m_activeParticleSystems;
 
-	ParticleSystemResource const * GetParticleSystemResource( std::string const & resourceName );
+	ParticleSystemResource const * GetParticleSystemResource(std::string const & resourceName);
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	ParticleEngine( );
-	~ParticleEngine( );
+	ParticleEngine();
+	~ParticleEngine();
 
-	void Update( );
-	void LoadAllParticleSystemResources( );
-	ParticleSystem * PlayOnce( std::string const & particleSystemID, int layerID, Vector2f const & position = Vector2f::ZERO );
-	ParticleSystem * Create( std::string const & particleSystemID, int layerID, Vector2f const & position = Vector2f::ZERO );
+	void Update();
+	void LoadAllParticleSystemResources();
+	ParticleSystem * PlayOnce(std::string const & particleSystemID, int layerID, Vector2f const & position = Vector2f::ZERO);
+	ParticleSystem * Create(std::string const & particleSystemID, int layerID, Vector2f const & position = Vector2f::ZERO);
 };

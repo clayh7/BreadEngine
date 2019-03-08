@@ -39,17 +39,17 @@ STATIC float const Engine::ASPECT_RATIO = 16.f / 9.f;
 
 
 //-------------------------------------------------------------------------------------------------
-LRESULT CALLBACK WindowsMessageHandlingProcedure( HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam)
 {
 	//Only run if these both exist
-	if( !g_ConsoleSystem || !g_InputSystem )
+	if (!g_ConsoleSystem || !g_InputSystem)
 	{
-		return DefWindowProc( windowHandle, wmMessageCode, wParam, lParam );
+		return DefWindowProc(windowHandle, wmMessageCode, wParam, lParam);
 	}
 
-	unsigned char asKey = (unsigned char) wParam;
-	
-	switch( wmMessageCode )
+	unsigned char asKey = (unsigned char)wParam;
+
+	switch (wmMessageCode)
 	{
 	case WM_CLOSE:
 	case WM_DESTROY:
@@ -58,135 +58,135 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure( HWND windowHandle, UINT wmMess
 		return 0;
 
 	case WM_KEYDOWN:
-		if( g_ConsoleSystem->IsOpen( ) )
+		if (g_ConsoleSystem->IsOpen())
 		{
-			g_ConsoleSystem->PressKey( asKey );
+			g_ConsoleSystem->PressKey(asKey);
 		}
 		else
 		{
-			g_InputSystem->SetKeyStatus( asKey, true );
+			g_InputSystem->SetKeyStatus(asKey, true);
 		}
 		break;
 
 	case WM_KEYUP:
-		if( g_ConsoleSystem->IsOpen( ) )
+		if (g_ConsoleSystem->IsOpen())
 		{
-			g_ConsoleSystem->ReleaseKey( asKey );
+			g_ConsoleSystem->ReleaseKey(asKey);
 		}
 		else
 		{
-			g_InputSystem->SetKeyStatus( asKey, false );
+			g_InputSystem->SetKeyStatus(asKey, false);
 		}
 		break;
 
 	case WM_KILLFOCUS:
-		g_InputSystem->SetFocus( false );
+		g_InputSystem->SetFocus(false);
 		break;
 
-	//This gets called before input is created
+		//This gets called before input is created
 	case WM_SETFOCUS:
-		if( g_InputSystem ) //Make sure it exists first
+		if (g_InputSystem) //Make sure it exists first
 		{
-			g_InputSystem->SetFocus( true );
+			g_InputSystem->SetFocus(true);
 		}
 		break;
 
 	case WM_LBUTTONDOWN:
-		if( !g_ConsoleSystem->IsOpen( ) )
+		if (!g_ConsoleSystem->IsOpen())
 		{
-			g_InputSystem->SetMouseStatus( eMouseButton_LEFT, true );
+			g_InputSystem->SetMouseStatus(eMouseButton_LEFT, true);
 		}
 		break;
 
 	case WM_LBUTTONUP:
-		if( !g_ConsoleSystem->IsOpen( ) )
+		if (!g_ConsoleSystem->IsOpen())
 		{
-			g_InputSystem->SetMouseStatus( eMouseButton_LEFT, false );
+			g_InputSystem->SetMouseStatus(eMouseButton_LEFT, false);
 		}
 		break;
 
 	case WM_RBUTTONDOWN:
-		if( !g_ConsoleSystem->IsOpen( ) )
+		if (!g_ConsoleSystem->IsOpen())
 		{
-			g_InputSystem->SetMouseStatus( eMouseButton_RIGHT, true );
+			g_InputSystem->SetMouseStatus(eMouseButton_RIGHT, true);
 		}
 		break;
 
 	case WM_RBUTTONUP:
-		if( !g_ConsoleSystem->IsOpen( ) )
+		if (!g_ConsoleSystem->IsOpen())
 		{
-			g_InputSystem->SetMouseStatus( eMouseButton_RIGHT, false );
+			g_InputSystem->SetMouseStatus(eMouseButton_RIGHT, false);
 		}
 		break;
 
 	case WM_MOUSEWHEEL:
-		if( g_ConsoleSystem->IsOpen( ) )
+		if (g_ConsoleSystem->IsOpen())
 		{
-			g_ConsoleSystem->MoveMouseWheel( (int) GET_WHEEL_DELTA_WPARAM( wParam ) );
+			g_ConsoleSystem->MoveMouseWheel((int)GET_WHEEL_DELTA_WPARAM(wParam));
 		}
 		else
 		{
-			g_InputSystem->SetWheelStatus( (int) GET_WHEEL_DELTA_WPARAM( wParam ) );
+			g_InputSystem->SetWheelStatus((int)GET_WHEEL_DELTA_WPARAM(wParam));
 		}
 		break;
 
 	case WM_CHAR:
-		g_InputSystem->AddTypedCharacter( asKey );
+		g_InputSystem->AddTypedCharacter(asKey);
 		break;
 	}
 
-	return DefWindowProc( windowHandle, wmMessageCode, wParam, lParam );
+	return DefWindowProc(windowHandle, wmMessageCode, wParam, lParam);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Engine::Engine( HINSTANCE applicationInstanceHandle )
-	: m_applicationInstanceHandle( applicationInstanceHandle )
-	, m_timeLastFrameBegan( 0.0 )
-	, m_targetFPS( 60.0 )
-	, m_isFullscreen( false )
-	, m_UICamera( nullptr )
-	, m_currentDrawCalls( 0 )
+Engine::Engine(HINSTANCE applicationInstanceHandle)
+	: m_applicationInstanceHandle(applicationInstanceHandle)
+	, m_timeLastFrameBegan(0.0)
+	, m_targetFPS(60.0)
+	, m_isFullscreen(false)
+	, m_UICamera(nullptr)
+	, m_currentDrawCalls(0)
 {
 	//Randomize Seed
-	srand( (unsigned int) time( NULL ) );
+	srand((unsigned int)time(NULL));
 
 	//Give us correct pixels on screen
-	SetProcessDPIAware( );
+	SetProcessDPIAware();
 
 	//Create Application Window
-	CreateOpenGLWindow( m_applicationInstanceHandle );
+	CreateOpenGLWindow(m_applicationInstanceHandle);
 
 	//Start Engine clock
-	m_timeLastFrameBegan = Time::GetCurrentTimeSeconds( );
+	m_timeLastFrameBegan = Time::GetCurrentTimeSeconds();
 
 	//Create All Engine Systems
-	g_MemoryAnalyticsSystem = new MemoryAnalytics( );
-	EventSystem::Startup( );
-	g_AudioSystem = new BAudio( );
-	g_InputSystem = new Input( );
-	g_RenderSystem = new Renderer( );
-	m_UICamera = new Camera3D( false );
-	g_RenderSystem->SetActiveCamera( m_UICamera );
-	Console::Startup( );
-	g_SpriteRenderSystem = new SpriteGameRenderer( );
-	g_UISystem = new UISystem( );
-	g_UISystem->LoadUIFromXML( );
-	g_DebugSystem = new Debugger( );
-	
+	g_MemoryAnalyticsSystem = new MemoryAnalytics();
+	EventSystem::Startup();
+	g_AudioSystem = new BAudio();
+	g_InputSystem = new Input();
+	g_RenderSystem = new Renderer();
+	m_UICamera = new Camera3D(false);
+	g_RenderSystem->SetActiveCamera(m_UICamera);
+	Console::Startup();
+	g_SpriteRenderSystem = new SpriteGameRenderer();
+	g_UISystem = new UISystem();
+	g_UISystem->LoadUIFromXML();
+	g_DebugSystem = new Debugger();
+
 	//Add a sleep(10) to the job threads
 	//g_JobSystem = new JobSystem( );
 	//g_JobSystem->Startup( -2 );
-	NetworkSystem::Startup( );
-	RemoteCommandServer::Startup( );
+	NetworkSystem::Startup();
+	RemoteCommandServer::Startup();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Engine::~Engine( )
+Engine::~Engine()
 {
-	RemoteCommandServer::Shutdown( );
-	NetworkSystem::Shutdown( );
+	RemoteCommandServer::Shutdown();
+	NetworkSystem::Shutdown();
 
 	//delete g_JobSystem;
 	//g_JobSystem = nullptr;
@@ -196,7 +196,7 @@ Engine::~Engine( )
 
 	delete g_ConsoleSystem;
 	g_ConsoleSystem = nullptr;
-	
+
 	delete g_DebugSystem;
 	g_DebugSystem = nullptr;
 
@@ -208,16 +208,16 @@ Engine::~Engine( )
 
 	delete g_RenderSystem;
 	g_RenderSystem = nullptr;
-	
+
 	delete g_InputSystem;
 	g_InputSystem = nullptr;
 
 	delete g_AudioSystem;
 	g_AudioSystem = nullptr;
 
-	EventSystem::Shutdown( );
+	EventSystem::Shutdown();
 
-	Clock::DestroyClocks( );
+	Clock::DestroyClocks();
 
 	delete g_MemoryAnalyticsSystem;
 	g_MemoryAnalyticsSystem = nullptr;
@@ -226,119 +226,119 @@ Engine::~Engine( )
 
 
 //-------------------------------------------------------------------------------------------------
-void RunMessagePump( )
+void RunMessagePump()
 {
 	MSG queuedMessage;
-	for( ;; )
+	for (;; )
 	{
-		const BOOL wasMessagePresent = PeekMessage( &queuedMessage, NULL, 0, 0, PM_REMOVE );
-		if( !wasMessagePresent )
+		const BOOL wasMessagePresent = PeekMessage(&queuedMessage, NULL, 0, 0, PM_REMOVE);
+		if (!wasMessagePresent)
 		{
 			break;
 		}
 
-		TranslateMessage( &queuedMessage );
-		DispatchMessage( &queuedMessage );
+		TranslateMessage(&queuedMessage);
+		DispatchMessage(&queuedMessage);
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-void Engine::Update( )
+void Engine::Update()
 {
 	//Update Total time and Delta time
-	UpdateTime( );
-	
-	g_ProfilerSystem->StartSample( "UPDATE ENGINE" );
-	
+	UpdateTime();
+
+	BProfiler::StartSample("UPDATE ENGINE");
+
 	//#TODO: Put these two and the Message Pump in InputSystem
-	g_InputSystem->AdvanceFrameNumber( );
-	RunMessagePump( );
+	g_InputSystem->AdvanceFrameNumber();
+	RunMessagePump();
 
-	m_UICamera->Update( );
-	g_InputSystem->Update( );
-	g_MemoryAnalyticsSystem->Update( );
-	g_AudioSystem->Update( );
-	g_DebugSystem->Update( );
-	g_ConsoleSystem->Update( );
+	m_UICamera->Update();
+	g_InputSystem->Update();
+	g_MemoryAnalyticsSystem->Update();
+	g_AudioSystem->Update();
+	g_DebugSystem->Update();
+	g_ConsoleSystem->Update();
 
-	EventSystem::TriggerEvent( ENGINE_UPDATE_EVENT );
+	EventSystem::TriggerEvent(ENGINE_UPDATE_EVENT);
 
 	//Reset Variables
 	m_currentDrawCalls = 0;
-	g_ProfilerSystem->StopSample( );
+	BProfiler::StopSample();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Engine::LateUpdate( )
+void Engine::LateUpdate()
 {
-	g_UISystem->Update( );
+	g_UISystem->Update();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Engine::UpdateTime( )
+void Engine::UpdateTime()
 {
 	//#TODO: Find a nicer way to limit FPS
-	g_ProfilerSystem->StartSample( "WAIT FOR FRAME" );
+	BProfiler::StartSample("WAIT FOR FRAME");
 	double targetFPS = m_targetFPS;
-	double timeThisFrameBegan = Time::GetCurrentTimeSeconds( );
-	double elapsedTime = ( timeThisFrameBegan - m_timeLastFrameBegan );
+	double timeThisFrameBegan = Time::GetCurrentTimeSeconds();
+	double elapsedTime = (timeThisFrameBegan - m_timeLastFrameBegan);
 	double totalFrameTime = 1.0 / targetFPS;
 
-	if( g_limitFPS && elapsedTime < totalFrameTime )
+	if (g_limitFPS && elapsedTime < totalFrameTime)
 	{
 		double waitTime = (totalFrameTime - elapsedTime) * 1000.0 - 0.5;
-		std::this_thread::sleep_for( std::chrono::duration<double,std::milli>( waitTime ) );
+		std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(waitTime));
 	}
-	g_ProfilerSystem->StopSample( );
+	BProfiler::StopSample();
 
 	//Track time
-	timeThisFrameBegan = Time::GetCurrentTimeSeconds( );
-	Time::DELTA_SECONDS = static_cast<float>( timeThisFrameBegan - m_timeLastFrameBegan );
+	timeThisFrameBegan = Time::GetCurrentTimeSeconds();
+	Time::DELTA_SECONDS = static_cast<float>(timeThisFrameBegan - m_timeLastFrameBegan);
 	Time::TOTAL_SECONDS += Time::DELTA_SECONDS;
 	m_timeLastFrameBegan = timeThisFrameBegan;
 
 	//Update clock system
-	for( Clock * clock : Clock::s_baseClocks )
+	for (Clock * clock : Clock::s_baseClocks)
 	{
-		clock->Update( Time::DELTA_SECONDS );
+		clock->Update(Time::DELTA_SECONDS);
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Engine::Render( ) const
+void Engine::Render() const
 {
-	g_ProfilerSystem->StartSample( "RENDER ENGINE" );
+	BProfiler::StartSample("RENDER ENGINE");
 
-	EventSystem::TriggerEvent( ENGINE_RENDER_EVENT );
-	g_UISystem->Render( );
-	g_DebugSystem->Render( );
-	g_ConsoleSystem->Render( );
+	EventSystem::TriggerEvent(ENGINE_RENDER_EVENT);
+	g_UISystem->Render();
+	g_DebugSystem->Render();
+	g_ConsoleSystem->Render();
 
 	//Double Buffer | Also known as FlipAndPresent
-	SwapBuffers( g_displayDeviceContext );
+	SwapBuffers(g_displayDeviceContext);
 
-	g_ProfilerSystem->StopSample( );
+	BProfiler::StopSample();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Engine::CreateOpenGLWindow( HINSTANCE applicationInstanceHandle )
+void Engine::CreateOpenGLWindow(HINSTANCE applicationInstanceHandle)
 {
 	// Define a window class
 	WNDCLASSEX windowClassDescription;
-	memset( &windowClassDescription, 0, sizeof( windowClassDescription ) );
-	windowClassDescription.cbSize = sizeof( windowClassDescription );
+	memset(&windowClassDescription, 0, sizeof(windowClassDescription));
+	windowClassDescription.cbSize = sizeof(windowClassDescription);
 	windowClassDescription.style = CS_OWNDC; // Redraw on move, request own Display Context
-	windowClassDescription.lpfnWndProc = static_cast<WNDPROC>( WindowsMessageHandlingProcedure ); // Assign a win32 message-handling function
-	windowClassDescription.hInstance = GetModuleHandle( NULL );
+	windowClassDescription.lpfnWndProc = static_cast<WNDPROC>(WindowsMessageHandlingProcedure); // Assign a win32 message-handling function
+	windowClassDescription.hInstance = GetModuleHandle(NULL);
 	windowClassDescription.hIcon = NULL;
 	windowClassDescription.hCursor = NULL;
-	windowClassDescription.lpszClassName = TEXT( "Simple Window Class" );
-	RegisterClassEx( &windowClassDescription );
-	
+	windowClassDescription.lpszClassName = TEXT("Simple Window Class");
+	RegisterClassEx(&windowClassDescription);
+
 	//Original
 	//const DWORD windowStyleFlags = WS_CAPTION | WS_BORDER | WS_THICKFRAME | WS_SYSMENU | WS_OVERLAPPED;
 	//const DWORD windowStyleExFlags = WS_EX_APPWINDOW;
@@ -355,24 +355,24 @@ void Engine::CreateOpenGLWindow( HINSTANCE applicationInstanceHandle )
 	//Windowed
 	//	else
 	//{
-		windowStyleFlags = WS_CAPTION | WS_BORDER | WS_THICKFRAME | WS_SYSMENU | WS_OVERLAPPED;
-		windowStyleExFlags = WS_EX_APPWINDOW;
+	windowStyleFlags = WS_CAPTION | WS_BORDER | WS_THICKFRAME | WS_SYSMENU | WS_OVERLAPPED;
+	windowStyleExFlags = WS_EX_APPWINDOW;
 	//}
 
 	RECT desktopRect;
-	HWND desktopWindowHandle = GetDesktopWindow( );
-	GetClientRect( desktopWindowHandle, &desktopRect );
+	HWND desktopWindowHandle = GetDesktopWindow();
+	GetClientRect(desktopWindowHandle, &desktopRect);
 
-	CalculateLargestWindow( );
+	CalculateLargestWindow();
 
 	RECT windowRect = { m_offsetXFromWindowsDesktop,
 		m_offsetYFromWindowsDesktop,
 		m_offsetXFromWindowsDesktop + m_windowPhysicalWidth,
 		m_offsetYFromWindowsDesktop + m_windowPhysicalHeight };
-	AdjustWindowRectEx( &windowRect, windowStyleFlags, FALSE, windowStyleExFlags );
+	AdjustWindowRectEx(&windowRect, windowStyleFlags, FALSE, windowStyleExFlags);
 
 	WCHAR windowTitle[1024];
-	MultiByteToWideChar( GetACP( ), 0, APP_NAME, -1, windowTitle, sizeof( windowTitle ) / sizeof( windowTitle[0] ) );
+	MultiByteToWideChar(GetACP(), 0, APP_NAME, -1, windowTitle, sizeof(windowTitle) / sizeof(windowTitle[0]));
 	m_windowHandle = CreateWindowEx(
 		windowStyleExFlags,
 		windowClassDescription.lpszClassName,
@@ -385,20 +385,20 @@ void Engine::CreateOpenGLWindow( HINSTANCE applicationInstanceHandle )
 		NULL,
 		NULL,
 		applicationInstanceHandle,
-		NULL );
+		NULL);
 
-	ShowWindow( m_windowHandle, SW_SHOW );
-	SetForegroundWindow( m_windowHandle );
-	SetFocus( m_windowHandle );
+	ShowWindow(m_windowHandle, SW_SHOW);
+	SetForegroundWindow(m_windowHandle);
+	SetFocus(m_windowHandle);
 
-	g_displayDeviceContext = GetDC( m_windowHandle );
+	g_displayDeviceContext = GetDC(m_windowHandle);
 
-	HCURSOR cursor = LoadCursor( NULL, IDC_ARROW );
-	SetCursor( cursor );
+	HCURSOR cursor = LoadCursor(NULL, IDC_ARROW);
+	SetCursor(cursor);
 
 	PIXELFORMATDESCRIPTOR pixelFormatDescriptor;
-	memset( &pixelFormatDescriptor, 0, sizeof( pixelFormatDescriptor ) );
-	pixelFormatDescriptor.nSize = sizeof( pixelFormatDescriptor );
+	memset(&pixelFormatDescriptor, 0, sizeof(pixelFormatDescriptor));
+	pixelFormatDescriptor.nSize = sizeof(pixelFormatDescriptor);
 	pixelFormatDescriptor.nVersion = 1;
 	pixelFormatDescriptor.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
 	pixelFormatDescriptor.iPixelType = PFD_TYPE_RGBA;
@@ -407,59 +407,59 @@ void Engine::CreateOpenGLWindow( HINSTANCE applicationInstanceHandle )
 	pixelFormatDescriptor.cAccumBits = 0;
 	pixelFormatDescriptor.cStencilBits = 8;
 
-	int pixelFormatCode = ChoosePixelFormat( g_displayDeviceContext, &pixelFormatDescriptor );
-	SetPixelFormat( g_displayDeviceContext, pixelFormatCode, &pixelFormatDescriptor );
-	g_openGLRenderingContext = wglCreateContext( g_displayDeviceContext );
-	wglMakeCurrent( g_displayDeviceContext, g_openGLRenderingContext );
+	int pixelFormatCode = ChoosePixelFormat(g_displayDeviceContext, &pixelFormatDescriptor);
+	SetPixelFormat(g_displayDeviceContext, pixelFormatCode, &pixelFormatDescriptor);
+	g_openGLRenderingContext = wglCreateContext(g_displayDeviceContext);
+	wglMakeCurrent(g_displayDeviceContext, g_openGLRenderingContext);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Engine::CalculateLargestWindow( )
+void Engine::CalculateLargestWindow()
 {
-	Vector2i desktopDimensions = GetDesktopDimensions( );
-	float workingSpaceWidth = (float) desktopDimensions.x * PERCENT_OF_SCREEN;
-	float workingSpaceHeight = (float) desktopDimensions.y * PERCENT_OF_SCREEN;
+	Vector2i desktopDimensions = GetDesktopDimensions();
+	float workingSpaceWidth = (float)desktopDimensions.x * PERCENT_OF_SCREEN;
+	float workingSpaceHeight = (float)desktopDimensions.y * PERCENT_OF_SCREEN;
 	float workingAspect = workingSpaceWidth / workingSpaceHeight;
-	float aspect = GetWindowAspectRatio( );
-	
+	float aspect = GetWindowAspectRatio();
+
 	//Width is largest
-	if( workingAspect > aspect )
+	if (workingAspect > aspect)
 	{
-		m_windowPhysicalHeight = (int) workingSpaceHeight;
-		m_windowPhysicalWidth = (int) ( workingSpaceHeight * aspect );
+		m_windowPhysicalHeight = (int)workingSpaceHeight;
+		m_windowPhysicalWidth = (int)(workingSpaceHeight * aspect);
 	}
 
 	//Height is largest
 	else
 	{
-		m_windowPhysicalWidth = (int) workingSpaceWidth;
-		m_windowPhysicalHeight = (int) ( workingSpaceWidth / aspect );
+		m_windowPhysicalWidth = (int)workingSpaceWidth;
+		m_windowPhysicalHeight = (int)(workingSpaceWidth / aspect);
 	}
 
-	m_offsetXFromWindowsDesktop = (int) ( ( desktopDimensions.x - m_windowPhysicalWidth ) / 2.f );
-	m_offsetYFromWindowsDesktop = (int) ( ( desktopDimensions.y - m_windowPhysicalHeight ) / 2.f );
+	m_offsetXFromWindowsDesktop = (int)((desktopDimensions.x - m_windowPhysicalWidth) / 2.f);
+	m_offsetYFromWindowsDesktop = (int)((desktopDimensions.y - m_windowPhysicalHeight) / 2.f);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Engine::SetTargetFPS( double fps )
+void Engine::SetTargetFPS(double fps)
 {
 	m_targetFPS = fps;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Engine::SetWindowHandle( HWND & handle )
+void Engine::SetWindowHandle(HWND & handle)
 {
 	m_windowHandle = handle;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Engine::SetFullscreen( bool isFullscreen )
+void Engine::SetFullscreen(bool isFullscreen)
 {
-	if( m_isFullscreen != isFullscreen )
+	if (m_isFullscreen != isFullscreen)
 	{
 		m_isFullscreen = isFullscreen;
 	}
@@ -467,118 +467,118 @@ void Engine::SetFullscreen( bool isFullscreen )
 
 
 //-------------------------------------------------------------------------------------------------
-void Engine::IncrementDrawCalls( )
+void Engine::IncrementDrawCalls()
 {
 	m_currentDrawCalls++;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-int Engine::GetCurrentDrawCalls( ) const
+int Engine::GetCurrentDrawCalls() const
 {
 	return m_currentDrawCalls;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-HWND Engine::GetWindowHandle( ) const
+HWND Engine::GetWindowHandle() const
 {
 	return m_windowHandle;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-double Engine::GetTargetFPS( ) const
+double Engine::GetTargetFPS() const
 {
 	return m_targetFPS;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Engine::ConsolePrint( std::string const & consoleLog, Color const & color /*= Rgba::WHITE */ )
+void Engine::ConsolePrint(std::string const & consoleLog, Color const & color /*= Rgba::WHITE */)
 {
-	g_ConsoleSystem->AddLog( consoleLog, color );
+	g_ConsoleSystem->AddLog(consoleLog, color);
 }
 
 
 //-----------------------------------------------------------------------------------------------
 // Function By: Squirrel Eiserloh (from StringUtils.cpp)
 const int STRINGF_STACK_LOCAL_TEMP_LENGTH = 2048;
-void Engine::ConsolePrintf( const char* format, ... )
+void Engine::ConsolePrintf(const char* format, ...)
 {
 	char textLiteral[STRINGF_STACK_LOCAL_TEMP_LENGTH];
 	va_list variableArgumentList;
-	va_start( variableArgumentList, format );
-	vsnprintf_s( textLiteral, STRINGF_STACK_LOCAL_TEMP_LENGTH, _TRUNCATE, format, variableArgumentList );
-	va_end( variableArgumentList );
+	va_start(variableArgumentList, format);
+	vsnprintf_s(textLiteral, STRINGF_STACK_LOCAL_TEMP_LENGTH, _TRUNCATE, format, variableArgumentList);
+	va_end(variableArgumentList);
 	textLiteral[STRINGF_STACK_LOCAL_TEMP_LENGTH - 1] = '\0'; // In case vsnprintf overran (doesn't auto-terminate)
 
-	ConsolePrint( std::string( textLiteral ), Color::WHITE );
+	ConsolePrint(std::string(textLiteral), Color::WHITE);
 }
 
 
 //-----------------------------------------------------------------------------------------------
 // Can't put color at the end of the list
-void Engine::ConsolePrintf( Color const & color, const char* format, ... )
+void Engine::ConsolePrintf(Color const & color, const char* format, ...)
 {
 	char textLiteral[STRINGF_STACK_LOCAL_TEMP_LENGTH];
 	va_list variableArgumentList;
-	va_start( variableArgumentList, format );
-	vsnprintf_s( textLiteral, STRINGF_STACK_LOCAL_TEMP_LENGTH, _TRUNCATE, format, variableArgumentList );
-	va_end( variableArgumentList );
+	va_start(variableArgumentList, format);
+	vsnprintf_s(textLiteral, STRINGF_STACK_LOCAL_TEMP_LENGTH, _TRUNCATE, format, variableArgumentList);
+	va_end(variableArgumentList);
 	textLiteral[STRINGF_STACK_LOCAL_TEMP_LENGTH - 1] = '\0'; // In case vsnprintf overran (doesn't auto-terminate)
 
-	ConsolePrint( std::string( textLiteral ), color );
+	ConsolePrint(std::string(textLiteral), color);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC Vector2i Engine::GetWindowDimensions( )
+STATIC Vector2i Engine::GetWindowDimensions()
 {
-	if( g_EngineSystem )
+	if (g_EngineSystem)
 	{
-		return Vector2i( g_EngineSystem->m_windowPhysicalWidth, g_EngineSystem->m_windowPhysicalHeight );
+		return Vector2i(g_EngineSystem->m_windowPhysicalWidth, g_EngineSystem->m_windowPhysicalHeight);
 	}
 	else
 	{
-		return Vector2i( Engine::START_WINDOW_WIDTH, Engine::START_WINDOW_HEIGHT );
+		return Vector2i(Engine::START_WINDOW_WIDTH, Engine::START_WINDOW_HEIGHT);
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC Vector2i Engine::GetDesktopDimensions( )
+STATIC Vector2i Engine::GetDesktopDimensions()
 {
 	RECT desktop;
 	// Get a handle to the desktop window
-	const HWND hDesktop = GetDesktopWindow( );
+	const HWND hDesktop = GetDesktopWindow();
 	// Get the size of screen to the variable desktop
-	GetWindowRect( hDesktop, &desktop );
+	GetWindowRect(hDesktop, &desktop);
 	// The top left corner will have coordinates (0,0)
 	// and the bottom right corner will have coordinates
 	// (horizontal, vertical)
 	int horizontal = desktop.right;
 	int vertical = desktop.bottom;
 
-	return Vector2i( horizontal, vertical );
+	return Vector2i(horizontal, vertical);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC float Engine::GetWindowAspectRatio( )
+STATIC float Engine::GetWindowAspectRatio()
 {
 	return ASPECT_RATIO;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC Vector3f Engine::ScreenToClipSpace( Vector2f const & screenPosition )
+STATIC Vector3f Engine::ScreenToClipSpace(Vector2f const & screenPosition)
 {
-	Vector2i windowDimensions = GetWindowDimensions( );
-	float aspectRatio = (float) windowDimensions.x / (float) windowDimensions.y;
-	float xPosition = screenPosition.x / ( float ) windowDimensions.x;
-	xPosition = ( xPosition * 2.f - 1.f )*( aspectRatio );
-	float yPosition = screenPosition.y / ( float ) windowDimensions.y;
-	yPosition = ( yPosition * 2.f - 1.f );
-	return Vector3f( xPosition, yPosition, 0.f );
+	Vector2i windowDimensions = GetWindowDimensions();
+	float aspectRatio = (float)windowDimensions.x / (float)windowDimensions.y;
+	float xPosition = screenPosition.x / (float)windowDimensions.x;
+	xPosition = (xPosition * 2.f - 1.f)*(aspectRatio);
+	float yPosition = screenPosition.y / (float)windowDimensions.y;
+	yPosition = (yPosition * 2.f - 1.f);
+	return Vector3f(xPosition, yPosition, 0.f);
 }

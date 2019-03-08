@@ -14,53 +14,53 @@
 
 
 //-------------------------------------------------------------------------------------------------
-void Update( )
+void Update()
 {
-	g_ProfilerSystem->StartSample( "UPDATE" );
+	BProfiler::StartSample("UPDATE");
 
-	g_EngineSystem->Update( ); //Needs to run first to update Input/Audio/etc...
-	g_AppSystem->Update( );
+	g_EngineSystem->Update(); //Needs to run first to update Input/Audio/etc...
+	g_AppSystem->Update();
 
-	g_ProfilerSystem->StopSample( );
+	BProfiler::StopSample();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Render( )
+void Render()
 {
-	g_ProfilerSystem->StartSample( "RENDER" );
+	BProfiler::StartSample("RENDER");
 
 	//Clear Screen
-	g_RenderSystem->ClearScreen( Color::BLACK );
+	g_RenderSystem->ClearScreen(Color::BLACK);
 
 	//Print world
-	g_AppSystem->Render( );
-	g_EngineSystem->Render( ); //Needs to run second to print on top of App
+	g_AppSystem->Render();
+	g_EngineSystem->Render(); //Needs to run second to print on top of App
 
-	g_ProfilerSystem->StopSample( );
+	BProfiler::StopSample();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void RunFrame( )
+void RunFrame()
 {
-	g_ProfilerSystem->FrameMark( );
-	Update( );
-	Render( );
+	BProfiler::Update();
+	Update();
+	Render();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Initialize( HINSTANCE applicationInstanceHandle )
+void Initialize(HINSTANCE applicationInstanceHandle)
 {
 	//Engine and Game Initialization
-	g_EngineSystem = new Engine( applicationInstanceHandle );
-	g_AppSystem = new App( );
+	g_EngineSystem = new Engine(applicationInstanceHandle);
+	g_AppSystem = new App();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Shutdown( )
+void Shutdown()
 {
 	//Destroy in inverse order
 	delete g_AppSystem;
@@ -72,15 +72,15 @@ void Shutdown( )
 
 
 //-------------------------------------------------------------------------------------------------
-int WINAPI WinMain( HINSTANCE applicationInstanceHandle, HINSTANCE, LPSTR, int )
+int WINAPI WinMain(HINSTANCE applicationInstanceHandle, HINSTANCE, LPSTR, int)
 {
-	Initialize( applicationInstanceHandle );
+	Initialize(applicationInstanceHandle);
 
-	while ( !g_isQuitting )
+	while (!g_isQuitting)
 	{
-		RunFrame( );
+		RunFrame();
 	}
 
-	Shutdown( );
+	Shutdown();
 	return 0;
 }

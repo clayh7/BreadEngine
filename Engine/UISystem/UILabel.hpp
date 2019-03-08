@@ -15,9 +15,9 @@ struct XMLNode;
 //-------------------------------------------------------------------------------------------------
 class UILabel : public UIWidget
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	static UIWidgetRegistration s_UILabelRegistration;
 	static char const * PROPERTY_BACKGROUND_COLOR;
@@ -26,34 +26,34 @@ public:
 	static char const * PROPERTY_TEXT_SIZE;
 	static char const * PROPERTY_TEXT_ALIGNMENT;
 
-//-------------------------------------------------------------------------------------------------
-// Static Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	static UIWidget * CreateWidgetFromXML( XMLNode const & node );
+	static UIWidget * CreateWidgetFromXML(XMLNode const & node);
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	MeshRenderer * m_background;
 	TextRenderer * m_text;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	UILabel( std::string const & name = "" );
-	UILabel( XMLNode const & node );
-	virtual ~UILabel( ) override;
+	UILabel(std::string const & name = "");
+	UILabel(XMLNode const & node);
+	virtual ~UILabel() override;
 
-	virtual void Update( ) override;
-	virtual void Render( ) const override;
+	virtual void Update() override;
+	virtual void Render() const override;
 
 protected:
-	void SetupRenderers( );
-	Vector2f GetWorldPositionForAlignment( eAlignment const & textAlignment );
-	void UpdateRenderers( );
-	Transform CalcBackgroundTransform( );
-	void PopulateFromXML( XMLNode const & node );
+	void SetupRenderers();
+	Vector2f GetWorldPositionForAlignment(eAlignment const & textAlignment);
+	void UpdateRenderers();
+	Transform CalcBackgroundTransform();
+	void PopulateFromXML(XMLNode const & node);
 };

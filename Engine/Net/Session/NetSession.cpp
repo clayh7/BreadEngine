@@ -24,7 +24,7 @@ STATIC char const * NetSession::ON_CONNECTION_JOIN_EVENT = "ConnectionJoinEvent"
 STATIC char const * NetSession::ON_CONNECTION_LEAVE_EVENT = "ConnectionLeaveEvent";
 STATIC char const * NetSession::ON_GAME_JOIN_VALIDATION_EVENT = "GameJoinValidation";
 STATIC char const * NetSession::ON_JOIN_DENY_EVENT = "JoinDenyEvent";
-STATIC DebugLog NetSession::m_NetworkTrafficActivity = DebugLog( "Data/Logs/NetworkTraffic.txt" );
+STATIC DebugLog NetSession::m_NetworkTrafficActivity = DebugLog("Data/Logs/NetworkTraffic.txt");
 
 
 //-------------------------------------------------------------------------------------------------
@@ -36,16 +36,16 @@ public:
 
 
 //-------------------------------------------------------------------------------------------------
-void OnPing( NetSender const & sender, NetMessage const & message )
+void OnPing(NetSender const & sender, NetMessage const & message)
 {
 	char * sent = nullptr;
-	message.ReadString( &(sent) );
+	message.ReadString(&(sent));
 	sent = sent == nullptr ? "[null]" : sent;
 	sockaddr_in addr = sender.fromAddress;
-	g_ConsoleSystem->AddLog( Stringf( "Received Ping from %s: %s", StringFromSockAddr(&addr), sent ), Console::GOOD );
+	g_ConsoleSystem->AddLog(Stringf("Received Ping from %s: %s", StringFromSockAddr(&addr), sent), Console::GOOD);
 
-	NetMessage pong( eNetMessageType_PONG );
-	sender.session->SendDirect( addr, pong );
+	NetMessage pong(eNetMessageType_PONG);
+	sender.session->SendDirect(addr, pong);
 }
 
 
@@ -57,79 +57,79 @@ class Pong
 
 
 //-------------------------------------------------------------------------------------------------
-void OnPong( NetSender const & sender, NetMessage const & )
+void OnPong(NetSender const & sender, NetMessage const &)
 {
 	sockaddr_in addr = sender.fromAddress;
-	g_ConsoleSystem->AddLog( Stringf( "Received Pong from %s", StringFromSockAddr( &addr ) ), Console::GOOD );
+	g_ConsoleSystem->AddLog(Stringf("Received Pong from %s", StringFromSockAddr(&addr)), Console::GOOD);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void OnJoinRequest( NetSender const & sender, NetMessage const & message )
+void OnJoinRequest(NetSender const & sender, NetMessage const & message)
 {
-	g_ConsoleSystem->AddLog( Stringf( "Join Request Received: %s", StringFromSockAddr( &sender.fromAddress ) ), Console::REMOTE );
+	g_ConsoleSystem->AddLog(Stringf("Join Request Received: %s", StringFromSockAddr(&sender.fromAddress)), Console::REMOTE);
 	NetSession * currentSession = sender.session;
 
 	JoinRequest request;
-	message.Read<uint64_t>( &( request.version ) );
-	message.Read<uint32_t>( &( request.nuonce ) );
-	message.ReadString( &( request.username ) );
-	message.Read<size_t>( &( request.password ) );
+	message.Read<uint64_t>(&(request.version));
+	message.Read<uint32_t>(&(request.nuonce));
+	message.ReadString(&(request.username));
+	message.Read<size_t>(&(request.password));
 
-	if( request.version != currentSession->GetNetSessionVersion( ) )
+	if (request.version != currentSession->GetNetSessionVersion())
 	{
-		currentSession->SendDeny( sender.fromAddress, eNetSessionError_JOIN_DENIED_WRONG_VERSION, request.nuonce );
+		currentSession->SendDeny(sender.fromAddress, eNetSessionError_JOIN_DENIED_WRONG_VERSION, request.nuonce);
 	}
-	else if( !currentSession->IsHost() )
+	else if (!currentSession->IsHost())
 	{
-		currentSession->SendDeny( sender.fromAddress, eNetSessionError_JOIN_DENIED_NOT_HOST, request.nuonce );
+		currentSession->SendDeny(sender.fromAddress, eNetSessionError_JOIN_DENIED_NOT_HOST, request.nuonce);
 	}
 	//#TODO: implement listening
-	else if( false )
+	else if (false)
 	{
-		currentSession->SendDeny( sender.fromAddress, eNetSessionError_JOIN_DENIED_NOT_ACCEPTING_NEW_CONNECTIONS, request.nuonce );
+		currentSession->SendDeny(sender.fromAddress, eNetSessionError_JOIN_DENIED_NOT_ACCEPTING_NEW_CONNECTIONS, request.nuonce);
 	}
 	//TODO: implement max capacity
-	else if( false )
+	else if (false)
 	{
-		currentSession->SendDeny( sender.fromAddress, eNetSessionError_JOIN_DENIED_FULL, request.nuonce );
+		currentSession->SendDeny(sender.fromAddress, eNetSessionError_JOIN_DENIED_FULL, request.nuonce);
 	}
 	//Socket Address == GUID
-	else if( currentSession->IsDuplicateGUID( StringFromSockAddr( &sender.fromAddress ) ) )
+	else if (currentSession->IsDuplicateGUID(StringFromSockAddr(&sender.fromAddress)))
 	{
-		currentSession->SendDeny( sender.fromAddress, eNetSessionError_JOIN_DENIED_GUID_IN_USE, request.nuonce );
+		currentSession->SendDeny(sender.fromAddress, eNetSessionError_JOIN_DENIED_GUID_IN_USE, request.nuonce);
 	}
 	else
 	{
 		NamedProperties joinEvent;
-		joinEvent.Set( "request", &request );
-		joinEvent.Set( "error", eNetSessionError_NONE );
-		joinEvent.Set( "canJoin", true );
-		EventSystem::TriggerEvent( NetSession::ON_GAME_JOIN_VALIDATION_EVENT, joinEvent );
+		joinEvent.Set("request", &request);
+		joinEvent.Set("error", eNetSessionError_NONE);
+		joinEvent.Set("canJoin", true);
+		EventSystem::TriggerEvent(NetSession::ON_GAME_JOIN_VALIDATION_EVENT, joinEvent);
 
 		//Find out if join was successful
 		bool success = false;
-		joinEvent.Get( "canJoin", success );
+		joinEvent.Get("canJoin", success);
 
-		if( success )
+		if (success)
 		{
 			//Create new connection
-			byte_t index = currentSession->GetNextFreeIndex( );
-			ConnectionInfo newConnectionInfo( index, sender.fromAddress, StringFromSockAddr( &sender.fromAddress ), request.username );
-			NetConnection * newConnection = currentSession->CreateConnection( newConnectionInfo );
-			newConnection->SetPassword( request.password );
+			byte_t index = currentSession->GetNextFreeIndex();
+			ConnectionInfo newConnectionInfo(index, sender.fromAddress, StringFromSockAddr(&sender.fromAddress), request.username);
+			NetConnection * newConnection = currentSession->CreateConnection(newConnectionInfo);
+			newConnection->SetPassword(request.password);
 
 			//Send Acceptance
-			currentSession->SendAccept( newConnection, request.nuonce );
+			currentSession->SendAccept(newConnection, request.nuonce);
 
 			//Conenct after sending Accept because we want the send accept message written first
-			currentSession->Connect( newConnection );
+			currentSession->Connect(newConnection);
 		}
 		else
 		{
 			eNetSessionError reportedError;
-			joinEvent.Get( "error", reportedError );
-			currentSession->SendDeny( sender.fromAddress, reportedError, request.nuonce );
+			joinEvent.Get("error", reportedError);
+			currentSession->SendDeny(sender.fromAddress, reportedError, request.nuonce);
 		}
 	}
 }
@@ -145,28 +145,28 @@ public:
 
 
 //-------------------------------------------------------------------------------------------------
-void OnJoinDeny( NetSender const & sender, NetMessage const & message )
+void OnJoinDeny(NetSender const & sender, NetMessage const & message)
 {
-	EventSystem::TriggerEvent( NetSession::ON_JOIN_DENY_EVENT );
-	g_ConsoleSystem->AddLog( Stringf( "Join Deny Received: %s", StringFromSockAddr( &sender.fromAddress ) ), Console::REMOTE );
+	EventSystem::TriggerEvent(NetSession::ON_JOIN_DENY_EVENT);
+	g_ConsoleSystem->AddLog(Stringf("Join Deny Received: %s", StringFromSockAddr(&sender.fromAddress)), Console::REMOTE);
 	uint32_t nuonce;
-	message.Read<uint32_t>( &nuonce );
+	message.Read<uint32_t>(&nuonce);
 
 	uint8_t reason;
-	message.Read<uint8_t>( &reason );
+	message.Read<uint8_t>(&reason);
 
-	NetConnection * self = sender.session->GetSelf( );
-	if( sender.session->GetState( ) != eNetSessionState_JOINING )
+	NetConnection * self = sender.session->GetSelf();
+	if (sender.session->GetState() != eNetSessionState_JOINING)
 	{
 		return;
 	}
-	else if( self->m_lastJoinRequestNuonce != nuonce )
+	else if (self->m_lastJoinRequestNuonce != nuonce)
 	{
 		return;
 	}
 
-	sender.session->m_lastError = (eNetSessionError) reason;
-	sender.session->ChangeState( eNetSessionState_DISCONNECTED );
+	sender.session->m_lastError = (eNetSessionError)reason;
+	sender.session->ChangeState(eNetSessionState_DISCONNECTED);
 }
 
 
@@ -181,105 +181,105 @@ public:
 
 
 //-------------------------------------------------------------------------------------------------
-void OnJoinAccept( NetSender const & sender, NetMessage const & message )
+void OnJoinAccept(NetSender const & sender, NetMessage const & message)
 {
-	g_ConsoleSystem->AddLog( Stringf( "Join Accept Received: %s", StringFromSockAddr( &sender.fromAddress ) ), Console::REMOTE );
+	g_ConsoleSystem->AddLog(Stringf("Join Accept Received: %s", StringFromSockAddr(&sender.fromAddress)), Console::REMOTE);
 	NetSession * currentSession = sender.session;
-	
+
 	//Must be in joining state
-	if( currentSession->GetState( ) != eNetSessionState_JOINING )
+	if (currentSession->GetState() != eNetSessionState_JOINING)
 	{
 		return;
 	}
-	
+
 	//Must have connection to self
-	NetConnection * currentConnection = currentSession->GetSelf( );
-	if( !currentConnection )
+	NetConnection * currentConnection = currentSession->GetSelf();
+	if (!currentConnection)
 	{
 		return;
 	}
 
 	//Read accept nuonce
 	uint32_t nuonce;
-	message.Read<uint32_t>( &( nuonce ) );
-	
-	if( currentConnection->m_lastJoinRequestNuonce != nuonce )
+	message.Read<uint32_t>(&(nuonce));
+
+	if (currentConnection->m_lastJoinRequestNuonce != nuonce)
 	{
 		return;
 	}
-	
+
 	//Read host info
 	byte_t index;
-	message.Read<byte_t>( &index );
+	message.Read<byte_t>(&index);
 	char * hostUsername;
-	message.ReadString( &( hostUsername ) );
-	ConnectionInfo hostInfo( index, sender.fromAddress, StringFromSockAddr( &sender.fromAddress ), hostUsername );
-	NetConnection * host = currentSession->GetHost( );
-	host->SetConnectionInfo( hostInfo );
+	message.ReadString(&(hostUsername));
+	ConnectionInfo hostInfo(index, sender.fromAddress, StringFromSockAddr(&sender.fromAddress), hostUsername);
+	NetConnection * host = currentSession->GetHost();
+	host->SetConnectionInfo(hostInfo);
 
 	//Establish Connection
-	currentSession->Connect( host );
+	currentSession->Connect(host);
 
 	//Read my info
-	message.Read<byte_t>( &index );
-	ConnectionInfo joineeInfo = ConnectionInfo( index, currentConnection->GetAddress( ), currentConnection->GetGUID( ), currentConnection->GetUsername() );
-	currentConnection->SetConnectionInfo( joineeInfo );
+	message.Read<byte_t>(&index);
+	ConnectionInfo joineeInfo = ConnectionInfo(index, currentConnection->GetAddress(), currentConnection->GetGUID(), currentConnection->GetUsername());
+	currentConnection->SetConnectionInfo(joineeInfo);
 
 	//Establish Connection
-	currentSession->Connect( currentConnection );
+	currentSession->Connect(currentConnection);
 
-	currentSession->ChangeState( eNetSessionState_CONNECTED );
+	currentSession->ChangeState(eNetSessionState_CONNECTED);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void OnLeave( NetSender const & sender, NetMessage const & )
+void OnLeave(NetSender const & sender, NetMessage const &)
 {
-	g_ConsoleSystem->AddLog( Stringf( "Leave Received: %s", StringFromSockAddr( &sender.fromAddress ) ), Console::REMOTE );
-	NetConnection * connection = sender.session->GetNetConnection( sender.connection->GetIndex( ) );
+	g_ConsoleSystem->AddLog(Stringf("Leave Received: %s", StringFromSockAddr(&sender.fromAddress)), Console::REMOTE);
+	NetConnection * connection = sender.session->GetNetConnection(sender.connection->GetIndex());
 
 	//Host left, so I should leave
-	if( connection == sender.session->GetHost( ) )
+	if (connection == sender.session->GetHost())
 	{
-		sender.session->ChangeState( eNetSessionState_DISCONNECTED );
+		sender.session->ChangeState(eNetSessionState_DISCONNECTED);
 	}
 
 	//Someone else left
-	else if( connection )
+	else if (connection)
 	{
-		sender.session->Disconnect( &connection );
+		sender.session->Disconnect(&connection);
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-NetSession::NetSession( uint16_t gameVersion /*= 0U*/ )
-	: m_channel( )
-	, m_self( nullptr )
-	, m_host( nullptr )
-	, m_state( eNetSessionState_INVALID )
-	, m_definitionCount( 0 )
-	, m_connectionTimeouts( true )
-	, m_invalidPacketCount( 0 )
-	, m_invalidMessageCount( 0 )
-	, m_lastError( eNetSessionError_NONE )
-	, m_netVersion( NET_VERSION )
-	, m_definitionHash( 0U )
-	, m_gameVersion( gameVersion )
+NetSession::NetSession(uint16_t gameVersion /*= 0U*/)
+	: m_channel()
+	, m_self(nullptr)
+	, m_host(nullptr)
+	, m_state(eNetSessionState_INVALID)
+	, m_definitionCount(0)
+	, m_connectionTimeouts(true)
+	, m_invalidPacketCount(0)
+	, m_invalidMessageCount(0)
+	, m_lastError(eNetSessionError_NONE)
+	, m_netVersion(NET_VERSION)
+	, m_definitionHash(0U)
+	, m_gameVersion(gameVersion)
 {
 	//Clear out all connections
-	for( size_t index = 0; index < MAX_CONNECTIONS; ++index )
+	for (size_t index = 0; index < MAX_CONNECTIONS; ++index)
 	{
 		m_connections[index] = nullptr;
 	}
 
 	//Clear out all messages
-	for( size_t defIndex = 0; defIndex < MAX_DEFINITIONS; ++defIndex )
+	for (size_t defIndex = 0; defIndex < MAX_DEFINITIONS; ++defIndex)
 	{
 		m_messageDefinitions[defIndex] = nullptr;
 	}
 
-	EventSystem::RegisterEvent( ENGINE_UPDATE_EVENT, this, &NetSession::OnUpdate );
+	EventSystem::RegisterEvent(ENGINE_UPDATE_EVENT, this, &NetSession::OnUpdate);
 
 	//Registering Core Message Types
 	byte_t controlFlags, optionFlags;
@@ -287,85 +287,85 @@ NetSession::NetSession( uint16_t gameVersion /*= 0U*/ )
 	//Connectionless, Unreliable
 	controlFlags = NetMessageDefinition::CONNECTIONLESS_CONTROL_FLAG;
 	optionFlags = 0;
-	RegisterMessage( eNetMessageType_PING, OnPing, controlFlags, optionFlags );
-	RegisterMessage( eNetMessageType_PONG, OnPong, controlFlags, optionFlags );
+	RegisterMessage(eNetMessageType_PING, OnPing, controlFlags, optionFlags);
+	RegisterMessage(eNetMessageType_PONG, OnPong, controlFlags, optionFlags);
 
 	//Connectionless, Reliable
 	controlFlags = NetMessageDefinition::CONNECTIONLESS_CONTROL_FLAG;
 	optionFlags = NetMessageDefinition::RELIABLE_OPTION_FLAG;
-	RegisterMessage( eNetMessageType_JOIN_REQUEST, OnJoinRequest, controlFlags, optionFlags );
+	RegisterMessage(eNetMessageType_JOIN_REQUEST, OnJoinRequest, controlFlags, optionFlags);
 
 	//Connection, Unreliable
 	controlFlags = NetMessageDefinition::CONNECTIONLESS_CONTROL_FLAG;
 	optionFlags = 0;
-	RegisterMessage( eNetMessageType_JOIN_DENY, OnJoinDeny, controlFlags, optionFlags );
-	RegisterMessage( eNetMessageType_LEAVE, OnLeave, controlFlags, optionFlags );
+	RegisterMessage(eNetMessageType_JOIN_DENY, OnJoinDeny, controlFlags, optionFlags);
+	RegisterMessage(eNetMessageType_LEAVE, OnLeave, controlFlags, optionFlags);
 
 	//Connection, Reliable
 	controlFlags = NetMessageDefinition::CONNECTIONLESS_CONTROL_FLAG;
 	optionFlags = NetMessageDefinition::RELIABLE_OPTION_FLAG;
-	RegisterMessage( eNetMessageType_JOIN_ACCEPT, OnJoinAccept, controlFlags, optionFlags );
+	RegisterMessage(eNetMessageType_JOIN_ACCEPT, OnJoinAccept, controlFlags, optionFlags);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-NetSession::~NetSession( )
+NetSession::~NetSession()
 {
-	EventSystem::Unregister( this );
+	EventSystem::Unregister(this);
 
 
 	//Delete all registered messages
 	//I had to keep track of my number of message definitions, but not the number of connections I had
 	//message definitions was breaking when deleting a nullptr, weird.
-	for( size_t defIndex = 0; defIndex < m_definitionCount; ++defIndex )
+	for (size_t defIndex = 0; defIndex < m_definitionCount; ++defIndex)
 	{
 		delete m_messageDefinitions[defIndex];
 		m_messageDefinitions[defIndex] = nullptr;
 	}
 
-	Disconnect( &m_self );
-	DisconnectOtherClientConnections( );
-	Disconnect( &m_host );
+	Disconnect(&m_self);
+	DisconnectOtherClientConnections();
+	Disconnect(&m_host);
 
-	m_channel.Unbind( );
+	m_channel.Unbind();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::OnUpdate( NamedProperties & )
+void NetSession::OnUpdate(NamedProperties &)
 {
-	UpdateState( m_state );
+	UpdateState(m_state);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::ProcessIncomingPackets( )
+void NetSession::ProcessIncomingPackets()
 {
-	m_channel.RecvPackets( this );
+	m_channel.RecvPackets(this);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::ProcessOutgoingPackets( )
+void NetSession::ProcessOutgoingPackets()
 {
 	static float timeSinceLastUpdate = 0.f;
 	timeSinceLastUpdate += Time::DELTA_SECONDS;
-	if( timeSinceLastUpdate >= SEND_RATE )
+	if (timeSinceLastUpdate >= SEND_RATE)
 	{
-		for(size_t index = 0; index < MAX_CONNECTIONS; ++index )
+		for (size_t index = 0; index < MAX_CONNECTIONS; ++index)
 		{
-			if( !m_connections[index] )
+			if (!m_connections[index])
 			{
 				continue;
 			}
 			NamedProperties netEvent;
-			netEvent.Set( "connection", m_connections[index] );
-			EventSystem::TriggerEvent( PREPARE_PACKET_EVENT, netEvent );
-			m_connections[index]->SendPacket( );
+			netEvent.Set("connection", m_connections[index]);
+			EventSystem::TriggerEvent(PREPARE_PACKET_EVENT, netEvent);
+			m_connections[index]->SendPacket();
 		}
 
 		//I only want to process packets at most once per frame
-		while( timeSinceLastUpdate >= SEND_RATE )
+		while (timeSinceLastUpdate >= SEND_RATE)
 		{
 			timeSinceLastUpdate -= SEND_RATE;
 		}
@@ -374,41 +374,41 @@ void NetSession::ProcessOutgoingPackets( )
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::CheckForDisconnect( )
+void NetSession::CheckForDisconnect()
 {
-	if( m_host )
+	if (m_host)
 	{
-		float timeElapsed = (float) ( Time::TOTAL_SECONDS - m_host->m_timeLastRecv );
-		if( timeElapsed > DISCONNECT_INTERVAL_SECONDS && m_connectionTimeouts )
+		float timeElapsed = (float)(Time::TOTAL_SECONDS - m_host->m_timeLastRecv);
+		if (timeElapsed > DISCONNECT_INTERVAL_SECONDS && m_connectionTimeouts)
 		{
-			g_ConsoleSystem->AddLog( "Connection to host timed out", Console::BAD );
-			ChangeState( eNetSessionState_DISCONNECTED );
+			g_ConsoleSystem->AddLog("Connection to host timed out", Console::BAD);
+			ChangeState(eNetSessionState_DISCONNECTED);
 		}
 	}
 
-	for( size_t index = 0; index < MAX_CONNECTIONS; ++index )
+	for (size_t index = 0; index < MAX_CONNECTIONS; ++index)
 	{
-		if( !m_connections[index] )
+		if (!m_connections[index])
 		{
 			continue;
 		}
-		
-		float timeElapsed = ( float )( Time::TOTAL_SECONDS - m_connections[index]->m_timeLastRecv );
-		if( timeElapsed > DISCONNECT_INTERVAL_SECONDS && m_connectionTimeouts )
+
+		float timeElapsed = (float)(Time::TOTAL_SECONDS - m_connections[index]->m_timeLastRecv);
+		if (timeElapsed > DISCONNECT_INTERVAL_SECONDS && m_connectionTimeouts)
 		{
-			g_ConsoleSystem->AddLog( Stringf( "Connection %d timed out", index ), Console::BAD );
-			Disconnect( &m_connections[index] );
+			g_ConsoleSystem->AddLog(Stringf("Connection %d timed out", index), Console::BAD);
+			Disconnect(&m_connections[index]);
 		}
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::RegisterMessage( eNetMessageType const & type, MessageCallback * cb, byte_t const & setTypeFlags /*= 0*/, byte_t const & setOptionFlags /*= 0*/, byte_t const & setChannel /*= 0 */ )
+void NetSession::RegisterMessage(eNetMessageType const & type, MessageCallback * cb, byte_t const & setTypeFlags /*= 0*/, byte_t const & setOptionFlags /*= 0*/, byte_t const & setChannel /*= 0 */)
 {
-	if( GetState( ) != eNetSessionState_INVALID )
+	if (GetState() != eNetSessionState_INVALID)
 	{
-		g_ConsoleSystem->AddLog( "Can only register messages before starting", Console::BAD );
+		g_ConsoleSystem->AddLog("Can only register messages before starting", Console::BAD);
 		return;
 	}
 
@@ -418,30 +418,30 @@ void NetSession::RegisterMessage( eNetMessageType const & type, MessageCallback 
 	def->controlFlags = setTypeFlags;
 	def->optionFlags = setOptionFlags;
 	def->sequenceChannelID = setChannel;
-	def->CalculateHeaderSize( );
+	def->CalculateHeaderSize();
 	def->callback = cb;
 	m_messageDefinitions[type] = def;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool NetSession::Start( unsigned int port, unsigned int range /*= PORT_RANGE*/ )
+bool NetSession::Start(unsigned int port, unsigned int range /*= PORT_RANGE*/)
 {
-	if( GetState( ) != eNetSessionState_INVALID )
+	if (GetState() != eNetSessionState_INVALID)
 	{
-		g_ConsoleSystem->AddLog( "Net Session already started", Console::BAD );
+		g_ConsoleSystem->AddLog("Net Session already started", Console::BAD);
 		return false;
 	}
 
-	ChangeState( eNetSessionState_SETUP );
-	m_channel.Bind( NetworkUtils::GetLocalHostName( ), port, range );
+	ChangeState(eNetSessionState_SETUP);
+	m_channel.Bind(NetworkUtils::GetLocalHostName(), port, range);
 
 	//If socket is connected
-	if( IsConnected( ) )
+	if (IsConnected())
 	{
 		//Set our state to ready, but no host connection
-		ChangeState( eNetSessionState_DISCONNECTED );
-		g_ConsoleSystem->AddLog( Stringf( "Net Session: %s", GetAddressString( ) ), Console::GOOD );
+		ChangeState(eNetSessionState_DISCONNECTED);
+		g_ConsoleSystem->AddLog(Stringf("Net Session: %s", GetAddressString()), Console::GOOD);
 
 		//#TODO: Unique identifier for the definitions registered
 		m_definitionHash = m_definitionCount;
@@ -450,185 +450,185 @@ bool NetSession::Start( unsigned int port, unsigned int range /*= PORT_RANGE*/ )
 	else
 	{
 		m_lastError = eNetSessionError_SOCKET_CREATION_FAILED;
-		ChangeState( eNetSessionState_INVALID );
-		g_ConsoleSystem->AddLog( "Start Net Session failed", Console::BAD );
+		ChangeState(eNetSessionState_INVALID);
+		g_ConsoleSystem->AddLog("Start Net Session failed", Console::BAD);
 		return false;
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::Stop( )
+void NetSession::Stop()
 {
-	if( GetState( ) == eNetSessionState_INVALID )
+	if (GetState() == eNetSessionState_INVALID)
 	{
-		g_ConsoleSystem->AddLog( "Net Session not currently running", Console::BAD );
+		g_ConsoleSystem->AddLog("Net Session not currently running", Console::BAD);
 		return;
 	}
-	else if( GetState( ) != eNetSessionState_DISCONNECTED )
+	else if (GetState() != eNetSessionState_DISCONNECTED)
 	{
-		g_ConsoleSystem->AddLog( "Must be disconnected to stop", Console::BAD );
+		g_ConsoleSystem->AddLog("Must be disconnected to stop", Console::BAD);
 		return;
 	}
 
-	m_channel.Unbind( );
-	ChangeState( eNetSessionState_INVALID );
-	g_ConsoleSystem->AddLog( "Successfully stopped Net Session", Console::GOOD );
+	m_channel.Unbind();
+	ChangeState(eNetSessionState_INVALID);
+	g_ConsoleSystem->AddLog("Successfully stopped Net Session", Console::GOOD);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::Host( char const * username, size_t password /*= 0*/ )
+void NetSession::Host(char const * username, size_t password /*= 0*/)
 {
-	if( GetState( ) != eNetSessionState_DISCONNECTED )
+	if (GetState() != eNetSessionState_DISCONNECTED)
 	{
-		g_ConsoleSystem->AddLog( "Must be disconnected to host", Console::BAD );
+		g_ConsoleSystem->AddLog("Must be disconnected to host", Console::BAD);
 		return;
 	}
 
 	//Make a connection for yourself at conn_index 0
-	ChangeState( eNetSessionState_HOSTING );
-	m_host = CreateConnection( HOST_INDEX, m_channel.GetAddress( ), GetAddressString(), username );
-	if( m_host )
+	ChangeState(eNetSessionState_HOSTING);
+	m_host = CreateConnection(HOST_INDEX, m_channel.GetAddress(), GetAddressString(), username);
+	if (m_host)
 	{
-		m_host->SetPassword( password );
-		ChangeState( eNetSessionState_CONNECTED );
-		g_ConsoleSystem->AddLog( Stringf( "Hosting: %s", GetAddressString( ) ), Console::GOOD );
+		m_host->SetPassword(password);
+		ChangeState(eNetSessionState_CONNECTED);
+		g_ConsoleSystem->AddLog(Stringf("Hosting: %s", GetAddressString()), Console::GOOD);
 		m_self = m_host;
-		Connect( m_host );
+		Connect(m_host);
 	}
 	else
 	{
-		ChangeState( eNetSessionState_DISCONNECTED );
+		ChangeState(eNetSessionState_DISCONNECTED);
 		m_lastError = eNetSessionError_HOST_CREATION_FAILED;
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::Join( sockaddr_in const & hostAddress, char const * username, size_t password /*= 0*/ )
+void NetSession::Join(sockaddr_in const & hostAddress, char const * username, size_t password /*= 0*/)
 {
-	if( GetState( ) != eNetSessionState_DISCONNECTED )
+	if (GetState() != eNetSessionState_DISCONNECTED)
 	{
-		g_ConsoleSystem->AddLog( "Must be disconnected to join a host", Console::BAD );
+		g_ConsoleSystem->AddLog("Must be disconnected to join a host", Console::BAD);
 		return;
 	}
 
-	g_ConsoleSystem->AddLog( Stringf( "Joining: %s", StringFromSockAddr( &hostAddress ) ), Console::GOOD );
-	m_host = CreateConnection( HOST_INDEX, hostAddress, StringFromSockAddr( &hostAddress ), " " );
-	if( m_host )
+	g_ConsoleSystem->AddLog(Stringf("Joining: %s", StringFromSockAddr(&hostAddress)), Console::GOOD);
+	m_host = CreateConnection(HOST_INDEX, hostAddress, StringFromSockAddr(&hostAddress), " ");
+	if (m_host)
 	{
-		ChangeState( eNetSessionState_JOINING );
+		ChangeState(eNetSessionState_JOINING);
 
 		//Make my connection
-		m_self = CreateConnection( INVALID_INDEX, m_channel.GetAddress( ), GetAddressString(), username );
-		m_self->SetPassword( password );
-		m_self->m_lastJoinRequestNuonce = GetNuonce( );
+		m_self = CreateConnection(INVALID_INDEX, m_channel.GetAddress(), GetAddressString(), username);
+		m_self->SetPassword(password);
+		m_self->m_lastJoinRequestNuonce = GetNuonce();
 
-		NetMessage request( eNetMessageType_JOIN_REQUEST );
-		request.Write<uint64_t>( GetNetSessionVersion( ) );
-		request.Write<uint32_t>( m_self->m_lastJoinRequestNuonce );
-		request.WriteString( username );
-		request.Write<size_t>( password );
-		m_host->AddMessage( request );
-		m_host->SendPacket( );
+		NetMessage request(eNetMessageType_JOIN_REQUEST);
+		request.Write<uint64_t>(GetNetSessionVersion());
+		request.Write<uint32_t>(m_self->m_lastJoinRequestNuonce);
+		request.WriteString(username);
+		request.Write<size_t>(password);
+		m_host->AddMessage(request);
+		m_host->SendPacket();
 	}
 	else
 	{
-		ChangeState( eNetSessionState_DISCONNECTED );
+		ChangeState(eNetSessionState_DISCONNECTED);
 		m_lastError = eNetSessionError_HOST_CREATION_FAILED;
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::Leave( )
+void NetSession::Leave()
 {
-	if( GetState( ) != eNetSessionState_CONNECTED )
+	if (GetState() != eNetSessionState_CONNECTED)
 	{
-		g_ConsoleSystem->AddLog( "Must be connected to a host to leave", Console::BAD );
+		g_ConsoleSystem->AddLog("Must be connected to a host to leave", Console::BAD);
 		return;
 	}
 
 	//send everyone else a LEAVE message
-	NetMessage leave( eNetMessageType_LEAVE, GetSelf( )->GetIndex( ) );
-	for( uint8_t connIndex = 0; connIndex < MAX_CONNECTIONS; ++connIndex )
+	NetMessage leave(eNetMessageType_LEAVE, GetSelf()->GetIndex());
+	for (uint8_t connIndex = 0; connIndex < MAX_CONNECTIONS; ++connIndex)
 	{
-		NetConnection * conn = GetNetConnection( connIndex );
-		if( conn && conn != m_self )
+		NetConnection * conn = GetNetConnection(connIndex);
+		if (conn && conn != m_self)
 		{
-			conn->AddMessage( leave );
-			conn->SendPacket( );
+			conn->AddMessage(leave);
+			conn->SendPacket();
 		}
 	}
 
 	//Disconnect self & others & host
-	ChangeState( eNetSessionState_DISCONNECTED );
+	ChangeState(eNetSessionState_DISCONNECTED);
 
-	g_ConsoleSystem->AddLog( "Successful leave", Console::GOOD );
+	g_ConsoleSystem->AddLog("Successful leave", Console::GOOD);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-NetConnection * NetSession::CreateConnection( ConnectionInfo const & connInfo ) const
+NetConnection * NetSession::CreateConnection(ConnectionInfo const & connInfo) const
 {
-	return CreateConnection( connInfo.m_index, connInfo.m_address, connInfo.m_guid, connInfo.m_username );
+	return CreateConnection(connInfo.m_index, connInfo.m_address, connInfo.m_guid, connInfo.m_username);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-NetConnection * NetSession::CreateConnection( byte_t index, sockaddr_in const & address, std::string const & guid, std::string const & username ) const
+NetConnection * NetSession::CreateConnection(byte_t index, sockaddr_in const & address, std::string const & guid, std::string const & username) const
 {
-	if( GetState( ) == eNetSessionState_INVALID )
+	if (GetState() == eNetSessionState_INVALID)
 	{
-		g_ConsoleSystem->AddLog( "Net Session not currently running", Console::BAD );
+		g_ConsoleSystem->AddLog("Net Session not currently running", Console::BAD);
 		return nullptr;
 	}
 
-	if( m_connections[index] )
+	if (m_connections[index])
 	{
-		g_ConsoleSystem->AddLog( "Connection index already exists", Console::BAD );
+		g_ConsoleSystem->AddLog("Connection index already exists", Console::BAD);
 		return nullptr;
 	}
 
-	if( IsDuplicateGUID( guid ) )
+	if (IsDuplicateGUID(guid))
 	{
-		g_ConsoleSystem->AddLog( "GUID already exists", Console::BAD );
+		g_ConsoleSystem->AddLog("GUID already exists", Console::BAD);
 		return nullptr;
 	}
 
-	g_ConsoleSystem->AddLog( Stringf( "Connection %u created", index ), Console::GOOD );
-	return new NetConnection( index, address, guid, username, this );
+	g_ConsoleSystem->AddLog(Stringf("Connection %u created", index), Console::GOOD);
+	return new NetConnection(index, address, guid, username, this);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::DisconnectOtherClientConnections( )
+void NetSession::DisconnectOtherClientConnections()
 {
-	for( size_t index = 0; index < MAX_CONNECTIONS; ++index )
+	for (size_t index = 0; index < MAX_CONNECTIONS; ++index)
 	{
-		if( m_connections[index] == m_host )
+		if (m_connections[index] == m_host)
 		{
 			//Nothing
 		}
-		else if( m_connections[index] == m_self )
+		else if (m_connections[index] == m_self)
 		{
 			//Nothing
 		}
 		else
 		{
-			Disconnect( &m_connections[index] );
+			Disconnect(&m_connections[index]);
 		}
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::Connect( NetConnection * connection )
+void NetSession::Connect(NetConnection * connection)
 {
-	if( m_connections[connection->GetIndex( )] )
+	if (m_connections[connection->GetIndex()])
 	{
-		g_ConsoleSystem->AddLog( "Connection already exists", Console::BAD );
+		g_ConsoleSystem->AddLog("Connection already exists", Console::BAD);
 		return;
 	}
 
@@ -637,35 +637,35 @@ void NetSession::Connect( NetConnection * connection )
 
 	//Trigger Join Event
 	NamedProperties netEvent;
-	netEvent.Set( "connection", connection );
-	EventSystem::TriggerEvent( ON_CONNECTION_JOIN_EVENT, netEvent );
+	netEvent.Set("connection", connection);
+	EventSystem::TriggerEvent(ON_CONNECTION_JOIN_EVENT, netEvent);
 
-	g_ConsoleSystem->AddLog( Stringf( "Connection %u established", connection->GetIndex() ), Console::GOOD );
+	g_ConsoleSystem->AddLog(Stringf("Connection %u established", connection->GetIndex()), Console::GOOD);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::Disconnect( NetConnection ** connection )
+void NetSession::Disconnect(NetConnection ** connection)
 {
 	//We can call this on a nullptr, no big deal
-	if( ( *connection ) == nullptr )
+	if ((*connection) == nullptr)
 	{
 		return;
 	}
 
 	//If you're host, clear the host and trigger leave
-	if( m_self == m_host && ( *connection ) == m_host )
+	if (m_self == m_host && (*connection) == m_host)
 	{
 		//Trigger Leave Event
 		NamedProperties netEvent;
-		netEvent.Set("connection", *connection );
-		EventSystem::TriggerEvent( ON_CONNECTION_LEAVE_EVENT, netEvent );
+		netEvent.Set("connection", *connection);
+		EventSystem::TriggerEvent(ON_CONNECTION_LEAVE_EVENT, netEvent);
 		m_host = nullptr;
 	}
 
-	byte_t index = ( *connection )->GetIndex( );
+	byte_t index = (*connection)->GetIndex();
 	//Must have been temp, delete them
-	if( index == INVALID_INDEX )
+	if (index == INVALID_INDEX)
 	{
 		delete *connection;
 		*connection = nullptr;
@@ -673,134 +673,134 @@ void NetSession::Disconnect( NetConnection ** connection )
 	}
 	//You don't exist, this is a problem... but we'll still clear you out anyways
 	//Aaand the 'temp' host will call this, this is fine
-	else if( m_connections[index] == nullptr )
+	else if (m_connections[index] == nullptr)
 	{
 		delete *connection;
 		*connection = nullptr;
-		g_ConsoleSystem->AddLog( "Connection not established", Console::BAD );
+		g_ConsoleSystem->AddLog("Connection not established", Console::BAD);
 		return;
 	}
 
 	//Trigger Leave Event
 	NamedProperties netEvent;
-	netEvent.Set( "connection", *connection );
-	EventSystem::TriggerEvent( ON_CONNECTION_LEAVE_EVENT, netEvent );
+	netEvent.Set("connection", *connection);
+	EventSystem::TriggerEvent(ON_CONNECTION_LEAVE_EVENT, netEvent);
 
 	//Clear connection
 	delete m_connections[index];
 	m_connections[index] = nullptr;
 	*connection = nullptr;
 
-	g_ConsoleSystem->AddLog( Stringf( "Connection %u disconnected", index ), Console::GOOD );
+	g_ConsoleSystem->AddLog(Stringf("Connection %u disconnected", index), Console::GOOD);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::AddMessageToAllClients( NetMessage & message )
+void NetSession::AddMessageToAllClients(NetMessage & message)
 {
-	for( byte_t connIndex = 0; connIndex < MAX_CONNECTIONS; ++connIndex )
+	for (byte_t connIndex = 0; connIndex < MAX_CONNECTIONS; ++connIndex)
 	{
-		if( m_connections[connIndex] == nullptr )
+		if (m_connections[connIndex] == nullptr)
 		{
 			continue;
 		}
 
-		m_connections[connIndex]->AddMessage( message );
+		m_connections[connIndex]->AddMessage(message);
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::SendDirect( sockaddr_in const & address, NetMessage & message ) const
+void NetSession::SendDirect(sockaddr_in const & address, NetMessage & message) const
 {
-	if( GetState( ) == eNetSessionState_INVALID )
+	if (GetState() == eNetSessionState_INVALID)
 	{
-		g_ConsoleSystem->AddLog( "Start session first", Console::BAD );
+		g_ConsoleSystem->AddLog("Start session first", Console::BAD);
 		return;
 	}
 
-	NetMessageDefinition const * definition = GetDefinition( message.GetNetMessageType( ) );
+	NetMessageDefinition const * definition = GetDefinition(message.GetNetMessageType());
 
-	if( definition->IsReliable( ) )
+	if (definition->IsReliable())
 	{
-		g_ConsoleSystem->AddLog( "Cannot send direct a message that is reliable", Console::BAD );
+		g_ConsoleSystem->AddLog("Cannot send direct a message that is reliable", Console::BAD);
 		return;
 	}
 
-	NetConnection conn( INVALID_INDEX, address, "", "", this);
-	conn.AddMessage( message );
-	conn.SendPacket( );
+	NetConnection conn(INVALID_INDEX, address, "", "", this);
+	conn.AddMessage(message);
+	conn.SendPacket();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::SendDeny( sockaddr_in const & address, eNetSessionError const & reason, uint32_t nuonce ) const
+void NetSession::SendDeny(sockaddr_in const & address, eNetSessionError const & reason, uint32_t nuonce) const
 {
-	g_ConsoleSystem->AddLog( Stringf( "Deny Sent: %s", StringFromSockAddr( &address ) ), Console::REMOTE );
-	NetMessage deny( eNetMessageType_JOIN_DENY );
-	deny.Write<uint32_t>( nuonce );
-	deny.Write<uint8_t>( (uint8_t) reason );
-	SendDirect( address, deny );
+	g_ConsoleSystem->AddLog(Stringf("Deny Sent: %s", StringFromSockAddr(&address)), Console::REMOTE);
+	NetMessage deny(eNetMessageType_JOIN_DENY);
+	deny.Write<uint32_t>(nuonce);
+	deny.Write<uint8_t>((uint8_t)reason);
+	SendDirect(address, deny);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::SendAccept( NetConnection * connection, uint32_t nuonce ) const
+void NetSession::SendAccept(NetConnection * connection, uint32_t nuonce) const
 {
-	g_ConsoleSystem->AddLog( Stringf( "Accept Sent: %s", StringFromSockAddr( &connection->GetAddress() ) ), Console::REMOTE );
-	NetMessage accept( eNetMessageType_JOIN_ACCEPT );
+	g_ConsoleSystem->AddLog(Stringf("Accept Sent: %s", StringFromSockAddr(&connection->GetAddress())), Console::REMOTE);
+	NetMessage accept(eNetMessageType_JOIN_ACCEPT);
 
-	accept.Write<uint32_t>( nuonce );
-	accept.Write<byte_t>( m_host->GetIndex( ) );
-	accept.WriteString( m_host->GetUsername( ) );
-	accept.Write<byte_t>( connection->GetIndex() );
+	accept.Write<uint32_t>(nuonce);
+	accept.Write<byte_t>(m_host->GetIndex());
+	accept.WriteString(m_host->GetUsername());
+	accept.Write<byte_t>(connection->GetIndex());
 
-	connection->AddMessage( accept );
+	connection->AddMessage(accept);
 	//Do not need to immediately send a packet, it's connected, so it will automatically send OnUpdate()
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::SendPacket( sockaddr_in const & address, byte_t const * data, size_t dataSize ) const
+void NetSession::SendPacket(sockaddr_in const & address, byte_t const * data, size_t dataSize) const
 {
-	m_channel.SendPackets( address, data, dataSize );
+	m_channel.SendPackets(address, data, dataSize);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::ProcessPacket( NetPacket & packet )
+void NetSession::ProcessPacket(NetPacket & packet)
 {
 	PacketHeader header;
-	packet.ReadHeader( &header );
+	packet.ReadHeader(&header);
 
 	//Connection received packet
-	packet.m_senderInfo.connection = GetNetConnection( packet.m_senderInfo.fromAddress );
+	packet.m_senderInfo.connection = GetNetConnection(packet.m_senderInfo.fromAddress);
 
 	//Still need to make packets with no contents
-	if( header.messageCount == 0 )
+	if (header.messageCount == 0)
 	{
-		if( packet.m_senderInfo.connection != nullptr )
+		if (packet.m_senderInfo.connection != nullptr)
 		{
-			packet.m_senderInfo.connection->MarkPacketReceived( header );
+			packet.m_senderInfo.connection->MarkPacketReceived(header);
 		}
 	}
 
-	for( size_t messageIndex = 0; messageIndex < header.messageCount; ++messageIndex )
+	for (size_t messageIndex = 0; messageIndex < header.messageCount; ++messageIndex)
 	{
 		//Read Message
 		NetMessage message;
-		ReadMessage( packet, &message );
+		ReadMessage(packet, &message);
 
 		//Set Ack ID from packet (used in unreliable sequenced messages)
 		//message.m_ackID = header.packetAck;
 
 		//Validate and process
-		if( packet.m_senderInfo.connection != nullptr )
+		if (packet.m_senderInfo.connection != nullptr)
 		{
-			if( IsValidMessage( packet.m_senderInfo, message ) )
+			if (IsValidMessage(packet.m_senderInfo, message))
 			{
-				packet.m_senderInfo.connection->ProcessMessage( packet.m_senderInfo, message );
-				packet.m_senderInfo.connection->MarkPacketReceived( header );
+				packet.m_senderInfo.connection->ProcessMessage(packet.m_senderInfo, message);
+				packet.m_senderInfo.connection->MarkPacketReceived(header);
 			}
 			else
 			{
@@ -810,22 +810,22 @@ void NetSession::ProcessPacket( NetPacket & packet )
 		}
 		else
 		{
-			if( !message.m_definition->IsConnectionless( ) )
+			if (!message.m_definition->IsConnectionless())
 			{
 				++m_invalidMessageCount;
 				continue;
 			}
 
-			message.Process( packet.m_senderInfo );
-			
+			message.Process(packet.m_senderInfo);
+
 			//Check again and mark received
-			if( message.m_definition->IsReliable( ) )
+			if (message.m_definition->IsReliable())
 			{
-				packet.m_senderInfo.connection = GetNetConnection( packet.m_senderInfo.fromAddress );
+				packet.m_senderInfo.connection = GetNetConnection(packet.m_senderInfo.fromAddress);
 			}
-			if( packet.m_senderInfo.connection != nullptr )
+			if (packet.m_senderInfo.connection != nullptr)
 			{
-				packet.m_senderInfo.connection->MarkPacketReceived( header );
+				packet.m_senderInfo.connection->MarkPacketReceived(header);
 			}
 		}
 	}
@@ -833,110 +833,110 @@ void NetSession::ProcessPacket( NetPacket & packet )
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::ReadMessage( NetPacket const & packet, NetMessage * out_message )
+void NetSession::ReadMessage(NetPacket const & packet, NetMessage * out_message)
 {
 	//Read Message Size
 	uint16_t messageSize;
-	packet.Read( &messageSize );
+	packet.Read(&messageSize);
 
 	//Read Type
-	packet.Read( &( out_message->m_type ) );
+	packet.Read(&(out_message->m_type));
 	messageSize -= 1; //One less because we just read a byte
 
-	out_message->m_definition = GetDefinition( (eNetMessageType) out_message->m_type );
+	out_message->m_definition = GetDefinition((eNetMessageType)out_message->m_type);
 
 	//Definition does not exist on session
-	if( !out_message->m_definition )
+	if (!out_message->m_definition)
 	{
 		++m_invalidMessageCount;
-		packet.Advance( messageSize );
+		packet.Advance(messageSize);
 		return;
 	}
 
 	//Read Index
-	if( !out_message->m_definition->IsConnectionless( ) )
+	if (!out_message->m_definition->IsConnectionless())
 	{
-		packet.Read( &( out_message->m_senderIndex ) );
+		packet.Read(&(out_message->m_senderIndex));
 		messageSize -= 1; //One less because we just read a byte
 	}
 
 	//Read ReliableID
-	if( out_message->m_definition->IsReliable( ) )
+	if (out_message->m_definition->IsReliable())
 	{
-		packet.Read( &( out_message->m_reliableID ) );
+		packet.Read(&(out_message->m_reliableID));
 		messageSize -= 2; //Two less because we just read 2 bytes
 	}
 
 	//Read SequenceID
-	if( out_message->m_definition->IsReliable( ) && out_message->m_definition->IsSequence( ) )
+	if (out_message->m_definition->IsReliable() && out_message->m_definition->IsSequence())
 	{
-		packet.Read( &( out_message->m_sequenceID ) );
+		packet.Read(&(out_message->m_sequenceID));
 		messageSize -= 2; //Two less because we just read 2 bytes
 	}
 
 	//Copy Message
-	out_message->WriteForward( packet.GetHead( ), messageSize );
-	out_message->Rewind( );
+	out_message->WriteForward(packet.GetHead(), messageSize);
+	out_message->Rewind();
 
 	//Finished with message
-	packet.Advance( messageSize );
+	packet.Advance(messageSize);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::PrintError( eNetSessionError const & error )
+void NetSession::PrintError(eNetSessionError const & error)
 {
-	switch( error )
+	switch (error)
 	{
 	case eNetSessionError_JOIN_HOST_TIMEOUT:
-		g_ConsoleSystem->AddLog( "Join host timed out", Console::BAD );
+		g_ConsoleSystem->AddLog("Join host timed out", Console::BAD);
 		break;
 	case eNetSessionError_JOIN_DENIED_WRONG_VERSION:
-		g_ConsoleSystem->AddLog( "Join denied: Wrong version", Console::BAD );
+		g_ConsoleSystem->AddLog("Join denied: Wrong version", Console::BAD);
 		break;
 	case eNetSessionError_JOIN_DENIED_NOT_ACCEPTING_NEW_CONNECTIONS:
-		g_ConsoleSystem->AddLog( "Join denied: Not accepting new connections", Console::BAD );
+		g_ConsoleSystem->AddLog("Join denied: Not accepting new connections", Console::BAD);
 		break;
 	case eNetSessionError_JOIN_DENIED_NOT_HOST:
-		g_ConsoleSystem->AddLog( "Join denied: Not host", Console::BAD );
+		g_ConsoleSystem->AddLog("Join denied: Not host", Console::BAD);
 		break;
 	case eNetSessionError_JOIN_DENIED_FULL:
-		g_ConsoleSystem->AddLog( "Join denied: Host full", Console::BAD );
+		g_ConsoleSystem->AddLog("Join denied: Host full", Console::BAD);
 		break;
 	case eNetSessionError_JOIN_DENIED_GUID_IN_USE:
-		g_ConsoleSystem->AddLog( "Join denied: GUID already in use", Console::BAD );
+		g_ConsoleSystem->AddLog("Join denied: GUID already in use", Console::BAD);
 		break;
 	default:
-		g_ConsoleSystem->AddLog( "Unknown Error", Console::BAD );
+		g_ConsoleSystem->AddLog("Unknown Error", Console::BAD);
 		break;
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::ChangeState( eNetSessionState const & newState )
+void NetSession::ChangeState(eNetSessionState const & newState)
 {
 	//Never change to the same state
-	if( m_state == newState )
+	if (m_state == newState)
 	{
-		ERROR_AND_DIE( "Net Session State change to the same state" );
+		ERROR_AND_DIE("Net Session State change to the same state");
 	}
 
-	LeaveState( m_state );
+	LeaveState(m_state);
 	m_state = newState;
-	EnterState( m_state );
+	EnterState(m_state);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::EnterState( eNetSessionState const & state )
+void NetSession::EnterState(eNetSessionState const & state)
 {
-	switch( state )
+	switch (state)
 	{
 	case eNetSessionState_DISCONNECTED:
-		Disconnect( &m_self );
-		DisconnectOtherClientConnections( );
-		Disconnect( &m_host );
+		Disconnect(&m_self);
+		DisconnectOtherClientConnections();
+		Disconnect(&m_host);
 		break;
 	case eNetSessionState_JOINING:
 		break;
@@ -947,9 +947,9 @@ void NetSession::EnterState( eNetSessionState const & state )
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::LeaveState( eNetSessionState const & state )
+void NetSession::LeaveState(eNetSessionState const & state)
 {
-	switch( state )
+	switch (state)
 	{
 	case eNetSessionState_INVALID:
 		break;
@@ -960,38 +960,38 @@ void NetSession::LeaveState( eNetSessionState const & state )
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::UpdateState( eNetSessionState const & state )
+void NetSession::UpdateState(eNetSessionState const & state)
 {
-	g_ProfilerSystem->StartSample( "NET UPDATE" );
-	switch( state )
+	BProfiler::StartSample("NET UPDATE");
+	switch (state)
 	{
 	case eNetSessionState_INVALID:
 		break;
 	case eNetSessionState_DISCONNECTED:
-		ProcessIncomingPackets( );
-		ProcessOutgoingPackets( );
+		ProcessIncomingPackets();
+		ProcessOutgoingPackets();
 		break;
 	default:
-		ProcessIncomingPackets( );
-		ProcessOutgoingPackets( );
-		CheckForDisconnect( );
+		ProcessIncomingPackets();
+		ProcessOutgoingPackets();
+		CheckForDisconnect();
 		break;
 	}
-	m_NetworkTrafficActivity.WriteToFile( );
-	g_ProfilerSystem->StopSample( );
+	m_NetworkTrafficActivity.WriteToFile();
+	BProfiler::StopSample();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-NetConnection * NetSession::GetNetConnection( sockaddr_in const & address ) const
+NetConnection * NetSession::GetNetConnection(sockaddr_in const & address) const
 {
-	for( size_t index = 0; index < MAX_CONNECTIONS; ++index )
+	for (size_t index = 0; index < MAX_CONNECTIONS; ++index)
 	{
-		if( !m_connections[index] )
+		if (!m_connections[index])
 		{
 			continue;
 		}
-		if( IsEqual( m_connections[index]->GetAddress( ), address ) )
+		if (IsEqual(m_connections[index]->GetAddress(), address))
 		{
 			return m_connections[index];
 		}
@@ -1002,107 +1002,107 @@ NetConnection * NetSession::GetNetConnection( sockaddr_in const & address ) cons
 
 
 //-------------------------------------------------------------------------------------------------
-NetConnection * NetSession::GetNetConnection( uint8_t netIndex )
+NetConnection * NetSession::GetNetConnection(uint8_t netIndex)
 {
 	return m_connections[netIndex];
 }
 
 
 //-------------------------------------------------------------------------------------------------
-PacketChannel const & NetSession::GetPacketChannel( ) const
+PacketChannel const & NetSession::GetPacketChannel() const
 {
 	return m_channel;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-UDPSock const & NetSession::GetSocket( ) const
+UDPSock const & NetSession::GetSocket() const
 {
 	return m_channel;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-char const * NetSession::GetAddressString( ) const
+char const * NetSession::GetAddressString() const
 {
-	return m_channel.GetAddressString( );
+	return m_channel.GetAddressString();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-NetMessageDefinition const * NetSession::GetDefinition( eNetMessageType const & type ) const
+NetMessageDefinition const * NetSession::GetDefinition(eNetMessageType const & type) const
 {
 	return m_messageDefinitions[type];
 }
 
 
 //-------------------------------------------------------------------------------------------------
-NetConnection * NetSession::GetSelf( ) const
+NetConnection * NetSession::GetSelf() const
 {
 	return m_self;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-NetConnection * NetSession::GetHost( ) const
+NetConnection * NetSession::GetHost() const
 {
 	return m_host;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-eNetSessionState NetSession::GetState( ) const
+eNetSessionState NetSession::GetState() const
 {
 	return m_state;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-float NetSession::GetSimDropRate( ) const
+float NetSession::GetSimDropRate() const
 {
 	return m_channel.m_dropRate;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Range<double> const NetSession::GetLatency( ) const
+Range<double> const NetSession::GetLatency() const
 {
 	return m_channel.m_latency;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-uint64_t NetSession::GetNetSessionVersion( ) const
+uint64_t NetSession::GetNetSessionVersion() const
 {
 	uint64_t version = 0;
 	version |= m_netVersion;
 
-	version = ( version << 16 );
+	version = (version << 16);
 	version |= m_gameVersion;
 
-	version = ( version << 32 );
+	version = (version << 32);
 	version |= m_definitionHash;
 	return version;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-uint32_t NetSession::GetNuonce( ) const
+uint32_t NetSession::GetNuonce() const
 {
 	static uint32_t nuonce;
-	nuonce += (uint8_t) ( RandomFloatZeroToOne( ) * RandomInt( 256 ) );
+	nuonce += (uint8_t)(RandomFloatZeroToOne() * RandomInt(256));
 	return nuonce;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-byte_t NetSession::GetNextFreeIndex( ) const
+byte_t NetSession::GetNextFreeIndex() const
 {
 	byte_t check = 0;
-	while( m_connections[check] )
+	while (m_connections[check])
 	{
 		++check;
-		if( check == INVALID_INDEX )
+		if (check == INVALID_INDEX)
 		{
 			return INVALID_INDEX;
 		}
@@ -1112,33 +1112,33 @@ byte_t NetSession::GetNextFreeIndex( ) const
 
 
 //-------------------------------------------------------------------------------------------------
-bool NetSession::IsConnected( ) const
+bool NetSession::IsConnected() const
 {
-	return m_channel.IsConnected( );
+	return m_channel.IsConnected();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool NetSession::IsValidPacket( NetPacket const & packet, size_t packetSize ) const
+bool NetSession::IsValidPacket(NetPacket const & packet, size_t packetSize) const
 {
 	PacketHeader header;
-	packet.ReadHeader( &header );
+	packet.ReadHeader(&header);
 
-	size_t totalSize = packet.GetCurrentOffset( );
+	size_t totalSize = packet.GetCurrentOffset();
 	//Stride over each message and sum up the size
-	for( uint8_t messageNum = 0; messageNum < header.messageCount; ++messageNum )
+	for (uint8_t messageNum = 0; messageNum < header.messageCount; ++messageNum)
 	{
 		uint16_t messageSize;
-		packet.Read<uint16_t>( &messageSize );
+		packet.Read<uint16_t>(&messageSize);
 		totalSize += sizeof(uint16_t) + messageSize; //size variable + reported size
-		if( totalSize > packetSize )
+		if (totalSize > packetSize)
 		{
 			return false;
 		}
-		packet.Advance( messageSize );
+		packet.Advance(messageSize);
 	}
 
-	packet.Rewind( );
+	packet.Rewind();
 
 	//Size must match total size
 	return totalSize == packetSize;
@@ -1146,50 +1146,50 @@ bool NetSession::IsValidPacket( NetPacket const & packet, size_t packetSize ) co
 
 
 //-------------------------------------------------------------------------------------------------
-bool NetSession::IsValidMessage( NetSender const & senderInfo, NetMessage const & message ) const
+bool NetSession::IsValidMessage(NetSender const & senderInfo, NetMessage const & message) const
 {
 	bool valid = true;
 
 	//Definition doesn't exist
-	if( !message.m_definition )
+	if (!message.m_definition)
 	{
 		valid = false;
 	}
-	else if( message.m_definition->IsReliable( ) )
+	else if (message.m_definition->IsReliable())
 	{
-		if( message.m_reliableID == NetMessage::INVALID_RELIABLE_ID )
+		if (message.m_reliableID == NetMessage::INVALID_RELIABLE_ID)
 		{
 			valid = false;
 		}
 	}
 
-	if( !message.m_definition->IsConnectionless( ) )
+	if (!message.m_definition->IsConnectionless())
 	{
 		//Needs connection and connection == nullptr
-		if( !senderInfo.connection )
+		if (!senderInfo.connection)
 		{
 			valid = false;
 		}
 		//Needs connection but connection index doesn't exist
-		else if( !IsValidConnectionIndex( message.m_senderIndex ) )
+		else if (!IsValidConnectionIndex(message.m_senderIndex))
 		{
 			valid = false;
 		}
 		//from index and written index doesn't match
-		else if( senderInfo.connection->GetIndex( ) != message.m_senderIndex )
+		else if (senderInfo.connection->GetIndex() != message.m_senderIndex)
 		{
 			valid = false;
 		}
 	}
-	
+
 	return valid;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool NetSession::IsValidConnectionIndex( byte_t index ) const
+bool NetSession::IsValidConnectionIndex(byte_t index) const
 {
-	if( index < MAX_CONNECTIONS )
+	if (index < MAX_CONNECTIONS)
 	{
 		return m_connections[index] != nullptr;
 	}
@@ -1198,17 +1198,17 @@ bool NetSession::IsValidConnectionIndex( byte_t index ) const
 
 
 //-------------------------------------------------------------------------------------------------
-bool NetSession::IsDuplicateGUID( std::string const & check ) const
+bool NetSession::IsDuplicateGUID(std::string const & check) const
 {
-	for( byte_t connIndex = 0; connIndex < MAX_CONNECTIONS; ++connIndex )
+	for (byte_t connIndex = 0; connIndex < MAX_CONNECTIONS; ++connIndex)
 	{
 		//Skip connections that don't exist
-		if( !m_connections[connIndex] )
+		if (!m_connections[connIndex])
 		{
 			continue;
 		}
 
-		if( strcmp( m_connections[connIndex]->GetGUID( ), check.c_str( ) ) == 0 )
+		if (strcmp(m_connections[connIndex]->GetGUID(), check.c_str()) == 0)
 		{
 			return true;
 		}
@@ -1218,28 +1218,28 @@ bool NetSession::IsDuplicateGUID( std::string const & check ) const
 
 
 //-------------------------------------------------------------------------------------------------
-bool NetSession::IsHost( ) const
+bool NetSession::IsHost() const
 {
 	return m_self == m_host && m_host != nullptr;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::SetDropRate( float dropRate )
+void NetSession::SetDropRate(float dropRate)
 {
 	m_channel.m_dropRate = dropRate;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetSession::SetLatency( Range<double> latency )
+void NetSession::SetLatency(Range<double> latency)
 {
 	m_channel.m_latency = latency;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool NetSession::ToggleTimeouts( )
+bool NetSession::ToggleTimeouts()
 {
 	m_connectionTimeouts = !m_connectionTimeouts;
 	return m_connectionTimeouts;

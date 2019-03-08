@@ -13,11 +13,11 @@ public:
 	int effectIndex;
 
 public:
-	PlaneData( );
+	PlaneData();
 };
 
 
 //-------------------------------------------------------------------------------------------------
-typedef Vector3f( PatchFunc )( void const*, float x, float y );
-Vector3f PlaneFunc( void const * userArgs, float x, float y );
-Vector3f WavesFunc( void const * userArgs, float x, float y );
+typedef Vector3f(PatchFunc)(void const*, float x, float y);
+Vector3f PlaneFunc(void const * userArgs, float x, float y);
+Vector3f WavesFunc(void const * userArgs, float x, float y);

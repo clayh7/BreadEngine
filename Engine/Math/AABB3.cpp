@@ -4,21 +4,21 @@
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC const AABB3 AABB3::ZERO_TO_ZERO( Vector3f::ZERO, Vector3f::ZERO );
-STATIC const AABB3 AABB3::ZERO_TO_ONE( Vector3f::ZERO, Vector3f::ONE );
+STATIC const AABB3 AABB3::ZERO_TO_ZERO(Vector3f::ZERO, Vector3f::ZERO);
+STATIC const AABB3 AABB3::ZERO_TO_ONE(Vector3f::ZERO, Vector3f::ONE);
 
 
 //-------------------------------------------------------------------------------------------------
-AABB3::AABB3( Vector3f const & setMins, Vector3f const & setMaxs )
-: mins( setMins )
-, maxs( setMaxs )
+AABB3::AABB3(Vector3f const & setMins, Vector3f const & setMaxs)
+	: mins(setMins)
+	, maxs(setMaxs)
 {
 	//Nothing
 }
 
 
 //-------------------------------------------------------------------------------------------------
-AABB3::~AABB3( )
+AABB3::~AABB3()
 {
 	//Nothing
 }

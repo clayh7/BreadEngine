@@ -15,24 +15,24 @@ class Kerning;
 //-------------------------------------------------------------------------------------------------
 class BitmapFont
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	//Static memory allocation
 	static std::map<size_t, BitmapFont*, std::less<size_t>, UntrackedAllocator<std::pair<size_t, BitmapFont*>>> s_fontRegistry;
 	static Kerning const DOES_NOT_EXIST;
 
-//-------------------------------------------------------------------------------------------------
-// Static Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	static BitmapFont * CreateOrGetFont( std::string const & bitmapFontName );
-	static void DestroyRegistry( );
+	static BitmapFont * CreateOrGetFont(std::string const & bitmapFontName);
+	static void DestroyRegistry();
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	int m_openglTextureID;
 	Vector2i m_texelSize;
@@ -43,22 +43,22 @@ private:
 	std::vector<Glyph*> m_glyphs;
 	std::map<unsigned short, Kerning*> m_kernings;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 private:
-	BitmapFont( std::string const & bitmapFontInfo, bool parseFNT = true );
-	~BitmapFont( );
-	int GetInt( std::string const & stringToParse, std::string const & delimeter );
-	std::string GetString( std::string const & stringToParse, std::string const & delimeter );
+	BitmapFont(std::string const & bitmapFontInfo, bool parseFNT = true);
+	~BitmapFont();
+	int GetInt(std::string const & stringToParse, std::string const & delimeter);
+	std::string GetString(std::string const & stringToParse, std::string const & delimeter);
 
 public:
-	void GenerateTexture( std::string const & bitmapFontPath );
+	void GenerateTexture(std::string const & bitmapFontPath);
 
-	const unsigned int GetTextureID( ) const;
-	int GetTextureWidth( ) const;
-	int GetTextureHeight( ) const;
-	Glyph const * GetGlyph( unsigned char glyphToDraw ) const;
-	Kerning const & GetKerning( Glyph const * previousGlyph, Glyph const * glyph ) const;
-	int GetFontSize( ) const;
+	const unsigned int GetTextureID() const;
+	int GetTextureWidth() const;
+	int GetTextureHeight() const;
+	Glyph const * GetGlyph(unsigned char glyphToDraw) const;
+	Kerning const & GetKerning(Glyph const * previousGlyph, Glyph const * glyph) const;
+	int GetFontSize() const;
 };

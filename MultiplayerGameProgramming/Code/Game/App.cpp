@@ -19,12 +19,12 @@ STATIC char const * App::APP_NAME = "ProtoGame"; //Name on top game window
 
 
 //-------------------------------------------------------------------------------------------------
-App::App( )
+App::App()
 {
 	//Startup text
-	g_ConsoleSystem->AddLog( "Engine: Bread v1.0.0", Console::INFO );
-	g_ConsoleSystem->AddLog( Stringf( "Project: %s", APP_NAME ), Console::INFO );
-	g_ConsoleSystem->AddLog( "Author: Clay Howell", Console::INFO );
+	g_ConsoleSystem->AddLog("Engine: Bread v1.0.0", Console::INFO);
+	g_ConsoleSystem->AddLog(Stringf("Project: %s", APP_NAME), Console::INFO);
+	g_ConsoleSystem->AddLog("Author: Clay Howell", Console::INFO);
 
 	//Create Game
 	g_GameSystem = new Game();
@@ -32,7 +32,7 @@ App::App( )
 
 
 //-------------------------------------------------------------------------------------------------
-App::~App( )
+App::~App()
 {
 	delete g_GameSystem;
 	g_GameSystem = nullptr;
@@ -40,22 +40,22 @@ App::~App( )
 
 
 //-------------------------------------------------------------------------------------------------
-void App::Update( )
+void App::Update()
 {
-	g_ProfilerSystem->StartSample( "UPDATE GAME" );
+	BProfiler::StartSample("UPDATE GAME");
 
-	UpdateInputs( );
-	g_GameSystem->Update( );
+	UpdateInputs();
+	g_GameSystem->Update();
 
-	g_ProfilerSystem->StopSample( );
+	BProfiler::StopSample();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void App::UpdateInputs( )
+void App::UpdateInputs()
 {
 	//Quitting App
-	if ( g_InputSystem->WasKeyJustPressed( Input::KEY_ESCAPE ) )
+	if (g_InputSystem->WasKeyJustPressed(Input::KEY_ESCAPE))
 	{
 		g_isQuitting = true;
 	}
@@ -63,15 +63,15 @@ void App::UpdateInputs( )
 
 
 //-------------------------------------------------------------------------------------------------
-void App::Render( ) const
+void App::Render() const
 {
-	g_ProfilerSystem->StartSample( "RENDER GAME" );
+	BProfiler::StartSample("RENDER GAME");
 
 	//Clear screen
-	g_RenderSystem->ClearScreen( Color::CLAY_GREEN );
+	g_RenderSystem->ClearScreen(Color::CLAY_GREEN);
 
 	//Draw Game
-	g_GameSystem->Render( );
+	g_GameSystem->Render();
 
-	g_ProfilerSystem->StopSample( );
+	BProfiler::StopSample();
 }

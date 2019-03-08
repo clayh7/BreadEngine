@@ -16,9 +16,9 @@ enum WarningLevel
 //-------------------------------------------------------------------------------------------------
 class LogMessage
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	char const * messageString;
 	size_t messageSize;
@@ -30,8 +30,8 @@ public:
 // Functions
 //-------------------------------------------------------------------------------------------------
 public:
-	LogMessage( char const * message, size_t const & size, size_t const & level );
-	~LogMessage( );
+	LogMessage(char const * message, size_t const & size, size_t const & level);
+	~LogMessage();
 };
 
 
@@ -47,9 +47,9 @@ extern Logger * LoggingSystem;
 //-------------------------------------------------------------------------------------------------
 class Logger
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	bool m_flushLogger;
 	std::string m_logFilename;
@@ -61,24 +61,24 @@ public:
 	size_t m_logLevelThreshold;
 	size_t m_debugLevelThreshold;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	Logger( );
-	~Logger( );
+	Logger();
+	~Logger();
 
 public:
-	void LogPrintfv( WarningLevel const & level, char const * format, va_list variableArgumentList );
-	void LogPrintf( char const * format, ... );
-	void LogPrintf( WarningLevel const & level, char const * format, ... );
-	void LogPrintfWithCallstack( WarningLevel const & level, char const * format, ... );
-	void LogFlush( );
-	bool IsFlushReady( ) const;
-	FILE * GetFileHandle( ) const;
-	void Begin( );
-	void OpenFile( );
-	void CloseFile( );
-	void SetLogLevel( int level );
-	void SetDebugLevel( int level );
+	void LogPrintfv(WarningLevel const & level, char const * format, va_list variableArgumentList);
+	void LogPrintf(char const * format, ...);
+	void LogPrintf(WarningLevel const & level, char const * format, ...);
+	void LogPrintfWithCallstack(WarningLevel const & level, char const * format, ...);
+	void LogFlush();
+	bool IsFlushReady() const;
+	FILE * GetFileHandle() const;
+	void Begin();
+	void OpenFile();
+	void CloseFile();
+	void SetLogLevel(int level);
+	void SetDebugLevel(int level);
 };

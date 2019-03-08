@@ -2,7 +2,7 @@
 
 
 //-------------------------------------------------------------------------------------------------
-NamedPropertyBase::~NamedPropertyBase( )
+NamedPropertyBase::~NamedPropertyBase()
 {
 	//Nothing
 }

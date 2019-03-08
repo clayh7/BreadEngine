@@ -20,16 +20,16 @@ enum eExtrapolationMode
 //-------------------------------------------------------------------------------------------------
 class Motion
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	// 1: Initial Version
 	static uint32_t const FILE_VERSION = 1;
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	std::string m_name;
 	eExtrapolationMode m_extrapolationMode;
@@ -42,25 +42,25 @@ private:
 
 	Skeleton * m_targetSkeleton;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	Motion( std::string const & motionName, float timeSpan, float framerate, Skeleton * skeleton );
-	~Motion( );
+	Motion(std::string const & motionName, float timeSpan, float framerate, Skeleton * skeleton);
+	~Motion();
 
-	void ApplyMotionToSkeleton( float time );
+	void ApplyMotionToSkeleton(float time);
 
-	int GetFrameCount( );
-	void GetFrameIndicesWithBlend( float inTime, uint32_t * out_frameIndex0, uint32_t * out_frameIndex1, float * out_blend );
-	Matrix4f GetJointKeyframe( uint32_t jointIndex, uint32_t keyframe );
-	uint32_t GetJointKeyframeIndex( uint32_t jointIndex, uint32_t keyframe );
+	int GetFrameCount();
+	void GetFrameIndicesWithBlend(float inTime, uint32_t * out_frameIndex0, uint32_t * out_frameIndex1, float * out_blend);
+	Matrix4f GetJointKeyframe(uint32_t jointIndex, uint32_t keyframe);
+	uint32_t GetJointKeyframeIndex(uint32_t jointIndex, uint32_t keyframe);
 
-	void SetTransform( uint32_t jointIndex, uint32_t frameIndex, Matrix4f const & boneTransform );
-	void SetExtrapolationMode( eExtrapolationMode const & mode );
-	void SetTargetSkeleton( Skeleton * targetSkeleton );
-	void ReadFromFile( std::string const & filename );
-	void WriteToFile( std::string const & filename );
-	void ReadFromStream( IBinaryReader & reader );
-	void WriteToStream( IBinaryWriter & writer ) const;
+	void SetTransform(uint32_t jointIndex, uint32_t frameIndex, Matrix4f const & boneTransform);
+	void SetExtrapolationMode(eExtrapolationMode const & mode);
+	void SetTargetSkeleton(Skeleton * targetSkeleton);
+	void ReadFromFile(std::string const & filename);
+	void WriteToFile(std::string const & filename);
+	void ReadFromStream(IBinaryReader & reader);
+	void WriteToStream(IBinaryWriter & writer) const;
 };

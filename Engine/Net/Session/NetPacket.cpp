@@ -5,39 +5,39 @@
 
 
 //-------------------------------------------------------------------------------------------------
-NetPacket::NetPacket( )
-	: BytePacker( m_data, MAX_SIZE, 0 )
-	, m_senderInfo( )
+NetPacket::NetPacket()
+	: BytePacker(m_data, MAX_SIZE, 0)
+	, m_senderInfo()
 {
 	//Nothing
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void NetPacket::WriteHeader( PacketHeader * header )
+void NetPacket::WriteHeader(PacketHeader * header)
 {
-	Write<uint8_t>( header->fromConnIndex );
-	Write<uint16_t>( header->packetAck );
-	Write<uint16_t>( header->mostRecentReceivedAck );
-	Write<uint16_t>( header->previousReceivedAcksBitfield );
+	Write<uint8_t>(header->fromConnIndex);
+	Write<uint16_t>(header->packetAck);
+	Write<uint16_t>(header->mostRecentReceivedAck);
+	Write<uint16_t>(header->previousReceivedAcksBitfield);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool NetPacket::CanWriteMessage( NetMessage const * message ) const
+bool NetPacket::CanWriteMessage(NetMessage const * message) const
 {
 	NetMessageDefinition const * definition = message->m_definition;
 
 	//Trying to send a message that we dont have a definition for
-	if( !definition )
+	if (!definition)
 	{
-		ERROR_AND_DIE( "Message Definition not registered" );
+		ERROR_AND_DIE("Message Definition not registered");
 	}
 
-	size_t totalSize = message->GetTotalWrittenMessageSize( );
+	size_t totalSize = message->GetTotalWrittenMessageSize();
 
 	//Make sure we can write this much
-	if( GetWritableBytesLeft( ) >= totalSize )
+	if (GetWritableBytesLeft() >= totalSize)
 	{
 		//There is room left
 		return true;
@@ -51,55 +51,55 @@ bool NetPacket::CanWriteMessage( NetMessage const * message ) const
 
 
 //-------------------------------------------------------------------------------------------------
-bool NetPacket::WriteMessage( NetMessage const * message )
+bool NetPacket::WriteMessage(NetMessage const * message)
 {
-	if( CanWriteMessage( message ) )
+	if (CanWriteMessage(message))
 	{
 		NetMessageDefinition const * definition = message->m_definition;
-		size_t messageSize = definition->headerSize + message->GetPayloadSize( );
+		size_t messageSize = definition->headerSize + message->GetPayloadSize();
 
 		//size of message
-		Write<uint16_t>( (uint16_t) messageSize );
+		Write<uint16_t>((uint16_t)messageSize);
 
 		//header : type
-		Write<uint8_t>( (uint8_t) definition->type );
+		Write<uint8_t>((uint8_t)definition->type);
 
 		//header : sender index
-		if( !definition->IsConnectionless( ) )
+		if (!definition->IsConnectionless())
 		{
-			Write<uint8_t>( (uint8_t) message->m_senderIndex );
+			Write<uint8_t>((uint8_t)message->m_senderIndex);
 		}
 
 		//header : reliable ID
-		if( definition->IsReliable( ) )
+		if (definition->IsReliable())
 		{
-			Write<uint16_t>( (uint16_t) message->m_reliableID );
+			Write<uint16_t>((uint16_t)message->m_reliableID);
 		}
 
 		//header : sequence ID
-		if( definition->IsReliable( ) && definition->IsSequence( ) )
+		if (definition->IsReliable() && definition->IsSequence())
 		{
-			Write<uint16_t>( (uint16_t) message->m_sequenceID );
+			Write<uint16_t>((uint16_t)message->m_sequenceID);
 		}
 
 		//payload
-		WriteForward( message->GetBuffer( ), message->GetPayloadSize( ) );
+		WriteForward(message->GetBuffer(), message->GetPayloadSize());
 
-		if( definition->IsReliable( ) && definition->IsSequence( ) )
+		if (definition->IsReliable() && definition->IsSequence())
 		{
-			NetSession::m_NetworkTrafficActivity.Printf( "\tMessage (type=%3u) (reliableID=%u) (sequenceID=%u) %4u Byte(s) ", definition->type, message->m_reliableID, message->m_sequenceID, message->GetTotalWrittenMessageSize( ) );
+			NetSession::m_NetworkTrafficActivity.Printf("\tMessage (type=%3u) (reliableID=%u) (sequenceID=%u) %4u Byte(s) ", definition->type, message->m_reliableID, message->m_sequenceID, message->GetTotalWrittenMessageSize());
 		}
-		else if( definition->IsSequence( ) )
+		else if (definition->IsSequence())
 		{
-			NetSession::m_NetworkTrafficActivity.Printf( "\tMessage (type=%3u) (sequenceID=%u) %4u Byte(s) ", definition->type, message->m_sequenceID, message->GetTotalWrittenMessageSize( ) );
+			NetSession::m_NetworkTrafficActivity.Printf("\tMessage (type=%3u) (sequenceID=%u) %4u Byte(s) ", definition->type, message->m_sequenceID, message->GetTotalWrittenMessageSize());
 		}
-		else if( definition->IsReliable( ) )
+		else if (definition->IsReliable())
 		{
-			NetSession::m_NetworkTrafficActivity.Printf( "\tMessage (type=%3u) (reliableID=%u) %4u Byte(s) ", definition->type, message->m_reliableID, message->GetTotalWrittenMessageSize( ) );
+			NetSession::m_NetworkTrafficActivity.Printf("\tMessage (type=%3u) (reliableID=%u) %4u Byte(s) ", definition->type, message->m_reliableID, message->GetTotalWrittenMessageSize());
 		}
 		else
 		{
-			NetSession::m_NetworkTrafficActivity.Printf( "\tMessage (type=%3u) %4u Byte(s) ", definition->type, message->GetTotalWrittenMessageSize( ) );
+			NetSession::m_NetworkTrafficActivity.Printf("\tMessage (type=%3u) %4u Byte(s) ", definition->type, message->GetTotalWrittenMessageSize());
 		}
 		return true;
 	}
@@ -108,29 +108,29 @@ bool NetPacket::WriteMessage( NetMessage const * message )
 
 
 //-------------------------------------------------------------------------------------------------
-void NetPacket::ReadHeader( PacketHeader * header ) const
+void NetPacket::ReadHeader(PacketHeader * header) const
 {
-	Read<uint8_t>( &( header->fromConnIndex ) );
-	Read<uint16_t>( &( header->packetAck ) );
-	Read<uint16_t>( &( header->mostRecentReceivedAck ) );
-	Read<uint16_t>( &( header->previousReceivedAcksBitfield ) );
-	Read<uint8_t>( &( header->messageCount ) );
+	Read<uint8_t>(&(header->fromConnIndex));
+	Read<uint16_t>(&(header->packetAck));
+	Read<uint16_t>(&(header->mostRecentReceivedAck));
+	Read<uint16_t>(&(header->previousReceivedAcksBitfield));
+	Read<uint8_t>(&(header->messageCount));
 }
 
 
 //-------------------------------------------------------------------------------------------------
-size_t NetPacket::GetSize( ) const
+size_t NetPacket::GetSize() const
 {
 	return m_bufferSize;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-NetPacket * NetPacket::Copy( ) const
+NetPacket * NetPacket::Copy() const
 {
-	NetPacket * copy = new NetPacket( );
+	NetPacket * copy = new NetPacket();
 	copy->m_senderInfo = m_senderInfo;
-	copy->WriteForward( m_data, m_bufferSize );
-	copy->Rewind( );
+	copy->WriteForward(m_data, m_bufferSize);
+	copy->Rewind();
 	return copy;
 }

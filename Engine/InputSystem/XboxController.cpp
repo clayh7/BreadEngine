@@ -18,16 +18,16 @@ const float XboxController::LIGHT_VIBRATE_AMOUNT = 30000.f;
 
 
 //-------------------------------------------------------------------------------------------------
-XboxController::XboxController( )
-: m_currentFrameNumber( 0 )
-, m_isConnected( false )
-, m_leftTrigger( 0.f )
-, m_rightTrigger( 0.f )
-, m_leftStick( 0.f, 0.f )
-, m_rightStick( 0.f, 0.f )
+XboxController::XboxController()
+	: m_currentFrameNumber(0)
+	, m_isConnected(false)
+	, m_leftTrigger(0.f)
+	, m_rightTrigger(0.f)
+	, m_leftStick(0.f, 0.f)
+	, m_rightStick(0.f, 0.f)
 {
 	//Clear all buttons
-	for ( int i = 0; i < XboxButton_Count; i++ )
+	for (int i = 0; i < XboxButton_Count; i++)
 	{
 		m_buttons[i].m_frameNumberLastChanged = 0;
 		m_buttons[i].m_isDown = false;
@@ -36,20 +36,20 @@ XboxController::XboxController( )
 
 
 //-------------------------------------------------------------------------------------------------
-XboxController::~XboxController( )
+XboxController::~XboxController()
 {
 	//Nothing
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void XboxController::Update( int controllerIndex, int currentFrame )
+void XboxController::Update(int controllerIndex, int currentFrame)
 {
 	m_currentFrameNumber = currentFrame;
 	XINPUT_STATE xboxControllerState;
-	memset( &xboxControllerState, 0, sizeof(xboxControllerState) );
+	memset(&xboxControllerState, 0, sizeof(xboxControllerState));
 
-	DWORD errorStatus = XInputGetState( controllerIndex, &xboxControllerState );
+	DWORD errorStatus = XInputGetState(controllerIndex, &xboxControllerState);
 	if (errorStatus == ERROR_SUCCESS)
 	{
 		//If we even get in here then that means this controller is connected
@@ -57,18 +57,18 @@ void XboxController::Update( int controllerIndex, int currentFrame )
 
 		//decode button input value and store which are pressed and when
 		int buttonInputHex = xboxControllerState.Gamepad.wButtons;
-		SetButtonStatus( buttonInputHex );
+		SetButtonStatus(buttonInputHex);
 
 		//store float 0 - 1 inclusive for triggers
-		m_leftTrigger = RangeMapNormalize( 0, 255, xboxControllerState.Gamepad.bLeftTrigger );
-		m_rightTrigger = RangeMapNormalize( 0, 255, xboxControllerState.Gamepad.bRightTrigger );
+		m_leftTrigger = RangeMapNormalize(0, 255, xboxControllerState.Gamepad.bLeftTrigger);
+		m_rightTrigger = RangeMapNormalize(0, 255, xboxControllerState.Gamepad.bRightTrigger);
 
 		//Convert raw stick input into float 0 - 1 (inclusive)
 		float leftStickXRaw = static_cast<float>(xboxControllerState.Gamepad.sThumbLX);
 		float leftStickYRaw = static_cast<float>(xboxControllerState.Gamepad.sThumbLY);
 		float rightStickXRaw = static_cast<float>(xboxControllerState.Gamepad.sThumbRX);
 		float rightStickYRaw = static_cast<float>(xboxControllerState.Gamepad.sThumbRY);
-		SetStickStatus( leftStickXRaw, leftStickYRaw, rightStickXRaw, rightStickYRaw );
+		SetStickStatus(leftStickXRaw, leftStickYRaw, rightStickXRaw, rightStickYRaw);
 	}
 	else
 	{
@@ -78,27 +78,27 @@ void XboxController::Update( int controllerIndex, int currentFrame )
 
 
 //-------------------------------------------------------------------------------------------------
-void XboxController::SetButtonStatus( int buttonInput )
+void XboxController::SetButtonStatus(int buttonInput)
 {
-	ParseInputSetTo( XboxHexCode_Up, XboxButton_Up, buttonInput );
-	ParseInputSetTo( XboxHexCode_Down, XboxButton_Down, buttonInput );
-	ParseInputSetTo( XboxHexCode_Left, XboxButton_Left, buttonInput );
-	ParseInputSetTo( XboxHexCode_Right, XboxButton_Right, buttonInput );
-	ParseInputSetTo( XboxHexCode_Start, XboxButton_Start, buttonInput );
-	ParseInputSetTo( XboxHexCode_Back, XboxButton_Back, buttonInput );
-	ParseInputSetTo( XboxHexCode_LeftStickButton, XboxButton_LeftStickButton, buttonInput );
-	ParseInputSetTo( XboxHexCode_RightStickButton, XboxButton_RightStickButton, buttonInput );
-	ParseInputSetTo( XboxHexCode_LeftBumper, XboxButton_LeftBumper, buttonInput );
-	ParseInputSetTo( XboxHexCode_RightBumper, XboxButton_RightBumper, buttonInput );
-	ParseInputSetTo( XboxHexCode_A, XboxButton_A, buttonInput );
-	ParseInputSetTo( XboxHexCode_B, XboxButton_B, buttonInput );
-	ParseInputSetTo( XboxHexCode_X, XboxButton_X, buttonInput );
-	ParseInputSetTo( XboxHexCode_Y, XboxButton_Y, buttonInput );
+	ParseInputSetTo(XboxHexCode_Up, XboxButton_Up, buttonInput);
+	ParseInputSetTo(XboxHexCode_Down, XboxButton_Down, buttonInput);
+	ParseInputSetTo(XboxHexCode_Left, XboxButton_Left, buttonInput);
+	ParseInputSetTo(XboxHexCode_Right, XboxButton_Right, buttonInput);
+	ParseInputSetTo(XboxHexCode_Start, XboxButton_Start, buttonInput);
+	ParseInputSetTo(XboxHexCode_Back, XboxButton_Back, buttonInput);
+	ParseInputSetTo(XboxHexCode_LeftStickButton, XboxButton_LeftStickButton, buttonInput);
+	ParseInputSetTo(XboxHexCode_RightStickButton, XboxButton_RightStickButton, buttonInput);
+	ParseInputSetTo(XboxHexCode_LeftBumper, XboxButton_LeftBumper, buttonInput);
+	ParseInputSetTo(XboxHexCode_RightBumper, XboxButton_RightBumper, buttonInput);
+	ParseInputSetTo(XboxHexCode_A, XboxButton_A, buttonInput);
+	ParseInputSetTo(XboxHexCode_B, XboxButton_B, buttonInput);
+	ParseInputSetTo(XboxHexCode_X, XboxButton_X, buttonInput);
+	ParseInputSetTo(XboxHexCode_Y, XboxButton_Y, buttonInput);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void XboxController::ParseInputSetTo( XboxHexCode const & hexToCheck, XboxButton const & setButton, int checkButton )
+void XboxController::ParseInputSetTo(XboxHexCode const & hexToCheck, XboxButton const & setButton, int checkButton)
 {
 	if ((checkButton & hexToCheck) == hexToCheck)
 	{
@@ -121,11 +121,11 @@ void XboxController::ParseInputSetTo( XboxHexCode const & hexToCheck, XboxButton
 
 //-------------------------------------------------------------------------------------------------
 // #TODO: Change everything in class to Degrees, and remove Math.h
-void XboxController::SetStickStatus( const float& leftStickXRaw, const float& leftStickYRaw, const float& rightStickXRaw, const float& rightStickYRaw )
+void XboxController::SetStickStatus(const float& leftStickXRaw, const float& leftStickYRaw, const float& rightStickXRaw, const float& rightStickYRaw)
 {
 	//Left Stick
-	float thetaRadians_leftStick = atan2( leftStickYRaw, leftStickXRaw );
-	float radius_leftStick = sqrt( leftStickYRaw * leftStickYRaw + leftStickXRaw * leftStickXRaw );
+	float thetaRadians_leftStick = atan2(leftStickYRaw, leftStickXRaw);
+	float radius_leftStick = sqrt(leftStickYRaw * leftStickYRaw + leftStickXRaw * leftStickXRaw);
 	float normalizedRadius = 0.f;
 
 	if (radius_leftStick < STICK_DEADZONE_MIN)
@@ -133,25 +133,25 @@ void XboxController::SetStickStatus( const float& leftStickXRaw, const float& le
 	else if (radius_leftStick > STICK_DEADZONE_MAX)
 		normalizedRadius = 1.f;
 	else
-		normalizedRadius = RangeMapNormalize( STICK_DEADZONE_MIN, STICK_DEADZONE_MAX, radius_leftStick );
-	float leftStickX = normalizedRadius * cos( thetaRadians_leftStick );
-	float leftStickY = normalizedRadius * sin( thetaRadians_leftStick );
-	m_leftStick = Vector2f( leftStickX, leftStickY );
+		normalizedRadius = RangeMapNormalize(STICK_DEADZONE_MIN, STICK_DEADZONE_MAX, radius_leftStick);
+	float leftStickX = normalizedRadius * cos(thetaRadians_leftStick);
+	float leftStickY = normalizedRadius * sin(thetaRadians_leftStick);
+	m_leftStick = Vector2f(leftStickX, leftStickY);
 	m_leftStickRadians = thetaRadians_leftStick;
 
 	//Right Stick
-	float thetaRadians_rightStick = atan2( rightStickYRaw, rightStickXRaw );
-	float radius_rightStick = sqrt( rightStickYRaw * rightStickYRaw + rightStickXRaw * rightStickXRaw );
+	float thetaRadians_rightStick = atan2(rightStickYRaw, rightStickXRaw);
+	float radius_rightStick = sqrt(rightStickYRaw * rightStickYRaw + rightStickXRaw * rightStickXRaw);
 
 	if (radius_rightStick < STICK_DEADZONE_MIN)
 		normalizedRadius = 0.f;
 	else if (radius_rightStick > STICK_DEADZONE_MAX)
 		normalizedRadius = 1.f;
 	else
-		normalizedRadius = RangeMapNormalize( STICK_DEADZONE_MIN, STICK_DEADZONE_MAX, radius_rightStick );
-	float rightStickX = normalizedRadius * cos( thetaRadians_rightStick );
-	float rightStickY = normalizedRadius * sin( thetaRadians_rightStick );
-	m_rightStick = Vector2f( rightStickX, rightStickY );
+		normalizedRadius = RangeMapNormalize(STICK_DEADZONE_MIN, STICK_DEADZONE_MAX, radius_rightStick);
+	float rightStickX = normalizedRadius * cos(thetaRadians_rightStick);
+	float rightStickY = normalizedRadius * sin(thetaRadians_rightStick);
+	m_rightStick = Vector2f(rightStickX, rightStickY);
 	m_rightStickRadians = thetaRadians_rightStick;
 }
 
@@ -164,7 +164,7 @@ bool XboxController::IsConnected() const
 
 
 //-------------------------------------------------------------------------------------------------
-bool XboxController::WasButtonJustPressed( XboxButton const & checkButton ) const
+bool XboxController::WasButtonJustPressed(XboxButton const & checkButton) const
 {
 	const ButtonState& bs = m_buttons[checkButton];
 	return (bs.m_isDown && (bs.m_frameNumberLastChanged == m_currentFrameNumber));
@@ -172,14 +172,14 @@ bool XboxController::WasButtonJustPressed( XboxButton const & checkButton ) cons
 
 
 //-------------------------------------------------------------------------------------------------
-bool XboxController::IsButtonDown( XboxButton const & checkButton ) const
+bool XboxController::IsButtonDown(XboxButton const & checkButton) const
 {
 	return m_buttons[checkButton].m_isDown;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool XboxController::WasButtonJustReleased( XboxButton const & checkButton ) const
+bool XboxController::WasButtonJustReleased(XboxButton const & checkButton) const
 {
 	const ButtonState& bs = m_buttons[checkButton];
 	return (!bs.m_isDown && (bs.m_frameNumberLastChanged == m_currentFrameNumber));
@@ -187,11 +187,11 @@ bool XboxController::WasButtonJustReleased( XboxButton const & checkButton ) con
 
 
 //-------------------------------------------------------------------------------------------------
-float XboxController::GetTrigger( XboxTrigger const & checkTrigger ) const
+float XboxController::GetTrigger(XboxTrigger const & checkTrigger) const
 {
 	if (checkTrigger == XboxTrigger_Left)
 		return m_leftTrigger;
-	else if ( checkTrigger == XboxTrigger_Right )
+	else if (checkTrigger == XboxTrigger_Right)
 		return m_rightTrigger;
 	else
 		return 0.f;
@@ -199,18 +199,18 @@ float XboxController::GetTrigger( XboxTrigger const & checkTrigger ) const
 
 
 //-------------------------------------------------------------------------------------------------
-bool XboxController::IsStickMoving( XboxStick const & checkStick ) const
+bool XboxController::IsStickMoving(XboxStick const & checkStick) const
 {
-	if ( checkStick == XboxStick_Left )
+	if (checkStick == XboxStick_Left)
 	{
-		if ( m_leftStick.x != 0.f && m_leftStick.y != 0.f )
+		if (m_leftStick.x != 0.f && m_leftStick.y != 0.f)
 			return true;
 		else
 			return false;
 	}
 	else
 	{
-		if ( m_rightStick.x != 0.f && m_rightStick.y != 0.f )
+		if (m_rightStick.x != 0.f && m_rightStick.y != 0.f)
 			return true;
 		else
 			return false;
@@ -219,9 +219,9 @@ bool XboxController::IsStickMoving( XboxStick const & checkStick ) const
 
 
 //-------------------------------------------------------------------------------------------------
-Vector2f XboxController::GetStickPosition( XboxStick const & checkStick ) const
+Vector2f XboxController::GetStickPosition(XboxStick const & checkStick) const
 {
-	if ( checkStick == XboxStick_Left )
+	if (checkStick == XboxStick_Left)
 		return m_leftStick;
 	else
 		return m_rightStick;
@@ -229,9 +229,9 @@ Vector2f XboxController::GetStickPosition( XboxStick const & checkStick ) const
 
 
 //-------------------------------------------------------------------------------------------------
-float XboxController::GetStickDirectionRadians( XboxStick const & checkStick ) const
+float XboxController::GetStickDirectionRadians(XboxStick const & checkStick) const
 {
-	if ( checkStick == XboxStick_Left )
+	if (checkStick == XboxStick_Left)
 		return m_leftStickRadians;
 	else
 		return m_rightStickRadians;
@@ -239,7 +239,7 @@ float XboxController::GetStickDirectionRadians( XboxStick const & checkStick ) c
 
 
 //-------------------------------------------------------------------------------------------------
-void XboxController::Vibrate( int playerNum, int leftVal, int rightVal )
+void XboxController::Vibrate(int playerNum, int leftVal, int rightVal)
 {
 	// Create a Vibraton State
 	XINPUT_VIBRATION Vibration;
@@ -249,5 +249,5 @@ void XboxController::Vibrate( int playerNum, int leftVal, int rightVal )
 	Vibration.wRightMotorSpeed = (WORD)rightVal;
 
 	// Vibrate the controller
-	XInputSetState( (DWORD)playerNum, &Vibration );
+	XInputSetState((DWORD)playerNum, &Vibration);
 }

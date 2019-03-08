@@ -2,22 +2,22 @@
 
 
 //-------------------------------------------------------------------------------------------------
-Thread::Thread( EntryCallback * functionPtr )
-	: m_handle( functionPtr, nullptr )
+Thread::Thread(EntryCallback * functionPtr)
+	: m_handle(functionPtr, nullptr)
 {
 
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Thread::Join( )
+void Thread::Join()
 {
-	m_handle.join( );
+	m_handle.join();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Thread::Detach( )
+void Thread::Detach()
 {
-	m_handle.detach( );
+	m_handle.detach();
 }

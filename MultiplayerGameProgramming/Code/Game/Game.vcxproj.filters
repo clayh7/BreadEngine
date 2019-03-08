@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Singletons">
-      <UniqueIdentifier>{f5581a2d-145a-4ccd-b5fb-9854ae8b1e78}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders">
       <UniqueIdentifier>{bdf8ae62-5dca-498c-a10b-c4d1a98161bc}</UniqueIdentifier>
     </Filter>
@@ -16,24 +13,27 @@
     <Filter Include="Data\Sprites">
       <UniqueIdentifier>{17dcb38e-f77a-4ff4-bdce-2c1e8b4ea010}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{f5581a2d-145a-4ccd-b5fb-9854ae8b1e78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main_Win32.cpp">
-      <Filter>Singletons</Filter>
+      <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="App.cpp">
-      <Filter>Singletons</Filter>
+      <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
-      <Filter>Singletons</Filter>
+      <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
-      <Filter>Singletons</Filter>
+      <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="Game.hpp">
-      <Filter>Singletons</Filter>
+      <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

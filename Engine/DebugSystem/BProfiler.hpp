@@ -16,29 +16,26 @@ class Command;
 
 
 //-------------------------------------------------------------------------------------------------
-void PingProfilerCommand( Command const & );
-void EnableProfilerCommand( Command const & );
-void DisableProfilerCommand( Command const & );
-
-
-//-------------------------------------------------------------------------------------------------
-extern BProfiler * g_ProfilerSystem;
+void PingProfilerCommand(Command const &);
+void EnableProfilerCommand(Command const &);
+void DisableProfilerCommand(Command const &);
 
 
 //-------------------------------------------------------------------------------------------------
 class BProfiler
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 public:
+	static BProfiler * s_ProfilerSystem;
 	static char const * ROOT_SAMPLE;
 	static int const POOL_SIZE = 100000;
 	static int const LINE_COUNT = 40;
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	bool m_toBeEnabled;
 	bool m_toBePinged;
@@ -53,27 +50,36 @@ private:
 	ObjectPool<BProfilerSample> m_samplePool;
 	std::vector<TextRenderer*> m_profilerLines;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 public:
-	BProfiler( );
-	~BProfiler( );
+	static void Initialize();
+	static void Destroy();
+	static void Update();
+	static void Render();
+	static void StartSample(char const * sampleTag);
+	static void StopSample();
+	static void SetEnabled(bool isEnabled);
+	static void SetPing();
+	static void ToggleLayout();
+	static void SetProfilerVisible(bool show);
+	static void IncrementNews();
+	static void IncrementDeletes();
+	static void Delete(BProfilerSample * sample);
+	static bool IsEnabled();
 
-	void Render( ) const;
-	void GenerateListReport( BProfilerSample * sample, int * index, int depth, std::multimap<int, BProfilerReport> * report ) const;
-	void GenerateFlatReport( BProfilerSample * sample, std::multimap<int, BProfilerReport> * report ) const;
-	void RenderReport( std::multimap<int, BProfilerReport> * report ) const;
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
+private:
+	BProfiler();
+	~BProfiler();
 
-	void SetEnabled( bool isEnabled );
-	void SetPing( );
-	void ToggleLayout( );
-	void StartSample( char const * sampleTag );
-	void StopSample( );
-	void Delete( BProfilerSample * sample );
-	void UpdateInput( );
-	void FrameMark( );
-	void IncrementNews( );
-	void IncrementDeletes( );
-	void SetProfilerVisible( bool show );
+	void GenerateListReport(BProfilerSample const & sample, int & index, int depth, std::multimap<int, BProfilerReport> & report) const;
+	void GenerateFlatReport(BProfilerSample const & sample, std::multimap<int, BProfilerReport> & report) const;
+	void RenderReport(std::multimap<int, BProfilerReport> const & report) const;
+
+	void UpdateInput();
+	void FrameMark();
 };

@@ -19,9 +19,9 @@ class Light;
 //-------------------------------------------------------------------------------------------------
 class MeshRenderer
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 protected:
 	Transform m_transform;
 	RenderState m_renderState;
@@ -36,60 +36,60 @@ protected:
 //-------------------------------------------------------------------------------------------------
 public:
 	//#TODO: Be careful with this implementation of MeshRenderer, catch the cases where VAO = NULL
-	MeshRenderer( Transform const &transform = Transform( ), RenderState const &renderState = RenderState::BASIC_3D );
-	
-	MeshRenderer( eMeshShape const &meshShape, Transform const &transform = Transform( ), RenderState const &renderState = RenderState::BASIC_3D );
-	MeshRenderer( Mesh const *mesh, Transform const &transform = Transform( ), RenderState const &renderState = RenderState::BASIC_3D );
-	MeshRenderer( Mesh const *mesh, Material const *material, Transform const &transform = Transform(), RenderState const &renderState = RenderState::BASIC_3D );
-	~MeshRenderer( );
+	MeshRenderer(Transform const &transform = Transform(), RenderState const &renderState = RenderState::BASIC_3D);
 
-	void Update( bool onScreen = false );
-	void Render( ) const;
+	MeshRenderer(eMeshShape const &meshShape, Transform const &transform = Transform(), RenderState const &renderState = RenderState::BASIC_3D);
+	MeshRenderer(Mesh const *mesh, Transform const &transform = Transform(), RenderState const &renderState = RenderState::BASIC_3D);
+	MeshRenderer(Mesh const *mesh, Material const *material, Transform const &transform = Transform(), RenderState const &renderState = RenderState::BASIC_3D);
+	~MeshRenderer();
 
-	void CreateVAO( );
+	void Update(bool onScreen = false);
+	void Render() const;
 
-	RenderState GetRenderState( ) const;
-	Matrix4f GetModelMatrix( ) const;
-	Matrix4f GetViewMatrix( ) const;
-	Matrix4f GetProjectionMatrix( ) const;
-	unsigned int GetGPUProgramID( ) const;
-	unsigned int GetSamplerID( ) const;
-	unsigned int GetVAOID( ) const;
-	unsigned int GetIBOID( ) const;
-	std::vector<DrawInstruction> const & GetDrawInstructions( ) const;
-	std::map<std::string, Uniform*> const & GetUniformList( ) const;
-	std::map<std::string, Uniform*> const & GetMaterialUniformList( ) const;
-	std::map<size_t, Attribute*> const & GetMaterialAttributeList( ) const;
-	Vector3f GetPosition( );
+	void CreateVAO();
 
-	void SetLineWidth( float lineWidth );
-	void SetPosition( Vector3f const & pos );
-	void SetPosition( float xPos, float yPos, float zPos );
-	void SetTransform( Transform const &transform );
-	void SetMesh( Mesh const * mesh );
-	void SetMaterial( Material const * setMaterial );
-	void SetMeshAndMaterial( Mesh const * mesh, Material const * material );
-	void RebindMeshAndMaterialToVAO( );//#TODO: Maybe make a force rebind
-	void UpdateUniformBindpoints( );
+	RenderState GetRenderState() const;
+	Matrix4f GetModelMatrix() const;
+	Matrix4f GetViewMatrix() const;
+	Matrix4f GetProjectionMatrix() const;
+	unsigned int GetGPUProgramID() const;
+	unsigned int GetSamplerID() const;
+	unsigned int GetVAOID() const;
+	unsigned int GetIBOID() const;
+	std::vector<DrawInstruction> const & GetDrawInstructions() const;
+	std::map<std::string, Uniform*> const & GetUniformList() const;
+	std::map<std::string, Uniform*> const & GetMaterialUniformList() const;
+	std::map<size_t, Attribute*> const & GetMaterialAttributeList() const;
+	Vector3f GetPosition();
 
-	void SetUniform( std::string const & uniformName, uint32_t uniformValue );
-	void SetUniform( std::string const & uniformName, int uniformValue );
-	void SetUniform( std::string const & uniformName, float uniformValue );
-	void SetUniform( std::string const & uniformName, Vector2f const & uniformValue );
-	void SetUniform( std::string const & uniformName, Vector3f const & uniformValue );
-	void SetUniform( std::string const & uniformName, Vector4f const & uniformValue );
-	void SetUniform( std::string const & uniformName, Vector4i const & uniformValue );
-	void SetUniform( std::string const & uniformName, Matrix4f const & uniformValue );
-	void SetUniform( std::string const & uniformName, Color const & uniformValue );
-	void SetUniform( std::string const & uniformName, std::string const & uniformValue );
-	void SetUniform( std::string const & uniformName, Texture const * uniformValue );
-										 
-	void SetUniform( std::string const & uniformName, int * uniformValue );
-	void SetUniform( std::string const & uniformName, float * uniformValue );
-	void SetUniform( std::string const & uniformName, Vector2f * uniformValue );
-	void SetUniform( std::string const & uniformName, Vector3f * uniformValue );
-	void SetUniform( std::string const & uniformName, Vector4f * uniformValue );
-	void SetUniform( std::string const & uniformName, Matrix4f * uniformValue );
+	void SetLineWidth(float lineWidth);
+	void SetPosition(Vector3f const & pos);
+	void SetPosition(float xPos, float yPos, float zPos);
+	void SetTransform(Transform const &transform);
+	void SetMesh(Mesh const * mesh);
+	void SetMaterial(Material const * setMaterial);
+	void SetMeshAndMaterial(Mesh const * mesh, Material const * material);
+	void RebindMeshAndMaterialToVAO();//#TODO: Maybe make a force rebind
+	void UpdateUniformBindpoints();
 
-	void SetUniform( std::vector<Light> const & uniformLights, int lightCount );
+	void SetUniform(std::string const & uniformName, uint32_t uniformValue);
+	void SetUniform(std::string const & uniformName, int uniformValue);
+	void SetUniform(std::string const & uniformName, float uniformValue);
+	void SetUniform(std::string const & uniformName, Vector2f const & uniformValue);
+	void SetUniform(std::string const & uniformName, Vector3f const & uniformValue);
+	void SetUniform(std::string const & uniformName, Vector4f const & uniformValue);
+	void SetUniform(std::string const & uniformName, Vector4i const & uniformValue);
+	void SetUniform(std::string const & uniformName, Matrix4f const & uniformValue);
+	void SetUniform(std::string const & uniformName, Color const & uniformValue);
+	void SetUniform(std::string const & uniformName, std::string const & uniformValue);
+	void SetUniform(std::string const & uniformName, Texture const * uniformValue);
+
+	void SetUniform(std::string const & uniformName, int * uniformValue);
+	void SetUniform(std::string const & uniformName, float * uniformValue);
+	void SetUniform(std::string const & uniformName, Vector2f * uniformValue);
+	void SetUniform(std::string const & uniformName, Vector3f * uniformValue);
+	void SetUniform(std::string const & uniformName, Vector4f * uniformValue);
+	void SetUniform(std::string const & uniformName, Matrix4f * uniformValue);
+
+	void SetUniform(std::vector<Light> const & uniformLights, int lightCount);
 };

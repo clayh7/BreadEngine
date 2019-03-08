@@ -9,7 +9,7 @@
 
 
 //-------------------------------------------------------------------------------------------------
-void JobSystemThreadEntry( void * );
+void JobSystemThreadEntry(void *);
 
 
 //-------------------------------------------------------------------------------------------------
@@ -19,11 +19,11 @@ private:
 	std::vector<eJobCategory> m_categories;
 
 public:
-	JobConsumer( );
+	JobConsumer();
 
-	void AddCategory( eJobCategory const & category );
-	void ConsumeAll( );
-	bool Consume( );
+	void AddCategory(eJobCategory const & category);
+	void ConsumeAll();
+	bool Consume();
 };
 
 
@@ -38,15 +38,15 @@ extern JobSystem * g_JobSystem;
 //-------------------------------------------------------------------------------------------------
 class JobSystem
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	static const int MAX_JOBS = 1024;
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	std::vector<BQueue<Job*>*> m_jobQueue;
 	std::vector<Thread> m_threads;
@@ -54,21 +54,21 @@ private:
 	bool m_isRunning;
 	CriticalSection m_criticalSection;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	JobSystem( );
-	~JobSystem( );
+	JobSystem();
+	~JobSystem();
 
-	void Startup( int numOfThreads );
-	Job * JobCreate( eJobCategory const & category, JobCallback * jobFunc );
-	void JobDispatch( Job * job );
-	void JobDetach( Job * job );
-	void JobJoin( Job * job );
-	void Finish( Job * job );
+	void Startup(int numOfThreads);
+	Job * JobCreate(eJobCategory const & category, JobCallback * jobFunc);
+	void JobDispatch(Job * job);
+	void JobDetach(Job * job);
+	void JobJoin(Job * job);
+	void Finish(Job * job);
 
-	size_t GetCoreCount( ) const;
-	BQueue<Job*> * GetJobQueue( eJobCategory const & category ) const;
-	bool IsRunning( ) const;
+	size_t GetCoreCount() const;
+	BQueue<Job*> * GetJobQueue(eJobCategory const & category) const;
+	bool IsRunning() const;
 };

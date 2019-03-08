@@ -38,36 +38,36 @@ enum eRCSMessageType : char
 //-------------------------------------------------------------------------------------------------
 class NetworkUtils
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	static int const WOULD_BLOCK_ERROR;
 
-//-------------------------------------------------------------------------------------------------
-// Static Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	static SocketAddressPtr CreateIPv4FromString( std::string const & addressString );
-	static SocketAddressPtr CreateIPv4FromString( std::string const & host, uint32_t port );
-	static SocketAddressPtr CreateIPv4FromString( std::string const & host, std::string const & service );
-	static TCPSocketPtr CreateTCPSocket( eSocketAddressFamily family );
-	static UDPSocketPtr CreateUDPSocket( eSocketAddressFamily family );
+	static SocketAddressPtr CreateIPv4FromString(std::string const & addressString);
+	static SocketAddressPtr CreateIPv4FromString(std::string const & host, uint32_t port);
+	static SocketAddressPtr CreateIPv4FromString(std::string const & host, std::string const & service);
+	static TCPSocketPtr CreateTCPSocket(eSocketAddressFamily family);
+	static UDPSocketPtr CreateUDPSocket(eSocketAddressFamily family);
 
-	static char const * GetLocalHostName( );
+	static char const * GetLocalHostName();
 
-	static int ReportError( bool printLog = true );
+	static int ReportError(bool printLog = true);
 };
 
 
 //-------------------------------------------------------------------------------------------------
 // Old Stuff
 //-------------------------------------------------------------------------------------------------
-addrinfo * AllocAddressesForHost( char const * host, char const * service, int family, int socktype, int flags = 0 );								
-void * GetInAddr( sockaddr const * addr );
-bool SockAddrFromString( sockaddr_in * out_addr, char const * address );
-void FreeAddresses( addrinfo * addresses );
-bool SocketErrorShouldDisconnect( int error );
-bool IsEqual( sockaddr_in const & first, sockaddr_in const & second );
-void SetBlocking( SOCKET socket, bool isBlocking );
-char const * StringFromSockAddr( sockaddr_in const * addr );
+addrinfo * AllocAddressesForHost(char const * host, char const * service, int family, int socktype, int flags = 0);
+void * GetInAddr(sockaddr const * addr);
+bool SockAddrFromString(sockaddr_in * out_addr, char const * address);
+void FreeAddresses(addrinfo * addresses);
+bool SocketErrorShouldDisconnect(int error);
+bool IsEqual(sockaddr_in const & first, sockaddr_in const & second);
+void SetBlocking(SOCKET socket, bool isBlocking);
+char const * StringFromSockAddr(sockaddr_in const * addr);

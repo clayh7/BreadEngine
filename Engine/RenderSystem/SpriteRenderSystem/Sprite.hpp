@@ -16,9 +16,9 @@ class Texture;
 //-------------------------------------------------------------------------------------------------
 class Sprite
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	bool m_enabled;
 	int m_layerID;
@@ -37,32 +37,32 @@ public:
 	Sprite * m_nextSprite;
 	Sprite * m_prevSprite;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	Sprite( std::string const & spriteID, int layer = 0, bool ignoreView = false );
-	~Sprite( );
-	void Render( ) const;
-	void ConstructMesh( Mesh * out_updateMesh, MeshBuilder & meshBuilder ) const;
+	Sprite(std::string const & spriteID, int layer = 0, bool ignoreView = false);
+	~Sprite();
+	void Render() const;
+	void ConstructMesh(Mesh * out_updateMesh, MeshBuilder & meshBuilder) const;
 
-	Material * GetMaterial( ) const;
-	Texture const * GetTexture( ) const;
-	float GetWidth( ) const;
-	float GetHeight( ) const;
-	Vector2f GetPivot( ) const;
-	Vector2f GetScale( ) const;
-	float GetRadiusScaled( ) const;
-	std::string GetID( ) const;
-	bool IsEnabled( ) const;
+	Material * GetMaterial() const;
+	Texture const * GetTexture() const;
+	float GetWidth() const;
+	float GetHeight() const;
+	Vector2f GetPivot() const;
+	Vector2f GetScale() const;
+	float GetRadiusScaled() const;
+	std::string GetID() const;
+	bool IsEnabled() const;
 
-	void SetEnabled( bool isEnabled );
-	void SetScale( Vector2f const & scale );
-	void SetColor( Color const & color );
-	void SetPivot( Vector2f const & pivot );
-	void SetPosition( Vector2f const & position );
-	void SetRotation( float degrees );
-	void SetRenderer( SpriteGameRenderer const * renderer );
-	void SetID( std::string const & spriteID );
-	void SetLayer( int layerID );
+	void SetEnabled(bool isEnabled);
+	void SetScale(Vector2f const & scale);
+	void SetColor(Color const & color);
+	void SetPivot(Vector2f const & pivot);
+	void SetPosition(Vector2f const & position);
+	void SetRotation(float degrees);
+	void SetRenderer(SpriteGameRenderer const * renderer);
+	void SetID(std::string const & spriteID);
+	void SetLayer(int layerID);
 };

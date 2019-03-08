@@ -27,9 +27,9 @@ public:
 	Vector4f weights;
 
 public:
-	SkinWeight( )
-		: indices( )
-		, weights( )
+	SkinWeight()
+		: indices()
+		, weights()
 	{
 
 	}
@@ -37,9 +37,9 @@ public:
 
 
 //-------------------------------------------------------------------------------------------------
-static std::string const GetAttributeTypeName( FbxNodeAttribute::EType type )
+static std::string const GetAttributeTypeName(FbxNodeAttribute::EType type)
 {
-	switch ( type )
+	switch (type)
 	{
 	case FbxNodeAttribute::eUnknown: return "unidentified";
 	case FbxNodeAttribute::eNull: return "null";
@@ -67,145 +67,145 @@ static std::string const GetAttributeTypeName( FbxNodeAttribute::EType type )
 
 
 //-------------------------------------------------------------------------------------------------
-static void PrintAttribute( FbxNodeAttribute *attribute, int depth )
+static void PrintAttribute(FbxNodeAttribute *attribute, int depth)
 {
-	if ( nullptr == attribute )
+	if (nullptr == attribute)
 	{
 		return;
 	}
 
-	FbxNodeAttribute::EType type = attribute->GetAttributeType( );
+	FbxNodeAttribute::EType type = attribute->GetAttributeType();
 
-	std::string const typeName = GetAttributeTypeName( type );
-	std::string const attributeName = attribute->GetName( );
-	g_ConsoleSystem->AddLog( Stringf( "%*s- type='%s', name='%s'", (depth + 1)*4, " ", &typeName[0], &attributeName[0] ), Color::WHITE );
+	std::string const typeName = GetAttributeTypeName(type);
+	std::string const attributeName = attribute->GetName();
+	g_ConsoleSystem->AddLog(Stringf("%*s- type='%s', name='%s'", (depth + 1) * 4, " ", &typeName[0], &attributeName[0]), Color::WHITE);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-static void PrintNode( FbxNode *node, int depth )
+static void PrintNode(FbxNode *node, int depth)
 {
-	g_ConsoleSystem->AddLog( Stringf( "%*sNode [%s]", (depth + 1)*4, " ", node->GetName( ) ), Color::WHITE );
-	for ( int attributeIndex = 0; attributeIndex < node->GetNodeAttributeCount( ); ++attributeIndex )
+	g_ConsoleSystem->AddLog(Stringf("%*sNode [%s]", (depth + 1) * 4, " ", node->GetName()), Color::WHITE);
+	for (int attributeIndex = 0; attributeIndex < node->GetNodeAttributeCount(); ++attributeIndex)
 	{
-		PrintAttribute( node->GetNodeAttributeByIndex( attributeIndex ), depth );
+		PrintAttribute(node->GetNodeAttributeByIndex(attributeIndex), depth);
 	}
 
-	for ( int childIndex = 0; childIndex < node->GetChildCount( ); ++childIndex )
+	for (int childIndex = 0; childIndex < node->GetChildCount(); ++childIndex)
 	{
-		PrintNode( node->GetChild( childIndex ), depth + 1 );
+		PrintNode(node->GetChild(childIndex), depth + 1);
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void FBXListScene( std::string const &filename )
+void FBXListScene(std::string const &filename)
 {
-	FbxManager *fbxManager = FbxManager::Create( );
-	if ( nullptr == fbxManager )
+	FbxManager *fbxManager = FbxManager::Create();
+	if (nullptr == fbxManager)
 	{
-		g_ConsoleSystem->AddLog( "Could not create fbx manager.", Color::RED );
+		g_ConsoleSystem->AddLog("Could not create fbx manager.", Color::RED);
 		return;
 	}
 
-	FbxIOSettings *ioSettings = FbxIOSettings::Create( fbxManager, IOSROOT );
-	fbxManager->SetIOSettings( ioSettings );
+	FbxIOSettings *ioSettings = FbxIOSettings::Create(fbxManager, IOSROOT);
+	fbxManager->SetIOSettings(ioSettings);
 
 	//Create Importer
-	FbxImporter *importer = FbxImporter::Create( fbxManager, "" );
-	bool result = importer->Initialize( &filename[0], -1, fbxManager->GetIOSettings() );
+	FbxImporter *importer = FbxImporter::Create(fbxManager, "");
+	bool result = importer->Initialize(&filename[0], -1, fbxManager->GetIOSettings());
 
-	if ( result )
+	if (result)
 	{
 		//We have imported the FBX
-		FbxScene *scene = FbxScene::Create( fbxManager, "" );
-		bool importSuccess = importer->Import( scene );
-		if ( importSuccess )
+		FbxScene *scene = FbxScene::Create(fbxManager, "");
+		bool importSuccess = importer->Import(scene);
+		if (importSuccess)
 		{
-			FbxNode *root = scene->GetRootNode( );
-			PrintNode( root, 0 );
+			FbxNode *root = scene->GetRootNode();
+			PrintNode(root, 0);
 		}
 
-		FBX_SAFE_DESTROY( scene );
+		FBX_SAFE_DESTROY(scene);
 	}
 	else
 	{
-		g_ConsoleSystem->AddLog( Stringf( "Could not import scene: %s", &filename[0] ), Color::RED );
+		g_ConsoleSystem->AddLog(Stringf("Could not import scene: %s", &filename[0]), Color::RED);
 	}
 
-	FBX_SAFE_DESTROY( importer );
-	FBX_SAFE_DESTROY( ioSettings );
-	FBX_SAFE_DESTROY( fbxManager );
+	FBX_SAFE_DESTROY(importer);
+	FBX_SAFE_DESTROY(ioSettings);
+	FBX_SAFE_DESTROY(fbxManager);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-static Vector3f ToEngineVector3f( FbxVector4 const &fbxVector4 )
+static Vector3f ToEngineVector3f(FbxVector4 const &fbxVector4)
 {
-	return Vector3f( ( float ) fbxVector4.mData[0], ( float ) fbxVector4.mData[1], ( float ) fbxVector4.mData[2] );
+	return Vector3f((float)fbxVector4.mData[0], (float)fbxVector4.mData[1], (float)fbxVector4.mData[2]);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-static Color ToEngineColor( FbxColor const &fbxColor )
+static Color ToEngineColor(FbxColor const &fbxColor)
 {
-	unsigned char r = ( unsigned char ) ( fbxColor.mRed * 255 );
-	unsigned char g = ( unsigned char ) ( fbxColor.mGreen * 255 );
-	unsigned char b = ( unsigned char ) ( fbxColor.mBlue * 255 );
-	unsigned char a = ( unsigned char ) ( fbxColor.mAlpha * 255 );
-	return Color( r, g, b, a );
+	unsigned char r = (unsigned char)(fbxColor.mRed * 255);
+	unsigned char g = (unsigned char)(fbxColor.mGreen * 255);
+	unsigned char b = (unsigned char)(fbxColor.mBlue * 255);
+	unsigned char a = (unsigned char)(fbxColor.mAlpha * 255);
+	return Color(r, g, b, a);
 }
 
 
 
 //-------------------------------------------------------------------------------------------------
-static bool GetPosition( Vector3f *out_position, Matrix4f transform, FbxMesh *mesh, int polyIndex, int vertIndex )
+static bool GetPosition(Vector3f *out_position, Matrix4f transform, FbxMesh *mesh, int polyIndex, int vertIndex)
 {
 	FbxVector4 fbxPosition;
-	int controlIndex = mesh->GetPolygonVertex( polyIndex, vertIndex );
-	fbxPosition = mesh->GetControlPointAt( controlIndex );
+	int controlIndex = mesh->GetPolygonVertex(polyIndex, vertIndex);
+	fbxPosition = mesh->GetControlPointAt(controlIndex);
 
-	Vector4f newPosition( Vector4f( ToEngineVector3f( fbxPosition ), 1 ) * transform );
-	*out_position = newPosition.XYZ( );
+	Vector4f newPosition(Vector4f(ToEngineVector3f(fbxPosition), 1) * transform);
+	*out_position = newPosition.XYZ();
 	return true;
 }
 
 
 //-------------------------------------------------------------------------------------------------
 template <typename ElemType, typename VarType>
-static bool GetObjectFromElement( FbxMesh *mesh,
+static bool GetObjectFromElement(FbxMesh *mesh,
 	int polyIndex,
 	int vertIndex,
 	ElemType *elem,
-	VarType *out_var )
+	VarType *out_var)
 {
-	if ( nullptr == elem )
+	if (nullptr == elem)
 	{
 		return false;
 	}
-	
-	switch ( elem->GetMappingMode() )
+
+	switch (elem->GetMappingMode())
 	{
 
 	case FbxGeometryElement::eByControlPoint:
 	{
-		int controlIndex = mesh->GetPolygonVertex( polyIndex, vertIndex );
-		switch ( elem->GetReferenceMode( ) )
+		int controlIndex = mesh->GetPolygonVertex(polyIndex, vertIndex);
+		switch (elem->GetReferenceMode())
 		{
 
 		case FbxGeometryElement::eDirect:
-			if ( controlIndex < elem->GetDirectArray( ).GetCount( ) )
+			if (controlIndex < elem->GetDirectArray().GetCount())
 			{
-				*out_var = elem->GetDirectArray( ).GetAt( controlIndex );
+				*out_var = elem->GetDirectArray().GetAt(controlIndex);
 				return true;
 			}
 			break;
 
 		case FbxGeometryElement::eIndexToDirect:
-			if ( controlIndex < elem->GetIndexArray( ).GetCount( ) )
+			if (controlIndex < elem->GetIndexArray().GetCount())
 			{
-				int index = elem->GetIndexArray( ).GetAt( controlIndex );
-				*out_var = elem->GetDirectArray( ).GetAt( index );
+				int index = elem->GetIndexArray().GetAt(controlIndex);
+				*out_var = elem->GetDirectArray().GetAt(index);
 				return true;
 			}
 			break;
@@ -218,23 +218,23 @@ static bool GetObjectFromElement( FbxMesh *mesh,
 
 	case FbxGeometryElement::eByPolygonVertex:
 	{
-		int directVertexIndex = ( polyIndex * 3 ) + vertIndex;
-		switch ( elem->GetReferenceMode( ) )
+		int directVertexIndex = (polyIndex * 3) + vertIndex;
+		switch (elem->GetReferenceMode())
 		{
 
 		case FbxGeometryElement::eDirect:
-			if ( directVertexIndex < elem->GetDirectArray( ).GetCount( ) )
+			if (directVertexIndex < elem->GetDirectArray().GetCount())
 			{
-				*out_var = elem->GetDirectArray( ).GetAt( directVertexIndex );
+				*out_var = elem->GetDirectArray().GetAt(directVertexIndex);
 				return true;
 			}
 			break;
 
 		case FbxGeometryElement::eIndexToDirect:
-			if ( directVertexIndex < elem->GetIndexArray( ).GetCount( ) )
+			if (directVertexIndex < elem->GetIndexArray().GetCount())
 			{
-				int index = elem->GetIndexArray( ).GetAt( directVertexIndex );
-				*out_var = elem->GetDirectArray( ).GetAt( index );
+				int index = elem->GetIndexArray().GetAt(directVertexIndex);
+				*out_var = elem->GetDirectArray().GetAt(index);
 				return true;
 			}
 			break;
@@ -244,7 +244,7 @@ static bool GetObjectFromElement( FbxMesh *mesh,
 	}
 
 	default:
-		ERROR_AND_DIE( "Couldn't fine Geometry Element Type" );
+		ERROR_AND_DIE("Couldn't fine Geometry Element Type");
 		break;
 	}
 
@@ -253,17 +253,17 @@ static bool GetObjectFromElement( FbxMesh *mesh,
 
 
 //-------------------------------------------------------------------------------------------------
-static bool GetUV( Vector2f *out_uv,
+static bool GetUV(Vector2f *out_uv,
 	FbxMesh *mesh,
 	int polyIndex,
 	int vertIndex,
-	int uvIndex )
+	int uvIndex)
 {
 	FbxVector2 uv;
-	FbxGeometryElementUV *uvs = mesh->GetElementUV( uvIndex );
-	if ( GetObjectFromElement( mesh, polyIndex, vertIndex, uvs, &uv ) )
+	FbxGeometryElementUV *uvs = mesh->GetElementUV(uvIndex);
+	if (GetObjectFromElement(mesh, polyIndex, vertIndex, uvs, &uv))
 	{
-		*out_uv = Vector2f( ( float ) uv.mData[0], ( float ) uv.mData[1] );
+		*out_uv = Vector2f((float)uv.mData[0], (float)uv.mData[1]);
 		return true;
 	}
 
@@ -272,13 +272,13 @@ static bool GetUV( Vector2f *out_uv,
 
 
 //-------------------------------------------------------------------------------------------------
-static bool GetColor( Color *out_color, FbxMesh *mesh, int polyIndex, int vertIndex )
+static bool GetColor(Color *out_color, FbxMesh *mesh, int polyIndex, int vertIndex)
 {
 	FbxColor color;
-	FbxGeometryElementVertexColor *colorElement = mesh->GetElementVertexColor( );
-	if ( GetObjectFromElement( mesh, polyIndex, vertIndex, colorElement, &color ) )
+	FbxGeometryElementVertexColor *colorElement = mesh->GetElementVertexColor();
+	if (GetObjectFromElement(mesh, polyIndex, vertIndex, colorElement, &color))
 	{
-		*out_color = ToEngineColor( color );
+		*out_color = ToEngineColor(color);
 		return true;
 	}
 
@@ -287,20 +287,20 @@ static bool GetColor( Color *out_color, FbxMesh *mesh, int polyIndex, int vertIn
 
 
 //-------------------------------------------------------------------------------------------------
-static bool GetNormal( Vector3f *out_normal,
+static bool GetNormal(Vector3f *out_normal,
 	Matrix4f const &transform,
 	FbxMesh *mesh,
 	int polyIndex,
 	int vertIndex,
-	int normalIndex )
+	int normalIndex)
 {
 	FbxVector4 normal;
-	FbxGeometryElementNormal *normals = mesh->GetElementNormal( normalIndex );
-	if ( GetObjectFromElement( mesh, polyIndex, vertIndex, normals, &normal ) )
+	FbxGeometryElementNormal *normals = mesh->GetElementNormal(normalIndex);
+	if (GetObjectFromElement(mesh, polyIndex, vertIndex, normals, &normal))
 	{
-		Vector3f tempNormal = ToEngineVector3f( normal );
-		Vector4f vecNormal = Vector4f( tempNormal, 0.0f ) * transform;
-		*out_normal = vecNormal.XYZ( );
+		Vector3f tempNormal = ToEngineVector3f(normal);
+		Vector4f vecNormal = Vector4f(tempNormal, 0.0f) * transform;
+		*out_normal = vecNormal.XYZ();
 		return true;
 	}
 
@@ -309,92 +309,92 @@ static bool GetNormal( Vector3f *out_normal,
 
 
 //-------------------------------------------------------------------------------------------------
-static void ImportVertex( MeshBuilder * meshBuilder, Matrix4f const & transform, FbxMesh * mesh, int polyIndex, int vertIndex, std::vector<SkinWeight> const & skinWeights )
+static void ImportVertex(MeshBuilder * meshBuilder, Matrix4f const & transform, FbxMesh * mesh, int polyIndex, int vertIndex, std::vector<SkinWeight> const & skinWeights)
 {
 	Vector3f normal;
-	if ( GetNormal( &normal, transform, mesh, polyIndex, vertIndex, 0 ) )
+	if (GetNormal(&normal, transform, mesh, polyIndex, vertIndex, 0))
 	{
-		meshBuilder->SetNormal( normal );
+		meshBuilder->SetNormal(normal);
 
 		//#TODO: Remove once I have a VertexType that supports only Normals
 		//#TODO: Make this part of the post process step
-		Vector3f bitangent = Vector3f( 1.f, 0.f, 0.f );
-		if ( normal == bitangent )
+		Vector3f bitangent = Vector3f(1.f, 0.f, 0.f);
+		if (normal == bitangent)
 		{
-			bitangent = Vector3f( 0.f, 1.f, 0.f );
+			bitangent = Vector3f(0.f, 1.f, 0.f);
 		}
-		Vector3f tangent = CrossProduct( bitangent, normal );
-		bitangent = CrossProduct( normal, tangent );
+		Vector3f tangent = CrossProduct(bitangent, normal);
+		bitangent = CrossProduct(normal, tangent);
 
-		meshBuilder->SetTangent( tangent );
-		meshBuilder->SetBitangent( bitangent );
+		meshBuilder->SetTangent(tangent);
+		meshBuilder->SetBitangent(bitangent);
 	}
 
 	Color vertexColor;
-	if ( GetColor( &vertexColor, mesh, polyIndex, vertIndex ) )
+	if (GetColor(&vertexColor, mesh, polyIndex, vertIndex))
 	{
-		meshBuilder->SetColor( vertexColor );
+		meshBuilder->SetColor(vertexColor);
 	}
 
 	Vector2f uv;
-	if ( GetUV( &uv, mesh, polyIndex, vertIndex, 0 ) ) //#TODO: support importing 0 and 1
+	if (GetUV(&uv, mesh, polyIndex, vertIndex, 0)) //#TODO: support importing 0 and 1
 	{
-		meshBuilder->SetUV0( uv );
+		meshBuilder->SetUV0(uv);
 	}
 
 	// Set Bone Weights
-	unsigned int controlIndex = mesh->GetPolygonVertex( polyIndex, vertIndex );
-	if( controlIndex < skinWeights.size( ) )
+	unsigned int controlIndex = mesh->GetPolygonVertex(polyIndex, vertIndex);
+	if (controlIndex < skinWeights.size())
 	{
-		meshBuilder->SetBoneWeights( skinWeights[controlIndex].indices, skinWeights[controlIndex].weights );
+		meshBuilder->SetBoneWeights(skinWeights[controlIndex].indices, skinWeights[controlIndex].weights);
 		//meshBuilder->renormalize_skin_weights( ); // just to be safe
 	}
 	else
 	{
-		meshBuilder->ClearBoneWeights( );
+		meshBuilder->ClearBoneWeights();
 	}
 
 	Vector3f position;
-	if ( GetPosition( &position, transform, mesh, polyIndex, vertIndex ) )
+	if (GetPosition(&position, transform, mesh, polyIndex, vertIndex))
 	{
-		meshBuilder->AddVertex( position );
+		meshBuilder->AddVertex(position);
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-static Vector4f ToEngineVector4( FbxDouble4 const &vec4 )
+static Vector4f ToEngineVector4(FbxDouble4 const &vec4)
 {
-	return Vector4f( ( float ) vec4.mData[0], ( float ) vec4.mData[1], ( float ) vec4.mData[2], ( float ) vec4.mData[3] );
+	return Vector4f((float)vec4.mData[0], (float)vec4.mData[1], (float)vec4.mData[2], (float)vec4.mData[3]);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-static Matrix4f ToEngineMatrix4( FbxMatrix const &fbxMat )
+static Matrix4f ToEngineMatrix4(FbxMatrix const &fbxMat)
 {
-	Vector4f row1 = ToEngineVector4( fbxMat.mData[0] );
-	Vector4f row2 = ToEngineVector4( fbxMat.mData[1] );
-	Vector4f row3 = ToEngineVector4( fbxMat.mData[2] );
-	Vector4f row4 = ToEngineVector4( fbxMat.mData[3] );
-	return Matrix4f( row1, row2, row3, row4 );
+	Vector4f row1 = ToEngineVector4(fbxMat.mData[0]);
+	Vector4f row2 = ToEngineVector4(fbxMat.mData[1]);
+	Vector4f row3 = ToEngineVector4(fbxMat.mData[2]);
+	Vector4f row4 = ToEngineVector4(fbxMat.mData[3]);
+	return Matrix4f(row1, row2, row3, row4);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-static Matrix4f GetGeometricTransform( FbxNode *node )
+static Matrix4f GetGeometricTransform(FbxNode *node)
 {
 	Matrix4f ret = Matrix4f::IDENTITY;
 
-	if ( ( node != nullptr ) && ( node->GetNodeAttribute( ) != nullptr ) )
+	if ((node != nullptr) && (node->GetNodeAttribute() != nullptr))
 	{
-		FbxVector4 const geo_trans = node->GetGeometricTranslation( FbxNode::eSourcePivot );
-		FbxVector4 const geo_rot = node->GetGeometricRotation( FbxNode::eSourcePivot );
-		FbxVector4 const geo_scale = node->GetGeometricScaling( FbxNode::eSourcePivot );
+		FbxVector4 const geo_trans = node->GetGeometricTranslation(FbxNode::eSourcePivot);
+		FbxVector4 const geo_rot = node->GetGeometricRotation(FbxNode::eSourcePivot);
+		FbxVector4 const geo_scale = node->GetGeometricScaling(FbxNode::eSourcePivot);
 
 		FbxMatrix geo_mat;
-		geo_mat.SetTRS( geo_trans, geo_rot, geo_scale );
+		geo_mat.SetTRS(geo_trans, geo_rot, geo_scale);
 
-		ret = ToEngineMatrix4( geo_mat );
+		ret = ToEngineMatrix4(geo_mat);
 	}
 
 	return ret;
@@ -403,48 +403,48 @@ static Matrix4f GetGeometricTransform( FbxNode *node )
 
 //-------------------------------------------------------------------------------------------------
 // Check if a mesh contains skin weights
-static bool HasSkinWeights( FbxMesh const *mesh )
+static bool HasSkinWeights(FbxMesh const *mesh)
 {
-	int deformerCount = mesh->GetDeformerCount( FbxDeformer::eSkin );
-	return ( deformerCount > 0 );
+	int deformerCount = mesh->GetDeformerCount(FbxDeformer::eSkin);
+	return (deformerCount > 0);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-static void AddHighestWeight( SkinWeight * skinWeights, int jointIndex, float weight )
+static void AddHighestWeight(SkinWeight * skinWeights, int jointIndex, float weight)
 {
 	float lowestWeight = skinWeights->weights.x;
-	if( skinWeights->weights.y < lowestWeight )
+	if (skinWeights->weights.y < lowestWeight)
 	{
 		lowestWeight = skinWeights->weights.y;
 	}
-	if( skinWeights->weights.z < lowestWeight )
+	if (skinWeights->weights.z < lowestWeight)
 	{
 		lowestWeight = skinWeights->weights.z;
 	}
-	if( skinWeights->weights.w < lowestWeight )
+	if (skinWeights->weights.w < lowestWeight)
 	{
 		lowestWeight = skinWeights->weights.w;
 	}
 
-	if( lowestWeight < weight )
+	if (lowestWeight < weight)
 	{
-		if( skinWeights->weights.x == lowestWeight )
+		if (skinWeights->weights.x == lowestWeight)
 		{
 			skinWeights->weights.x = weight;
 			skinWeights->indices.x = jointIndex;
 		}
-		else if( skinWeights->weights.y == lowestWeight )
+		else if (skinWeights->weights.y == lowestWeight)
 		{
 			skinWeights->weights.y = weight;
 			skinWeights->indices.y = jointIndex;
 		}
-		else if( skinWeights->weights.z == lowestWeight )
+		else if (skinWeights->weights.z == lowestWeight)
 		{
 			skinWeights->weights.z = weight;
 			skinWeights->indices.z = jointIndex;
 		}
-		else if( skinWeights->weights.w == lowestWeight )
+		else if (skinWeights->weights.w == lowestWeight)
 		{
 			skinWeights->weights.w = weight;
 			skinWeights->indices.w = jointIndex;
@@ -454,11 +454,11 @@ static void AddHighestWeight( SkinWeight * skinWeights, int jointIndex, float we
 
 
 //-------------------------------------------------------------------------------------------------
-static int GetJointIndexForNode( std::map<int, FbxNode*> & jointIndexToNode, FbxNode const * node )
+static int GetJointIndexForNode(std::map<int, FbxNode*> & jointIndexToNode, FbxNode const * node)
 {
-	for( auto jointNodeMapIter = jointIndexToNode.begin( ); jointNodeMapIter != jointIndexToNode.end( ); ++jointNodeMapIter )
+	for (auto jointNodeMapIter = jointIndexToNode.begin(); jointNodeMapIter != jointIndexToNode.end(); ++jointNodeMapIter)
 	{
-		if( jointNodeMapIter->second == node )
+		if (jointNodeMapIter->second == node)
 		{
 			return jointNodeMapIter->first;
 		}
@@ -468,79 +468,79 @@ static int GetJointIndexForNode( std::map<int, FbxNode*> & jointIndexToNode, Fbx
 
 
 //-------------------------------------------------------------------------------------------------
-static void Normalize( SkinWeight * skinWeight )
+static void Normalize(SkinWeight * skinWeight)
 {
 	float totalWeight = skinWeight->weights.x + skinWeight->weights.y + skinWeight->weights.z + skinWeight->weights.w;
-	if( totalWeight > 0.f )
+	if (totalWeight > 0.f)
 	{
-		skinWeight->weights = skinWeight->weights * ( 1.f / totalWeight );
+		skinWeight->weights = skinWeight->weights * (1.f / totalWeight);
 	}
 	else
 	{
-		skinWeight->weights = Vector4f( 1.f, 0.f, 0.f, 0.f );
+		skinWeight->weights = Vector4f(1.f, 0.f, 0.f, 0.f);
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-static void GetSkinWeights( std::vector<SkinWeight> * skinWeights, FbxMesh const * mesh, std::map<int, FbxNode*> & jointIndexToNode )
+static void GetSkinWeights(std::vector<SkinWeight> * skinWeights, FbxMesh const * mesh, std::map<int, FbxNode*> & jointIndexToNode)
 {
-	for( size_t i = 0; i < skinWeights->size( ); ++i )
+	for (size_t i = 0; i < skinWeights->size(); ++i)
 	{
-		(*skinWeights)[i].indices = Vector4i( 0 );
-		(*skinWeights)[i].weights = Vector4f( 0.f );
+		(*skinWeights)[i].indices = Vector4i(0);
+		(*skinWeights)[i].weights = Vector4f(0.f);
 	}
 
-	int deformerCount = mesh->GetDeformerCount( FbxDeformer::eSkin );
-	ASSERT_RECOVERABLE(  deformerCount == 1, "Only one deformer supported." );
-	for( int deformerIndex = 0; deformerIndex < deformerCount; ++deformerIndex )
+	int deformerCount = mesh->GetDeformerCount(FbxDeformer::eSkin);
+	ASSERT_RECOVERABLE(deformerCount == 1, "Only one deformer supported.");
+	for (int deformerIndex = 0; deformerIndex < deformerCount; ++deformerIndex)
 	{
-		FbxSkin * skin = (FbxSkin*) mesh->GetDeformer( deformerIndex, FbxDeformer::eSkin );
+		FbxSkin * skin = (FbxSkin*)mesh->GetDeformer(deformerIndex, FbxDeformer::eSkin);
 
-		if( nullptr == skin )
+		if (nullptr == skin)
 		{
 			continue;
 		}
 
 		// Clusters are a link between this skin object, bones, 
 		// and the verts that bone affects.
-		int clusterCount = skin->GetClusterCount( );
-		for( int clusterIndex = 0; clusterIndex < clusterCount; ++clusterIndex )
+		int clusterCount = skin->GetClusterCount();
+		for (int clusterIndex = 0; clusterIndex < clusterCount; ++clusterIndex)
 		{
-			FbxCluster * cluster = skin->GetCluster( clusterIndex );
-			FbxNode const * linkNode = cluster->GetLink( );
+			FbxCluster * cluster = skin->GetCluster(clusterIndex);
+			FbxNode const * linkNode = cluster->GetLink();
 
 			// Not associated with a bone - ignore it, we
 			// don't care about it. 
-			if( nullptr == linkNode )
+			if (nullptr == linkNode)
 			{
 				continue;
 			}
 
-			int jointIndex = GetJointIndexForNode( jointIndexToNode, linkNode ); // you guys should have something like this
-			if( jointIndex == -1 ) //Invalid Index
+			int jointIndex = GetJointIndexForNode(jointIndexToNode, linkNode); // you guys should have something like this
+			if (jointIndex == -1) //Invalid Index
 			{
 				continue;
 			}
 
-			int * controlPointIndices = cluster->GetControlPointIndices( );
-			int indexCount = cluster->GetControlPointIndicesCount( );
-			double * weights = cluster->GetControlPointWeights( );
+			int * controlPointIndices = cluster->GetControlPointIndices();
+			int indexCount = cluster->GetControlPointIndicesCount();
+			double * weights = cluster->GetControlPointWeights();
 
-			for( int index = 0; index < indexCount; ++index )
+			for (int index = 0; index < indexCount; ++index)
 			{
 				int controlIndex = controlPointIndices[index];
 				double weight = weights[index];
 
-				SkinWeight * skinWeight = &( ( *skinWeights )[controlIndex] );
-				AddHighestWeight( skinWeight, jointIndex, (float) weight );
+				SkinWeight * skinWeight = &((*skinWeights)[controlIndex]);
+				AddHighestWeight(skinWeight, jointIndex, (float)weight);
 			}
 		}
 	}
 
-	for( unsigned int skinWeightIndex = 0; skinWeightIndex < skinWeights->size( ); ++skinWeightIndex )
+	for (unsigned int skinWeightIndex = 0; skinWeightIndex < skinWeights->size(); ++skinWeightIndex)
 	{
-		Normalize( &( ( *skinWeights )[skinWeightIndex] ) );
+		Normalize(&((*skinWeights)[skinWeightIndex]));
 		// Renormalize all the skin weights
 		// If skin_weights were never added - make sure
 		// you set it's weights to 1, 0, 0, 0
@@ -549,58 +549,58 @@ static void GetSkinWeights( std::vector<SkinWeight> * skinWeights, FbxMesh const
 
 
 //-------------------------------------------------------------------------------------------------
-static void ImportMesh( SceneImport * import, FbxMesh * mesh, Matrix4fStack * matrixStack, std::map<int, FbxNode*> & jointIndexToNode )
+static void ImportMesh(SceneImport * import, FbxMesh * mesh, Matrix4fStack * matrixStack, std::map<int, FbxNode*> & jointIndexToNode)
 {
-	MeshBuilder *meshBuilder = new MeshBuilder( );
+	MeshBuilder *meshBuilder = new MeshBuilder();
 
-	ASSERT_RECOVERABLE(  mesh->IsTriangleMesh( ), "Not a triangle." );
-	if ( !mesh->IsTriangleMesh( ) )
+	ASSERT_RECOVERABLE(mesh->IsTriangleMesh(), "Not a triangle.");
+	if (!mesh->IsTriangleMesh())
 	{
 		return;
 	}
 
-	meshBuilder->Begin( );
+	meshBuilder->Begin();
 
-	Matrix4f geoTransform = GetGeometricTransform( mesh->GetNode() );
-	matrixStack->Push( geoTransform );
+	Matrix4f geoTransform = GetGeometricTransform(mesh->GetNode());
+	matrixStack->Push(geoTransform);
 
-	int controlPointCount = mesh->GetControlPointsCount( );
+	int controlPointCount = mesh->GetControlPointsCount();
 
 	// NEW STUFF IS HERE!  Before we import any vertices
 	// figure out our weights for all vertices
 	std::vector<SkinWeight> skinWeights;
-	skinWeights.resize( controlPointCount );
-	if( HasSkinWeights( mesh ) )
+	skinWeights.resize(controlPointCount);
+	if (HasSkinWeights(mesh))
 	{
-		GetSkinWeights( &skinWeights, mesh, jointIndexToNode );
+		GetSkinWeights(&skinWeights, mesh, jointIndexToNode);
 	}
 	else
 	{
-		FbxNode * node = mesh->GetNode( );
-		FbxNode * parent = node->GetParent( );
-		while( parent != nullptr )
+		FbxNode * node = mesh->GetNode();
+		FbxNode * parent = node->GetParent();
+		while (parent != nullptr)
 		{
-			int jointIndex = GetJointIndexForNode( jointIndexToNode, parent );
-			if( jointIndex != -1 )
+			int jointIndex = GetJointIndexForNode(jointIndexToNode, parent);
+			if (jointIndex != -1)
 			{
-				for( size_t i = 0; i < skinWeights.size( ); ++i )
+				for (size_t i = 0; i < skinWeights.size(); ++i)
 				{
-					skinWeights[i].indices = Vector4i( jointIndex, 0, 0, 0 );
-					skinWeights[i].weights = Vector4f( 1.f, 0.f, 0.f, 0.f );
+					skinWeights[i].indices = Vector4i(jointIndex, 0, 0, 0);
+					skinWeights[i].weights = Vector4f(1.f, 0.f, 0.f, 0.f);
 				}
 				break;
 			}
 			else
 			{
-				parent = parent->GetParent( );
+				parent = parent->GetParent();
 			}
 		}
-		if( parent == nullptr )
+		if (parent == nullptr)
 		{
-			for( size_t i = 0; i < skinWeights.size( ); ++i )
+			for (size_t i = 0; i < skinWeights.size(); ++i)
 			{
-				skinWeights[i].indices = Vector4i( 0 );
-				skinWeights[i].weights = Vector4f( 1.f, 0.f, 0.f, 0.f );
+				skinWeights[i].indices = Vector4i(0);
+				skinWeights[i].weights = Vector4f(1.f, 0.f, 0.f, 0.f);
 			}
 		}
 		// walk tree up till node associated with joint. 
@@ -612,39 +612,39 @@ static void ImportMesh( SceneImport * import, FbxMesh * mesh, Matrix4fStack * ma
 
 	//#TODO: Set up material also
 
-	meshBuilder->SetUV0( Vector2f( 0.f ) );
-	Matrix4f transform = matrixStack->GetTop( );
-	int polyCount = mesh->GetPolygonCount( );
-	for ( int polyIndex = 0; polyIndex < polyCount; ++polyIndex )
+	meshBuilder->SetUV0(Vector2f(0.f));
+	Matrix4f transform = matrixStack->GetTop();
+	int polyCount = mesh->GetPolygonCount();
+	for (int polyIndex = 0; polyIndex < polyCount; ++polyIndex)
 	{
-		int vertCount = mesh->GetPolygonSize( polyIndex );
-		ASSERT_RECOVERABLE(  vertCount == 3, "Should only be 3 verts in a triangle." );
-		for ( int vertIndex = 0; vertIndex < vertCount; ++vertIndex )
+		int vertCount = mesh->GetPolygonSize(polyIndex);
+		ASSERT_RECOVERABLE(vertCount == 3, "Should only be 3 verts in a triangle.");
+		for (int vertIndex = 0; vertIndex < vertCount; ++vertIndex)
 		{
-			ImportVertex( meshBuilder, transform, mesh, polyIndex, vertIndex, skinWeights );
+			ImportVertex(meshBuilder, transform, mesh, polyIndex, vertIndex, skinWeights);
 		}
 	}
 
-	matrixStack->Pop( );
+	matrixStack->Pop();
 
-	meshBuilder->End( );
-	import->m_meshes.push_back( meshBuilder );
+	meshBuilder->End();
+	import->m_meshes.push_back(meshBuilder);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-static void ImportNodeAttribute( SceneImport *import, FbxNodeAttribute *attribute, Matrix4fStack * matrixStack, std::map<int, FbxNode*> & jointIndexToNode )
+static void ImportNodeAttribute(SceneImport *import, FbxNodeAttribute *attribute, Matrix4fStack * matrixStack, std::map<int, FbxNode*> & jointIndexToNode)
 {
 	//Be safe
-	if ( nullptr == attribute )
+	if (nullptr == attribute)
 	{
 		return;
 	}
-	
-	switch ( attribute->GetAttributeType() )
+
+	switch (attribute->GetAttributeType())
 	{
 	case FbxNodeAttribute::eMesh:
-		ImportMesh( import, ( FbxMesh* ) attribute, matrixStack, jointIndexToNode );
+		ImportMesh(import, (FbxMesh*)attribute, matrixStack, jointIndexToNode);
 		break;
 
 	default:
@@ -654,190 +654,190 @@ static void ImportNodeAttribute( SceneImport *import, FbxNodeAttribute *attribut
 
 
 //-------------------------------------------------------------------------------------------------
-static Matrix4f GetNodeTransform( FbxNode *node )
+static Matrix4f GetNodeTransform(FbxNode *node)
 {
-	FbxMatrix fbxLocalMatrix = node->EvaluateLocalTransform( );
-	return ToEngineMatrix4( fbxLocalMatrix );
+	FbxMatrix fbxLocalMatrix = node->EvaluateLocalTransform();
+	return ToEngineMatrix4(fbxLocalMatrix);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-static void ImportMeshes( SceneImport * import, FbxNode * node, Matrix4fStack * matrixStack, std::map<int, FbxNode*> & jointIndexToNode )
+static void ImportMeshes(SceneImport * import, FbxNode * node, Matrix4fStack * matrixStack, std::map<int, FbxNode*> & jointIndexToNode)
 {
 	//Be safe
-	if ( nullptr == node )
+	if (nullptr == node)
 	{
 		return;
 	}
 
-	Matrix4f nodeLocalTransform = GetNodeTransform( node );
-	matrixStack->Push( nodeLocalTransform );
+	Matrix4f nodeLocalTransform = GetNodeTransform(node);
+	matrixStack->Push(nodeLocalTransform);
 
 	// We want to load meshes
-	int attributeCount = node->GetNodeAttributeCount( );
-	for ( int attributeIndex = 0; attributeIndex < attributeCount; ++attributeIndex )
+	int attributeCount = node->GetNodeAttributeCount();
+	for (int attributeIndex = 0; attributeIndex < attributeCount; ++attributeIndex)
 	{
-		ImportNodeAttribute( import, node->GetNodeAttributeByIndex( attributeIndex ), matrixStack, jointIndexToNode );
+		ImportNodeAttribute(import, node->GetNodeAttributeByIndex(attributeIndex), matrixStack, jointIndexToNode);
 	}
 
 	//Import Children
-	int childCount = node->GetChildCount( );
-	for ( int childIndex = 0; childIndex < childCount; ++childIndex )
+	int childCount = node->GetChildCount();
+	for (int childIndex = 0; childIndex < childCount; ++childIndex)
 	{
-		ImportMeshes( import, node->GetChild( childIndex ), matrixStack, jointIndexToNode );
+		ImportMeshes(import, node->GetChild(childIndex), matrixStack, jointIndexToNode);
 	}
 
-	matrixStack->Pop( );
+	matrixStack->Pop();
 }
 
 
 //---------------------------------------------------------------------------------------------
-static Skeleton * ImportSkeleton( SceneImport * import, Matrix4fStack * matStack, Skeleton * skeleton, FbxSkeleton * fbxSkeleton, int parentJointIndex )
+static Skeleton * ImportSkeleton(SceneImport * import, Matrix4fStack * matStack, Skeleton * skeleton, FbxSkeleton * fbxSkeleton, int parentJointIndex)
 {
 	Skeleton * returnSkeleton = nullptr;
-	if ( fbxSkeleton->IsSkeletonRoot( ) )
+	if (fbxSkeleton->IsSkeletonRoot())
 	{
 		//THIS IS NEW SKELETON
-		returnSkeleton = new Skeleton( );
-		import->m_skeletons.push_back( returnSkeleton );
+		returnSkeleton = new Skeleton();
+		import->m_skeletons.push_back(returnSkeleton);
 	}
 	else
 	{
 		returnSkeleton = skeleton;
 		//No orphans
-		ASSERT_RECOVERABLE(  returnSkeleton != nullptr, "Trying to add a child with no parent" );
+		ASSERT_RECOVERABLE(returnSkeleton != nullptr, "Trying to add a child with no parent");
 	}
 
-	Matrix4f geoTransform = GetGeometricTransform( fbxSkeleton->GetNode( ) );
+	Matrix4f geoTransform = GetGeometricTransform(fbxSkeleton->GetNode());
 
-	matStack->Push( geoTransform );
-	Matrix4f modelSpace = matStack->GetTop( );
-	returnSkeleton->AddJoint( fbxSkeleton->GetNode( )->GetName( ), parentJointIndex, modelSpace );
-	matStack->Pop( );
+	matStack->Push(geoTransform);
+	Matrix4f modelSpace = matStack->GetTop();
+	returnSkeleton->AddJoint(fbxSkeleton->GetNode()->GetName(), parentJointIndex, modelSpace);
+	matStack->Pop();
 
 	return returnSkeleton;
 }
 
 
 //---------------------------------------------------------------------------------------------
-static void ImportSkeletons( SceneImport * import, FbxNode * node, Matrix4fStack * matStack, Skeleton * skeleton, int parentJointIndex, std::map<int,FbxNode*> * jointIndexToNode )
+static void ImportSkeletons(SceneImport * import, FbxNode * node, Matrix4fStack * matStack, Skeleton * skeleton, int parentJointIndex, std::map<int, FbxNode*> * jointIndexToNode)
 {
-	if ( node == nullptr )
+	if (node == nullptr)
 	{
 		return;
 	}
 
-	Matrix4f mat = GetNodeTransform( node );
-	matStack->Push( mat );
+	Matrix4f mat = GetNodeTransform(node);
+	matStack->Push(mat);
 
 	//Walk attributes, looking for doot doots
-	int attributeCount = node->GetNodeAttributeCount( );
-	for ( int attribIndex = 0; attribIndex < attributeCount; ++attribIndex )
+	int attributeCount = node->GetNodeAttributeCount();
+	for (int attribIndex = 0; attribIndex < attributeCount; ++attribIndex)
 	{
-		FbxNodeAttribute *attrib = node->GetNodeAttributeByIndex( attribIndex );
-		if ( attrib != nullptr && ( attrib->GetAttributeType( ) == FbxNodeAttribute::eSkeleton ) ) //Also make it only meshs in the other function
+		FbxNodeAttribute *attrib = node->GetNodeAttributeByIndex(attribIndex);
+		if (attrib != nullptr && (attrib->GetAttributeType() == FbxNodeAttribute::eSkeleton)) //Also make it only meshs in the other function
 		{
 			//So we have skeleton
-			FbxSkeleton * fbxSkeleton = ( FbxSkeleton* ) attrib;
-			Skeleton * newSkeleton = ImportSkeleton( import, matStack, skeleton, fbxSkeleton, parentJointIndex );
+			FbxSkeleton * fbxSkeleton = (FbxSkeleton*)attrib;
+			Skeleton * newSkeleton = ImportSkeleton(import, matStack, skeleton, fbxSkeleton, parentJointIndex);
 
 			//newSkeleton will either be the same skeleton passed,
 			//or a new skeleton, or no skeleton if it was a bad node.
 			//If we got something back - it is what we pass on to the
 			//next generation.
-			if ( newSkeleton != nullptr )
+			if (newSkeleton != nullptr)
 			{
 				skeleton = newSkeleton;
-				parentJointIndex = skeleton->GetLastAddJointIndex( );
+				parentJointIndex = skeleton->GetLastAddJointIndex();
 
 				//Add joint to FbxNode mapping
-				jointIndexToNode->insert( std::pair<int, FbxNode*>( parentJointIndex, node ) );
+				jointIndexToNode->insert(std::pair<int, FbxNode*>(parentJointIndex, node));
 
 			}
 		}
 	}
 
 	//Do the rest of the tree
-	int childCount = node->GetChildCount( );
-	for ( int childIndex = 0; childIndex < childCount; ++childIndex )
+	int childCount = node->GetChildCount();
+	for (int childIndex = 0; childIndex < childCount; ++childIndex)
 	{
-		ImportSkeletons( import, node->GetChild( childIndex ), matStack, skeleton, parentJointIndex, jointIndexToNode );
+		ImportSkeletons(import, node->GetChild(childIndex), matStack, skeleton, parentJointIndex, jointIndexToNode);
 	}
 
-	matStack->Pop( );
+	matStack->Pop();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-uint32_t GetSkeletonCount( SceneImport * import )
+uint32_t GetSkeletonCount(SceneImport * import)
 {
-	return import->m_skeletons.size( );
+	return import->m_skeletons.size();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Skeleton * GetSkeleton( SceneImport * import, uint32_t skeletonIndex )
+Skeleton * GetSkeleton(SceneImport * import, uint32_t skeletonIndex)
 {
 	return import->m_skeletons[skeletonIndex];
 }
 
 
 //-------------------------------------------------------------------------------------------------
-static Matrix4f GetNodeWorldTransformAtTime( FbxNode *node, FbxTime time, Matrix4f const &importTransform )
+static Matrix4f GetNodeWorldTransformAtTime(FbxNode *node, FbxTime time, Matrix4f const &importTransform)
 {
-	if ( node == nullptr )
+	if (node == nullptr)
 	{
 		return Matrix4f::IDENTITY;
 	}
 
-	FbxMatrix fbxMat = node->EvaluateGlobalTransform( time );
-	Matrix4f engineMatrix = ToEngineMatrix4( fbxMat );
+	FbxMatrix fbxMat = node->EvaluateGlobalTransform(time);
+	Matrix4f engineMatrix = ToEngineMatrix4(fbxMat);
 	return engineMatrix * importTransform;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void ImportMotions( SceneImport * import, Matrix4f const & importTransform, FbxScene * scene, float framerate, std::map<int,FbxNode*> & jointIndexToNode )
+void ImportMotions(SceneImport * import, Matrix4f const & importTransform, FbxScene * scene, float framerate, std::map<int, FbxNode*> & jointIndexToNode)
 {
 	// Get number of animations
-	int animationCount = scene->GetSrcObjectCount<FbxAnimStack>( );
-	if ( 0 == animationCount )
+	int animationCount = scene->GetSrcObjectCount<FbxAnimStack>();
+	if (0 == animationCount)
 	{
 		return;
 	}
 
-	uint32_t skeletonCount = GetSkeletonCount( import );
-	if ( 0 == skeletonCount )
+	uint32_t skeletonCount = GetSkeletonCount(import);
+	if (0 == skeletonCount)
 	{
 		return;
 	}
 	// #TODO: Only supporting one skeleton for now - update when needed.
-	ASSERT_RECOVERABLE(  skeletonCount == 1, "Only support for importing one" );
+	ASSERT_RECOVERABLE(skeletonCount == 1, "Only support for importing one");
 
 	// Timing information for animation in this scene
-	FbxGlobalSettings & settings = scene->GetGlobalSettings( );
-	FbxTime::EMode timeMode = settings.GetTimeMode( );
+	FbxGlobalSettings & settings = scene->GetGlobalSettings();
+	FbxTime::EMode timeMode = settings.GetTimeMode();
 	double scene_framerate;
-	if ( timeMode == FbxTime::eCustom )
+	if (timeMode == FbxTime::eCustom)
 	{
-		scene_framerate = settings.GetCustomFrameRate( );
+		scene_framerate = settings.GetCustomFrameRate();
 	}
 	else
 	{
-		scene_framerate = FbxTime::GetFrameRate( timeMode );
+		scene_framerate = FbxTime::GetFrameRate(timeMode);
 	}
-	
-	Skeleton *skeleton = GetSkeleton( import, 0 );
+
+	Skeleton *skeleton = GetSkeleton(import, 0);
 
 	// Time between frames
 	FbxTime advance;
-	advance.SetSecondDouble( ( double ) ( 1.0f / framerate ) );
+	advance.SetSecondDouble((double)(1.0f / framerate));
 
-	for ( int animIndex = 0; animIndex < animationCount; ++animIndex )
+	for (int animIndex = 0; animIndex < animationCount; ++animIndex)
 	{
 		// Import Motions
-		FbxAnimStack *anim = scene->GetSrcObject<FbxAnimStack>( );
-		if ( nullptr == anim )
+		FbxAnimStack *anim = scene->GetSrcObject<FbxAnimStack>();
+		if (nullptr == anim)
 		{
 			continue;
 		}
@@ -847,41 +847,41 @@ void ImportMotions( SceneImport * import, Matrix4f const & importTransform, FbxS
 		FbxTime endTime = anim->LocalStop;
 		FbxTime duration = endTime - startTime;
 
-		scene->SetCurrentAnimationStack( anim );
+		scene->SetCurrentAnimationStack(anim);
 
-		std::string motionName = anim->GetName( );
-		float timeSpan = ( float ) duration.GetSecondDouble( );
+		std::string motionName = anim->GetName();
+		float timeSpan = (float)duration.GetSecondDouble();
 
-		Motion * newMotion = new Motion( motionName, timeSpan, framerate, skeleton );
+		Motion * newMotion = new Motion(motionName, timeSpan, framerate, skeleton);
 
-		int jointCount = skeleton->GetJointCount( );
-		for ( int jointIndex = 0; jointIndex < jointCount; ++jointIndex )
+		int jointCount = skeleton->GetJointCount();
+		for (int jointIndex = 0; jointIndex < jointCount; ++jointIndex)
 		{
 			FbxNode *node = jointIndexToNode[jointIndex];
 
 			// Extracting World Position
 			// Local, you would need to grab parent as well
 
-			FbxTime eval_time = FbxTime( 0 );
-			for ( uint32_t frameIndex = 0; frameIndex < ( uint32_t ) newMotion->GetFrameCount( ); ++frameIndex)
+			FbxTime eval_time = FbxTime(0);
+			for (uint32_t frameIndex = 0; frameIndex < (uint32_t)newMotion->GetFrameCount(); ++frameIndex)
 			{
-				Matrix4f boneTransform = GetNodeWorldTransformAtTime( node, eval_time, importTransform );
-				newMotion->SetTransform( jointIndex, frameIndex, boneTransform );
+				Matrix4f boneTransform = GetNodeWorldTransformAtTime(node, eval_time, importTransform);
+				newMotion->SetTransform(jointIndex, frameIndex, boneTransform);
 
 				eval_time += advance;
 			}
 		}
 
-		import->m_motion.push_back( newMotion );
+		import->m_motion.push_back(newMotion);
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-static void TriangulateScene( FbxScene *scene )
+static void TriangulateScene(FbxScene *scene)
 {
-	FbxGeometryConverter converter( scene->GetFbxManager( ) );
-	converter.Triangulate( scene, true ); //true - replaces nodes
+	FbxGeometryConverter converter(scene->GetFbxManager());
+	converter.Triangulate(scene, true); //true - replaces nodes
 }
 
 
@@ -896,100 +896,100 @@ static void TriangulateScene( FbxScene *scene )
 
 
 //-------------------------------------------------------------------------------------------------
-static void ImportScene( SceneImport * import, FbxScene * scene, Matrix4fStack * matrixStack )
+static void ImportScene(SceneImport * import, FbxScene * scene, Matrix4fStack * matrixStack)
 {
 	StopWatch importTimer;
 
 	//Make everything triangles
-	TriangulateScene( scene );
-	importTimer.PrintLap( "Triangulate Time" );
+	TriangulateScene(scene);
+	importTimer.PrintLap("Triangulate Time");
 
 	//Import all meshes
-	FbxNode *root = scene->GetRootNode( );
+	FbxNode *root = scene->GetRootNode();
 
 	std::map<int, FbxNode*> jointIndexToNode;
-	ImportSkeletons( import, root, matrixStack, nullptr, -1, &jointIndexToNode );
-	importTimer.PrintLap( "Import Skeletons Time" );
+	ImportSkeletons(import, root, matrixStack, nullptr, -1, &jointIndexToNode);
+	importTimer.PrintLap("Import Skeletons Time");
 
-	ImportMeshes( import, root, matrixStack, jointIndexToNode );
-	importTimer.PrintLap( "Import Meshes Time" );
+	ImportMeshes(import, root, matrixStack, jointIndexToNode);
+	importTimer.PrintLap("Import Meshes Time");
 
-	ImportMotions( import, matrixStack->GetTop(), scene, 30, jointIndexToNode );
-	importTimer.PrintLap( "Import Motions Time" );
+	ImportMotions(import, matrixStack->GetTop(), scene, 30, jointIndexToNode);
+	importTimer.PrintLap("Import Motions Time");
 
 	//Finalize( import );
 	//importTimer.PrintLap( "Finalize Time" );
 
-	importTimer.PrintTime( "Total Time" );
+	importTimer.PrintTime("Total Time");
 }
 
 
 //-------------------------------------------------------------------------------------------------
-static Matrix4f GetSceneBasis( FbxScene *scene )
+static Matrix4f GetSceneBasis(FbxScene *scene)
 {
-	fbxsdk::FbxAxisSystem axisSystem = scene->GetGlobalSettings( ).GetAxisSystem( );
-	
+	fbxsdk::FbxAxisSystem axisSystem = scene->GetGlobalSettings().GetAxisSystem();
+
 	FbxAMatrix mat;
-	axisSystem.GetMatrix( mat );
+	axisSystem.GetMatrix(mat);
 
-	return ToEngineMatrix4( mat );
+	return ToEngineMatrix4(mat);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-SceneImport* FBXLoadSceneFromFile( std::string const &fbxFilename, Matrix4f const &engineBasis, bool isEngineBasisRightHanded, Matrix4f const &transform /*= Matrix4f::IDENTITY*/ )
+SceneImport* FBXLoadSceneFromFile(std::string const &fbxFilename, Matrix4f const &engineBasis, bool isEngineBasisRightHanded, Matrix4f const &transform /*= Matrix4f::IDENTITY*/)
 {
-	FbxManager *fbxManager = FbxManager::Create( );
-	if ( nullptr == fbxManager )
+	FbxManager *fbxManager = FbxManager::Create();
+	if (nullptr == fbxManager)
 	{
-		g_ConsoleSystem->AddLog( "Could not create fbx manager.", Color::RED );
+		g_ConsoleSystem->AddLog("Could not create fbx manager.", Color::RED);
 		return nullptr;
 	}
 
-	FbxIOSettings *ioSettings = FbxIOSettings::Create( fbxManager, IOSROOT );
-	fbxManager->SetIOSettings( ioSettings );
+	FbxIOSettings *ioSettings = FbxIOSettings::Create(fbxManager, IOSROOT);
+	fbxManager->SetIOSettings(ioSettings);
 
 	//Create Importer
-	FbxImporter *importer = FbxImporter::Create( fbxManager, "" );
-	bool result = importer->Initialize( &fbxFilename[0], -1, fbxManager->GetIOSettings( ) );
-	if ( !result )
+	FbxImporter *importer = FbxImporter::Create(fbxManager, "");
+	bool result = importer->Initialize(&fbxFilename[0], -1, fbxManager->GetIOSettings());
+	if (!result)
 	{
-		g_ConsoleSystem->AddLog( Stringf( "Could not initialize scene: %s", &fbxFilename[0] ), Color::RED );
+		g_ConsoleSystem->AddLog(Stringf("Could not initialize scene: %s", &fbxFilename[0]), Color::RED);
 		return nullptr;
 	}
 
 	//We have imported the FBX
-	FbxScene *scene = FbxScene::Create( fbxManager, "" );
-	bool importSuccess = importer->Import( scene );
-	if ( !importSuccess )
+	FbxScene *scene = FbxScene::Create(fbxManager, "");
+	bool importSuccess = importer->Import(scene);
+	if (!importSuccess)
 	{
-		g_ConsoleSystem->AddLog( Stringf( "Could not import scene: %s", &fbxFilename[0] ), Color::RED );
+		g_ConsoleSystem->AddLog(Stringf("Could not import scene: %s", &fbxFilename[0]), Color::RED);
 	}
 
-	SceneImport *import = new SceneImport( );
+	SceneImport *import = new SceneImport();
 	Matrix4fStack matrixStack;
 
-	matrixStack.Push( transform );
-	matrixStack.Push( engineBasis );
+	matrixStack.Push(transform);
+	matrixStack.Push(engineBasis);
 
 	//Set up our initial transforms
-	Matrix4f sceneBasis = GetSceneBasis( scene );
-	sceneBasis.Transpose( ); //Get Inverse
-	if ( !isEngineBasisRightHanded )
+	Matrix4f sceneBasis = GetSceneBasis(scene);
+	sceneBasis.Transpose(); //Get Inverse
+	if (!isEngineBasisRightHanded)
 	{
-		Vector3f forward = sceneBasis.GetForward( );
-		sceneBasis.SetForward( -forward );
+		Vector3f forward = sceneBasis.GetForward();
+		sceneBasis.SetForward(-forward);
 	}
-	
-	matrixStack.Push( sceneBasis );
+
+	matrixStack.Push(sceneBasis);
 
 	//The Actual Work
-	ImportScene( import, scene, &matrixStack );
+	ImportScene(import, scene, &matrixStack);
 
-	FBX_SAFE_DESTROY( scene );
-	FBX_SAFE_DESTROY( importer );
-	FBX_SAFE_DESTROY( ioSettings );
-	FBX_SAFE_DESTROY( fbxManager );
+	FBX_SAFE_DESTROY(scene);
+	FBX_SAFE_DESTROY(importer);
+	FBX_SAFE_DESTROY(ioSettings);
+	FBX_SAFE_DESTROY(fbxManager);
 
 	return import;
 }
@@ -1004,18 +1004,18 @@ SceneImport* FBXLoadSceneFromFile( std::string const &fbxFilename, Matrix4f cons
 #include "Engine/Core/EngineCommon.hpp"
 
 //-------------------------------------------------------------------------------------------------
-void FBXListScene( std::string const & filename )
+void FBXListScene(std::string const & filename)
 {
-	UNREFERENCED( filename );
-	g_ConsoleSystem->AddLog( "TOOLS_BUILD does not exist.", Color::RED );
+	UNREFERENCED(filename);
+	g_ConsoleSystem->AddLog("TOOLS_BUILD does not exist.", Color::RED);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-SceneImport * FBXLoadSceneFromFile( std::string const * fbxFilename )
+SceneImport * FBXLoadSceneFromFile(std::string const * fbxFilename)
 {
-	UNREFERENCED( fbxFilename );
-	g_ConsoleSystem->AddLog( "TOOLS_BUILD does not exist.", Color::RED );
+	UNREFERENCED(fbxFilename);
+	g_ConsoleSystem->AddLog("TOOLS_BUILD does not exist.", Color::RED);
 	return nullptr;
 }
 

@@ -14,9 +14,9 @@ struct XMLNode;
 //-------------------------------------------------------------------------------------------------
 class UIBox : public UIWidget
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	static UIWidgetRegistration s_UIBoxRegistration;
 
@@ -25,35 +25,35 @@ public:
 	static char const * PROPERTY_BORDER_SIZE;
 	static char const * PROPERTY_BACKGROUND_COLOR;
 
-//-------------------------------------------------------------------------------------------------
-// Static Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	static UIWidget * CreateWidgetFromXML( XMLNode const & node );
+	static UIWidget * CreateWidgetFromXML(XMLNode const & node);
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	Mesh * m_borderMesh;
 	MeshRenderer * m_border;
 	MeshRenderer * m_background;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	UIBox( std::string const & name = "" );
-	UIBox( XMLNode const & node );
-	virtual ~UIBox( ) override;
+	UIBox(std::string const & name = "");
+	UIBox(XMLNode const & node);
+	virtual ~UIBox() override;
 
-	virtual void Update( ) override;
-	virtual void Render( ) const override;
+	virtual void Update() override;
+	virtual void Render() const override;
 
 protected:
-	void SetupRenderers( );
-	void UpdateRenderers( );
-	void CreateBorderMesh( Mesh * out_mesh );
-	Transform CalcBackgroundTransform( );
-	void PopulateFromXML( XMLNode const & node );
+	void SetupRenderers();
+	void UpdateRenderers();
+	void CreateBorderMesh(Mesh * out_mesh);
+	Transform CalcBackgroundTransform();
+	void PopulateFromXML(XMLNode const & node);
 };

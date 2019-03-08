@@ -33,9 +33,9 @@ enum DepthMode
 //-------------------------------------------------------------------------------------------------
 class DebugRenderCommand
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	CommandType m_type;
 	Vector3f m_startPosition;
@@ -53,12 +53,12 @@ public:
 	float m_age;
 	DepthMode m_mode;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	DebugRenderCommand( CommandType const & type, Vector3f const & startPosition, Vector3f const & endPosition, Color const & startColor, Color const & endColor, Color const & startOutlineColor, Color const & endOutlineColor, float radius, float size, float duration, DepthMode const & mode );
-	DebugRenderCommand( CommandType const & type, Vector3f const & startPosition, Vector3f const & endPosition, Color const & startColor, Color const & endColor, float size, float duration, DepthMode const & mode );
-	DebugRenderCommand( CommandType const & type, Vector3f const & position, Vector3f const & rightVector, Vector3f const & upVector, Color const & startColor, Color const & endColor, AABB2f const & texCoords, float length, float lineSize, float duration, DepthMode const & mode );
-	bool IsComplete( ) const;
+	DebugRenderCommand(CommandType const & type, Vector3f const & startPosition, Vector3f const & endPosition, Color const & startColor, Color const & endColor, Color const & startOutlineColor, Color const & endOutlineColor, float radius, float size, float duration, DepthMode const & mode);
+	DebugRenderCommand(CommandType const & type, Vector3f const & startPosition, Vector3f const & endPosition, Color const & startColor, Color const & endColor, float size, float duration, DepthMode const & mode);
+	DebugRenderCommand(CommandType const & type, Vector3f const & position, Vector3f const & rightVector, Vector3f const & upVector, Color const & startColor, Color const & endColor, AABB2f const & texCoords, float length, float lineSize, float duration, DepthMode const & mode);
+	bool IsComplete() const;
 };

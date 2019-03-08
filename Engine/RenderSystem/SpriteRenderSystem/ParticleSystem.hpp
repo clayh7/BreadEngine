@@ -13,54 +13,54 @@ class Vector2f;
 //-------------------------------------------------------------------------------------------------
 class ParticleSystemResource
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	std::string m_id;
 	std::vector<ParticleEmitterResource const *> m_emitterResources;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	ParticleSystemResource( std::string const & resourceID );
-	~ParticleSystemResource( );
+	ParticleSystemResource(std::string const & resourceID);
+	~ParticleSystemResource();
 
-	void AddEmitter( ParticleEmitterResource const * emitter );
+	void AddEmitter(ParticleEmitterResource const * emitter);
 };
 
 
 //-------------------------------------------------------------------------------------------------
 class ParticleSystem
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	bool m_isEnabled;
 
-private: 
+private:
 	ParticleSystemResource const * m_particleSystemResource;
 	bool m_isDead;
 	Vector2f m_position;
 	std::vector<ParticleEmitter*> m_emitters;
 	std::vector<Particle*> m_particles;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	ParticleSystem( ParticleSystemResource const * resource, int layer, Vector2f const & position );
-	~ParticleSystem( );
+	ParticleSystem(ParticleSystemResource const * resource, int layer, Vector2f const & position);
+	~ParticleSystem();
 
-	void Initialize( );
-	void Destroy( );
-	void Update( );
-	void UpdateParticles( );
-	void CleanUpParticles( );
-	void SpawnParticles( );
-	
-	bool IsFinished( ) const;
-	void SetSpawnPosition( Vector2f const & position );
+	void Initialize();
+	void Destroy();
+	void Update();
+	void UpdateParticles();
+	void CleanUpParticles();
+	void SpawnParticles();
+
+	bool IsFinished() const;
+	void SetSpawnPosition(Vector2f const & position);
 };

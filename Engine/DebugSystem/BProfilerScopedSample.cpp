@@ -5,18 +5,18 @@
 
 
 //-------------------------------------------------------------------------------------------------
-BScopedSample::BScopedSample( char const * sampleTag )
-	: tag( sampleTag )
-	, startSampleTime( Time::GetCurrentOpCount( ) )
-	, stopSampleTime( 0 )
+BScopedSample::BScopedSample(char const * sampleTag)
+	: tag(sampleTag)
+	, startSampleTime(Time::GetCurrentOpCount())
+	, stopSampleTime(0)
 {
 }
 
 
 //-------------------------------------------------------------------------------------------------
-BScopedSample::~BScopedSample( )
+BScopedSample::~BScopedSample()
 {
-	stopSampleTime = Time::GetCurrentOpCount( );
-	double sampleTime = Time::GetTimeFromOpCount( stopSampleTime - startSampleTime );
-	g_ConsoleSystem->AddLog( Stringf( "%s: %.5fseconds", tag, sampleTime ), Console::DEFAULT );
+	stopSampleTime = Time::GetCurrentOpCount();
+	double sampleTime = Time::GetTimeFromOpCount(stopSampleTime - startSampleTime);
+	g_ConsoleSystem->AddLog(Stringf("%s: %.5fseconds", tag, sampleTime), Console::DEFAULT);
 }

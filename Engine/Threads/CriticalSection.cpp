@@ -2,28 +2,28 @@
 
 
 //-------------------------------------------------------------------------------------------------
-CriticalSection::CriticalSection( )
+CriticalSection::CriticalSection()
 {
 
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void CriticalSection::Lock( )
+void CriticalSection::Lock()
 {
-	m_mutex.lock( );
+	m_mutex.lock();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void CriticalSection::Unlock( )
+void CriticalSection::Unlock()
 {
-	m_mutex.unlock( );
+	m_mutex.unlock();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool CriticalSection::TryLock( )
+bool CriticalSection::TryLock()
 {
-	return m_mutex.try_lock( );
+	return m_mutex.try_lock();
 }

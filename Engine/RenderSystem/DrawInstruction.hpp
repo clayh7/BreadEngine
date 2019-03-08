@@ -7,9 +7,9 @@
 //-------------------------------------------------------------------------------------------------
 class DrawInstruction
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	unsigned int m_primitiveType;
 
@@ -18,11 +18,11 @@ public:
 	unsigned int m_startIndex;
 	unsigned int m_count;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	DrawInstruction( bool useIndexBuffer = false, ePrimitiveType const & primitiveType = ePrimitiveType_TRIANGLES, unsigned int start = 0, unsigned int count = 0 );
-	void SetPrimitiveType( ePrimitiveType const & primitiveType );
-	unsigned int GetPrimitiveType( ) const;
+	DrawInstruction(bool useIndexBuffer = false, ePrimitiveType const & primitiveType = ePrimitiveType_TRIANGLES, unsigned int start = 0, unsigned int count = 0);
+	void SetPrimitiveType(ePrimitiveType const & primitiveType);
+	unsigned int GetPrimitiveType() const;
 };

@@ -15,9 +15,9 @@ struct XMLNode;
 //-------------------------------------------------------------------------------------------------
 class UIButton : public UIWidget
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	static UIWidgetRegistration s_UIButtonRegistration;
 	static char const * PROPERTY_BORDER_COLOR;
@@ -28,37 +28,37 @@ public:
 	static char const * PROPERTY_TEXT_SIZE;
 	static char const * PROPERTY_TEXT_ALIGNMENT;
 
-//-------------------------------------------------------------------------------------------------
-// Static Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	static UIWidget * CreateWidgetFromXML( XMLNode const & node );
+	static UIWidget * CreateWidgetFromXML(XMLNode const & node);
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	Mesh * m_borderMesh;
 	MeshRenderer * m_border;
 	MeshRenderer * m_background;
 	TextRenderer * m_text;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	UIButton( std::string const & name = "" );
-	UIButton( XMLNode const & node );
-	virtual ~UIButton( ) override;
+	UIButton(std::string const & name = "");
+	UIButton(XMLNode const & node);
+	virtual ~UIButton() override;
 
-	virtual void Update( ) override;
-	virtual void Render( ) const override;
+	virtual void Update() override;
+	virtual void Render() const override;
 
 protected:
-	void SetupRenderers( );
-	Vector2f GetWorldPositionForAlignment( eAlignment const & textAlignment );
-	void UpdateRenderers( );
-	void CreateBorderMesh( Mesh * out_mesh );
-	Transform CalcBackgroundTransform( );
-	void PopulateFromXML( XMLNode const & node );
+	void SetupRenderers();
+	Vector2f GetWorldPositionForAlignment(eAlignment const & textAlignment);
+	void UpdateRenderers();
+	void CreateBorderMesh(Mesh * out_mesh);
+	Transform CalcBackgroundTransform();
+	void PopulateFromXML(XMLNode const & node);
 };

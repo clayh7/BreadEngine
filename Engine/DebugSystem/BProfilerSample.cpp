@@ -5,40 +5,40 @@
 
 
 //-------------------------------------------------------------------------------------------------
-BProfilerSample::BProfilerSample( )
-	: tag( nullptr )
-	, opCountStart( Time::GetCurrentOpCount( ) )
-	, opCountEnd( 0 )
-	, newCount( 0 )
-	, deleteCount( 0 )
-	, parent( nullptr )
-	, next( nullptr )
-	, children( nullptr )
+BProfilerSample::BProfilerSample()
+	: tag(nullptr)
+	, opCountStart(Time::GetCurrentOpCount())
+	, opCountEnd(0)
+	, newCount(0)
+	, deleteCount(0)
+	, parent(nullptr)
+	, next(nullptr)
+	, children(nullptr)
 {
 }
 
 
 //-------------------------------------------------------------------------------------------------
-BProfilerSample::~BProfilerSample( )
+BProfilerSample::~BProfilerSample()
 {
-	while( children )
+	while (children)
 	{
 		BProfilerSample * deleteSample = children;
 		children = children->next;
-		g_ProfilerSystem->Delete( deleteSample );
+		BProfiler::Delete(deleteSample);
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void BProfilerSample::SetTag( char const * setTag )
+void BProfilerSample::SetTag(char const * setTag)
 {
 	tag = setTag;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void BProfilerSample::AddChild( BProfilerSample * child )
+void BProfilerSample::AddChild(BProfilerSample * child)
 {
 	child->next = children;
 	child->parent = this;

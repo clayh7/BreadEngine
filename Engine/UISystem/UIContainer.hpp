@@ -15,9 +15,9 @@ struct XMLNode;
 //-------------------------------------------------------------------------------------------------
 class UIContainer : public UIWidget
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	static UIWidgetRegistration s_UIContainerRegistration;
 
@@ -28,40 +28,40 @@ public:
 	static char const * PROPERTY_GRID_SIZE;
 	static char const * PROPERTY_ON_ADD_ITEM;
 
-//-------------------------------------------------------------------------------------------------
-// Static Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	static UIWidget * CreateWidgetFromXML( XMLNode const & node );
+	static UIWidget * CreateWidgetFromXML(XMLNode const & node);
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	Mesh * m_borderMesh;
 	MeshRenderer * m_border;
 	MeshRenderer * m_background;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	UIContainer( std::string const & name = "" );
-	UIContainer( XMLNode const & node );
-	virtual ~UIContainer( ) override;
+	UIContainer(std::string const & name = "");
+	UIContainer(XMLNode const & node);
+	virtual ~UIContainer() override;
 
-	virtual void Update( ) override;
-	virtual void Render( ) const override;
-	Vector2f GetItemSize( ) const;
-	Vector2f GetPositionForItem( UIItem const * childItem ) const;
-	bool IsFull( ) const;
-	bool IsEmpty( ) const;
-	void AddItem( UIItem * item );
+	virtual void Update() override;
+	virtual void Render() const override;
+	Vector2f GetItemSize() const;
+	Vector2f GetPositionForItem(UIItem const * childItem) const;
+	bool IsFull() const;
+	bool IsEmpty() const;
+	void AddItem(UIItem * item);
 
 protected:
-	void SetupRenderers( );
-	void UpdateRenderers( );
-	void CreateBorderMesh( Mesh * out_mesh );
-	Transform CalcBackgroundTransform( );
-	void PopulateFromXML( XMLNode const & node );
+	void SetupRenderers();
+	void UpdateRenderers();
+	void CreateBorderMesh(Mesh * out_mesh);
+	Transform CalcBackgroundTransform();
+	void PopulateFromXML(XMLNode const & node);
 };

@@ -19,23 +19,23 @@ STATIC char const * Input::BACKSPACE_EVENT = "BackspaceEvent";
 
 
 //-------------------------------------------------------------------------------------------------
-Input::Input( )
-: m_currentFrameNumber( 0 )
-, m_isMouseHidden( false )
-, m_mouseHoldDeviation( Vector2i::ZERO )
-, m_mouseHoldPosition( Vector2i::ZERO )
-, m_isHoldPositionActive( false )
-, m_isWheelMovingUp( false )
-, m_lastWheelChange( -1 )
-, m_isFocused( true )
-, m_lastFocusChange( 0 )
+Input::Input()
+	: m_currentFrameNumber(0)
+	, m_isMouseHidden(false)
+	, m_mouseHoldDeviation(Vector2i::ZERO)
+	, m_mouseHoldPosition(Vector2i::ZERO)
+	, m_isHoldPositionActive(false)
+	, m_isWheelMovingUp(false)
+	, m_lastWheelChange(-1)
+	, m_isFocused(true)
+	, m_lastFocusChange(0)
 {
 	//Setup all controllers
-	for ( int i = 0; i < MAX_XBOX_CONTROLLERS; i++ )
-		m_xboxControllers[i] = new XboxController( );
+	for (int i = 0; i < MAX_XBOX_CONTROLLERS; i++)
+		m_xboxControllers[i] = new XboxController();
 
 	//Set all keys to "not down"
-	for ( int keyIndex = 0; keyIndex < NUM_KEYS; keyIndex++ )
+	for (int keyIndex = 0; keyIndex < NUM_KEYS; keyIndex++)
 	{
 		m_keyStates[keyIndex].m_isDown = false;
 		m_keyStates[keyIndex].m_frameNumberLastChanged = -1;
@@ -44,9 +44,9 @@ Input::Input( )
 
 
 //-------------------------------------------------------------------------------------------------
-Input::~Input( )
+Input::~Input()
 {
-	for ( int i = 0; i < MAX_XBOX_CONTROLLERS; i++ )
+	for (int i = 0; i < MAX_XBOX_CONTROLLERS; i++)
 	{
 		delete m_xboxControllers[i];
 		m_xboxControllers[i] = nullptr;
@@ -55,46 +55,46 @@ Input::~Input( )
 
 
 //-------------------------------------------------------------------------------------------------
-void Input::Update( )
+void Input::Update()
 {
 	//AdvanceFrameNumber( );
 
 	//Snap back to hold position every frame
-	UpdateHoldPosition( );
+	UpdateHoldPosition();
 
 	//Update all controllers
-	for ( int i = 0; i < MAX_XBOX_CONTROLLERS; i++ )
-		m_xboxControllers[i]->Update( i, m_currentFrameNumber );
+	for (int i = 0; i < MAX_XBOX_CONTROLLERS; i++)
+		m_xboxControllers[i]->Update(i, m_currentFrameNumber);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Input::AdvanceFrameNumber( )
+void Input::AdvanceFrameNumber()
 {
 	m_currentFrameNumber++;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Input::AddTypedCharacter( unsigned char asKey )
+void Input::AddTypedCharacter(unsigned char asKey)
 {
 	bool success = false;
-	if( asKey >= 'a' && asKey <= 'z' )
+	if (asKey >= 'a' && asKey <= 'z')
 	{
 		success = true;
 	}
 
-	else if( asKey >= 'A' && asKey <= 'Z' )
+	else if (asKey >= 'A' && asKey <= 'Z')
 	{
 		success = true;
 	}
 
-	else if( asKey >= '0' && asKey <= '9' )
+	else if (asKey >= '0' && asKey <= '9')
 	{
 		success = true;
 	}
 
-	else if( asKey == '-'
+	else if (asKey == '-'
 		|| asKey == '_'
 		|| asKey == '+'
 		|| asKey == '='
@@ -103,26 +103,26 @@ void Input::AddTypedCharacter( unsigned char asKey )
 		|| asKey == '.'
 		|| asKey == ':'
 		|| asKey == ';'
-		|| asKey == ' ' )
+		|| asKey == ' ')
 	{
 		success = true;
 	}
 
-	if( success )
+	if (success)
 	{
 		NamedProperties charTypedEvent;
-		charTypedEvent.Set( "asKey", asKey );
-		EventSystem::TriggerEvent( CHAR_TYPED_EVENT, charTypedEvent );
+		charTypedEvent.Set("asKey", asKey);
+		EventSystem::TriggerEvent(CHAR_TYPED_EVENT, charTypedEvent);
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Input::SetKeyStatus( unsigned char asKey, bool isNowDown )
+void Input::SetKeyStatus(unsigned char asKey, bool isNowDown)
 {
-	if( asKey == KEY_BACKSPACE && isNowDown )
+	if (asKey == KEY_BACKSPACE && isNowDown)
 	{
-		EventSystem::TriggerEvent( BACKSPACE_EVENT );
+		EventSystem::TriggerEvent(BACKSPACE_EVENT);
 	}
 
 	m_keyStates[asKey].m_isDown = isNowDown;
@@ -131,21 +131,21 @@ void Input::SetKeyStatus( unsigned char asKey, bool isNowDown )
 
 
 //-------------------------------------------------------------------------------------------------
-bool Input::WasKeyJustPressed( unsigned char checkKey ) const
+bool Input::WasKeyJustPressed(unsigned char checkKey) const
 {
 	const KeyState& ks = m_keyStates[checkKey];
 	return (ks.m_isDown && (ks.m_frameNumberLastChanged == m_currentFrameNumber));
 }
 
 //-------------------------------------------------------------------------------------------------
-bool Input::IsKeyDown( unsigned char checkKey ) const
+bool Input::IsKeyDown(unsigned char checkKey) const
 {
 	return m_keyStates[checkKey].m_isDown;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool Input::WasKeyJustReleased( unsigned char checkKey ) const
+bool Input::WasKeyJustReleased(unsigned char checkKey) const
 {
 	const KeyState& ks = m_keyStates[checkKey];
 	return (!ks.m_isDown && (ks.m_frameNumberLastChanged == m_currentFrameNumber));
@@ -153,7 +153,7 @@ bool Input::WasKeyJustReleased( unsigned char checkKey ) const
 
 
 //-------------------------------------------------------------------------------------------------
-void Input::SetMouseStatus( const eMouseButton& button, bool isNowDown )
+void Input::SetMouseStatus(const eMouseButton& button, bool isNowDown)
 {
 	m_keyStates[button].m_isDown = isNowDown;
 	m_keyStates[button].m_frameNumberLastChanged = m_currentFrameNumber;
@@ -161,7 +161,7 @@ void Input::SetMouseStatus( const eMouseButton& button, bool isNowDown )
 
 
 //-------------------------------------------------------------------------------------------------
-bool Input::WasMouseButtonJustPressed( const eMouseButton& button ) const
+bool Input::WasMouseButtonJustPressed(const eMouseButton& button) const
 {
 	const KeyState& ks = m_keyStates[button];
 	return (ks.m_isDown && (ks.m_frameNumberLastChanged == m_currentFrameNumber));
@@ -169,14 +169,14 @@ bool Input::WasMouseButtonJustPressed( const eMouseButton& button ) const
 
 
 //-------------------------------------------------------------------------------------------------
-bool Input::IsMouseButtonDown( const eMouseButton& button ) const
+bool Input::IsMouseButtonDown(const eMouseButton& button) const
 {
 	return m_keyStates[button].m_isDown;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool Input::WasMouseButtonJustReleased( const eMouseButton& button ) const
+bool Input::WasMouseButtonJustReleased(const eMouseButton& button) const
 {
 	const KeyState& ks = m_keyStates[button];
 	return (!ks.m_isDown && (ks.m_frameNumberLastChanged == m_currentFrameNumber));
@@ -184,30 +184,30 @@ bool Input::WasMouseButtonJustReleased( const eMouseButton& button ) const
 
 
 //-------------------------------------------------------------------------------------------------
-void Input::SetMouseHidden( bool hideMouse )
+void Input::SetMouseHidden(bool hideMouse)
 {
-	if ( hideMouse )
-		ShowCursor( FALSE );
+	if (hideMouse)
+		ShowCursor(FALSE);
 	else
-		ShowCursor( TRUE );
+		ShowCursor(TRUE);
 
 	m_isMouseHidden = hideMouse;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Vector2i Input::GetMousePosition( bool relativeToWindow /*= false*/ ) const
+Vector2i Input::GetMousePosition(bool relativeToWindow /*= false*/) const
 {
 	POINT cursorPos;
-	GetCursorPos( &cursorPos );
-	if( relativeToWindow )
+	GetCursorPos(&cursorPos);
+	if (relativeToWindow)
 	{
-		ScreenToClient( g_EngineSystem->GetWindowHandle( ), &cursorPos );
+		ScreenToClient(g_EngineSystem->GetWindowHandle(), &cursorPos);
 	}
 
 	//Invert Y because I want bottom to be 0 and top to be positive
-	Vector2i windowDimensions = GetWindowDimensions( );
-	return Vector2i( cursorPos.x, windowDimensions.y - cursorPos.y );
+	Vector2i windowDimensions = GetWindowDimensions();
+	return Vector2i(cursorPos.x, windowDimensions.y - cursorPos.y);
 }
 
 
@@ -219,27 +219,27 @@ Vector2i Input::GetMouseHoldDeviation() const
 
 
 //-------------------------------------------------------------------------------------------------
-void Input::SetMousePosition( const Vector2i& setPosition )
+void Input::SetMousePosition(const Vector2i& setPosition)
 {
-	SetMousePosition( setPosition.x, setPosition.y );
+	SetMousePosition(setPosition.x, setPosition.y);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Input::SetMousePosition( int setX, int setY )
+void Input::SetMousePosition(int setX, int setY)
 {
-	SetCursorPos( setX, setY );
+	SetCursorPos(setX, setY);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Input::UpdateHoldPosition( )
+void Input::UpdateHoldPosition()
 {
-	if ( m_isHoldPositionActive )
+	if (m_isHoldPositionActive)
 	{
-		Vector2i currentMousePosition = GetMousePosition( );
+		Vector2i currentMousePosition = GetMousePosition();
 		m_mouseHoldDeviation = currentMousePosition - m_mouseHoldPosition;
-		SetMousePosition( m_mouseHoldPosition );
+		SetMousePosition(m_mouseHoldPosition);
 	}
 	else
 	{
@@ -249,24 +249,24 @@ void Input::UpdateHoldPosition( )
 
 
 //-------------------------------------------------------------------------------------------------
-void Input::HoldMousePosition( const Vector2i& setPosition )
+void Input::HoldMousePosition(const Vector2i& setPosition)
 {
-	HoldMousePosition( setPosition.x, setPosition.y );
+	HoldMousePosition(setPosition.x, setPosition.y);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Input::HoldMousePosition( int setX, int setY )
+void Input::HoldMousePosition(int setX, int setY)
 {
-	SetMousePosition( setX, setY );
-	m_mouseHoldPosition = Vector2i( setX, setY );
+	SetMousePosition(setX, setY);
+	m_mouseHoldPosition = Vector2i(setX, setY);
 	m_mouseHoldDeviation = Vector2i::ZERO;
 	m_isHoldPositionActive = true;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Input::ReleaseMouseHold( )
+void Input::ReleaseMouseHold()
 {
 	m_mouseHoldPosition = Vector2i::ZERO;
 	m_mouseHoldDeviation = Vector2i::ZERO;
@@ -275,7 +275,7 @@ void Input::ReleaseMouseHold( )
 
 
 //-------------------------------------------------------------------------------------------------
-void Input::SetFocus( bool isFocus )
+void Input::SetFocus(bool isFocus)
 {
 	m_isFocused = isFocus;
 	m_lastFocusChange = m_currentFrameNumber;
@@ -304,7 +304,7 @@ bool Input::LostFocus() const
 
 
 //-------------------------------------------------------------------------------------------------
-void Input::SetWheelStatus( int wheelDelta )
+void Input::SetWheelStatus(int wheelDelta)
 {
 	m_isWheelMovingUp = wheelDelta > 0;
 	m_lastWheelChange = m_currentFrameNumber;
@@ -312,14 +312,14 @@ void Input::SetWheelStatus( int wheelDelta )
 
 
 //-------------------------------------------------------------------------------------------------
-bool Input::JustScrolledUp( ) const
+bool Input::JustScrolledUp() const
 {
 	return m_isWheelMovingUp && (m_lastWheelChange == m_currentFrameNumber);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool Input::JustScrolledDown( ) const
+bool Input::JustScrolledDown() const
 {
 	return !m_isWheelMovingUp && (m_lastWheelChange == m_currentFrameNumber);
 }

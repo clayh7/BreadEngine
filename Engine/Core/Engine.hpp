@@ -16,16 +16,16 @@ extern Engine * g_EngineSystem;
 
 
 //-------------------------------------------------------------------------------------------------
-LRESULT CALLBACK WindowsMessageHandlingProcedure( HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam );
-typedef void ( MessagePumpCallback )( void );
+LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam);
+typedef void (MessagePumpCallback)(void);
 
 
 //-------------------------------------------------------------------------------------------------
 class Engine
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	static char const * APP_NAME;
 	static int const START_WINDOW_OFFSET = 50;
@@ -34,18 +34,18 @@ public:
 	static float const PERCENT_OF_SCREEN;
 	static float const ASPECT_RATIO;
 
-//-------------------------------------------------------------------------------------------------
-// Static Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	static Vector2i GetWindowDimensions( );
-	static Vector2i GetDesktopDimensions( );
-	static float GetWindowAspectRatio( );
-	static Vector3f ScreenToClipSpace( Vector2f const &screenPosition );
+	static Vector2i GetWindowDimensions();
+	static Vector2i GetDesktopDimensions();
+	static float GetWindowAspectRatio();
+	static Vector3f ScreenToClipSpace(Vector2f const &screenPosition);
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	HWND m_windowHandle = nullptr;
 	HDC g_displayDeviceContext = nullptr;
@@ -62,30 +62,30 @@ private:
 	int m_windowPhysicalWidth = START_WINDOW_WIDTH;
 	int m_windowPhysicalHeight = START_WINDOW_HEIGHT;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	Engine( HINSTANCE applicationInstanceHandle );
-	~Engine( );
+	Engine(HINSTANCE applicationInstanceHandle);
+	~Engine();
 
-	void Update( );
-	void LateUpdate( );
-	void UpdateTime( );
-	void Render( ) const;
-	void CreateOpenGLWindow( HINSTANCE applicationInstanceHandle );
-	void CalculateLargestWindow( );
+	void Update();
+	void LateUpdate();
+	void UpdateTime();
+	void Render() const;
+	void CreateOpenGLWindow(HINSTANCE applicationInstanceHandle);
+	void CalculateLargestWindow();
 
-	void SetTargetFPS( double fps );
-	void SetWindowHandle( HWND & handle );
-	void SetFullscreen( bool isFullscreen );
+	void SetTargetFPS(double fps);
+	void SetWindowHandle(HWND & handle);
+	void SetFullscreen(bool isFullscreen);
 
-	void IncrementDrawCalls( );
-	int GetCurrentDrawCalls( ) const;
-	HWND GetWindowHandle( ) const;
-	double GetTargetFPS( ) const;
+	void IncrementDrawCalls();
+	int GetCurrentDrawCalls() const;
+	HWND GetWindowHandle() const;
+	double GetTargetFPS() const;
 
-	void ConsolePrint( std::string const & consoleLog, Color const & color = Color::WHITE );
-	void ConsolePrintf( const char* format, ... );
-	void ConsolePrintf( Color const & color, const char* format, ... );
+	void ConsolePrint(std::string const & consoleLog, Color const & color = Color::WHITE);
+	void ConsolePrintf(const char* format, ...);
+	void ConsolePrintf(Color const & color, const char* format, ...);
 };

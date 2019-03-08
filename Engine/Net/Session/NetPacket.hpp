@@ -33,9 +33,9 @@ public:
 	uint8_t messageCount;
 
 public:
-	size_t const GetTotalWrittenHeaderSize( )
+	size_t const GetTotalWrittenHeaderSize()
 	{
-		return sizeof( uint8_t ) * 2 + sizeof( uint16_t ) * 3;
+		return sizeof(uint8_t) * 2 + sizeof(uint16_t) * 3;
 	};
 };
 
@@ -43,33 +43,33 @@ public:
 //-------------------------------------------------------------------------------------------------
 class NetPacket : public BytePacker
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	static size_t const MAX_SIZE = 1444;
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	byte_t m_data[MAX_SIZE];
 
 public:
 	NetSender m_senderInfo;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	NetPacket( );
+	NetPacket();
 
-	void WriteHeader( PacketHeader * header );
-	bool CanWriteMessage( NetMessage const * message ) const;
-	bool WriteMessage( NetMessage const * message );
+	void WriteHeader(PacketHeader * header);
+	bool CanWriteMessage(NetMessage const * message) const;
+	bool WriteMessage(NetMessage const * message);
 
-	void ReadHeader( PacketHeader * header ) const;
+	void ReadHeader(PacketHeader * header) const;
 
-	size_t GetSize( ) const;
-	NetPacket * Copy( ) const;
+	size_t GetSize() const;
+	NetPacket * Copy() const;
 };

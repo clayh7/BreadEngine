@@ -10,34 +10,34 @@ class TCPSocket;
 //-------------------------------------------------------------------------------------------------
 class RCSConnection
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	static int const BUFFER_SIZE = 1024;
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
 	TCPSocketPtr m_tcpSocket;
 	char m_messageBuffer[BUFFER_SIZE];
 	size_t m_messageBufferIndex;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	RCSConnection( TCPSocketPtr tcpSocket );
-	~RCSConnection( );
+	RCSConnection(TCPSocketPtr tcpSocket);
+	~RCSConnection();
 
-	void Send( eRCSMessageType messageType, char const * message ) const;
-	void Receive( );
-	SOCKET GetSocket( ) const;
-	std::string GetAddress( ) const;
+	void Send(eRCSMessageType messageType, char const * message) const;
+	void Receive();
+	SOCKET GetSocket() const;
+	std::string GetAddress() const;
 
 private:
-	void AddToBuffer( char readChar );
-	void ClearMessageBuffer( );
-	void CreateMessageEvent( );
+	void AddToBuffer(char readChar);
+	void ClearMessageBuffer();
+	void CreateMessageEvent();
 };

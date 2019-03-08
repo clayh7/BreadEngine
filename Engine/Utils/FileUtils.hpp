@@ -15,18 +15,18 @@ private:
 	eEndianMode endianMode;
 
 public:
-	void SetEndianess( eEndianMode mode ) { endianMode = mode; }
+	void SetEndianess(eEndianMode mode) { endianMode = mode; }
 
-	virtual size_t ReadBytes( void *out_buffer, size_t const numBytes ) = 0;
-	virtual size_t ReadString( std::string *out_buffer ) = 0;
-	virtual size_t ReadFloats( std::vector<float> *out_buffer ) = 0;
-	virtual size_t ReadInts( std::vector<int> *out_buffer ) = 0;
+	virtual size_t ReadBytes(void *out_buffer, size_t const numBytes) = 0;
+	virtual size_t ReadString(std::string *out_buffer) = 0;
+	virtual size_t ReadFloats(std::vector<float> *out_buffer) = 0;
+	virtual size_t ReadInts(std::vector<int> *out_buffer) = 0;
 
 	template <typename DataType>
-	bool Read( DataType *data )
+	bool Read(DataType *data)
 	{
 		//#TODO: add Swapping for Endianness
-		return ReadBytes( data, sizeof( DataType ) ) == sizeof( DataType );
+		return ReadBytes(data, sizeof(DataType)) == sizeof(DataType);
 	}
 };
 
@@ -38,15 +38,15 @@ private:
 	eEndianMode endianMode;
 
 public:
-	void SetEndianess( eEndianMode mode ) { endianMode = mode; }
+	void SetEndianess(eEndianMode mode) { endianMode = mode; }
 
-	virtual size_t WriteBytes( void const *src, size_t const numBytes ) = 0;
-	virtual bool WriteString( std::string const &string ) = 0;
-	virtual bool WriteFloats( std::vector<float> const &floats ) = 0;
-	virtual bool WriteInts( std::vector<float> const &ints ) = 0;
+	virtual size_t WriteBytes(void const *src, size_t const numBytes) = 0;
+	virtual bool WriteString(std::string const &string) = 0;
+	virtual bool WriteFloats(std::vector<float> const &floats) = 0;
+	virtual bool WriteInts(std::vector<float> const &ints) = 0;
 
 	template<typename DataType>
-	bool Write( DataType const &data )
+	bool Write(DataType const &data)
 	{
 		//#TODO: add Swapping for Endianness
 // 		DataType copy = v;
@@ -54,7 +54,7 @@ public:
 // 		{
 // 			ByteSwap( &copy, sizeof( DataType ) );
 // 		}
-		return WriteBytes( &data, sizeof( DataType ) ) == sizeof( DataType );
+		return WriteBytes(&data, sizeof(DataType)) == sizeof(DataType);
 	}
 };
 
@@ -69,16 +69,16 @@ public:
 	FILE *fileHandle;
 
 public:
-	FileBinaryReader( );
+	FileBinaryReader();
 
-	bool Open( std::string const &filename );
-	void Close( );
+	bool Open(std::string const &filename);
+	void Close();
 
 public:
-	virtual size_t ReadBytes( void *out_buffer, size_t const numBytes ) override;
-	virtual size_t ReadString( std::string *out_buffer ) override;
-	virtual size_t ReadFloats( std::vector<float> *out_buffer ) override;
-	virtual size_t ReadInts( std::vector<int> *out_buffer ) override;
+	virtual size_t ReadBytes(void *out_buffer, size_t const numBytes) override;
+	virtual size_t ReadString(std::string *out_buffer) override;
+	virtual size_t ReadFloats(std::vector<float> *out_buffer) override;
+	virtual size_t ReadInts(std::vector<int> *out_buffer) override;
 };
 
 
@@ -90,34 +90,34 @@ public:
 	FILE *fileHandle;
 
 public:
-	FileBinaryWriter( );
+	FileBinaryWriter();
 
-	bool Open( std::string const &filename, bool append = false );
-	void Close( );
+	bool Open(std::string const &filename, bool append = false);
+	void Close();
 
 public:
-	virtual size_t WriteBytes( void const *src, size_t const numBytes ) override;
-	virtual bool WriteString( std::string const &string ) override;
-	virtual bool WriteFloats( std::vector<float> const &floats ) override;
-	virtual bool WriteInts( std::vector<float> const &ints ) override;
+	virtual size_t WriteBytes(void const *src, size_t const numBytes) override;
+	virtual bool WriteString(std::string const &string) override;
+	virtual bool WriteFloats(std::vector<float> const &floats) override;
+	virtual bool WriteInts(std::vector<float> const &ints) override;
 };
 
 
 //-------------------------------------------------------------------------------------------------
 //put this in a bit utils class
-void ByteSwap( void *data, size_t const dataSize );
+void ByteSwap(void *data, size_t const dataSize);
 
 
 //-------------------------------------------------------------------------------------------------
-std::vector<std::string> EnumerateFilesInFolder( std::string const &relativeDirectoryPath, std::string const filePattern );
+std::vector<std::string> EnumerateFilesInFolder(std::string const &relativeDirectoryPath, std::string const filePattern);
 
 
 //-----------------------------------------------------------------------------------------------
 // Old Read/Write Functions
 //-------------------------------------------------------------------------------------------------
-bool LoadBinaryFileToBuffer( std::string const & filePath, std::string& out_buffer );
-bool SaveBufferToBinaryFile( std::string const &filePath, std::string const &buffer );
-bool LoadBinaryFileToBuffer( std::string const & filePath, std::vector< unsigned char >& out_buffer );
-bool SaveBufferToBinaryFile( std::string const & filePath, const std::vector< unsigned char >& buffer );
-bool LoadBinaryFileToBuffer( std::string const & filePath, std::vector< float >& out_buffer );
-bool SaveBufferToBinaryFile( std::string const & filePath, const std::vector< float >& buffer );
+bool LoadBinaryFileToBuffer(std::string const & filePath, std::string& out_buffer);
+bool SaveBufferToBinaryFile(std::string const &filePath, std::string const &buffer);
+bool LoadBinaryFileToBuffer(std::string const & filePath, std::vector< unsigned char >& out_buffer);
+bool SaveBufferToBinaryFile(std::string const & filePath, const std::vector< unsigned char >& buffer);
+bool LoadBinaryFileToBuffer(std::string const & filePath, std::vector< float >& out_buffer);
+bool SaveBufferToBinaryFile(std::string const & filePath, const std::vector< float >& buffer);

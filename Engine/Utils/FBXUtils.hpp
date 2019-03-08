@@ -8,7 +8,7 @@
 #include <string>
 #include <map>
 
-void FBXListScene( std::string const &filename );
+void FBXListScene(std::string const &filename);
 
 #endif
 
@@ -26,9 +26,9 @@ class Motion;
 //-------------------------------------------------------------------------------------------------
 class SceneImport
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	std::vector<MeshBuilder*> m_meshes;
 	std::vector<Skeleton*> m_skeletons;
@@ -39,7 +39,7 @@ public:
 // Functions
 //-------------------------------------------------------------------------------------------------
 public:
-	~SceneImport( )
+	~SceneImport()
 	{
 		//destroy all meshes
 	}
@@ -47,4 +47,4 @@ public:
 
 
 //-------------------------------------------------------------------------------------------------
-SceneImport * FBXLoadSceneFromFile( std::string const & fbxFilename, Matrix4f const & engineBasis, bool isEngineBasisRightHanded, Matrix4f const & transform = Matrix4f::IDENTITY );
+SceneImport * FBXLoadSceneFromFile(std::string const & fbxFilename, Matrix4f const & engineBasis, bool isEngineBasisRightHanded, Matrix4f const & transform = Matrix4f::IDENTITY);

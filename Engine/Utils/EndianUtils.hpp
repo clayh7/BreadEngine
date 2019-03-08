@@ -20,4 +20,4 @@ enum eEndianMode
 
 
 //-------------------------------------------------------------------------------------------------
-eEndianMode GetLocalEndianess( );
+eEndianMode GetLocalEndianess();

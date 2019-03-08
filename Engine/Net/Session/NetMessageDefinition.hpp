@@ -9,7 +9,7 @@ class NetSender;
 
 
 //-------------------------------------------------------------------------------------------------
-typedef void ( MessageCallback )( NetSender const &, NetMessage const & );
+typedef void (MessageCallback)(NetSender const &, NetMessage const &);
 
 
 //-------------------------------------------------------------------------------------------------
@@ -29,17 +29,17 @@ enum eNetMessageType : byte_t
 //-------------------------------------------------------------------------------------------------
 class NetMessageDefinition
 {
-//-------------------------------------------------------------------------------------------------
-// Statics
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Statics
+	//-------------------------------------------------------------------------------------------------
 public:
-	static byte_t const CONNECTIONLESS_CONTROL_FLAG = BIT( 0 );
-	static byte_t const RELIABLE_OPTION_FLAG = BIT( 0 );
-	static byte_t const SEQUENCE_OPTION_FLAG = BIT( 1 );
+	static byte_t const CONNECTIONLESS_CONTROL_FLAG = BIT(0);
+	static byte_t const RELIABLE_OPTION_FLAG = BIT(0);
+	static byte_t const SEQUENCE_OPTION_FLAG = BIT(1);
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	eNetMessageType type;
 	byte_t controlFlags;
@@ -48,12 +48,12 @@ public:
 	size_t headerSize;
 	MessageCallback * callback;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	void CalculateHeaderSize( );
-	bool IsConnectionless( ) const;
-	bool IsReliable( ) const;
-	bool IsSequence( ) const;
+	void CalculateHeaderSize();
+	bool IsConnectionless() const;
+	bool IsReliable() const;
+	bool IsSequence() const;
 };

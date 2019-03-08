@@ -12,9 +12,9 @@ class AABB2f;
 //-------------------------------------------------------------------------------------------------
 class SpriteResource
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	char const * m_id;
 	char const * m_filename;
@@ -25,16 +25,16 @@ private:
 	SpriteSheetResource const * m_spriteSheetResource;
 	int m_spriteSheetIndex;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	SpriteResource( std::string const & id, std::string const & filename );
-	SpriteResource( std::string const & id, SpriteSheetResource const * spriteSheetResource, int index );
-	SpriteResource( SpriteResource const & copy ) = delete;
-	~SpriteResource( );
+	SpriteResource(std::string const & id, std::string const & filename);
+	SpriteResource(std::string const & id, SpriteSheetResource const * spriteSheetResource, int index);
+	SpriteResource(SpriteResource const & copy) = delete;
+	~SpriteResource();
 
-	Material * GetMaterial( ) const;
-	Texture const * GetTexture( ) const;
-	AABB2f GetUVBounds( ) const;
+	Material * GetMaterial() const;
+	Texture const * GetTexture() const;
+	AABB2f GetUVBounds() const;
 };

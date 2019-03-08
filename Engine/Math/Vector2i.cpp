@@ -8,31 +8,31 @@
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC const Vector2i Vector2i::ZERO( 0 );
-STATIC const Vector2i Vector2i::ONE( 1 );
+STATIC const Vector2i Vector2i::ZERO(0);
+STATIC const Vector2i Vector2i::ONE(1);
 
 
 //-------------------------------------------------------------------------------------------------
-Vector2i::Vector2i( )
-	: Vector2i( 0 )
+Vector2i::Vector2i()
+	: Vector2i(0)
 {
 	//Nothing
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Vector2i::Vector2i( int setValues )
-	: x( setValues )
-	, y( setValues )
+Vector2i::Vector2i(int setValues)
+	: x(setValues)
+	, y(setValues)
 {
 	//Nothing
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Vector2i::Vector2i( int setX, int setY )
-	: x( setX )
-	, y( setY )
+Vector2i::Vector2i(int setX, int setY)
+	: x(setX)
+	, y(setY)
 {
 	//Nothing
 }
@@ -40,48 +40,48 @@ Vector2i::Vector2i( int setX, int setY )
 
 //-------------------------------------------------------------------------------------------------
 //#TODO: Support parsing "," commas also
-Vector2i::Vector2i( std::string const & valueRange )
+Vector2i::Vector2i(std::string const & valueRange)
 {
 	//If the string has commas, use comma splitter
 	char splitToken = ',';
-	size_t foundComma = valueRange.find( ',' );
+	size_t foundComma = valueRange.find(',');
 	//Otherwise use ~ as the comma splitter
-	if( foundComma == std::string::npos )
+	if (foundComma == std::string::npos)
 	{
 		splitToken = '~';
 	}
-	std::vector<std::string> values = SplitString( valueRange, splitToken );
-	if ( values.size( ) == 0 )
+	std::vector<std::string> values = SplitString(valueRange, splitToken);
+	if (values.size() == 0)
 	{
 		x = 0;
 		y = 0;
 	}
-	else if ( values.size( ) == 1 )
+	else if (values.size() == 1)
 	{
-		SetTypeFromString( x, values[0] );
-		SetTypeFromString( y, values[0] );
+		SetTypeFromString(x, values[0]);
+		SetTypeFromString(y, values[0]);
 	}
-	else if( values.size( ) == 2 )
+	else if (values.size() == 2)
 	{
-		SetTypeFromString( x, values[0] );
-		SetTypeFromString( y, values[1] );
+		SetTypeFromString(x, values[0]);
+		SetTypeFromString(y, values[1]);
 	}
 	else
 	{
-		ERROR_AND_DIE( "Parsing Vector2i from std::string format not supported" );
+		ERROR_AND_DIE("Parsing Vector2i from std::string format not supported");
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Vector2i const Vector2i::operator+( Vector2i const &add ) const
+Vector2i const Vector2i::operator+(Vector2i const &add) const
 {
-	return Vector2i( x + add.x, y + add.y );
+	return Vector2i(x + add.x, y + add.y);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Vector2i::operator+=( Vector2i const &add )
+void Vector2i::operator+=(Vector2i const &add)
 {
 	x = x + add.x;
 	y = y + add.y;
@@ -89,48 +89,48 @@ void Vector2i::operator+=( Vector2i const &add )
 
 
 //-------------------------------------------------------------------------------------------------
-Vector2i const Vector2i::operator-( ) const
+Vector2i const Vector2i::operator-() const
 {
-	return Vector2i( -x, -y );
+	return Vector2i(-x, -y);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Vector2i const Vector2i::operator-( Vector2i const & subtract ) const
+Vector2i const Vector2i::operator-(Vector2i const & subtract) const
 {
-	return Vector2i( x - subtract.x, y - subtract.y );
+	return Vector2i(x - subtract.x, y - subtract.y);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Vector2i const Vector2i::operator*( int rhs ) const
+Vector2i const Vector2i::operator*(int rhs) const
 {
-	return Vector2i( x * rhs, y * rhs );
+	return Vector2i(x * rhs, y * rhs);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Vector2i const operator*( int lhs, Vector2i const & rhs )
+Vector2i const operator*(int lhs, Vector2i const & rhs)
 {
 	return rhs * lhs;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool Vector2i::operator==( Vector2i const & check ) const
+bool Vector2i::operator==(Vector2i const & check) const
 {
-	return ( x == check.x ) && ( y == check.y );
+	return (x == check.x) && (y == check.y);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool Vector2i::operator<( Vector2i const & check ) const
+bool Vector2i::operator<(Vector2i const & check) const
 {
-	if ( x < check.x )
+	if (x < check.x)
 	{
 		return true;
 	}
-	else if ( check.x == x && y < check.y )
+	else if (check.x == x && y < check.y)
 	{
 		return true;
 	}
@@ -139,14 +139,14 @@ bool Vector2i::operator<( Vector2i const & check ) const
 
 
 //-------------------------------------------------------------------------------------------------
-int Vector2i::SquareLength( ) const
+int Vector2i::SquareLength() const
 {
 	return x*x + y*y;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-std::string Vector2i::ToString( ) const
+std::string Vector2i::ToString() const
 {
-	return Stringf( "%d~%d", x, y );
+	return Stringf("%d~%d", x, y);
 }

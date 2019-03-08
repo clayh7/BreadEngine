@@ -8,26 +8,26 @@
 
 
 //-------------------------------------------------------------------------------------------------
-Framebuffer::Framebuffer( )
+Framebuffer::Framebuffer()
 {
 	std::vector<TextureFormat> colorFormats;
-	colorFormats.push_back( TextureFormat_RGBA8 );
-	Vector2i windowDimensions = GetWindowDimensions( );
-	Initialize( windowDimensions.x, windowDimensions.y, colorFormats, TextureFormat_D24S8 );
+	colorFormats.push_back(TextureFormat_RGBA8);
+	Vector2i windowDimensions = GetWindowDimensions();
+	Initialize(windowDimensions.x, windowDimensions.y, colorFormats, TextureFormat_D24S8);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Framebuffer::Framebuffer( unsigned int width, unsigned int height, std::vector<TextureFormat> const & colorFormats, TextureFormat const & depthStencilFormat )
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, std::vector<TextureFormat> const & colorFormats, TextureFormat const & depthStencilFormat)
 {
-	Initialize( width, height, colorFormats, depthStencilFormat );
+	Initialize(width, height, colorFormats, depthStencilFormat);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Framebuffer::~Framebuffer( )
+Framebuffer::~Framebuffer()
 {
-	for ( Texture *currentTex : m_colorTargets )
+	for (Texture *currentTex : m_colorTargets)
 	{
 		delete currentTex;
 		currentTex = nullptr;
@@ -39,45 +39,45 @@ Framebuffer::~Framebuffer( )
 
 
 //-------------------------------------------------------------------------------------------------
-void Framebuffer::Initialize( unsigned int width, unsigned int height, std::vector<TextureFormat> const & colorFormats, TextureFormat const & depthStencilFormat )
+void Framebuffer::Initialize(unsigned int width, unsigned int height, std::vector<TextureFormat> const & colorFormats, TextureFormat const & depthStencilFormat)
 {
 	std::vector<Texture*> colorTargets;
-	for( unsigned int colorIndex = 0; colorIndex < colorFormats.size( ); ++colorIndex )
+	for (unsigned int colorIndex = 0; colorIndex < colorFormats.size(); ++colorIndex)
 	{
 		TextureFormat format = colorFormats[colorIndex];
-		colorTargets.push_back( new Texture( width, height, format ) );
+		colorTargets.push_back(new Texture(width, height, format));
 	}
 
-	Texture * depthStencilTarget = new Texture( width, height, depthStencilFormat );
+	Texture * depthStencilTarget = new Texture(width, height, depthStencilFormat);
 
 	//Create the Framebuffer Object
 	unsigned int fboHandle;
-	glGenFramebuffers( 1, &fboHandle );
-	if( fboHandle == NULL )
+	glGenFramebuffers(1, &fboHandle);
+	if (fboHandle == NULL)
 	{
-		ERROR_AND_DIE( "No handle created." )
+		ERROR_AND_DIE("No handle created.")
 	}
 
 	// Set known values
 	m_fboHandle = fboHandle;
 	m_pixelWidth = width;
 	m_pixelHeight = height;
-	unsigned int colorCount = colorFormats.size( );
+	unsigned int colorCount = colorFormats.size();
 
 	//Set textures
-	for( unsigned int currentColor = 0; currentColor < colorCount; ++currentColor )
+	for (unsigned int currentColor = 0; currentColor < colorCount; ++currentColor)
 	{
-		m_colorTargets.push_back( colorTargets[currentColor] );
+		m_colorTargets.push_back(colorTargets[currentColor]);
 	}
 	m_depthStencilTarget = depthStencilTarget;
 
 	//OpenGL Initialization
 	//If you bound a framebuffer to your Renderer - 
 	//be careful you didn't unbind just now...
-	glBindFramebuffer( GL_FRAMEBUFFER, fboHandle );
+	glBindFramebuffer(GL_FRAMEBUFFER, fboHandle);
 
 	// Bind our color targets to our FBO
-	for( unsigned int i = 0; i < colorCount; ++i )
+	for (unsigned int i = 0; i < colorCount; ++i)
 	{
 		Texture *tex = colorTargets[i];
 		glFramebufferTexture
@@ -90,7 +90,7 @@ void Framebuffer::Initialize( unsigned int width, unsigned int height, std::vect
 	}
 
 	// Bind depth stencil if it exists
-	if( nullptr != depthStencilTarget )
+	if (nullptr != depthStencilTarget)
 	{
 		glFramebufferTexture
 		(
@@ -102,14 +102,14 @@ void Framebuffer::Initialize( unsigned int width, unsigned int height, std::vect
 	}
 
 	//Make sure everything was bound correctly
-	GLenum status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
-	if( status != GL_FRAMEBUFFER_COMPLETE )
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (status != GL_FRAMEBUFFER_COMPLETE)
 	{
-		ERROR_AND_DIE( "Buffer creation failed." );
+		ERROR_AND_DIE("Buffer creation failed.");
 	}
 
 	//Revert to old state
-	glBindFramebuffer( GL_FRAMEBUFFER, NULL );
+	glBindFramebuffer(GL_FRAMEBUFFER, NULL);
 
 	//1. Create the textures
 	//2. Then do steps below (FramebufferCreate)
@@ -118,7 +118,7 @@ void Framebuffer::Initialize( unsigned int width, unsigned int height, std::vect
 
 
 //-------------------------------------------------------------------------------------------------
-unsigned int Framebuffer::GetColorTexture( int colorIndex ) const
+unsigned int Framebuffer::GetColorTexture(int colorIndex) const
 {
 	return m_colorTargets[colorIndex]->m_openglTextureID;
 }

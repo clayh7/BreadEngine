@@ -10,9 +10,9 @@ class Sprite;
 //-------------------------------------------------------------------------------------------------
 class SpriteLayer
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	bool m_enabled;
 
@@ -21,19 +21,19 @@ public:
 	Sprite * m_listStart;
 	std::vector<eMaterialEffect> m_effects;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	SpriteLayer( int id );
-	~SpriteLayer( );
+	SpriteLayer(int id);
+	~SpriteLayer();
 
-	void AddSprite( Sprite * newSprite );
-	void RemoveSprite( Sprite * sprite );
-	void AddEffect( eMaterialEffect const & effect );
-	void RemoveAllEffects( );
+	void AddSprite(Sprite * newSprite);
+	void RemoveSprite(Sprite * sprite);
+	void AddEffect(eMaterialEffect const & effect);
+	void RemoveAllEffects();
 
-	bool IsEnabled( ) const;
+	bool IsEnabled() const;
 
-	void SetEnabled( bool isEnabled );
+	void SetEnabled(bool isEnabled);
 };

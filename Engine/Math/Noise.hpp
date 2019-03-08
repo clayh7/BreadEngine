@@ -37,26 +37,26 @@
 //-----------------------------------------------------------------------------------------------
 // Raw pseudorandom noise functions (random-access / deterministic).  Basis of all other noise.
 //
-unsigned int Get1dNoiseUint( int index, unsigned int seed = 0 );
-unsigned int Get2dNoiseUint( int indexX, int indexY, unsigned int seed = 0 );
-unsigned int Get3dNoiseUint( int indexX, int indexY, int indexZ, unsigned int seed = 0 );
-unsigned int Get4dNoiseUint( int indexX, int indexY, int indexZ, int indexT, unsigned int seed = 0 );
+unsigned int Get1dNoiseUint(int index, unsigned int seed = 0);
+unsigned int Get2dNoiseUint(int indexX, int indexY, unsigned int seed = 0);
+unsigned int Get3dNoiseUint(int indexX, int indexY, int indexZ, unsigned int seed = 0);
+unsigned int Get4dNoiseUint(int indexX, int indexY, int indexZ, int indexT, unsigned int seed = 0);
 
 //-----------------------------------------------------------------------------------------------
 // Same functions, mapped to floats in [0,1] for convenience
 //
-float Get1dNoiseZeroToOne( int index, unsigned int seed = 0 );
-float Get2dNoiseZeroToOne( int indexX, int indexY, unsigned int seed = 0 );
-float Get3dNoiseZeroToOne( int indexX, int indexY, int indexZ, unsigned int seed = 0 );
-float Get4dNoiseZeroToOne( int indexX, int indexY, int indexZ, int indexT, unsigned int seed = 0 );
+float Get1dNoiseZeroToOne(int index, unsigned int seed = 0);
+float Get2dNoiseZeroToOne(int indexX, int indexY, unsigned int seed = 0);
+float Get3dNoiseZeroToOne(int indexX, int indexY, int indexZ, unsigned int seed = 0);
+float Get4dNoiseZeroToOne(int indexX, int indexY, int indexZ, int indexT, unsigned int seed = 0);
 
 //-----------------------------------------------------------------------------------------------
 // Same functions, mapped to floats in [-1,1] for convenience
 //
-float Get1dNoiseNegOneToOne( int index, unsigned int seed = 0 );
-float Get2dNoiseNegOneToOne( int indexX, int indexY, unsigned int seed = 0 );
-float Get3dNoiseNegOneToOne( int indexX, int indexY, int indexZ, unsigned int seed = 0 );
-float Get4dNoiseNegOneToOne( int indexX, int indexY, int indexZ, int indexT, unsigned int seed = 0 );
+float Get1dNoiseNegOneToOne(int index, unsigned int seed = 0);
+float Get2dNoiseNegOneToOne(int indexX, int indexY, unsigned int seed = 0);
+float Get3dNoiseNegOneToOne(int indexX, int indexY, int indexZ, unsigned int seed = 0);
+float Get4dNoiseNegOneToOne(int indexX, int indexY, int indexZ, int indexT, unsigned int seed = 0);
 
 
 //-----------------------------------------------------------------------------------------------
@@ -69,10 +69,10 @@ float Get4dNoiseNegOneToOne( int indexX, int indexY, int indexZ, int indexT, uns
 // <octaveScale>		Frequency multiplier for each subsequent octave (each octave is busier)
 // <renormalize>		If true, uses nonlinear (SmoothStep) renormalization to within [-1,1]
 //
-float Compute1dFractalNoise( float position, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0 );
-float Compute2dFractalNoise( float posX, float posY, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0 );
-float Compute3dFractalNoise( float posX, float posY, float posZ, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0 );
-float Compute4dFractalNoise( float posX, float posY, float posZ, float posT, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0 );
+float Compute1dFractalNoise(float position, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0);
+float Compute2dFractalNoise(float posX, float posY, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0);
+float Compute3dFractalNoise(float posX, float posY, float posZ, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0);
+float Compute4dFractalNoise(float posX, float posY, float posZ, float posT, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0);
 
 
 //-----------------------------------------------------------------------------------------------
@@ -86,10 +86,10 @@ float Compute4dFractalNoise( float posX, float posY, float posZ, float posT, flo
 // <octaveScale>		Frequency multiplier for each subsequent octave (each octave is busier)
 // <renormalize>		If true, uses nonlinear (SmoothStep) renormalization to within [-1,1]
 //
-float Compute1dPerlinNoise( float position, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0 );
-float Compute2dPerlinNoise( float posX, float posY, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0 );
-float Compute3dPerlinNoise( float posX, float posY, float posZ, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0 );
-float Compute4dPerlinNoise( float posX, float posY, float posZ, float posT, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0 );
+float Compute1dPerlinNoise(float position, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0);
+float Compute2dPerlinNoise(float posX, float posY, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0);
+float Compute3dPerlinNoise(float posX, float posY, float posZ, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0);
+float Compute4dPerlinNoise(float posX, float posY, float posZ, float posT, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0);
 
 
 //-----------------------------------------------------------------------------------------------
@@ -106,16 +106,16 @@ float Compute4dPerlinNoise( float posX, float posY, float posZ, float posT, floa
 
 
 //-----------------------------------------------------------------------------------------------
-unsigned int Get2dNoiseUint( int indexX, int indexY, unsigned int seed );
-unsigned int Get3dNoiseUint( int indexX, int indexY, int indexZ, unsigned int seed );
-unsigned int Get4dNoiseUint( int indexX, int indexY, int indexZ, int indexT, unsigned int seed );
+unsigned int Get2dNoiseUint(int indexX, int indexY, unsigned int seed);
+unsigned int Get3dNoiseUint(int indexX, int indexY, int indexZ, unsigned int seed);
+unsigned int Get4dNoiseUint(int indexX, int indexY, int indexZ, int indexT, unsigned int seed);
 
-float Get1dNoiseZeroToOne( int index, unsigned int seed );
-float Get2dNoiseZeroToOne( int indexX, int indexY, unsigned int seed );
-float Get3dNoiseZeroToOne( int indexX, int indexY, int indexZ, unsigned int seed );
-float Get4dNoiseZeroToOne( int indexX, int indexY, int indexZ, int indexT, unsigned int seed );
+float Get1dNoiseZeroToOne(int index, unsigned int seed);
+float Get2dNoiseZeroToOne(int indexX, int indexY, unsigned int seed);
+float Get3dNoiseZeroToOne(int indexX, int indexY, int indexZ, unsigned int seed);
+float Get4dNoiseZeroToOne(int indexX, int indexY, int indexZ, int indexT, unsigned int seed);
 
-float Get1dNoiseNegOneToOne( int index, unsigned int seed );
-float Get2dNoiseNegOneToOne( int indexX, int indexY, unsigned int seed );
-float Get3dNoiseNegOneToOne( int indexX, int indexY, int indexZ, unsigned int seed );
-float Get4dNoiseNegOneToOne( int indexX, int indexY, int indexZ, int indexT, unsigned int seed );
+float Get1dNoiseNegOneToOne(int index, unsigned int seed);
+float Get2dNoiseNegOneToOne(int indexX, int indexY, unsigned int seed);
+float Get3dNoiseNegOneToOne(int indexX, int indexY, int indexZ, unsigned int seed);
+float Get4dNoiseNegOneToOne(int indexX, int indexY, int indexZ, int indexT, unsigned int seed);

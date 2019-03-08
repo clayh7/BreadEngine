@@ -7,9 +7,9 @@
 //-------------------------------------------------------------------------------------------------
 class Color
 {
-//-------------------------------------------------------------------------------------------------
-// Static Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	static const Color WHITE;
 	static const Color LIGHT_GREY;
@@ -36,37 +36,37 @@ public:
 	static const Color BROWN;
 	static const Color CLAY_GREEN;
 
-//-------------------------------------------------------------------------------------------------
-// Static Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Static Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	static Color Lerp( Color const & startColor, Color const & endColor, float zeroToOne );
-	static Color const RandomColor( );
+	static Color Lerp(Color const & startColor, Color const & endColor, float zeroToOne);
+	static Color const RandomColor();
 
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	unsigned char r;
 	unsigned char g;
 	unsigned char b;
 	unsigned char a;
 
-//-------------------------------------------------------------------------------------------------
-// Functions
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 public:
-	Color( );
-	Color( unsigned char setR, unsigned char setG, unsigned char setB, unsigned char setA );
-	Color( std::string colorString );
+	Color();
+	Color(unsigned char setR, unsigned char setG, unsigned char setB, unsigned char setA);
+	Color(std::string colorString);
 
-	bool Color::operator==( Color const & check ) const;
-	bool Color::operator!=( Color const & check ) const;
-	void Multiply( float darkenPercent );
+	bool Color::operator==(Color const & check) const;
+	bool Color::operator!=(Color const & check) const;
+	void Multiply(float darkenPercent);
 
-	float GetRFloat( ) const;
-	float GetGFloat( ) const;
-	float GetBFloat( ) const;
-	float GetAFloat( ) const;
-	Vector4f GetVector4f( ) const;
+	float GetRFloat() const;
+	float GetGFloat() const;
+	float GetBFloat() const;
+	float GetAFloat() const;
+	Vector4f GetVector4f() const;
 };

@@ -3,27 +3,27 @@
 
 
 //-------------------------------------------------------------------------------------------------
-SpriteLayer::SpriteLayer( int id )
-	: m_enabled( true )
-	, m_layerID( id )
-	, m_listStart(nullptr )
+SpriteLayer::SpriteLayer(int id)
+	: m_enabled(true)
+	, m_layerID(id)
+	, m_listStart(nullptr)
 {
 
 }
 
 
 //-------------------------------------------------------------------------------------------------
-SpriteLayer::~SpriteLayer( )
+SpriteLayer::~SpriteLayer()
 {
 
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteLayer::AddSprite( Sprite * newSprite )
+void SpriteLayer::AddSprite(Sprite * newSprite)
 {
 	newSprite->m_nextSprite = m_listStart;
-	if( m_listStart != nullptr )
+	if (m_listStart != nullptr)
 	{
 		m_listStart->m_prevSprite = newSprite;
 	}
@@ -32,10 +32,10 @@ void SpriteLayer::AddSprite( Sprite * newSprite )
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteLayer::RemoveSprite( Sprite * sprite )
+void SpriteLayer::RemoveSprite(Sprite * sprite)
 {
 	//Move the head of the list
-	if( m_listStart == sprite )
+	if (m_listStart == sprite)
 	{
 		m_listStart = sprite->m_nextSprite;
 	}
@@ -44,11 +44,11 @@ void SpriteLayer::RemoveSprite( Sprite * sprite )
 	{
 		Sprite * prev = sprite->m_prevSprite;
 		Sprite * next = sprite->m_nextSprite;
-		if( prev )
+		if (prev)
 		{
 			prev->m_nextSprite = next;
 		}
-		if( next )
+		if (next)
 		{
 			next->m_prevSprite = prev;
 		}
@@ -57,28 +57,28 @@ void SpriteLayer::RemoveSprite( Sprite * sprite )
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteLayer::AddEffect( eMaterialEffect const & effect )
+void SpriteLayer::AddEffect(eMaterialEffect const & effect)
 {
-	m_effects.push_back( effect );
+	m_effects.push_back(effect);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteLayer::RemoveAllEffects( )
+void SpriteLayer::RemoveAllEffects()
 {
-	m_effects.clear( );
+	m_effects.clear();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool SpriteLayer::IsEnabled( ) const 
+bool SpriteLayer::IsEnabled() const
 {
 	return m_enabled;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteLayer::SetEnabled( bool isEnabled )
+void SpriteLayer::SetEnabled(bool isEnabled)
 {
 	m_enabled = isEnabled;
 }

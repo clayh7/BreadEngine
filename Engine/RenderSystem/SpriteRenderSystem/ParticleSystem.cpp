@@ -4,126 +4,126 @@
 
 
 //-------------------------------------------------------------------------------------------------
-ParticleSystemResource::ParticleSystemResource( std::string const & resourceID )
-	: m_id( resourceID )
+ParticleSystemResource::ParticleSystemResource(std::string const & resourceID)
+	: m_id(resourceID)
 {
 }
 
 
 //-------------------------------------------------------------------------------------------------
-ParticleSystemResource::~ParticleSystemResource( )
+ParticleSystemResource::~ParticleSystemResource()
 {
-	for( ParticleEmitterResource const * emitterResource : m_emitterResources )
+	for (ParticleEmitterResource const * emitterResource : m_emitterResources)
 	{
 		delete emitterResource;
 		emitterResource = nullptr;
 	}
-	m_emitterResources.clear( );
+	m_emitterResources.clear();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void ParticleSystemResource::AddEmitter( ParticleEmitterResource const * emitter )
+void ParticleSystemResource::AddEmitter(ParticleEmitterResource const * emitter)
 {
-	m_emitterResources.push_back( emitter );
+	m_emitterResources.push_back(emitter);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-ParticleSystem::ParticleSystem( ParticleSystemResource const * resource, int layer, Vector2f const & position )
-	: m_isEnabled( true )
-	, m_particleSystemResource( resource )
-	, m_isDead( false )
-	, m_position( position )
+ParticleSystem::ParticleSystem(ParticleSystemResource const * resource, int layer, Vector2f const & position)
+	: m_isEnabled(true)
+	, m_particleSystemResource(resource)
+	, m_isDead(false)
+	, m_position(position)
 {
-	for( ParticleEmitterResource const * emitterResource : resource->m_emitterResources )
+	for (ParticleEmitterResource const * emitterResource : resource->m_emitterResources)
 	{
-		ParticleEmitter * emitter = new ParticleEmitter( emitterResource );
+		ParticleEmitter * emitter = new ParticleEmitter(emitterResource);
 		emitter->layerID = layer;
-		m_emitters.push_back( emitter );
+		m_emitters.push_back(emitter);
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-ParticleSystem::~ParticleSystem( )
+ParticleSystem::~ParticleSystem()
 {
-	for( ParticleEmitter * deleteEmitter : m_emitters )
+	for (ParticleEmitter * deleteEmitter : m_emitters)
 	{
 		delete deleteEmitter;
 		deleteEmitter = nullptr;
 	}
-	m_emitters.clear( );
+	m_emitters.clear();
 
-	for( Particle * deleteParticle : m_particles )
+	for (Particle * deleteParticle : m_particles)
 	{
 		delete deleteParticle;
 		deleteParticle = nullptr;
 	}
-	m_particles.clear( );
+	m_particles.clear();
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void ParticleSystem::Initialize( )
+void ParticleSystem::Initialize()
 {
 	//Spawn starting particles
-	for( ParticleEmitter * emitter : m_emitters )
+	for (ParticleEmitter * emitter : m_emitters)
 	{
 		int spawnAmount = emitter->m_particleEmitterResource->initialSpawn;
-		for( int initialIndex = 0; initialIndex < spawnAmount; ++initialIndex )
+		for (int initialIndex = 0; initialIndex < spawnAmount; ++initialIndex)
 		{
-			m_particles.push_back( emitter->SpawnParticle( m_position ) );
+			m_particles.push_back(emitter->SpawnParticle(m_position));
 		}
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void ParticleSystem::Destroy( )
+void ParticleSystem::Destroy()
 {
 	m_isDead = true;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void ParticleSystem::Update( )
+void ParticleSystem::Update()
 {
-	UpdateParticles( );
-	CleanUpParticles( );
-	if( m_isEnabled )
+	UpdateParticles();
+	CleanUpParticles();
+	if (m_isEnabled)
 	{
-		SpawnParticles( );
+		SpawnParticles();
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void ParticleSystem::UpdateParticles( )
+void ParticleSystem::UpdateParticles()
 {
-	for( Particle * particle : m_particles )
+	for (Particle * particle : m_particles)
 	{
 		particle->age += Time::DELTA_SECONDS;
 		particle->velocity += particle->acceleration * Time::DELTA_SECONDS;
 		particle->sprite->m_position += particle->velocity * Time::DELTA_SECONDS;
-		particle->sprite->m_scale = Lerp( particle->startScale, particle->endScale, particle->age / particle->maxAge );
-		float percentAge = ( particle->age / particle->maxAge );
-		particle->sprite->m_color = Color::Lerp( particle->startColor, particle->endColor, percentAge );
+		particle->sprite->m_scale = Lerp(particle->startScale, particle->endScale, particle->age / particle->maxAge);
+		float percentAge = (particle->age / particle->maxAge);
+		particle->sprite->m_color = Color::Lerp(particle->startColor, particle->endColor, percentAge);
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void ParticleSystem::CleanUpParticles( )
+void ParticleSystem::CleanUpParticles()
 {
-	for( size_t particleIndex = 0; particleIndex < m_particles.size( ); ++particleIndex )
+	for (size_t particleIndex = 0; particleIndex < m_particles.size(); ++particleIndex)
 	{
 		Particle * particle = m_particles[particleIndex];
-		if( particle->age >= particle->maxAge )
+		if (particle->age >= particle->maxAge)
 		{
 			delete particle;
-			m_particles[particleIndex] = m_particles[m_particles.size( ) - 1];
-			m_particles.pop_back( );
+			m_particles[particleIndex] = m_particles[m_particles.size() - 1];
+			m_particles.pop_back();
 			--particleIndex;
 		}
 	}
@@ -131,19 +131,19 @@ void ParticleSystem::CleanUpParticles( )
 
 
 //-------------------------------------------------------------------------------------------------
-void ParticleSystem::SpawnParticles( )
+void ParticleSystem::SpawnParticles()
 {
-	if( m_isDead )
+	if (m_isDead)
 	{
 		return;
 	}
 
-	for( ParticleEmitter * emitter : m_emitters )
+	for (ParticleEmitter * emitter : m_emitters)
 	{
 		emitter->m_emitTimer += Time::DELTA_SECONDS;
-		while( emitter->m_emitTimer > emitter->m_particleEmitterResource->spawnRate )
+		while (emitter->m_emitTimer > emitter->m_particleEmitterResource->spawnRate)
 		{
-			m_particles.push_back( emitter->SpawnParticle( m_position ) );
+			m_particles.push_back(emitter->SpawnParticle(m_position));
 			emitter->m_emitTimer -= emitter->m_particleEmitterResource->spawnRate;
 		}
 	}
@@ -151,14 +151,14 @@ void ParticleSystem::SpawnParticles( )
 
 
 //-------------------------------------------------------------------------------------------------
-bool ParticleSystem::IsFinished( ) const
+bool ParticleSystem::IsFinished() const
 {
-	return m_isDead && m_particles.size( ) == 0;
+	return m_isDead && m_particles.size() == 0;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void ParticleSystem::SetSpawnPosition( Vector2f const & position )
+void ParticleSystem::SetSpawnPosition(Vector2f const & position)
 {
 	m_position = position;
 }

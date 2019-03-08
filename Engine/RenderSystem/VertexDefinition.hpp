@@ -17,9 +17,9 @@ enum VertexDataType
 //-------------------------------------------------------------------------------------------------
 class VertexDefinition
 {
-//-------------------------------------------------------------------------------------------------
-// Members
-//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 public:
 	char const *	m_name;			// Name of this location, nullptr indicates end of the array
 	//unsigned int	m_id;			// id from name (GLuint)
@@ -34,6 +34,6 @@ public:
 // Functions
 //-------------------------------------------------------------------------------------------------
 public:
-	VertexDefinition( char const * name, unsigned int bindPoint, int count, VertexDataType const & type, bool normalized, int stride, int offset );
-	~VertexDefinition( );
+	VertexDefinition(char const * name, unsigned int bindPoint, int count, VertexDataType const & type, bool normalized, int stride, int offset);
+	~VertexDefinition();
 };
