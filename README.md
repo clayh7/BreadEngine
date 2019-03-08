@@ -1,9 +1,23 @@
 # BreadEngine v1.0
 This is the Engine I made while in Guildhall
 
+Features:
+- Audio System
+- Time System
+- Debug System
+- Event System
+- Input System
+- Math Library
+- Memory Manager System
+- Network System
+- Render System (OpenGL)
+- Job System (Multi-Threading)
+- UI System
+- File Utilities
+
 # Multiplayer Game Programming
-While I start reading this book, I need a place to implement the examples the book talked about so I could better learn.
-Examples from the book and my own implementations can be found here
+While I'm reading this book, I need a place to implement the examples the book talks about so I can learn it better.
+Examples from the book and my own implementations can be found here.
 
 Features:
 
