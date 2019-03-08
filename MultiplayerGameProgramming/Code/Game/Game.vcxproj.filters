@@ -1,20 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{bdf8ae62-5dca-498c-a10b-c4d1a98161bc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Data">
       <UniqueIdentifier>{92d64924-bf14-48ea-8aa5-fbc958684116}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Data\UI">
-      <UniqueIdentifier>{061f24ec-f16f-4be1-a951-ff9f5414c7d1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\Sprites">
       <UniqueIdentifier>{17dcb38e-f77a-4ff4-bdce-2c1e8b4ea010}</UniqueIdentifier>
     </Filter>
     <Filter Include="Main">
       <UniqueIdentifier>{f5581a2d-145a-4ccd-b5fb-9854ae8b1e78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Fonts">
+      <UniqueIdentifier>{8297181e-193c-41d6-8fa7-8bbacd782660}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Shaders">
+      <UniqueIdentifier>{bdf8ae62-5dca-498c-a10b-c4d1a98161bc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -38,46 +38,52 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Run_Win32\Data\Shaders\passthrough.frag">
-      <Filter>Shaders</Filter>
+      <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\..\Run_Win32\Data\Shaders\passthrough.vert">
-      <Filter>Shaders</Filter>
+      <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\..\Run_Win32\Data\Shaders\font.frag">
-      <Filter>Shaders</Filter>
+      <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\..\Run_Win32\Data\Shaders\font.vert">
-      <Filter>Shaders</Filter>
+      <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\..\Run_Win32\Data\Shaders\post.vert">
-      <Filter>Shaders</Filter>
+      <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\..\Run_Win32\Data\Shaders\postNothing.frag">
-      <Filter>Shaders</Filter>
+      <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\..\Run_Win32\Data\Shaders\postWaves.frag">
-      <Filter>Shaders</Filter>
+      <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\..\Run_Win32\Data\Shaders\tangent.frag">
-      <Filter>Shaders</Filter>
+      <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\..\Run_Win32\Data\Shaders\tangent.vert">
-      <Filter>Shaders</Filter>
+      <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\..\Run_Win32\Data\Shaders\blinnPhong.frag">
-      <Filter>Shaders</Filter>
+      <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\..\Run_Win32\Data\Shaders\blinnPhong.vert">
-      <Filter>Shaders</Filter>
+      <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\..\Run_Win32\Data\Shaders\sprite.frag">
-      <Filter>Shaders</Filter>
+      <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\..\Run_Win32\Data\Shaders\sprite.vert">
-      <Filter>Shaders</Filter>
+      <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\..\Run_Win32\Data\Shaders\postDark.frag">
-      <Filter>Shaders</Filter>
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Fonts\ConsoleFont.fnt">
+      <Filter>Data\Fonts</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Fonts\MainFrame.fnt">
+      <Filter>Data\Fonts</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -90,13 +96,19 @@
     <Image Include="..\..\Run_Win32\Data\Sprites\circle.png">
       <Filter>Data\Sprites</Filter>
     </Image>
+    <Image Include="..\..\Run_Win32\Data\Fonts\ClayFont.png">
+      <Filter>Data\Fonts</Filter>
+    </Image>
+    <Image Include="..\..\Run_Win32\Data\Fonts\ConsoleFont.png">
+      <Filter>Data\Fonts</Filter>
+    </Image>
+    <Image Include="..\..\Run_Win32\Data\Fonts\MainFrame.png">
+      <Filter>Data\Fonts</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\..\Run_Win32\Data\Sprites\SpriteResources.Sprite.xml">
       <Filter>Data\Sprites</Filter>
-    </Xml>
-    <Xml Include="..\..\Run_Win32\Data\UI\PlayerHUD.UI.xml">
-      <Filter>Data\UI</Filter>
     </Xml>
   </ItemGroup>
 </Project>

@@ -156,6 +156,8 @@
     <ClInclude Include="Game.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Run_Win32\Data\Fonts\ConsoleFont.fnt" />
+    <None Include="..\..\Run_Win32\Data\Fonts\MainFrame.fnt" />
     <None Include="..\..\Run_Win32\Data\Shaders\blinnPhong.frag" />
     <None Include="..\..\Run_Win32\Data\Shaders\blinnPhong.vert" />
     <None Include="..\..\Run_Win32\Data\Shaders\font.frag" />
@@ -173,9 +175,11 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\..\Run_Win32\Data\Sprites\SpriteResources.Sprite.xml" />
-    <Xml Include="..\..\Run_Win32\Data\UI\PlayerHUD.UI.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\Run_Win32\Data\Fonts\ClayFont.png" />
+    <Image Include="..\..\Run_Win32\Data\Fonts\ConsoleFont.png" />
+    <Image Include="..\..\Run_Win32\Data\Fonts\MainFrame.png" />
     <Image Include="..\..\Run_Win32\Data\Sprites\circle.png" />
     <Image Include="..\..\Run_Win32\Data\Sprites\square.png" />
     <Image Include="..\..\Run_Win32\Data\Sprites\triangle.png" />
