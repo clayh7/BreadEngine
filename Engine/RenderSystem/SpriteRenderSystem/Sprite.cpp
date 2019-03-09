@@ -218,7 +218,7 @@ void Sprite::SetRenderer(SpriteGameRenderer const * renderer)
 //-------------------------------------------------------------------------------------------------
 void Sprite::SetID(std::string const & spriteID)
 {
-	if (m_spriteID != spriteID)
+	if(m_spriteID != spriteID)
 	{
 		m_spriteResource = g_SpriteRenderSystem->GetSpriteResource(spriteID);
 		m_spriteID = spriteID;
@@ -230,7 +230,7 @@ void Sprite::SetID(std::string const & spriteID)
 void Sprite::SetLayer(int layerID)
 {
 	//Don't need to set the layer if it's already that layer
-	if (layerID == m_layerID)
+	if(layerID == m_layerID)
 	{
 		return;
 	}

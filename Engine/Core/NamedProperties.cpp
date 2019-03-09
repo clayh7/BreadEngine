@@ -11,7 +11,7 @@ NamedProperties::NamedProperties()
 //-------------------------------------------------------------------------------------------------
 NamedProperties::~NamedProperties()
 {
-	for (std::pair<size_t, NamedPropertyBase*> property : m_properties)
+	for(std::pair<size_t, NamedPropertyBase*> property : m_properties)
 	{
 		delete property.second;
 		property.second = nullptr;
@@ -36,7 +36,7 @@ ePropertySetResult NamedProperties::Set(std::string const & propertyName, char c
 	auto found = m_properties.find(propertyNameHash);
 
 	//Could not find property
-	if (found == m_properties.end())
+	if(found == m_properties.end())
 	{
 		NamedProperty<std::string> * addProperty = new NamedProperty<std::string>(propertyValue);
 		m_properties.insert(std::pair<size_t, NamedPropertyBase*>(propertyNameHash, addProperty));
@@ -51,7 +51,7 @@ ePropertySetResult NamedProperties::Set(std::string const & propertyName, char c
 		NamedProperty<std::string> * typedProperty = dynamic_cast<NamedProperty<std::string>*>(property);
 
 		//Property is correct type
-		if (typedProperty)
+		if(typedProperty)
 		{
 			typedProperty->m_data = propertyValue;
 			return ePropertySetResult_SUCCESS_UPDATE;

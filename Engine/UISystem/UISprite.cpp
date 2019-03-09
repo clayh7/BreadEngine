@@ -61,12 +61,12 @@ UISprite::~UISprite()
 //-------------------------------------------------------------------------------------------------
 void UISprite::Update()
 {
-	if (m_hidden)
+	if(m_hidden)
 	{
 		return;
 	}
 
-	if (m_dirty)
+	if(m_dirty)
 	{
 		UpdateRenderers();
 		m_dirty = false;
@@ -79,7 +79,7 @@ void UISprite::Update()
 //-------------------------------------------------------------------------------------------------
 void UISprite::Render() const
 {
-	if (m_hidden)
+	if(m_hidden)
 	{
 		return;
 	}
@@ -114,7 +114,7 @@ void UISprite::UpdateRenderers()
 	//Update Sprite Quad
 	std::string currentSpriteID;
 	GetProperty(PROPERTY_SPRITE_ID, currentSpriteID);
-	if (currentSpriteID != m_spriteData->m_id)
+	if(currentSpriteID != m_spriteData->m_id)
 	{
 		m_spriteData = g_SpriteRenderSystem->GetSpriteResource(currentSpriteID);
 		m_quad->SetUniform("uTexDiffuse", m_spriteData->GetTexture());
@@ -155,16 +155,16 @@ Transform UISprite::CalcQuadTransform()
 void UISprite::PopulateFromXML(XMLNode const & node)
 {
 	//Set properties from XML
-	for (int childPropertyIndex = 0; childPropertyIndex < node.nChildNode(); ++childPropertyIndex)
+	for(int childPropertyIndex = 0; childPropertyIndex < node.nChildNode(); ++childPropertyIndex)
 	{
 		XMLNode childProperty = node.getChildNode(childPropertyIndex);
-		if (strcmp(childProperty.getName(), PROPERTY_SPRITE_ID) == 0)
+		if(strcmp(childProperty.getName(), PROPERTY_SPRITE_ID) == 0)
 		{
 			std::string spriteID = ReadXMLAttribute(childProperty, STRING_VALUE, DEFAULT_SPRITE_ID);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_SPRITE_ID, spriteID, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_ROTATION_DEGREES) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_ROTATION_DEGREES) == 0)
 		{
 			float spriteRotation = ReadXMLAttribute(childProperty, STRING_VALUE, 0.f);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");

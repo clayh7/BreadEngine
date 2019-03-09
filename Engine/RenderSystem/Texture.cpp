@@ -29,7 +29,7 @@ STATIC Texture const * Texture::CreateOrLoadTexture(std::string const & imageFil
 {
 	size_t textureHash = std::hash<std::string>{}(imageFilePath);
 	auto found = s_textureRegistry.find(textureHash);
-	if (found != s_textureRegistry.end())
+	if(found != s_textureRegistry.end())
 	{
 		return found->second;
 	}
@@ -44,7 +44,7 @@ STATIC Texture const * Texture::CreateOrLoadTexture(std::string const & imageFil
 //-------------------------------------------------------------------------------------------------
 STATIC void Texture::DestroyRegistry()
 {
-	for (auto shaderIndex = s_textureRegistry.begin(); shaderIndex != s_textureRegistry.end(); ++shaderIndex)
+	for(auto shaderIndex = s_textureRegistry.begin(); shaderIndex != s_textureRegistry.end(); ++shaderIndex)
 	{
 		delete shaderIndex->second;
 		shaderIndex->second = nullptr;
@@ -85,7 +85,7 @@ Texture::Texture(std::string const & imageFilePath)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);  // one of: GL_NEAREST, GL_LINEAR, GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_LINEAR
 
 	GLenum bufferFormat = GL_RGBA; // the format our source pixel data is currently in; any of: GL_RGB, GL_RGBA, GL_LUMINANCE, GL_LUMINANCE_ALPHA, ...
-	if (numComponents == 3)
+	if(numComponents == 3)
 		bufferFormat = GL_RGB;
 
 	// #FIXME: What happens if numComponents is neither 3 nor 4?
@@ -123,11 +123,11 @@ Texture::Texture(unsigned int width, unsigned int height, TextureFormat const &f
 	GLenum bufferFormat = GL_UNSIGNED_INT_8_8_8_8;
 	GLenum internalFormat = GL_RGBA8;
 
-	if (format == TextureFormat_RGBA8)
+	if(format == TextureFormat_RGBA8)
 	{
 		//Hey look, nothing
 	}
-	else if (format == TextureFormat_D24S8)
+	else if(format == TextureFormat_D24S8)
 	{
 		bufferChannels = GL_DEPTH_STENCIL;
 		bufferFormat = GL_UNSIGNED_INT_24_8;

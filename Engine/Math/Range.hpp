@@ -47,7 +47,7 @@ public:
 	//-------------------------------------------------------------------------------------------------
 	Type GetRandom() const
 	{
-		if (minimum == maximum)
+		if(minimum == maximum)
 		{
 			return minimum;
 		}

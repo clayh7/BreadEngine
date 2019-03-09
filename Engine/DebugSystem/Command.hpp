@@ -37,7 +37,7 @@ public:
 	template< typename ArgType >
 	ArgType GetArg(unsigned int argIndex, ArgType const & defaultValue) const
 	{
-		if (!HasArg(argIndex))
+		if(!HasArg(argIndex))
 		{
 			return defaultValue;
 		}

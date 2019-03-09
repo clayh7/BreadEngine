@@ -19,14 +19,14 @@ ParticleEngine::ParticleEngine()
 //-------------------------------------------------------------------------------------------------
 ParticleEngine::~ParticleEngine()
 {
-	for (auto deleteResource : m_particleSystemResourceDatabase)
+	for(auto deleteResource : m_particleSystemResourceDatabase)
 	{
 		delete deleteResource.second;
 		deleteResource.second = nullptr;
 	}
 	m_particleSystemResourceDatabase.clear();
 
-	for (ParticleSystem * deleteParticleSystem : m_activeParticleSystems)
+	for(ParticleSystem * deleteParticleSystem : m_activeParticleSystems)
 	{
 		delete deleteParticleSystem;
 		deleteParticleSystem = nullptr;
@@ -38,12 +38,12 @@ ParticleEngine::~ParticleEngine()
 //-------------------------------------------------------------------------------------------------
 void ParticleEngine::Update()
 {
-	for (size_t particleSystemIndex = 0; particleSystemIndex < m_activeParticleSystems.size(); ++particleSystemIndex)
+	for(size_t particleSystemIndex = 0; particleSystemIndex < m_activeParticleSystems.size(); ++particleSystemIndex)
 	{
 		m_activeParticleSystems[particleSystemIndex]->Update();
 
 		//Clean up complete particle systems
-		if (m_activeParticleSystems[particleSystemIndex]->IsFinished())
+		if(m_activeParticleSystems[particleSystemIndex]->IsFinished())
 		{
 			delete m_activeParticleSystems[particleSystemIndex];
 			m_activeParticleSystems[particleSystemIndex] = m_activeParticleSystems[m_activeParticleSystems.size() - 1];
@@ -249,7 +249,7 @@ ParticleSystemResource const * ParticleEngine::GetParticleSystemResource(std::st
 {
 	size_t particleSystemIDHash = std::hash<std::string>{}(resourceName);
 	auto particleSystemResourceFound = m_particleSystemResourceDatabase.find(particleSystemIDHash);
-	if (particleSystemResourceFound == m_particleSystemResourceDatabase.end())
+	if(particleSystemResourceFound == m_particleSystemResourceDatabase.end())
 	{
 		ERROR_AND_DIE("Particle System resource not found.");
 	}

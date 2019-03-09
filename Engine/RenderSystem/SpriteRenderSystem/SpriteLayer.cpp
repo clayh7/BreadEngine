@@ -23,7 +23,7 @@ SpriteLayer::~SpriteLayer()
 void SpriteLayer::AddSprite(Sprite * newSprite)
 {
 	newSprite->m_nextSprite = m_listStart;
-	if (m_listStart != nullptr)
+	if(m_listStart != nullptr)
 	{
 		m_listStart->m_prevSprite = newSprite;
 	}
@@ -35,7 +35,7 @@ void SpriteLayer::AddSprite(Sprite * newSprite)
 void SpriteLayer::RemoveSprite(Sprite * sprite)
 {
 	//Move the head of the list
-	if (m_listStart == sprite)
+	if(m_listStart == sprite)
 	{
 		m_listStart = sprite->m_nextSprite;
 	}
@@ -44,11 +44,11 @@ void SpriteLayer::RemoveSprite(Sprite * sprite)
 	{
 		Sprite * prev = sprite->m_prevSprite;
 		Sprite * next = sprite->m_nextSprite;
-		if (prev)
+		if(prev)
 		{
 			prev->m_nextSprite = next;
 		}
-		if (next)
+		if(next)
 		{
 			next->m_prevSprite = prev;
 		}

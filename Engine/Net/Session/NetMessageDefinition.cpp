@@ -10,18 +10,18 @@ void NetMessageDefinition::CalculateHeaderSize()
 	headerSize = 1;
 
 	//sender index 1 byte
-	if (!IsConnectionless())
+	if(!IsConnectionless())
 	{
 		headerSize += 1;
 	}
 
 	//reliable id 2 bytes
-	if (IsReliable())
+	if(IsReliable())
 	{
 		headerSize += 2;
 	}
 
-	if (IsReliable() && IsSequence())
+	if(IsReliable() && IsSequence())
 	{
 		headerSize += 2;
 	}

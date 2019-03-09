@@ -153,7 +153,7 @@ public:
 		eWidgetPropertySource source, eWidgetState state)
 	{
 		WidgetProperty<T> propertyData(propertyValue, source, state);
-		if (IsHigherPriority(propertyName, propertyData))
+		if(IsHigherPriority(propertyName, propertyData))
 		{
 			m_properties[state].Set(propertyName, propertyData);
 			Dirty();
@@ -170,13 +170,13 @@ public:
 		ASSERT_RECOVERABLE(result != ePropertyGetResult_FAILED_WRONG_TYPE, "Widget Property doesn't match current type");
 
 		//Doesn't exist yet, keep it
-		if (result == ePropertyGetResult_FAILED_NOT_PRESENT)
+		if(result == ePropertyGetResult_FAILED_NOT_PRESENT)
 		{
 			return true;
 		}
-		if (result == ePropertyGetResult_SUCCESS)
+		if(result == ePropertyGetResult_SUCCESS)
 		{
-			if (newProperty.m_source < currentValue.m_source)
+			if(newProperty.m_source < currentValue.m_source)
 			{
 				return false;
 			}
@@ -192,7 +192,7 @@ public:
 		WidgetProperty<T> widgetProperty;
 		ePropertyGetResult result = m_properties[m_state].Get(propertyName, widgetProperty);
 
-		if (result != ePropertyGetResult_FAILED_NOT_PRESENT)
+		if(result != ePropertyGetResult_FAILED_NOT_PRESENT)
 		{
 			out_propertyValue = widgetProperty.m_value;
 		}
@@ -200,7 +200,7 @@ public:
 		else
 		{
 			result = m_properties[eWidgetState_ALL].Get(propertyName, widgetProperty);
-			if (result != ePropertyGetResult_FAILED_NOT_PRESENT)
+			if(result != ePropertyGetResult_FAILED_NOT_PRESENT)
 			{
 				out_propertyValue = widgetProperty.m_value;
 			}
@@ -212,17 +212,17 @@ public:
 	template<typename T>
 	T * FindWidgetByName(std::string const & name)
 	{
-		if (m_name == name)
+		if(m_name == name)
 		{
 			T * widget = static_cast<T*>(this);
 			return widget;
 		}
 
 		//Go through children, find the first one that matches the name
-		for (UIWidget * child : m_children)
+		for(UIWidget * child : m_children)
 		{
 			T * foundWidget = child->FindWidgetByName<T>(name);
-			if (foundWidget)
+			if(foundWidget)
 			{
 				return foundWidget;
 			}

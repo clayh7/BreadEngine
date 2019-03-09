@@ -127,7 +127,7 @@ void SetupColor()
 //-------------------------------------------------------------------------------------------------
 STATIC void Console::Startup()
 {
-	if (g_ConsoleSystem == nullptr)
+	if(g_ConsoleSystem == nullptr)
 	{
 		g_ConsoleSystem = new Console();
 
@@ -139,6 +139,10 @@ STATIC void Console::Startup()
 		RegisterCommand("shadow", ShadowCommand, " [0-255] : Change the drop shadow alpha to [0-255]. Default = 0");
 		RegisterCommand("server_echo", ServerEchoCommand, " : Toggles sending all console lines to all network connections.");
 
+		//Startup text
+		g_ConsoleSystem->AddLog("Engine: Bread v1.0.0", Console::INFO);
+		g_ConsoleSystem->AddLog("Author: Clay Howell", Console::INFO);
+
 		//Register Events
 		EventSystem::RegisterEvent(Input::CHAR_TYPED_EVENT, g_ConsoleSystem, &Console::OnAddChar);
 	}
@@ -148,7 +152,7 @@ STATIC void Console::Startup()
 //-------------------------------------------------------------------------------------------------
 STATIC void Console::Shutdown()
 {
-	if (g_ConsoleSystem != nullptr)
+	if(g_ConsoleSystem != nullptr)
 	{
 		delete g_ConsoleSystem;
 	}
@@ -158,7 +162,7 @@ STATIC void Console::Shutdown()
 //-------------------------------------------------------------------------------------------------
 STATIC void Console::RegisterCommand(std::string const & commandName, CommandCallback * callback, std::string const & commandDescription)
 {
-	if (g_ConsoleSystem == nullptr)
+	if(g_ConsoleSystem == nullptr)
 	{
 		Console::Startup();
 	}
@@ -210,28 +214,28 @@ Console::~Console()
 	m_consoleLineTextRenderer = nullptr;
 
 	//Delete Statics
-	for (ConsoleLog * log : s_consoleLogs)
+	for(ConsoleLog * log : s_consoleLogs)
 	{
 		delete log;
 		log = nullptr;
 	}
 	s_consoleLogs.clear();
 
-	for (TextRenderer * textRenderer : s_consoleTextRenderers)
+	for(TextRenderer * textRenderer : s_consoleTextRenderers)
 	{
 		delete textRenderer;
 		textRenderer = nullptr;
 	}
 	s_consoleTextRenderers.clear();
 
-	for (auto command : m_commands)
+	for(auto command : m_commands)
 	{
 		delete command.second;
 		command.second = nullptr;
 	}
 	m_commands.clear();
 
-	for (auto description : m_commandDescriptions)
+	for(auto description : m_commandDescriptions)
 	{
 		delete description.second;
 		description.second = nullptr;
@@ -244,17 +248,17 @@ Console::~Console()
 void Console::Update()
 {
 	//Open/Close Console
-	if (g_InputSystem->WasKeyJustPressed(Input::KEY_TILDE))
+	if(g_InputSystem->WasKeyJustPressed(Input::KEY_TILDE))
 	{
 		ToggleOpen();
 	}
 
 	//Opening Effect Timer
-	if (m_open)
+	if(m_open)
 	{
 		m_openAmount += Time::DELTA_SECONDS * OPEN_SPEED;
 		m_blinkTimer += Time::DELTA_SECONDS * BLINK_SPEED;
-		if (m_blinkTimer > 1.f)
+		if(m_blinkTimer > 1.f)
 		{
 			m_blinkTimer = 0.f;
 			m_showCursor = !m_showCursor;
@@ -267,13 +271,13 @@ void Console::Update()
 
 	m_openAmount = Clamp(m_openAmount, 0.f, 1.f);
 
-	if (m_openAmount <= 0.f && !m_open)
+	if(m_openAmount <= 0.f && !m_open)
 	{
 		return;
 	}
 
 	//Update current line mesh
-	if (m_showCursor)
+	if(m_showCursor)
 	{
 		m_consoleLineTextRenderer->SetText(m_consoleLine + "|");
 	}
@@ -296,7 +300,7 @@ void Console::Update()
 	m_consoleLineTextRenderer->Update();
 
 	//Update logs
-	for (unsigned int logIndex = 0; logIndex < s_consoleTextRenderers.size(); ++logIndex)
+	for(unsigned int logIndex = 0; logIndex < s_consoleTextRenderers.size(); ++logIndex)
 	{
 		float logPositionYOffset = CONSOLE_LINE_HEIGHT * (m_currentLog - logIndex);
 		Vector2f logPosition = Vector2f(CONSOLE_LEFT_PADDING, linePosition + CONSOLE_LINE_TO_BOX_GAP_HEIGHT + logPositionYOffset);
@@ -311,7 +315,7 @@ void Console::Update()
 //-------------------------------------------------------------------------------------------------
 void Console::Render() const
 {
-	if (m_openAmount <= 0.f)
+	if(m_openAmount <= 0.f)
 	{
 		return;
 	}
@@ -322,9 +326,9 @@ void Console::Render() const
 	m_consoleLineTextRenderer->Render();
 
 	//Render the lines in the box
-	for (int logIndex = 0; logIndex < (int)s_consoleTextRenderers.size(); ++logIndex)
+	for(int logIndex = 0; logIndex < (int)s_consoleTextRenderers.size(); ++logIndex)
 	{
-		if (logIndex <= m_currentLog && logIndex > m_currentLog - NUM_LOGS_TO_VIEW)
+		if(logIndex <= m_currentLog && logIndex > m_currentLog - NUM_LOGS_TO_VIEW)
 		{
 			s_consoleTextRenderers[logIndex]->Render();
 		}
@@ -338,7 +342,7 @@ void Console::Register(std::string const & commandName, CommandCallback * callba
 	//if it's a new command
 	size_t commandHash = std::hash<std::string>{}(commandName);
 	auto foundCommand = m_commands.find(commandHash);
-	if (foundCommand == m_commands.end())
+	if(foundCommand == m_commands.end())
 	{
 		//Make new command
 		CommandStaticFunction * registerCommand = new CommandStaticFunction();
@@ -375,7 +379,7 @@ void Console::RegisterCommandEvent(std::string const & commandName, EventCallbac
 void Console::RunCommand(std::string const & commandString, bool remote /*= false*/)
 {
 	//Remote commands are commands send over the network
-	if (remote)
+	if(remote)
 	{
 		std::string remoteCommandString = Stringf("REMOTE COMMAND: %s", commandString.c_str());
 		AddLog(remoteCommandString, REMOTE, remote, false);
@@ -385,7 +389,7 @@ void Console::RunCommand(std::string const & commandString, bool remote /*= fals
 		AddLog(commandString, DEFAULT, remote, false);
 	}
 
-	if (LoggingSystem)
+	if(LoggingSystem)
 	{
 		LoggingSystem->LogPrintf("Input: %s", commandString.c_str());
 	}
@@ -393,7 +397,7 @@ void Console::RunCommand(std::string const & commandString, bool remote /*= fals
 	Command command(commandString);
 	size_t commandHash = std::hash<std::string>{}(command.GetName());
 	auto foundCommandIter = m_commands.find(commandHash);
-	if (foundCommandIter != m_commands.end())
+	if(foundCommandIter != m_commands.end())
 	{
 		//Execute command if registered
 		foundCommandIter->second->Execute(command);
@@ -414,25 +418,25 @@ void Console::AddLog(std::string const & log, Color const & color /*= DEFAULT*/,
 	s_consoleTextRenderers.push_back(logTextRenderer);
 
 	//Send to other network connections
-	if (!remote)
+	if(!remote)
 	{
-		if (s_serverEchoEnabled)
+		if(s_serverEchoEnabled)
 		{
 			RemoteCommandServer::Send(eRCSMessageType_ECHO, log);
 		}
 	}
 
 	//Add Console log to logging system
-	if (debug)
+	if(debug)
 	{
-		if (LoggingSystem)
+		if(LoggingSystem)
 		{
 			LoggingSystem->LogPrintf("%s", log.c_str());
 		}
 	}
 
 	//If you're looking at the most recent log, have the logs shift up
-	if (m_currentLog == m_logCount - 1)
+	if(m_currentLog == m_logCount - 1)
 	{
 		++m_currentLog;
 	}
@@ -444,14 +448,14 @@ void Console::AddLog(std::string const & log, Color const & color /*= DEFAULT*/,
 void Console::ClearConsoleLogs()
 {
 	//Clear Statics
-	for (ConsoleLog * log : s_consoleLogs)
+	for(ConsoleLog * log : s_consoleLogs)
 	{
 		delete log;
 		log = nullptr;
 	}
 	s_consoleLogs.clear();
 
-	for (TextRenderer * textRenderer : s_consoleTextRenderers)
+	for(TextRenderer * textRenderer : s_consoleTextRenderers)
 	{
 		delete textRenderer;
 		textRenderer = nullptr;
@@ -468,7 +472,7 @@ std::string const Console::BuildLogFile()
 {
 	std::string logFile = "";
 	std::string newLine = "\r\n";
-	for (int logIndex = 0; logIndex < m_logCount; ++logIndex)
+	for(int logIndex = 0; logIndex < m_logCount; ++logIndex)
 	{
 		logFile.append(s_consoleLogs[logIndex]->m_log);
 		logFile.append(newLine);
@@ -482,7 +486,7 @@ void Console::ShowHelp()
 {
 	AddLog("Showing Registered Commands", Color::GREEN);
 	auto commandIter = m_commandDescriptions.begin();
-	while (commandIter != m_commandDescriptions.end())
+	while(commandIter != m_commandDescriptions.end())
 	{
 		AddLog(commandIter->second, Color::WHITE);
 		++commandIter;
@@ -493,17 +497,17 @@ void Console::ShowHelp()
 //-------------------------------------------------------------------------------------------------
 void Console::PressKey(unsigned char asKey)
 {
-	if (asKey == Input::KEY_TILDE)
+	if(asKey == Input::KEY_TILDE)
 	{
 		ToggleOpen();
 	}
-	else if (asKey == Input::KEY_BACKSPACE)
+	else if(asKey == Input::KEY_BACKSPACE)
 	{
 		RemoveLastChar();
 	}
-	else if (asKey == Input::KEY_ESCAPE)
+	else if(asKey == Input::KEY_ESCAPE)
 	{
-		if (m_consoleLine.length() > 0)
+		if(m_consoleLine.length() > 0)
 		{
 			ClearConsoleLine();
 		}
@@ -512,9 +516,9 @@ void Console::PressKey(unsigned char asKey)
 			ToggleOpen();
 		}
 	}
-	else if (asKey == Input::KEY_ENTER)
+	else if(asKey == Input::KEY_ENTER)
 	{
-		if (m_consoleLine.length() > 0)
+		if(m_consoleLine.length() > 0)
 		{
 			RunCommand(m_consoleLine);
 			ClearConsoleLine();
@@ -537,7 +541,7 @@ void Console::ReleaseKey(unsigned char)
 //-------------------------------------------------------------------------------------------------
 void Console::MoveMouseWheel(int wheelDelta)
 {
-	if (wheelDelta > 0)
+	if(wheelDelta > 0)
 	{
 		//Moving up
 		m_currentLog--;
@@ -554,7 +558,7 @@ void Console::MoveMouseWheel(int wheelDelta)
 //-------------------------------------------------------------------------------------------------
 void Console::OnAddChar(NamedProperties & charTypedEvent)
 {
-	if (m_open)
+	if(m_open)
 	{
 		//Get character
 		unsigned char asKey;
@@ -597,7 +601,7 @@ void Console::AddChar(unsigned char newChar)
 //-------------------------------------------------------------------------------------------------
 void Console::RemoveLastChar()
 {
-	if (m_consoleLine.size() > 0)
+	if(m_consoleLine.size() > 0)
 	{
 		m_consoleLine.pop_back();
 	}

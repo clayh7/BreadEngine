@@ -106,7 +106,7 @@ void StopWatch::PrintLap(std::string const & label /*= "" */)
 	float currentTime = (float)Time::GetCurrentTimeSeconds();
 	float elapsedTime = currentTime - lapTime;
 	lapTime = currentTime;
-	if (strcmp(label.c_str(), "") == 0)
+	if(strcmp(label.c_str(), "") == 0)
 	{
 		g_ConsoleSystem->AddLog(Stringf("%s: %.6f", stopWatchName.c_str(), elapsedTime), Color::WHITE);
 	}
@@ -122,7 +122,7 @@ void StopWatch::PrintTime(std::string const & label /*= "" */)
 {
 	lapTime = (float)Time::GetCurrentTimeSeconds();
 	float elapsedTime = lapTime - startTime;
-	if (strcmp(label.c_str(), "") == 0)
+	if(strcmp(label.c_str(), "") == 0)
 	{
 		g_ConsoleSystem->AddLog(Stringf("%s: %.6f", stopWatchName.c_str(), elapsedTime), Color::WHITE);
 	}
@@ -143,7 +143,7 @@ void StopWatch::Reset()
 //-------------------------------------------------------------------------------------------------
 void Clock::DestroyClocks()
 {
-	for (Clock * child : s_baseClocks)
+	for(Clock * child : s_baseClocks)
 	{
 		delete child;
 		child = nullptr;
@@ -155,7 +155,7 @@ void Clock::DestroyClocks()
 //-------------------------------------------------------------------------------------------------
 Clock::~Clock()
 {
-	for (Clock * child : children)
+	for(Clock * child : children)
 	{
 		delete child;
 		child = nullptr;
@@ -171,7 +171,7 @@ Clock::Clock(Clock * parentClock /*= nullptr */)
 	, scale(0.f)
 	, paused(false)
 {
-	if (parentClock)
+	if(parentClock)
 	{
 		parentClock->children.push_back(this);
 	}
@@ -185,7 +185,7 @@ Clock::Clock(Clock * parentClock /*= nullptr */)
 //-------------------------------------------------------------------------------------------------
 void Clock::Update(float dt)
 {
-	if (paused)
+	if(paused)
 	{
 		dt = 0;
 	}
@@ -193,7 +193,7 @@ void Clock::Update(float dt)
 	deltaSeconds = dt;
 	currentSeconds += dt;
 
-	for (Clock * child : children)
+	for(Clock * child : children)
 	{
 		child->Update(dt);
 	}

@@ -19,7 +19,7 @@ STATIC SocketAddressPtr NetworkUtils::CreateIPv4FromString(std::string const & a
 {
 	size_t portPosition = addressString.find_last_of(':');
 	std::string host, service;
-	if (portPosition != std::string::npos)
+	if(portPosition != std::string::npos)
 	{
 		host = addressString.substr(0, portPosition);
 		service = addressString.substr(portPosition + 1);
@@ -55,25 +55,25 @@ STATIC SocketAddressPtr NetworkUtils::CreateIPv4FromString(std::string const & h
 	addrinfo * result;
 	int error = getaddrinfo(host.c_str(), service.c_str(), &hint, &result);
 	addrinfo * start = result;
-	if (error == SOCKET_ERROR && result != nullptr)
+	if(error == SOCKET_ERROR && result != nullptr)
 	{
 		freeaddrinfo(start);
 		return nullptr;
 	}
 
-	if (result == nullptr)
+	if(result == nullptr)
 	{
 		return nullptr;
 	}
 
 	//Keep searching for a non-nullptr entry
-	while (result->ai_addr == nullptr && result->ai_next != nullptr)
+	while(result->ai_addr == nullptr && result->ai_next != nullptr)
 	{
 		result = result->ai_next;
 	}
 
 	//Last entry is nullptr, return
-	if (result->ai_addr == nullptr)
+	if(result->ai_addr == nullptr)
 	{
 		freeaddrinfo(start);
 		return nullptr;
@@ -89,18 +89,18 @@ STATIC SocketAddressPtr NetworkUtils::CreateIPv4FromString(std::string const & h
 STATIC int NetworkUtils::ReportError(bool printLog /*= true*/)
 {
 	int errorCode = WSAGetLastError();
-	if (printLog)
+	if(printLog)
 	{
 		std::string errorLog;
-		if (errorCode == 10048)
+		if(errorCode == 10048)
 		{
 			errorLog = "Socket address already in use.";
 		}
-		else if (errorCode == WOULD_BLOCK_ERROR)
+		else if(errorCode == WOULD_BLOCK_ERROR)
 		{
 			errorLog = "Resource temporarily unavailable. Non-blocking empty recv or connect.";
 		}
-		else if (errorCode == 10061)
+		else if(errorCode == 10061)
 		{
 			errorLog = "Connection refused. Address probably isn't hosting.";
 		}
@@ -118,7 +118,7 @@ STATIC int NetworkUtils::ReportError(bool printLog /*= true*/)
 STATIC UDPSocketPtr NetworkUtils::CreateUDPSocket(eSocketAddressFamily family)
 {
 	SOCKET newSocket = socket(family, SOCK_DGRAM, IPPROTO_IP);
-	if (newSocket != INVALID_SOCKET)
+	if(newSocket != INVALID_SOCKET)
 	{
 		return UDPSocketPtr(new UDPSocket(newSocket));
 	}
@@ -134,7 +134,7 @@ STATIC UDPSocketPtr NetworkUtils::CreateUDPSocket(eSocketAddressFamily family)
 STATIC TCPSocketPtr NetworkUtils::CreateTCPSocket(eSocketAddressFamily family)
 {
 	SOCKET newSocket = socket(family, SOCK_STREAM, IPPROTO_IP);
-	if (newSocket != INVALID_SOCKET)
+	if(newSocket != INVALID_SOCKET)
 	{
 		return TCPSocketPtr(new TCPSocket(newSocket));
 	}
@@ -151,7 +151,7 @@ STATIC TCPSocketPtr NetworkUtils::CreateTCPSocket(eSocketAddressFamily family)
 STATIC char const * NetworkUtils::GetLocalHostName()
 {
 	static char buffer[256];
-	if (::gethostname(buffer, 256) == 0)
+	if(::gethostname(buffer, 256) == 0)
 	{
 		return buffer;
 	}
@@ -188,7 +188,7 @@ addrinfo * AllocAddressesForHost(char const * host,	// host, like google.com
 	// with the head put into result.
 	addrinfo * result = nullptr;
 	int status = getaddrinfo(host, service, &hints, &result);
-	if (status != 0)
+	if(status != 0)
 	{
 		// Warning( "net", "Failed to find addresses for [%s:%s]. Error[%s]", host, service, gai_strerror(status) );
 		return nullptr;
@@ -203,7 +203,7 @@ addrinfo * AllocAddressesForHost(char const * host,	// host, like google.com
 void * GetInAddr(sockaddr const * addr)
 {
 	//#TODO: Conversion to AF_INET6
-	if (addr->sa_family == AF_INET)
+	if(addr->sa_family == AF_INET)
 	{
 		return &(((sockaddr_in*)addr)->sin_addr);
 	}
@@ -218,13 +218,13 @@ void * GetInAddr(sockaddr const * addr)
 bool SockAddrFromString(sockaddr_in * out_addr, char const * address)
 {
 	std::vector<std::string> splitAddress = SplitString(address, ':');
-	if (splitAddress.size() != 2)
+	if(splitAddress.size() != 2)
 	{
 		return false;
 	}
 	//#TODO: Look into changing this to AF_INET6
 	addrinfo * addrList = AllocAddressesForHost(splitAddress[0].c_str(), splitAddress[1].c_str(), AF_INET, SOCK_DGRAM);
-	if (!addrList)
+	if(!addrList)
 	{
 		return false;
 	}
@@ -239,7 +239,7 @@ bool SockAddrFromString(sockaddr_in * out_addr, char const * address)
 // Takes the addrinfo written to by getaddrinfo(...)
 void FreeAddresses(addrinfo * addresses)
 {
-	if (nullptr != addresses)
+	if(nullptr != addresses)
 	{
 		freeaddrinfo(addresses);
 	}
@@ -251,7 +251,7 @@ void FreeAddresses(addrinfo * addresses)
 // These errors are non-fatal and are more or less ignorable.
 bool SocketErrorShouldDisconnect(int error)
 {
-	switch (error)
+	switch(error)
 	{
 	case WSAEWOULDBLOCK: // nothing to do - would've blocked if set to blocking
 	case WSAEMSGSIZE:    // UDP message too large - ignore that packet.
@@ -275,7 +275,7 @@ bool IsEqual(sockaddr_in const & first, sockaddr_in const & second)
 void SetBlocking(SOCKET socket, bool isBlocking)
 {
 	u_long blocking = 0;
-	if (!isBlocking)
+	if(!isBlocking)
 	{
 		blocking = 1;
 	}

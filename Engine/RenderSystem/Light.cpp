@@ -21,7 +21,7 @@ Light::Light(Vector3f const & position, Color const & color, float radius, float
 	, m_strengthInside(1.f)
 	, m_strengthOutside(1.f)
 {
-	if (global)
+	if(global)
 	{
 		m_strengthAtMax = 1.f;
 	}
@@ -46,7 +46,7 @@ Light::Light(Vector3f const & position, Color const & color, Vector3f const &lig
 	, m_strengthInside(1.f)
 	, m_strengthOutside(1.f)
 {
-	if (global)
+	if(global)
 	{
 		m_strengthAtMax = 1.f;
 	}
@@ -71,7 +71,7 @@ Light::Light(Vector3f const & position, Color const & color, Vector3f const & li
 	, m_strengthInside(1.f)
 	, m_strengthOutside(0.f)
 {
-	if (global)
+	if(global)
 	{
 		m_strengthAtMax = 1.f;
 	}

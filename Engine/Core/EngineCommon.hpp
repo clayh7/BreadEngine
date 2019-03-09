@@ -2,7 +2,7 @@
 
 #include <string>
 #include "Engine/Core/BuildConfig.hpp"
-#define STATIC
+#define STATIC // The only purpose of this is to remind people in the .cpp that a function or variable is static
 #define BIT(x)(1<<(x))
 #define UNREFERENCED(x) x
 class Vector2i;

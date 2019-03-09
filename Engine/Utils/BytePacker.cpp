@@ -19,7 +19,7 @@ BytePacker::BytePacker(byte_t * buffer, size_t bufferMax, size_t bufferSize)
 	, m_offset(0)
 	, m_endianness(eEndianMode_LITTLE_ENDIAN)
 {
-	if (bufferMax < bufferSize)
+	if(bufferMax < bufferSize)
 	{
 		ERROR_AND_DIE("Buffer size too large");
 	}
@@ -29,7 +29,7 @@ BytePacker::BytePacker(byte_t * buffer, size_t bufferMax, size_t bufferSize)
 //-------------------------------------------------------------------------------------------------
 bool BytePacker::Write(byte_t const * data, size_t dataSize)
 {
-	if (GetLocalEndianess() == m_endianness)
+	if(GetLocalEndianess() == m_endianness)
 	{
 		return WriteForward(data, dataSize);
 	}
@@ -44,7 +44,7 @@ bool BytePacker::Write(byte_t const * data, size_t dataSize)
 bool BytePacker::WriteForward(byte_t const * data, size_t dataSize)
 {
 	//Make sure we don't go out of bounds
-	if (m_offset + dataSize - 1 >= m_bufferMax)
+	if(m_offset + dataSize - 1 >= m_bufferMax)
 	{
 		return false;
 	}
@@ -63,14 +63,14 @@ bool BytePacker::WriteForward(byte_t const * data, size_t dataSize)
 bool BytePacker::WriteBackwards(byte_t const * data, size_t dataSize)
 {
 	//Make sure we don't go out of bounds
-	if (m_offset + dataSize - 1 >= m_bufferMax)
+	if(m_offset + dataSize - 1 >= m_bufferMax)
 	{
 		return false;
 	}
 
 	//Write the data backwards
 	data += dataSize - 1;
-	for (size_t index = 0; index < dataSize; ++index)
+	for(size_t index = 0; index < dataSize; ++index)
 	{
 		m_buffer[m_offset + index] = *data;
 		--data;
@@ -86,7 +86,7 @@ bool BytePacker::WriteBackwards(byte_t const * data, size_t dataSize)
 //-------------------------------------------------------------------------------------------------
 bool BytePacker::WriteString(char const * data)
 {
-	if (data == nullptr)
+	if(data == nullptr)
 	{
 		return Write<byte_t>(NULL_CHAR);
 	}
@@ -101,7 +101,7 @@ bool BytePacker::WriteString(char const * data)
 //-------------------------------------------------------------------------------------------------
 bool BytePacker::Read(byte_t * out_data, size_t readAmount) const
 {
-	if (GetLocalEndianess() == m_endianness)
+	if(GetLocalEndianess() == m_endianness)
 	{
 		return ReadForward(out_data, readAmount);
 	}
@@ -116,7 +116,7 @@ bool BytePacker::Read(byte_t * out_data, size_t readAmount) const
 bool BytePacker::ReadForward(byte_t * out_data, size_t readAmount) const
 {
 	//Make sure we don't go out of bounds
-	if (m_offset + readAmount - 1 >= m_bufferSize)
+	if(m_offset + readAmount - 1 >= m_bufferSize)
 	{
 		return false;
 	}
@@ -134,14 +134,14 @@ bool BytePacker::ReadForward(byte_t * out_data, size_t readAmount) const
 bool BytePacker::ReadBackwards(byte_t * out_data, size_t readAmount) const
 {
 	//Make sure we don't go out of bounds
-	if (m_offset + readAmount - 1 >= m_bufferSize)
+	if(m_offset + readAmount - 1 >= m_bufferSize)
 	{
 		return false;
 	}
 
 	//Read data from buffer
 	out_data += readAmount - 1;
-	for (size_t index = 0; index < readAmount; ++index)
+	for(size_t index = 0; index < readAmount; ++index)
 	{
 		*out_data = m_buffer[m_offset + index];
 		--out_data;
@@ -156,7 +156,7 @@ bool BytePacker::ReadBackwards(byte_t * out_data, size_t readAmount) const
 //-------------------------------------------------------------------------------------------------
 bool BytePacker::ReadString(char ** out_data) const
 {
-	if (GetReadableBytesLeft() < 1)
+	if(GetReadableBytesLeft() < 1)
 	{
 		*out_data = nullptr;
 		return false;
@@ -164,7 +164,7 @@ bool BytePacker::ReadString(char ** out_data) const
 
 	byte_t check;
 	Read(&check);
-	if (check == NULL_CHAR)
+	if(check == NULL_CHAR)
 	{
 		*out_data = nullptr;
 	}
@@ -174,12 +174,12 @@ bool BytePacker::ReadString(char ** out_data) const
 		size_t max_size = GetReadableBytesLeft() + 1;
 		size_t length = 0;
 		char * c = *out_data;
-		while ((*c != NULL) && (length < max_size))
+		while((*c != NULL) && (length < max_size))
 		{
 			++length;
 			++c;
 		}
-		if (length < max_size)
+		if(length < max_size)
 		{
 			Advance(length);
 		}

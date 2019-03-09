@@ -86,12 +86,12 @@ UIProgressBar::~UIProgressBar()
 //-------------------------------------------------------------------------------------------------
 void UIProgressBar::Update()
 {
-	if (m_hidden)
+	if(m_hidden)
 	{
 		return;
 	}
 
-	if (m_dirty)
+	if(m_dirty)
 	{
 		UpdateRenderers();
 		m_dirty = false;
@@ -104,7 +104,7 @@ void UIProgressBar::Update()
 //-------------------------------------------------------------------------------------------------
 void UIProgressBar::Render() const
 {
-	if (m_hidden)
+	if(m_hidden)
 	{
 		return;
 	}
@@ -121,7 +121,7 @@ void UIProgressBar::Render() const
 //-------------------------------------------------------------------------------------------------
 void UIProgressBar::SetAmount(float amount)
 {
-	if (m_amount != amount)
+	if(m_amount != amount)
 	{
 		m_amount = Clamp(amount, 0.f, 1.f);
 		Dirty();
@@ -132,7 +132,7 @@ void UIProgressBar::SetAmount(float amount)
 //-------------------------------------------------------------------------------------------------
 void UIProgressBar::SetAmount(float amount, float max)
 {
-	if (max == 0.f)
+	if(max == 0.f)
 	{
 		SetAmount(0.f);
 	}
@@ -257,7 +257,7 @@ Transform UIProgressBar::CalcBarTransform()
 	//Figure out size
 	eFillDirection fillDirection = GetFillDirection();
 	Vector2f scale = GetSize();
-	if (fillDirection == eFillDirection_LEFT_TO_RIGHT ||
+	if(fillDirection == eFillDirection_LEFT_TO_RIGHT ||
 		fillDirection == eFillDirection_RIGHT_TO_LEFT)
 	{
 		scale.x *= m_amount;
@@ -269,22 +269,22 @@ Transform UIProgressBar::CalcBarTransform()
 
 	//Figure out location
 	Vector2f position = Vector2f::ZERO;
-	if (fillDirection == eFillDirection_LEFT_TO_RIGHT)
+	if(fillDirection == eFillDirection_LEFT_TO_RIGHT)
 	{
 		position = GetWorldPosition(eAnchor_LEFT);
 		position.x += scale.x / 2.f;
 	}
-	else if (fillDirection == eFillDirection_RIGHT_TO_LEFT)
+	else if(fillDirection == eFillDirection_RIGHT_TO_LEFT)
 	{
 		position = GetWorldPosition(eAnchor_RIGHT);
 		position.x -= scale.x / 2.f;
 	}
-	else if (fillDirection == eFillDirection_BOTTOM_TO_TOP)
+	else if(fillDirection == eFillDirection_BOTTOM_TO_TOP)
 	{
 		position = GetWorldPosition(eAnchor_BOTTOM);
 		position.y += scale.y / 2.f;
 	}
-	else if (fillDirection == eFillDirection_TOP_TO_BOTTOM)
+	else if(fillDirection == eFillDirection_TOP_TO_BOTTOM)
 	{
 		position = GetWorldPosition(eAnchor_TOP);
 		position.y -= scale.y / 2.f;
@@ -309,43 +309,43 @@ Transform UIProgressBar::CalcBackgroundTransform()
 void UIProgressBar::PopulateFromXML(XMLNode const & node)
 {
 	//Set properties from XML
-	for (int childPropertyIndex = 0; childPropertyIndex < node.nChildNode(); ++childPropertyIndex)
+	for(int childPropertyIndex = 0; childPropertyIndex < node.nChildNode(); ++childPropertyIndex)
 	{
 		XMLNode childProperty = node.getChildNode(childPropertyIndex);
 		//Border
-		if (strcmp(childProperty.getName(), PROPERTY_BORDER_COLOR) == 0)
+		if(strcmp(childProperty.getName(), PROPERTY_BORDER_COLOR) == 0)
 		{
 			Color borderColor = ReadXMLAttribute(childProperty, STRING_VALUE, Color::BLACK);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_BORDER_COLOR, borderColor, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_BORDER_SIZE) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_BORDER_SIZE) == 0)
 		{
 			float borderSize = ReadXMLAttribute(childProperty, STRING_VALUE, 0.f);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_BORDER_SIZE, borderSize, ParseState(state));
 		}
 		//Bar
-		else if (strcmp(childProperty.getName(), PROPERTY_BAR_COLOR) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_BAR_COLOR) == 0)
 		{
 			Color barColor = ReadXMLAttribute(childProperty, STRING_VALUE, Color::BLACK);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_BAR_COLOR, barColor, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_BAR_FILL_DIRECTION) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_BAR_FILL_DIRECTION) == 0)
 		{
 			std::string barFillDirection = ReadXMLAttribute(childProperty, STRING_VALUE, "");
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_BAR_FILL_DIRECTION, ParseFillDirection(barFillDirection), ParseState(state));
 		}
 		//Background
-		else if (strcmp(childProperty.getName(), PROPERTY_BACKGROUND_COLOR) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_BACKGROUND_COLOR) == 0)
 		{
 			Color backgroundColor = ReadXMLAttribute(childProperty, STRING_VALUE, Color::WHITE);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_BACKGROUND_COLOR, backgroundColor, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_AMOUNT_BIND_EVENT) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_AMOUNT_BIND_EVENT) == 0)
 		{
 			std::string amountBindEvent = ReadXMLAttribute(childProperty, STRING_VALUE, "");
 			EventSystem::RegisterEvent(amountBindEvent, this, &UIProgressBar::OnSetAmount);

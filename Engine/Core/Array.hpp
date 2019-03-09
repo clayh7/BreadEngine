@@ -29,7 +29,7 @@ public:
 		, m_count(0U)
 		, m_maxSize(size)
 	{
-		if (size > 0U)
+		if(size > 0U)
 		{
 			m_data = new Item[size];
 		}
@@ -52,7 +52,7 @@ public:
 
 	void Push(Item const & add)
 	{
-		if (m_count == m_maxSize)
+		if(m_count == m_maxSize)
 		{
 			Resize(m_maxSize * 2 + 1);
 		}
@@ -69,7 +69,7 @@ public:
 	Item Remove(size_t index)
 	{
 		Item removed = m_data[index];
-		for (size_t shift = index; shift < m_count; ++shift)
+		for(size_t shift = index; shift < m_count; ++shift)
 		{
 			m_data[shift] = m_data[shift + 1];
 		}
@@ -84,7 +84,7 @@ public:
 
 	void DeleteAndClear()
 	{
-		for (size_t index = 0; index < m_count; ++index)
+		for(size_t index = 0; index < m_count; ++index)
 		{
 			delete m_data[index];
 			m_data[index] = nullptr;

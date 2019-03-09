@@ -19,19 +19,19 @@ STATIC char const * RemoteCommandServer::RCS_MESSAGE_EVENT = "RCSMessageEvent";
 void RCSHost(Command const &)
 {
 	RemoteCommandServer const * rcs = RemoteCommandServer::Get();
-	if (rcs->IsHost())
+	if(rcs->IsHost())
 	{
 		g_ConsoleSystem->AddLog("Already hosting.", Console::BAD);
 		return;
 	}
 
-	if (rcs->IsClient())
+	if(rcs->IsClient())
 	{
 		g_ConsoleSystem->AddLog("Clients can not also host.", Console::BAD);
 		return;
 	}
 
-	if (RemoteCommandServer::Host())
+	if(RemoteCommandServer::Host())
 	{
 		std::string success = Stringf("Host successful. Listening on %s", rcs->GetListenAddress().c_str());
 		g_ConsoleSystem->AddLog(success, Console::GOOD);
@@ -47,7 +47,7 @@ void RCSHost(Command const &)
 void RCSJoin(Command const & command)
 {
 	RemoteCommandServer const * rcs = RemoteCommandServer::Get();
-	if (rcs->IsConnected())
+	if(rcs->IsConnected())
 	{
 		g_ConsoleSystem->AddLog("Already connected to host.", Console::BAD);
 		return;
@@ -55,7 +55,7 @@ void RCSJoin(Command const & command)
 
 	//Parse host address string
 	std::string address = "";
-	if (!command.HasArg(0))
+	if(!command.HasArg(0))
 	{
 		address = NetworkUtils::GetLocalHostName();
 	}
@@ -64,7 +64,7 @@ void RCSJoin(Command const & command)
 		address = command.GetArg(0, "error");
 	}
 
-	if (RemoteCommandServer::Join(address.c_str()))
+	if(RemoteCommandServer::Join(address.c_str()))
 	{
 		std::string success = Stringf("Joined server: %s", address.c_str());
 		g_ConsoleSystem->AddLog(success, Console::GOOD);
@@ -80,19 +80,19 @@ void RCSJoin(Command const & command)
 void RCSLeave(Command const &)
 {
 	RemoteCommandServer const * rcs = RemoteCommandServer::Get();
-	if (!rcs->IsConnected())
+	if(!rcs->IsConnected())
 	{
 		g_ConsoleSystem->AddLog("Nothing to leave.", Console::BAD);
 		return;
 	}
 
-	if (rcs->IsHost())
+	if(rcs->IsHost())
 	{
 		RemoteCommandServer::Leave();
 		g_ConsoleSystem->AddLog("Stopped hosting.", Console::GOOD);
 	}
 
-	if (rcs->IsClient())
+	if(rcs->IsClient())
 	{
 		RemoteCommandServer::Leave();
 		g_ConsoleSystem->AddLog("Disconnected from host.", Console::GOOD);
@@ -104,7 +104,7 @@ void RCSLeave(Command const &)
 void RCSInfo(Command const &)
 {
 	RemoteCommandServer const * rcs = RemoteCommandServer::Get();
-	if (rcs->IsHost())
+	if(rcs->IsHost())
 	{
 		g_ConsoleSystem->AddLog("Status: Host", Console::INFO);
 		std::string hostString = Stringf("Host: %s", rcs->GetListenAddress().c_str());
@@ -112,13 +112,13 @@ void RCSInfo(Command const &)
 
 		std::vector<std::string> connectionAddressList = rcs->GetConnectionAddresses();
 		g_ConsoleSystem->AddLog(Stringf("Connections: %u", connectionAddressList.size()), Console::GOOD);
-		for (size_t clientIndex = 0; clientIndex < connectionAddressList.size(); ++clientIndex)
+		for(size_t clientIndex = 0; clientIndex < connectionAddressList.size(); ++clientIndex)
 		{
 			std::string clientString = Stringf("[%u] %s", clientIndex, connectionAddressList[clientIndex].c_str());
 			g_ConsoleSystem->AddLog(clientString, Console::GOOD);
 		}
 	}
-	else if (rcs->IsClient())
+	else if(rcs->IsClient())
 	{
 		g_ConsoleSystem->AddLog("Status: Client", Console::INFO);
 		std::vector<std::string> connectionAddressList = rcs->GetConnectionAddresses();
@@ -136,7 +136,7 @@ void RCSInfo(Command const &)
 void RCSSend(Command const & command)
 {
 	RemoteCommandServer const * rcs = RemoteCommandServer::Get();
-	if (!rcs->IsConnected())
+	if(!rcs->IsConnected())
 	{
 		g_ConsoleSystem->AddLog("Not connected.", Console::BAD);
 		return;
@@ -149,7 +149,7 @@ void RCSSend(Command const & command)
 //-------------------------------------------------------------------------------------------------
 STATIC void RemoteCommandServer::Startup()
 {
-	if (s_remoteCommandServer == nullptr)
+	if(s_remoteCommandServer == nullptr)
 	{
 		s_remoteCommandServer = new RemoteCommandServer();
 	}
@@ -159,7 +159,7 @@ STATIC void RemoteCommandServer::Startup()
 //-------------------------------------------------------------------------------------------------
 void RemoteCommandServer::Shutdown()
 {
-	if (s_remoteCommandServer != nullptr)
+	if(s_remoteCommandServer != nullptr)
 	{
 		delete s_remoteCommandServer;
 	}
@@ -169,7 +169,7 @@ void RemoteCommandServer::Shutdown()
 //-------------------------------------------------------------------------------------------------
 STATIC bool RemoteCommandServer::Host(uint32_t port /*= RCS_PORT*/)
 {
-	if (!s_remoteCommandServer->IsConnected())
+	if(!s_remoteCommandServer->IsConnected())
 	{
 		char const * host = NetworkUtils::GetLocalHostName();
 		SocketAddressPtr address = NetworkUtils::CreateIPv4FromString(host, port);
@@ -185,9 +185,9 @@ STATIC bool RemoteCommandServer::Host(uint32_t port /*= RCS_PORT*/)
 //-------------------------------------------------------------------------------------------------
 STATIC bool RemoteCommandServer::Join(char const * host, uint32_t port /*= RCS_PORT*/)
 {
-	if (!s_remoteCommandServer->IsConnected())
+	if(!s_remoteCommandServer->IsConnected())
 	{
-		if (s_remoteCommandServer->m_connections.size() > 0)
+		if(s_remoteCommandServer->m_connections.size() > 0)
 		{
 			return false;
 		}
@@ -204,7 +204,7 @@ STATIC bool RemoteCommandServer::Join(char const * host, uint32_t port /*= RCS_P
 //-------------------------------------------------------------------------------------------------
 STATIC bool RemoteCommandServer::Send(eRCSMessageType const & type, std::string const & message)
 {
-	if (s_remoteCommandServer->IsConnected())
+	if(s_remoteCommandServer->IsConnected())
 	{
 		s_remoteCommandServer->SendRCSMessage(type, message);
 	}
@@ -217,7 +217,7 @@ STATIC bool RemoteCommandServer::Send(eRCSMessageType const & type, std::string 
 //-------------------------------------------------------------------------------------------------
 STATIC bool RemoteCommandServer::Leave()
 {
-	if (s_remoteCommandServer->IsConnected())
+	if(s_remoteCommandServer->IsConnected())
 	{
 		s_remoteCommandServer->Disconnect();
 		return true;
@@ -245,7 +245,7 @@ RemoteCommandServer::RemoteCommandServer()
 //-------------------------------------------------------------------------------------------------
 RemoteCommandServer::~RemoteCommandServer()
 {
-	for (RCSConnection * conn : m_connections)
+	for(RCSConnection * conn : m_connections)
 	{
 		delete conn;
 		conn = nullptr;
@@ -257,7 +257,7 @@ RemoteCommandServer::~RemoteCommandServer()
 //-------------------------------------------------------------------------------------------------
 void RemoteCommandServer::OnUpdate(NamedProperties &)
 {
-	if (!IsConnected())
+	if(!IsConnected())
 	{
 		return;
 	}
@@ -275,11 +275,11 @@ void RemoteCommandServer::OnMessage(NamedProperties & params)
 	std::string message;
 	params.Get("Message", message);
 
-	if (messageType == eRCSMessageType_COMMAND)
+	if(messageType == eRCSMessageType_COMMAND)
 	{
 		g_ConsoleSystem->RunCommand(message, true);
 	}
-	else if (messageType == eRCSMessageType_ECHO)
+	else if(messageType == eRCSMessageType_ECHO)
 	{
 		g_ConsoleSystem->AddLog(Stringf("REMOTE: %s", message.c_str()), Console::REMOTE, true);
 	}
@@ -290,17 +290,17 @@ void RemoteCommandServer::OnMessage(NamedProperties & params)
 void RemoteCommandServer::StartTCPListener(SocketAddressPtr address)
 {
 	m_listener = NetworkUtils::CreateTCPSocket(eSocketAddressFamily_IPv4);
-	if (m_listener == nullptr)
+	if(m_listener == nullptr)
 	{
 		return;
 	}
 	int error = m_listener->Bind(address);
-	if (error != NO_ERROR)
+	if(error != NO_ERROR)
 	{
 		return;
 	}
 	error = m_listener->Listen();
-	if (error == NO_ERROR)
+	if(error == NO_ERROR)
 	{
 		m_state = eRCSState_HOST;
 	}
@@ -311,12 +311,12 @@ void RemoteCommandServer::StartTCPListener(SocketAddressPtr address)
 void RemoteCommandServer::CreateRCSConnection(SocketAddressPtr address)
 {
 	TCPSocketPtr tcpSocket = NetworkUtils::CreateTCPSocket(eSocketAddressFamily_IPv4);
-	if (tcpSocket != nullptr)
+	if(tcpSocket != nullptr)
 	{
 		//Must block before connect
 		tcpSocket->SetBlocking(true);
 		int error = tcpSocket->Connect(address);
-		if (error == NO_ERROR)
+		if(error == NO_ERROR)
 		{
 			CreateRCSConnection(tcpSocket);
 		}
@@ -331,7 +331,7 @@ void RemoteCommandServer::CreateRCSConnection(TCPSocketPtr tcpSocket)
 	RCSConnection * connection = new RCSConnection(tcpSocket);
 	m_connections.push_back(connection);
 
-	if (!IsConnected())
+	if(!IsConnected())
 	{
 		m_state = eRCSState_CLIENT;
 	}
@@ -341,7 +341,7 @@ void RemoteCommandServer::CreateRCSConnection(TCPSocketPtr tcpSocket)
 //-------------------------------------------------------------------------------------------------
 void RemoteCommandServer::SendRCSMessage(eRCSMessageType const & type, std::string const & message)
 {
-	for (RCSConnection const * conn : m_connections)
+	for(RCSConnection const * conn : m_connections)
 	{
 		conn->Send(type, message.c_str());
 	}
@@ -351,10 +351,10 @@ void RemoteCommandServer::SendRCSMessage(eRCSMessageType const & type, std::stri
 //-------------------------------------------------------------------------------------------------
 void RemoteCommandServer::Disconnect()
 {
-	if (IsHost())
+	if(IsHost())
 	{
 		m_listener = nullptr;
-		for (RCSConnection * conn : m_connections)
+		for(RCSConnection * conn : m_connections)
 		{
 			delete conn;
 			conn = nullptr;
@@ -363,7 +363,7 @@ void RemoteCommandServer::Disconnect()
 		m_state = eRCSState_DISCONNECTED;
 	}
 
-	if (IsClient())
+	if(IsClient())
 	{
 		ASSERT_RECOVERABLE(m_connections.size() == 1, "Incorrect number of client connections.")
 			delete m_connections[0];
@@ -377,13 +377,13 @@ void RemoteCommandServer::Disconnect()
 //-------------------------------------------------------------------------------------------------
 void RemoteCommandServer::AcceptNewConnections()
 {
-	if (!IsHost())
+	if(!IsHost())
 	{
 		return;
 	}
 
 	TCPSocketPtr tcpSocket = m_listener->Accept();
-	if (tcpSocket != nullptr)
+	if(tcpSocket != nullptr)
 	{
 		CreateRCSConnection(tcpSocket);
 		g_ConsoleSystem->AddLog("Client connected: " + tcpSocket->GetAddressString(), Console::REMOTE);
@@ -396,13 +396,13 @@ void RemoteCommandServer::UpdateConnections()
 {
 	std::vector<WSAPOLLFD> fdArray;
 	FDArrayFill(fdArray);
-	if (fdArray.size() <= 0)
+	if(fdArray.size() <= 0)
 	{
 		return;
 	}
 
 	uint32_t result = WSAPoll(&fdArray[0], fdArray.size(), DEFAULT_WAIT);
-	if (result <= 0)
+	if(result <= 0)
 	{
 		return;
 	}
@@ -414,7 +414,7 @@ void RemoteCommandServer::UpdateConnections()
 //-------------------------------------------------------------------------------------------------
 void RemoteCommandServer::FDArrayFill(std::vector<WSAPOLLFD> & fdArray)
 {
-	for (size_t connIndex = 0; connIndex < m_connections.size(); ++connIndex)
+	for(size_t connIndex = 0; connIndex < m_connections.size(); ++connIndex)
 	{
 		RCSConnection * conn = m_connections[connIndex];
 		WSAPOLLFD poll;
@@ -428,22 +428,22 @@ void RemoteCommandServer::FDArrayFill(std::vector<WSAPOLLFD> & fdArray)
 //-------------------------------------------------------------------------------------------------
 void RemoteCommandServer::FDArrayProcess(std::vector<WSAPOLLFD> & fdArray)
 {
-	for (size_t fdIndex = 0; fdIndex < fdArray.size(); )
+	for(size_t fdIndex = 0; fdIndex < fdArray.size(); )
 	{
 		//Connection can be read from
-		if (fdArray[fdIndex].revents & POLLRDNORM)
+		if(fdArray[fdIndex].revents & POLLRDNORM)
 		{
 			m_connections[fdIndex]->Receive();
 		}
 
 		//Connection can be sent to
-		if (fdArray[fdIndex].revents & POLLWRNORM)
+		if(fdArray[fdIndex].revents & POLLWRNORM)
 		{
 			//Nothing
 		}
 
 		//Connection left
-		if (fdArray[fdIndex].revents & POLLHUP)
+		if(fdArray[fdIndex].revents & POLLHUP)
 		{
 			HandleDisconnect(m_connections[fdIndex]);
 
@@ -466,12 +466,12 @@ void RemoteCommandServer::FDArrayProcess(std::vector<WSAPOLLFD> & fdArray)
 //-------------------------------------------------------------------------------------------------
 void RemoteCommandServer::HandleDisconnect(RCSConnection * conn)
 {
-	if (IsHost())
+	if(IsHost())
 	{
 		g_ConsoleSystem->AddLog(Stringf("Client left: %s", conn->GetAddress().c_str()), Console::REMOTE);
 	}
 
-	if (IsClient())
+	if(IsClient())
 	{
 		g_ConsoleSystem->AddLog(Stringf("Host disconnected."), Console::REMOTE);
 		m_state = eRCSState_DISCONNECTED;
@@ -514,7 +514,7 @@ std::vector<std::string> RemoteCommandServer::GetConnectionAddresses() const
 {
 	std::vector<std::string> connectionAddressList;
 
-	for (RCSConnection * conn : m_connections)
+	for(RCSConnection * conn : m_connections)
 	{
 		connectionAddressList.push_back(conn->GetAddress());
 	}

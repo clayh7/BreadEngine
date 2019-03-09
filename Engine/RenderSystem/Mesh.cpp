@@ -16,7 +16,7 @@ STATIC std::vector<Mesh*, UntrackedAllocator<Mesh*>> Mesh::s_defaultMeshes;
 //-------------------------------------------------------------------------------------------------
 STATIC void Mesh::InitializeDefaultMeshes()
 {
-	for (int meshIndex = 0; meshIndex < eMeshShape_COUNT; ++meshIndex)
+	for(int meshIndex = 0; meshIndex < eMeshShape_COUNT; ++meshIndex)
 	{
 		s_defaultMeshes.push_back(new Mesh((eMeshShape)meshIndex));
 	}
@@ -26,7 +26,7 @@ STATIC void Mesh::InitializeDefaultMeshes()
 //-------------------------------------------------------------------------------------------------
 STATIC void Mesh::DestroyDefaultMeshes()
 {
-	for (int meshIndex = 0; meshIndex < eMeshShape_COUNT; ++meshIndex)
+	for(int meshIndex = 0; meshIndex < eMeshShape_COUNT; ++meshIndex)
 	{
 		delete s_defaultMeshes[meshIndex];
 		s_defaultMeshes[meshIndex] = nullptr;
@@ -66,7 +66,7 @@ Mesh::Mesh(eMeshShape const & shape)
 	//, m_vertexType( vertexType )
 {
 	//Create object
-	switch (shape)
+	switch(shape)
 	{//Remember Tex Coords: TL(0,0) BR(1,1)
 	case eMeshShape_QUAD:
 	{
@@ -182,7 +182,7 @@ Mesh::Mesh(eMeshShape const & shape)
 
 		float deltaPitch = 180.f / (float)horizontalStrips;
 		float deltaYaw = 360.f / (float)verticalStrips;
-		for (int horizontalStripCount = 0; horizontalStripCount < horizontalStrips; ++horizontalStripCount)
+		for(int horizontalStripCount = 0; horizontalStripCount < horizontalStrips; ++horizontalStripCount)
 		{
 			float currentPitch = deltaPitch * (float)horizontalStripCount;
 			float nextPitch = deltaPitch * (float)(horizontalStripCount + 1);
@@ -193,7 +193,7 @@ Mesh::Mesh(eMeshShape const & shape)
 			float heightRadius = radius * SinDegrees(currentPitch);
 			float nextHeightRadius = radius * SinDegrees(nextPitch);
 
-			for (int verticalStripCount = 0; verticalStripCount < verticalStrips; ++verticalStripCount)
+			for(int verticalStripCount = 0; verticalStripCount < verticalStrips; ++verticalStripCount)
 			{
 				float currentYaw = deltaYaw * (float)verticalStripCount;
 				float nextYaw = deltaYaw * (float)(verticalStripCount + 1);
@@ -334,7 +334,7 @@ Mesh::Mesh(std::string const & textString, float scale /*= 12.f */, BitmapFont c
 {
 	//UpdateText( textString, scale, font );
 	std::string asciiText = textString;
-	if (asciiText.size() <= 0)
+	if(asciiText.size() <= 0)
 	{
 		asciiText.append(" ");
 	}
@@ -350,7 +350,7 @@ Mesh::Mesh(std::string const & textString, float scale /*= 12.f */, BitmapFont c
 	Vector3f rightVector(Vector3f(1.f, 0.f, 0.f));
 	Vector3f upVector(Vector3f(0.f, 1.f, 0.f));
 
-	if (font == nullptr)
+	if(font == nullptr)
 		font = g_RenderSystem->GetDefaultFont();
 
 	scale /= (float)font->GetFontSize();
@@ -359,12 +359,12 @@ Mesh::Mesh(std::string const & textString, float scale /*= 12.f */, BitmapFont c
 	Glyph const *previousGlyph = nullptr;
 	Glyph const *undefinedGlyph = font->GetGlyph('?');
 
-	for (char const &glyphToDraw : asciiText)
+	for(char const &glyphToDraw : asciiText)
 	{
 		Glyph const *glyph = font->GetGlyph(glyphToDraw);
 
 		//Unknown characters
-		if (glyph == nullptr)
+		if(glyph == nullptr)
 		{
 			glyph = undefinedGlyph;
 		}
@@ -442,10 +442,10 @@ Mesh::Mesh(MeshBuilder const * meshBuilder, eVertexType const & vertexType)
 	byte_t * vertexBuffer = new byte_t[vertexBufferSize];
 	byte_t * dest = vertexBuffer;
 
-	switch (vertexType)
+	switch(vertexType)
 	{
 	case eVertexType_PC:
-		for (Vertex_Master vert : vertexData)
+		for(Vertex_Master vert : vertexData)
 		{
 			Vertex_PC parsed(vert.m_position, vert.m_color);
 			memcpy(dest, &parsed, vertexSize);
@@ -453,7 +453,7 @@ Mesh::Mesh(MeshBuilder const * meshBuilder, eVertexType const & vertexType)
 		}
 		break;
 	case eVertexType_PCU:
-		for (Vertex_Master vert : vertexData)
+		for(Vertex_Master vert : vertexData)
 		{
 			Vertex_PCU parsed(vert.m_position, vert.m_color, vert.m_uv0);
 			memcpy(dest, &parsed, vertexSize);
@@ -461,7 +461,7 @@ Mesh::Mesh(MeshBuilder const * meshBuilder, eVertexType const & vertexType)
 		}
 		break;
 	case eVertexType_PCUN:
-		for (Vertex_Master vert : vertexData)
+		for(Vertex_Master vert : vertexData)
 		{
 			Vertex_PCUN parsed(vert.m_position, vert.m_color, vert.m_uv0, vert.m_normal);
 			memcpy(dest, &parsed, vertexSize);
@@ -469,7 +469,7 @@ Mesh::Mesh(MeshBuilder const * meshBuilder, eVertexType const & vertexType)
 		}
 		break;
 	case eVertexType_PCUTB:
-		for (Vertex_Master vert : vertexData)
+		for(Vertex_Master vert : vertexData)
 		{
 			Vertex_PCUTB parsed(vert.m_position, vert.m_color, vert.m_uv0, vert.m_tangent, vert.m_bitangent);
 			memcpy(dest, &parsed, vertexSize);
@@ -477,7 +477,7 @@ Mesh::Mesh(MeshBuilder const * meshBuilder, eVertexType const & vertexType)
 		}
 		break;
 	case eVertexType_PCUTBWI:
-		for (Vertex_Master vert : vertexData)
+		for(Vertex_Master vert : vertexData)
 		{
 			Vertex_PCUTBWI parsed(vert.m_position, vert.m_color, vert.m_uv0, vert.m_tangent, vert.m_bitangent, vert.m_boneWeights, vert.m_boneIndicies);
 			memcpy(dest, &parsed, vertexSize);
@@ -493,7 +493,7 @@ Mesh::Mesh(MeshBuilder const * meshBuilder, eVertexType const & vertexType)
 	m_vboID = g_RenderSystem->CreateRenderBuffer(vertexBuffer, vertexCount, vertexSize);
 	delete vertexBuffer;
 
-	if (meshBuilder->DoesUseIBO())
+	if(meshBuilder->DoesUseIBO())
 	{
 		std::vector<unsigned int> const & indexBuffer = meshBuilder->GetIndexBuffer();
 		m_iboID = g_RenderSystem->CreateRenderBuffer(&indexBuffer[0], indexBuffer.size(), sizeof(indexBuffer[0]));
@@ -505,7 +505,7 @@ Mesh::Mesh(MeshBuilder const * meshBuilder, eVertexType const & vertexType)
 Mesh::~Mesh()
 {
 	glDeleteBuffers(1, &m_vboID);
-	if (m_iboID != NULL)
+	if(m_iboID != NULL)
 	{
 		glDeleteBuffers(1, &m_iboID);
 	}
@@ -537,7 +537,7 @@ int Mesh::GetVertexSize() const
 void Mesh::SetVertexLayout(eVertexType const & vertexType)
 {
 	m_layout.clear();
-	switch (vertexType)
+	switch(vertexType)
 	{
 	case eVertexType_PC:
 		m_layout.push_back(VertexDefinition("inPosition", 0, 3, VertexDataType_FLOAT, false, sizeof(Vertex_PC), offsetof(Vertex_PC, m_position)));
@@ -583,7 +583,7 @@ void Mesh::SetVertexLayout(eVertexType const & vertexType)
 Vector3f Mesh::Update(std::string const & newText, float scale /*= 12.f*/, BitmapFont const * font /*= nullptr */)
 {
 	std::string asciiText = newText;
-	if (asciiText.size() <= 0)
+	if(asciiText.size() <= 0)
 	{
 		asciiText.append(" ");
 	}
@@ -599,7 +599,7 @@ Vector3f Mesh::Update(std::string const & newText, float scale /*= 12.f*/, Bitma
 	Vector3f rightVector(Vector3f(1.f, 0.f, 0.f));
 	Vector3f upVector(Vector3f(0.f, 1.f, 0.f));
 
-	if (font == nullptr)
+	if(font == nullptr)
 		font = g_RenderSystem->GetDefaultFont();
 
 	scale /= (float)font->GetFontSize();
@@ -614,12 +614,12 @@ Vector3f Mesh::Update(std::string const & newText, float scale /*= 12.f*/, Bitma
 
 	Vector3f maxSize = Vector3f::ZERO;
 	Vector3f minSize = Vector3f::ZERO;
-	for (char const &glyphToDraw : asciiText)
+	for(char const &glyphToDraw : asciiText)
 	{
 		Glyph const *glyph = font->GetGlyph(glyphToDraw);
 
 		//Unknown characters
-		if (glyph == nullptr)
+		if(glyph == nullptr)
 		{
 			glyph = undefinedGlyph;
 		}
@@ -704,10 +704,10 @@ void Mesh::Update(MeshBuilder const * meshBuilder)
 	byte_t *vertexBuffer = (byte_t*)_alloca(vertexBufferSize);
 	byte_t *dest = vertexBuffer;
 
-	switch (m_vertexType)
+	switch(m_vertexType)
 	{
 	case eVertexType_PC:
-		for (Vertex_Master vert : vertexData)
+		for(Vertex_Master vert : vertexData)
 		{
 			Vertex_PC parsed(vert.m_position, vert.m_color);
 			memcpy(dest, &parsed, vertexSize);
@@ -715,7 +715,7 @@ void Mesh::Update(MeshBuilder const * meshBuilder)
 		}
 		break;
 	case eVertexType_PCU:
-		for (Vertex_Master vert : vertexData)
+		for(Vertex_Master vert : vertexData)
 		{
 			Vertex_PCU parsed(vert.m_position, vert.m_color, vert.m_uv0);
 			memcpy(dest, &parsed, vertexSize);
@@ -723,7 +723,7 @@ void Mesh::Update(MeshBuilder const * meshBuilder)
 		}
 		break;
 	case eVertexType_PCUN:
-		for (Vertex_Master vert : vertexData)
+		for(Vertex_Master vert : vertexData)
 		{
 			Vertex_PCUN parsed(vert.m_position, vert.m_color, vert.m_uv0, vert.m_normal);
 			memcpy(dest, &parsed, vertexSize);
@@ -731,7 +731,7 @@ void Mesh::Update(MeshBuilder const * meshBuilder)
 		}
 		break;
 	case eVertexType_PCUTB:
-		for (Vertex_Master vert : vertexData)
+		for(Vertex_Master vert : vertexData)
 		{
 			Vertex_PCUTB parsed(vert.m_position, vert.m_color, vert.m_uv0, vert.m_tangent, vert.m_bitangent);
 			memcpy(dest, &parsed, vertexSize);
@@ -739,7 +739,7 @@ void Mesh::Update(MeshBuilder const * meshBuilder)
 		}
 		break;
 	case eVertexType_PCUTBWI:
-		for (Vertex_Master vert : vertexData)
+		for(Vertex_Master vert : vertexData)
 		{
 			Vertex_PCUTBWI parsed(vert.m_position, vert.m_color, vert.m_uv0, vert.m_tangent, vert.m_bitangent, vert.m_boneWeights, vert.m_boneIndicies);
 			memcpy(dest, &parsed, vertexSize);
@@ -747,7 +747,7 @@ void Mesh::Update(MeshBuilder const * meshBuilder)
 		}
 		break;
 	case eVertexType_SPRITE:
-		for (Vertex_Master vert : vertexData)
+		for(Vertex_Master vert : vertexData)
 		{
 			Vertex_SPRITE parsed(vert.m_position, vert.m_color, vert.m_uv0);
 			memcpy(dest, &parsed, vertexSize);
@@ -763,7 +763,7 @@ void Mesh::Update(MeshBuilder const * meshBuilder)
 	g_RenderSystem->CreateOrUpdateRenderBuffer(&m_vboID, vertexBuffer, vertexCount, vertexSize, GL_DYNAMIC_DRAW);
 
 	//Update IBO
-	if (meshBuilder->DoesUseIBO())
+	if(meshBuilder->DoesUseIBO())
 	{
 		std::vector<unsigned int> const & indexBuffer = meshBuilder->GetIndexBuffer();
 		g_RenderSystem->CreateOrUpdateRenderBuffer(&m_iboID, &indexBuffer[0], indexBuffer.size(), sizeof(indexBuffer[0]), GL_DYNAMIC_DRAW);

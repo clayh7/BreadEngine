@@ -33,6 +33,7 @@ private:
 	//-------------------------------------------------------------------------------------------------
 public:
 	TextRenderer(std::string const & content, Vector2f const & screenPosition, float size = 12.f, BitmapFont const * font = nullptr);
+	TextRenderer();
 	~TextRenderer();
 
 	void SetText(std::string const & content);

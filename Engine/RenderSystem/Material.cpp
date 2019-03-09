@@ -68,7 +68,7 @@ Material::Material(ShaderProgram const *program)
 	//Get Attribute information
 	int attributeCount;
 	glGetProgramiv(progID, GL_ACTIVE_ATTRIBUTES, &attributeCount);
-	for (int aIndex = 0; aIndex < attributeCount; ++aIndex)
+	for(int aIndex = 0; aIndex < attributeCount; ++aIndex)
 	{
 		GLsizei length;
 		GLint size;
@@ -81,13 +81,13 @@ Material::Material(ShaderProgram const *program)
 		std::string aName(name);
 		std::size_t foundIndex = aName.find('[');
 
-		if (foundIndex != std::string::npos)
+		if(foundIndex != std::string::npos)
 		{
 			aName = aName.substr(0, foundIndex);
 		}
 
 		size_t attributeHash = std::hash<std::string>{}(aName);
-		switch (type)
+		switch(type)
 		{
 		case GL_INT:
 		{
@@ -136,7 +136,7 @@ Material::Material(ShaderProgram const *program)
 	//Get Uniform information
 	int uniformCount;
 	glGetProgramiv(progID, GL_ACTIVE_UNIFORMS, &uniformCount);
-	for (int uIndex = 0; uIndex < uniformCount; ++uIndex)
+	for(int uIndex = 0; uIndex < uniformCount; ++uIndex)
 	{
 		GLsizei length;
 		GLint size;
@@ -149,12 +149,12 @@ Material::Material(ShaderProgram const *program)
 		std::string uName(name);
 		std::size_t foundIndex = uName.find('[');
 
-		if (foundIndex != std::string::npos)
+		if(foundIndex != std::string::npos)
 		{
 			uName = uName.substr(0, foundIndex);
 		}
 
-		switch (type)
+		switch(type)
 		{
 		case GL_INT:
 		{
@@ -209,13 +209,13 @@ Material::Material(ShaderProgram const *program)
 //-------------------------------------------------------------------------------------------------
 Material::~Material()
 {
-	for (auto deleteUniform : m_uniforms)
+	for(auto deleteUniform : m_uniforms)
 	{
 		delete deleteUniform.second;
 		deleteUniform.second = nullptr;
 	}
 
-	for (auto deleteMe : m_attributes)
+	for(auto deleteMe : m_attributes)
 	{
 		delete deleteMe.second;
 		deleteMe.second = nullptr;
@@ -363,7 +363,7 @@ void Material::SetUniform(std::string const & uniformName, Texture const * unifo
 void Material::SetUniform(std::string const & uniformName, int * uniformValue)
 {
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if (m_uniforms[uniformName] == nullptr)
+	if(m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(int) * uniformSize;
@@ -382,7 +382,7 @@ void Material::SetUniform(std::string const & uniformName, int * uniformValue)
 	}
 
 	//update the data
-	else if (m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName] != nullptr)
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(int) * uniformSize;
@@ -401,7 +401,7 @@ void Material::SetUniform(std::string const & uniformName, int * uniformValue)
 void Material::SetUniform(std::string const & uniformName, float * uniformValue)
 {
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if (m_uniforms[uniformName] == nullptr)
+	if(m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(float) * uniformSize;
@@ -420,7 +420,7 @@ void Material::SetUniform(std::string const & uniformName, float * uniformValue)
 	}
 
 	//update the data
-	else if (m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName] != nullptr)
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(float) * uniformSize;
@@ -439,7 +439,7 @@ void Material::SetUniform(std::string const & uniformName, float * uniformValue)
 void Material::SetUniform(std::string const & uniformName, Vector2f * uniformValue)
 {
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if (m_uniforms[uniformName] == nullptr)
+	if(m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector2f) * uniformSize;
@@ -458,7 +458,7 @@ void Material::SetUniform(std::string const & uniformName, Vector2f * uniformVal
 	}
 
 	//update the data
-	else if (m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName] != nullptr)
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector2f) * uniformSize;
@@ -477,7 +477,7 @@ void Material::SetUniform(std::string const & uniformName, Vector2f * uniformVal
 void Material::SetUniform(std::string const & uniformName, Vector3f * uniformValue)
 {
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if (m_uniforms[uniformName] == nullptr)
+	if(m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector3f) * uniformSize;
@@ -496,7 +496,7 @@ void Material::SetUniform(std::string const & uniformName, Vector3f * uniformVal
 	}
 
 	//update the data
-	else if (m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName] != nullptr)
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector3f) * uniformSize;
@@ -515,7 +515,7 @@ void Material::SetUniform(std::string const & uniformName, Vector3f * uniformVal
 void Material::SetUniform(std::string const & uniformName, Vector4f * uniformValue)
 {
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if (m_uniforms[uniformName] == nullptr)
+	if(m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector4f) * uniformSize;
@@ -534,7 +534,7 @@ void Material::SetUniform(std::string const & uniformName, Vector4f * uniformVal
 	}
 
 	//update the data
-	else if (m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName] != nullptr)
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector4f) * uniformSize;
@@ -554,7 +554,7 @@ void Material::SetUniform(std::string const & uniformName, Vector4f * uniformVal
 void Material::SetUniform(std::string const & uniformName, Matrix4f * uniformValue)
 {
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if (m_uniforms[uniformName] == nullptr)
+	if(m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(Matrix4f) * uniformSize;
@@ -573,7 +573,7 @@ void Material::SetUniform(std::string const & uniformName, Matrix4f * uniformVal
 	}
 
 	//update the data
-	else if (m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName] != nullptr)
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(Matrix4f) * uniformSize;
@@ -604,7 +604,7 @@ void Material::SetUniform(std::vector<Light> const &uniformLights, int lightCoun
 	float lightOuterAngle[16];
 	float lightStrengthInside[16];
 	float lightStrengthOutside[16];
-	for (unsigned int lightIndex = 0; lightIndex < uniformLights.size(); ++lightIndex)
+	for(unsigned int lightIndex = 0; lightIndex < uniformLights.size(); ++lightIndex)
 	{
 		lightColor[lightIndex] = uniformLights[lightIndex].m_lightColor.GetVector4f();
 		lightPosition[lightIndex] = uniformLights[lightIndex].m_position;
@@ -639,7 +639,7 @@ void Material::SetUniform(std::vector<Light> const &uniformLights, int lightCoun
 void Material::SetUniform(std::vector<Matrix4f> const & uniformMatricies, int matrixCount)
 {
 	Matrix4f matrix[200];
-	for (int matrixIndex = 0; matrixIndex < matrixCount; ++matrixIndex)
+	for(int matrixIndex = 0; matrixIndex < matrixCount; ++matrixIndex)
 	{
 		matrix[matrixIndex] = uniformMatricies[matrixIndex];
 	}
@@ -655,7 +655,7 @@ void Material::UpdateBindpoints()
 	GLuint progID = m_program->GetShaderProgramID();
 
 	//Reset all attribute bindpoints
-	for (auto attribute : m_attributes)
+	for(auto attribute : m_attributes)
 	{
 		attribute.second->m_bindPoint = -1;
 	}
@@ -663,7 +663,7 @@ void Material::UpdateBindpoints()
 	//Get Attribute information
 	int attributeCount;
 	glGetProgramiv(progID, GL_ACTIVE_ATTRIBUTES, &attributeCount);
-	for (int aIndex = 0; aIndex < attributeCount; ++aIndex)
+	for(int aIndex = 0; aIndex < attributeCount; ++aIndex)
 	{
 		GLsizei length;
 		GLint size;
@@ -676,7 +676,7 @@ void Material::UpdateBindpoints()
 		std::string aName(name);
 		std::size_t foundIndex = aName.find('[');
 
-		if (foundIndex != std::string::npos)
+		if(foundIndex != std::string::npos)
 		{
 			aName = aName.substr(0, foundIndex);
 		}
@@ -684,14 +684,14 @@ void Material::UpdateBindpoints()
 		size_t attributeHash = std::hash<std::string>{}(aName);
 		auto foundAttribute = m_attributes.find(attributeHash);
 		//Update existing bindpoints
-		if (foundAttribute != m_attributes.end())
+		if(foundAttribute != m_attributes.end())
 		{
 			foundAttribute->second->m_bindPoint = loc;
 		}
 		//Create new attributes
 		else
 		{
-			switch (type)
+			switch(type)
 			{
 			case GL_INT:
 			{
@@ -736,7 +736,7 @@ void Material::UpdateBindpoints()
 	}
 
 	//Reset all uniform bindpoints
-	for (auto uniforms : m_uniforms)
+	for(auto uniforms : m_uniforms)
 	{
 		uniforms.second->m_bindPoint = -1;
 	}
@@ -744,7 +744,7 @@ void Material::UpdateBindpoints()
 	//Get Uniform information
 	int uniformCount;
 	glGetProgramiv(progID, GL_ACTIVE_UNIFORMS, &uniformCount);
-	for (int uIndex = 0; uIndex < uniformCount; ++uIndex)
+	for(int uIndex = 0; uIndex < uniformCount; ++uIndex)
 	{
 		GLsizei length;
 		GLint size;
@@ -757,21 +757,21 @@ void Material::UpdateBindpoints()
 		std::string uName(name);
 		std::size_t foundIndex = uName.find('[');
 
-		if (foundIndex != std::string::npos)
+		if(foundIndex != std::string::npos)
 		{
 			uName = uName.substr(0, foundIndex);
 		}
 
 		auto foundUniform = m_uniforms.find(uName);
 		//Update existing bindpoints
-		if (foundUniform != m_uniforms.end())
+		if(foundUniform != m_uniforms.end())
 		{
 			foundUniform->second->m_bindPoint = loc;
 		}
 		//Create new attributes
 		else
 		{
-			switch (type)
+			switch(type)
 			{
 			case GL_INT:
 			{

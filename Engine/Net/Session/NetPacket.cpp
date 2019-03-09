@@ -29,7 +29,7 @@ bool NetPacket::CanWriteMessage(NetMessage const * message) const
 	NetMessageDefinition const * definition = message->m_definition;
 
 	//Trying to send a message that we dont have a definition for
-	if (!definition)
+	if(!definition)
 	{
 		ERROR_AND_DIE("Message Definition not registered");
 	}
@@ -37,7 +37,7 @@ bool NetPacket::CanWriteMessage(NetMessage const * message) const
 	size_t totalSize = message->GetTotalWrittenMessageSize();
 
 	//Make sure we can write this much
-	if (GetWritableBytesLeft() >= totalSize)
+	if(GetWritableBytesLeft() >= totalSize)
 	{
 		//There is room left
 		return true;
@@ -53,7 +53,7 @@ bool NetPacket::CanWriteMessage(NetMessage const * message) const
 //-------------------------------------------------------------------------------------------------
 bool NetPacket::WriteMessage(NetMessage const * message)
 {
-	if (CanWriteMessage(message))
+	if(CanWriteMessage(message))
 	{
 		NetMessageDefinition const * definition = message->m_definition;
 		size_t messageSize = definition->headerSize + message->GetPayloadSize();
@@ -65,19 +65,19 @@ bool NetPacket::WriteMessage(NetMessage const * message)
 		Write<uint8_t>((uint8_t)definition->type);
 
 		//header : sender index
-		if (!definition->IsConnectionless())
+		if(!definition->IsConnectionless())
 		{
 			Write<uint8_t>((uint8_t)message->m_senderIndex);
 		}
 
 		//header : reliable ID
-		if (definition->IsReliable())
+		if(definition->IsReliable())
 		{
 			Write<uint16_t>((uint16_t)message->m_reliableID);
 		}
 
 		//header : sequence ID
-		if (definition->IsReliable() && definition->IsSequence())
+		if(definition->IsReliable() && definition->IsSequence())
 		{
 			Write<uint16_t>((uint16_t)message->m_sequenceID);
 		}
@@ -85,15 +85,15 @@ bool NetPacket::WriteMessage(NetMessage const * message)
 		//payload
 		WriteForward(message->GetBuffer(), message->GetPayloadSize());
 
-		if (definition->IsReliable() && definition->IsSequence())
+		if(definition->IsReliable() && definition->IsSequence())
 		{
 			NetSession::m_NetworkTrafficActivity.Printf("\tMessage (type=%3u) (reliableID=%u) (sequenceID=%u) %4u Byte(s) ", definition->type, message->m_reliableID, message->m_sequenceID, message->GetTotalWrittenMessageSize());
 		}
-		else if (definition->IsSequence())
+		else if(definition->IsSequence())
 		{
 			NetSession::m_NetworkTrafficActivity.Printf("\tMessage (type=%3u) (sequenceID=%u) %4u Byte(s) ", definition->type, message->m_sequenceID, message->GetTotalWrittenMessageSize());
 		}
-		else if (definition->IsReliable())
+		else if(definition->IsReliable())
 		{
 			NetSession::m_NetworkTrafficActivity.Printf("\tMessage (type=%3u) (reliableID=%u) %4u Byte(s) ", definition->type, message->m_reliableID, message->GetTotalWrittenMessageSize());
 		}

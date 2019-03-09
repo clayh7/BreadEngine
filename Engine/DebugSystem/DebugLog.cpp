@@ -17,7 +17,7 @@ DebugLog::DebugLog(std::string filename)
 	errno_t errorSuccess = fopen_s(&m_fileHandle, filename.c_str(), "wb");
 
 	//Make sure it opened something
-	if (errorSuccess != 0)
+	if(errorSuccess != 0)
 	{
 		m_opened = false;
 	}
@@ -27,7 +27,7 @@ DebugLog::DebugLog(std::string filename)
 //-------------------------------------------------------------------------------------------------
 DebugLog::~DebugLog()
 {
-	if (m_opened)
+	if(m_opened)
 	{
 		fclose(m_fileHandle);
 	}
@@ -47,7 +47,7 @@ void DebugLog::Printf(char const * format, ...)
 //-------------------------------------------------------------------------------------------------
 void DebugLog::WriteToFile()
 {
-	while (m_logs.size() > 0 && m_opened)
+	while(m_logs.size() > 0 && m_opened)
 	{
 		std::string currentLog = m_logs.front();
 		fwrite(currentLog.c_str(), sizeof(char), currentLog.size(), m_fileHandle);

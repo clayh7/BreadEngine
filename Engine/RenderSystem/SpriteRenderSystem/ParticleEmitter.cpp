@@ -51,7 +51,7 @@ Particle * ParticleEmitter::SpawnParticle(Vector2f const & position) const
 	Particle * spawn = new Particle();
 	spawn->sprite = SpriteGameRenderer::Create(m_particleEmitterResource->spriteID, layerID);
 	spawn->startScale = m_particleEmitterResource->startScale.GetRandom();
-	if (m_particleEmitterResource->constantScale)
+	if(m_particleEmitterResource->constantScale)
 	{
 		spawn->endScale = spawn->startScale;
 	}

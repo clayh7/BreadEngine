@@ -27,7 +27,6 @@ class Engine
 	// Static Members
 	//-------------------------------------------------------------------------------------------------
 public:
-	static char const * APP_NAME;
 	static int const START_WINDOW_OFFSET = 50;
 	static int const START_WINDOW_WIDTH = 1600;
 	static int const START_WINDOW_HEIGHT = 900;

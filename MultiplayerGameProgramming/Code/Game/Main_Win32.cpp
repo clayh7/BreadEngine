@@ -76,7 +76,7 @@ int WINAPI WinMain(HINSTANCE applicationInstanceHandle, HINSTANCE, LPSTR, int)
 {
 	Initialize(applicationInstanceHandle);
 
-	while (!g_isQuitting)
+	while(!g_isQuitting)
 	{
 		RunFrame();
 	}

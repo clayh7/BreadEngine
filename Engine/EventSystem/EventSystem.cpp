@@ -13,7 +13,7 @@ std::map< size_t, std::vector<SubscriberBase*> > * EventSystem::s_registeredSubs
 //-------------------------------------------------------------------------------------------------
 STATIC void EventSystem::Startup()
 {
-	if (s_registeredSubscribers == nullptr)
+	if(s_registeredSubscribers == nullptr)
 	{
 		s_registeredSubscribers = new std::map< size_t, std::vector<SubscriberBase*> >();
 	}
@@ -23,9 +23,9 @@ STATIC void EventSystem::Startup()
 //-------------------------------------------------------------------------------------------------
 STATIC void EventSystem::Shutdown()
 {
-	for (auto & subscriptions : *s_registeredSubscribers)
+	for(auto & subscriptions : *s_registeredSubscribers)
 	{
-		for (auto deleteMe : subscriptions.second)
+		for(auto deleteMe : subscriptions.second)
 		{
 			delete deleteMe;
 			deleteMe = nullptr;
@@ -58,7 +58,7 @@ STATIC void EventSystem::RegisterEvent(std::string const & eventName, EventCallb
 	subscriber->m_function = callback;
 
 	//If subscription exists, add to it
-	if (foundEventSubscription != s_registeredSubscribers->end())
+	if(foundEventSubscription != s_registeredSubscribers->end())
 	{
 		std::vector<SubscriberBase*> & eventSubscription = foundEventSubscription->second;
 		eventSubscription.push_back(subscriber);
@@ -89,10 +89,10 @@ STATIC void EventSystem::TriggerEvent(std::string const & eventName, NamedProper
 	auto foundEventSubscription = s_registeredSubscribers->find(eventNameHash);
 
 	//Event exists
-	if (foundEventSubscription != s_registeredSubscribers->end())
+	if(foundEventSubscription != s_registeredSubscribers->end())
 	{
 		std::vector<SubscriberBase*> & eventSubscription = foundEventSubscription->second;
-		for (SubscriberBase const * subscriber : eventSubscription)
+		for(SubscriberBase const * subscriber : eventSubscription)
 		{
 			subscriber->Execute(eventData);
 		}
@@ -110,7 +110,7 @@ STATIC void EventSystem::TriggerEvent(std::string const & eventName, NamedProper
 void EventSystem::TriggerEventForFilesFound(std::string const & eventName, std::string const & baseFolder, std::string const & filePattern)
 {
 	std::vector < std::string > filesFound = EnumerateFilesInFolder(baseFolder, filePattern);
-	for (std::string & relativePath : filesFound)
+	for(std::string & relativePath : filesFound)
 	{
 		NamedProperties fileFoundEvent;
 		size_t const MAX_PATH = 260;
@@ -122,7 +122,7 @@ void EventSystem::TriggerEventForFilesFound(std::string const & eventName, std::
 		std::vector<size_t> periodPosition = FindIndicies(fileName, '.');
 		std::vector<std::string> seperatedAbsolutePath = SplitString(absolutePath, '\\');
 		std::string builtAbsolutePath;
-		for (std::string & absolutePart : seperatedAbsolutePath)
+		for(std::string & absolutePart : seperatedAbsolutePath)
 		{
 			builtAbsolutePath += absolutePart;
 			builtAbsolutePath += '/';

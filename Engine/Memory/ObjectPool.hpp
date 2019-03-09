@@ -33,7 +33,7 @@ public:
 		ASSERT_RECOVERABLE(check, "ObjectPool type not large enough");
 		m_buffer = (Type*)malloc(bufferSize);
 		m_nextFreePtr = nullptr;
-		for (int blockIndex = blockCount - 1; blockIndex >= 0; --blockIndex)
+		for(int blockIndex = blockCount - 1; blockIndex >= 0; --blockIndex)
 		{
 			Type * blockPtr = &m_buffer[blockIndex];
 			BlockNode * node = (BlockNode*)blockPtr;
@@ -42,11 +42,18 @@ public:
 		}
 	}
 
+	Type * Alloc(Type & data)
+	{
+		Type * objectBlock = Alloc();
+		memcpy(&data, objectBlock, sizeof(Type));
+		return objectBlock;
+	}
+
 	Type * Alloc()
 	{
 		Type * objectBlock = (Type*)m_nextFreePtr;
+		ASSERT_RECOVERABLE(objectBlock != nullptr, "Out of memory in ObjectPool");
 		m_nextFreePtr = (Type*)(((BlockNode*)m_nextFreePtr)->next);
-		ASSERT_RECOVERABLE(m_nextFreePtr != nullptr, "Out of memory in ObjectPool");
 		new (objectBlock) Type();
 		return objectBlock;
 	}

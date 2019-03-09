@@ -34,7 +34,7 @@ void Matrix4fStack::Push(Matrix4f const & mat4)
 //-------------------------------------------------------------------------------------------------
 void Matrix4fStack::Pop()
 {
-	if (!IsEmpty())
+	if(!IsEmpty())
 	{
 		m_matricies.pop_back();
 	}

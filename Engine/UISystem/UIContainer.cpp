@@ -68,12 +68,12 @@ UIContainer::~UIContainer()
 //-------------------------------------------------------------------------------------------------
 void UIContainer::Update()
 {
-	if (m_hidden)
+	if(m_hidden)
 	{
 		return;
 	}
 
-	if (m_dirty)
+	if(m_dirty)
 	{
 		UpdateRenderers();
 		m_dirty = false;
@@ -86,7 +86,7 @@ void UIContainer::Update()
 //-------------------------------------------------------------------------------------------------
 void UIContainer::Render() const
 {
-	if (m_hidden)
+	if(m_hidden)
 	{
 		return;
 	}
@@ -114,10 +114,10 @@ Vector2f UIContainer::GetItemSize() const
 //-------------------------------------------------------------------------------------------------
 Vector2f UIContainer::GetPositionForItem(UIItem const * childItem) const
 {
-	for (size_t childIndex = 0; childIndex < m_children.size(); ++childIndex)
+	for(size_t childIndex = 0; childIndex < m_children.size(); ++childIndex)
 	{
 		UIWidget * childWidget = (UIWidget*)childItem;
-		if (m_children[childIndex] == childWidget)
+		if(m_children[childIndex] == childWidget)
 		{
 			Vector2f itemSize = GetItemSize();
 			Vector2i gridSize;
@@ -249,37 +249,37 @@ Transform UIContainer::CalcBackgroundTransform()
 void UIContainer::PopulateFromXML(XMLNode const & node)
 {
 	//Set properties from XML
-	for (int childPropertyIndex = 0; childPropertyIndex < node.nChildNode(); ++childPropertyIndex)
+	for(int childPropertyIndex = 0; childPropertyIndex < node.nChildNode(); ++childPropertyIndex)
 	{
 		XMLNode childProperty = node.getChildNode(childPropertyIndex);
 		//Border
-		if (strcmp(childProperty.getName(), PROPERTY_BORDER_COLOR) == 0)
+		if(strcmp(childProperty.getName(), PROPERTY_BORDER_COLOR) == 0)
 		{
 			Color borderColor = ReadXMLAttribute(childProperty, STRING_VALUE, Color::BLACK);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_BORDER_COLOR, borderColor, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_BORDER_SIZE) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_BORDER_SIZE) == 0)
 		{
 			float borderSize = ReadXMLAttribute(childProperty, STRING_VALUE, 0.f);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_BORDER_SIZE, borderSize, ParseState(state));
 		}
 		//Background
-		else if (strcmp(childProperty.getName(), PROPERTY_BACKGROUND_COLOR) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_BACKGROUND_COLOR) == 0)
 		{
 			Color backgroundColor = ReadXMLAttribute(childProperty, STRING_VALUE, Color::WHITE);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_BACKGROUND_COLOR, backgroundColor, ParseState(state));
 		}
 		//Grid
-		else if (strcmp(childProperty.getName(), PROPERTY_GRID_SIZE) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_GRID_SIZE) == 0)
 		{
 			Vector2i gridSize = ReadXMLAttribute(childProperty, STRING_VALUE, Vector2i::ONE);
 			SetProperty(PROPERTY_GRID_SIZE, gridSize, eWidgetState_ALL);
 		}
 		//Event callbacks
-		else if (strcmp(childProperty.getName(), PROPERTY_ON_ADD_ITEM) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_ON_ADD_ITEM) == 0)
 		{
 			std::string eventName = ReadXMLAttribute(childProperty, STRING_VALUE, "");
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");

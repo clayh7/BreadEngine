@@ -15,16 +15,9 @@ App * g_AppSystem = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC char const * App::APP_NAME = "ProtoGame"; //Name on top game window
-
-
-//-------------------------------------------------------------------------------------------------
 App::App()
 {
-	//Startup text
-	g_ConsoleSystem->AddLog("Engine: Bread v1.0.0", Console::INFO);
 	g_ConsoleSystem->AddLog(Stringf("Project: %s", APP_NAME), Console::INFO);
-	g_ConsoleSystem->AddLog("Author: Clay Howell", Console::INFO);
 
 	//Create Game
 	g_GameSystem = new Game();
@@ -55,7 +48,7 @@ void App::Update()
 void App::UpdateInputs()
 {
 	//Quitting App
-	if (g_InputSystem->WasKeyJustPressed(Input::KEY_ESCAPE))
+	if(g_InputSystem->WasKeyJustPressed(Input::KEY_ESCAPE))
 	{
 		g_isQuitting = true;
 	}

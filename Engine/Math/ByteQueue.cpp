@@ -16,7 +16,7 @@ ByteQueue * ByteQueue::CreateQueue()
 	ByteQueue * head = (ByteQueue *)s_queue;
 	int qCount = head->size;
 
-	if (qCount == sizeof(ByteQueue) - 1)
+	if(qCount == sizeof(ByteQueue) - 1)
 		return nullptr; // ERROR!
 
 	head[qCount].size = 0;
@@ -32,22 +32,22 @@ void ByteQueue::DestroyQueue(ByteQueue * queue)
 	int qCount = head->size;
 	int destroySize = queue->size;
 
-	if (qCount == 0)
+	if(qCount == 0)
 		return; // ERROR!
 
 	ByteQueue * currentQueue = &head[1];
 	int queueIndex = 0;
 	int queueDepth = 0;
-	while (currentQueue != queue)
+	while(currentQueue != queue)
 	{
 		queueDepth += currentQueue->size;
 		++currentQueue;
 		++queueIndex;
-		if (queueIndex > qCount)
+		if(queueIndex > qCount)
 			return; // ERROR!
 	}
 
-	while (queueIndex < qCount)
+	while(queueIndex < qCount)
 	{
 		head[queueIndex] = head[queueIndex++];
 	}
@@ -55,7 +55,7 @@ void ByteQueue::DestroyQueue(ByteQueue * queue)
 
 	byte_t * start = &s_queue[SIZE - queueDepth];
 	byte_t * end = start + destroySize;
-	while (end != (byte_t*)&head[head->size])
+	while(end != (byte_t*)&head[head->size])
 	{
 		*start = *end;
 		--start;
@@ -71,12 +71,12 @@ void ByteQueue::Push(ByteQueue * queue, byte_t byte)
 	ByteQueue * head = (ByteQueue *)s_queue;
 	int qCount = head->size;
 	int total = 0;
-	for (int qIndex = 1; qIndex < qCount; ++qIndex)
+	for(int qIndex = 1; qIndex < qCount; ++qIndex)
 	{
 		total += head[qIndex].size;
 	}
 	total += (qCount + 1) * sizeof(ByteQueue);
-	if (total >= SIZE)
+	if(total >= SIZE)
 		return; // ERROR!
 
 	queue->size += 1;
@@ -84,7 +84,7 @@ void ByteQueue::Push(ByteQueue * queue, byte_t byte)
 	//Find push location
 	byte_t * back = &s_queue[SIZE - 1];
 	ByteQueue * currentQueue = queue - 1;
-	while ((byte_t *)currentQueue > s_queue)
+	while((byte_t *)currentQueue > s_queue)
 	{
 		back -= currentQueue->size;
 		--currentQueue;
@@ -93,7 +93,7 @@ void ByteQueue::Push(ByteQueue * queue, byte_t byte)
 	byte_t * end = (byte_t*)&head[qCount + 1];
 
 	//Shift all the way to back
-	while (back != (byte_t*)end)
+	while(back != (byte_t*)end)
 	{
 		*(end) = *(end + 1);
 		++end;
@@ -107,14 +107,14 @@ void ByteQueue::Push(ByteQueue * queue, byte_t byte)
 byte_t ByteQueue::Pop(ByteQueue * queue)
 {
 	//Check current size
-	if (queue->size == 0)
+	if(queue->size == 0)
 		return 0; // ERROR!
 
 	ByteQueue * currentQueue = queue;
 	byte_t * back = &s_queue[SIZE - 1];
 
 	//Find pop location
-	while ((byte_t *)currentQueue > s_queue)
+	while((byte_t *)currentQueue > s_queue)
 	{
 		back -= currentQueue->size;
 		--currentQueue;
@@ -125,7 +125,7 @@ byte_t ByteQueue::Pop(ByteQueue * queue)
 	ByteQueue * end = (((ByteQueue*)(s_queue + 1)) + qCount);
 
 	//Shift it all down
-	while (back != (byte_t*)end)
+	while(back != (byte_t*)end)
 	{
 		*back = *(back - 1);
 		--back;

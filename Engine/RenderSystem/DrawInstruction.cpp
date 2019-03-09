@@ -17,7 +17,7 @@ DrawInstruction::DrawInstruction(bool useIndexBuffer /*= false*/, ePrimitiveType
 //-------------------------------------------------------------------------------------------------
 void DrawInstruction::SetPrimitiveType(ePrimitiveType const & primitiveType)
 {
-	switch (primitiveType)
+	switch(primitiveType)
 	{
 	case ePrimitiveType_TRIANGLES:
 		m_primitiveType = 0x0004; //GL_TRIANGLES

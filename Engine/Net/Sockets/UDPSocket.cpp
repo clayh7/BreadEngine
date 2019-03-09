@@ -15,7 +15,7 @@ UDPSocket::~UDPSocket()
 int UDPSocket::Bind(SocketAddressPtr address)
 {
 	int error = bind(m_socket, &(address->m_sockAddr), address->GetSize());
-	if (error == SOCKET_ERROR)
+	if(error == SOCKET_ERROR)
 	{
 		return NetworkUtils::ReportError();
 	}
@@ -28,7 +28,7 @@ int UDPSocket::Bind(SocketAddressPtr address)
 int UDPSocket::SendTo(void const * data, int length, SocketAddressPtr toAddress)
 {
 	int byteSentCount = sendto(m_socket, static_cast<char const *>(data), length, 0, &(toAddress->m_sockAddr), toAddress->GetSize());
-	if (byteSentCount >= 0)
+	if(byteSentCount >= 0)
 	{
 		return byteSentCount;
 	}
@@ -46,7 +46,7 @@ int UDPSocket::ReceiveFrom(void * buffer, int length, SocketAddressPtr out_fromA
 	int fromLength = sizeof(fromAddress);
 	int readByteCount = recvfrom(m_socket, static_cast<char*>(buffer), length, 0, &fromAddress, &fromLength);
 	out_fromAddress = std::make_shared<SocketAddress>(fromAddress);
-	if (readByteCount >= 0)
+	if(readByteCount >= 0)
 	{
 		return readByteCount;
 	}
@@ -62,7 +62,7 @@ void UDPSocket::SetBlocking(bool isBlocking)
 {
 	u_long blocking = isBlocking ? 1 : 0;
 	int error = ioctlsocket(m_socket, FIONBIO, &blocking);
-	if (error == SOCKET_ERROR)
+	if(error == SOCKET_ERROR)
 	{
 		NetworkUtils::ReportError();
 	}

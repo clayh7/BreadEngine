@@ -168,7 +168,7 @@ void Vector4f::SetXYZW(float setX, float setY, float setZ, float setW)
 void Vector4f::Normalize()
 {
 	float length = Length();
-	if (length == 0.f)
+	if(length == 0.f)
 		return;
 	float oneOverLength = 1.f / length;
 	x *= oneOverLength;

@@ -84,28 +84,28 @@ Color::Color(std::string colorString)
 {
 	std::vector<std::string> colorValues = SplitString(colorString, ',');
 
-	if (colorValues.size() == 1)
+	if(colorValues.size() == 1)
 	{
 		SetTypeFromString(r, colorValues[0]);
 		SetTypeFromString(g, colorValues[0]);
 		SetTypeFromString(b, colorValues[0]);
 		a = 255;
 	}
-	else if (colorValues.size() == 2)
+	else if(colorValues.size() == 2)
 	{
 		SetTypeFromString(r, colorValues[0]);
 		SetTypeFromString(g, colorValues[0]);
 		SetTypeFromString(b, colorValues[0]);
 		SetTypeFromString(a, colorValues[1]);
 	}
-	else if (colorValues.size() == 3)
+	else if(colorValues.size() == 3)
 	{
 		SetTypeFromString(r, colorValues[0]);
 		SetTypeFromString(g, colorValues[1]);
 		SetTypeFromString(b, colorValues[2]);
 		a = 255;
 	}
-	else if (colorValues.size() == 4)
+	else if(colorValues.size() == 4)
 	{
 		SetTypeFromString(r, colorValues[0]);
 		SetTypeFromString(g, colorValues[1]);

@@ -31,11 +31,11 @@ Input::Input()
 	, m_lastFocusChange(0)
 {
 	//Setup all controllers
-	for (int i = 0; i < MAX_XBOX_CONTROLLERS; i++)
+	for(int i = 0; i < MAX_XBOX_CONTROLLERS; i++)
 		m_xboxControllers[i] = new XboxController();
 
 	//Set all keys to "not down"
-	for (int keyIndex = 0; keyIndex < NUM_KEYS; keyIndex++)
+	for(int keyIndex = 0; keyIndex < NUM_KEYS; keyIndex++)
 	{
 		m_keyStates[keyIndex].m_isDown = false;
 		m_keyStates[keyIndex].m_frameNumberLastChanged = -1;
@@ -46,7 +46,7 @@ Input::Input()
 //-------------------------------------------------------------------------------------------------
 Input::~Input()
 {
-	for (int i = 0; i < MAX_XBOX_CONTROLLERS; i++)
+	for(int i = 0; i < MAX_XBOX_CONTROLLERS; i++)
 	{
 		delete m_xboxControllers[i];
 		m_xboxControllers[i] = nullptr;
@@ -63,7 +63,7 @@ void Input::Update()
 	UpdateHoldPosition();
 
 	//Update all controllers
-	for (int i = 0; i < MAX_XBOX_CONTROLLERS; i++)
+	for(int i = 0; i < MAX_XBOX_CONTROLLERS; i++)
 		m_xboxControllers[i]->Update(i, m_currentFrameNumber);
 }
 
@@ -79,22 +79,22 @@ void Input::AdvanceFrameNumber()
 void Input::AddTypedCharacter(unsigned char asKey)
 {
 	bool success = false;
-	if (asKey >= 'a' && asKey <= 'z')
+	if(asKey >= 'a' && asKey <= 'z')
 	{
 		success = true;
 	}
 
-	else if (asKey >= 'A' && asKey <= 'Z')
+	else if(asKey >= 'A' && asKey <= 'Z')
 	{
 		success = true;
 	}
 
-	else if (asKey >= '0' && asKey <= '9')
+	else if(asKey >= '0' && asKey <= '9')
 	{
 		success = true;
 	}
 
-	else if (asKey == '-'
+	else if(asKey == '-'
 		|| asKey == '_'
 		|| asKey == '+'
 		|| asKey == '='
@@ -108,7 +108,7 @@ void Input::AddTypedCharacter(unsigned char asKey)
 		success = true;
 	}
 
-	if (success)
+	if(success)
 	{
 		NamedProperties charTypedEvent;
 		charTypedEvent.Set("asKey", asKey);
@@ -120,7 +120,7 @@ void Input::AddTypedCharacter(unsigned char asKey)
 //-------------------------------------------------------------------------------------------------
 void Input::SetKeyStatus(unsigned char asKey, bool isNowDown)
 {
-	if (asKey == KEY_BACKSPACE && isNowDown)
+	if(asKey == KEY_BACKSPACE && isNowDown)
 	{
 		EventSystem::TriggerEvent(BACKSPACE_EVENT);
 	}
@@ -186,7 +186,7 @@ bool Input::WasMouseButtonJustReleased(const eMouseButton& button) const
 //-------------------------------------------------------------------------------------------------
 void Input::SetMouseHidden(bool hideMouse)
 {
-	if (hideMouse)
+	if(hideMouse)
 		ShowCursor(FALSE);
 	else
 		ShowCursor(TRUE);
@@ -200,7 +200,7 @@ Vector2i Input::GetMousePosition(bool relativeToWindow /*= false*/) const
 {
 	POINT cursorPos;
 	GetCursorPos(&cursorPos);
-	if (relativeToWindow)
+	if(relativeToWindow)
 	{
 		ScreenToClient(g_EngineSystem->GetWindowHandle(), &cursorPos);
 	}
@@ -235,7 +235,7 @@ void Input::SetMousePosition(int setX, int setY)
 //-------------------------------------------------------------------------------------------------
 void Input::UpdateHoldPosition()
 {
-	if (m_isHoldPositionActive)
+	if(m_isHoldPositionActive)
 	{
 		Vector2i currentMousePosition = GetMousePosition();
 		m_mouseHoldDeviation = currentMousePosition - m_mouseHoldPosition;

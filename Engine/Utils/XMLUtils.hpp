@@ -36,7 +36,7 @@ void SetTypeFromString(DestinationType* out_destination, std::string const &asSt
 //-------------------------------------------------------------------------------------------------
 template< > inline void SetTypeFromString(size_t & out_destination, std::string const &asString)
 {
-	if (asString.size() == 0)
+	if(asString.size() == 0)
 	{
 		out_destination = 0U;
 	}
@@ -85,15 +85,15 @@ template< > inline void SetTypeFromString(unsigned char & out_destination, std::
 //-------------------------------------------------------------------------------------------------
 template< > inline void SetTypeFromString(bool & out_destination, std::string const &asString)
 {
-	if (asString == "true")
+	if(asString == "true")
 	{
 		out_destination = true;
 	}
-	else if (asString == "false")
+	else if(asString == "false")
 	{
 		out_destination = false;
 	}
-	else if (asString == "")
+	else if(asString == "")
 	{
 		out_destination = false;
 	}
@@ -107,7 +107,7 @@ template< > inline void SetTypeFromString(bool & out_destination, std::string co
 //-------------------------------------------------------------------------------------------------
 template< > inline void SetTypeFromString(uint16_t & out_destination, std::string const &asString)
 {
-	if (asString.size() == 0)
+	if(asString.size() == 0)
 	{
 		out_destination = 0U;
 	}
@@ -145,7 +145,7 @@ ValueType ReadXMLAttribute(const XMLNode& node, std::string const & propertyName
 	bool wasPropertyPresent = false;
 
 	ValueType outValue = GetXMLAttributeOfType< ValueType >(node, propertyName, wasPropertyPresent);
-	if (!wasPropertyPresent)
+	if(!wasPropertyPresent)
 		outValue = defaultValue;
 
 	return outValue;

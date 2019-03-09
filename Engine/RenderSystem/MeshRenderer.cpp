@@ -86,7 +86,7 @@ MeshRenderer::~MeshRenderer()
 {
 	glDeleteVertexArrays(1, &m_vaoID);
 
-	for (auto deleteMe : m_uniforms)
+	for(auto deleteMe : m_uniforms)
 	{
 		delete deleteMe.second;
 		deleteMe.second = nullptr;
@@ -99,7 +99,7 @@ MeshRenderer::~MeshRenderer()
 void MeshRenderer::Update(bool onScreen /*= false*/)
 {
 	SetUniform("uModel", GetModelMatrix());
-	if (!onScreen)
+	if(!onScreen)
 	{
 		g_RenderSystem->SetMatrixUniforms(this);
 	}
@@ -250,7 +250,7 @@ void MeshRenderer::SetMeshAndMaterial(Mesh const * mesh, Material const * materi
 //-------------------------------------------------------------------------------------------------
 void MeshRenderer::RebindMeshAndMaterialToVAO()
 {
-	if (m_mesh && m_material)
+	if(m_mesh && m_material)
 	{
 		//if (BProfiler::IsEnabled())
 		{
@@ -267,10 +267,10 @@ void MeshRenderer::UpdateUniformBindpoints()
 	std::map<std::string, Uniform*> const & uniformList = m_material->GetUniformList();
 
 	//Reset all uniform bindpoints
-	for (auto uniform : m_uniforms)
+	for(auto uniform : m_uniforms)
 	{
 		auto foundUniform = uniformList.find(uniform.second->m_name);
-		if (foundUniform != uniformList.end())
+		if(foundUniform != uniformList.end())
 		{
 			uniform.second->m_bindPoint = foundUniform->second->m_bindPoint;
 		}
@@ -318,14 +318,14 @@ void MeshRenderer::SetUniform(std::string const & uniformName, uint32_t uniformV
 
 	//Find uniform on material
 	auto foundMatUniform = matUniformList.find(uniformName);
-	if (foundMatUniform == matUniformList.end())
+	if(foundMatUniform == matUniformList.end())
 	{
 		ERROR_AND_DIE("Uniform doesn't exist on Material");
 	}
 
 	//Find uniform on meshrenderer
 	auto foundUniform = m_uniforms.find(uniformName);
-	if (foundUniform == m_uniforms.end())
+	if(foundUniform == m_uniforms.end())
 	{
 		size_t * newData = new size_t[foundMatUniform->second->m_size];
 		newData[0] = (uniformValue);
@@ -348,14 +348,14 @@ void MeshRenderer::SetUniform(std::string const & uniformName, int uniformValue)
 
 	//Find uniform on material
 	auto foundMatUniform = matUniformList.find(uniformName);
-	if (foundMatUniform == matUniformList.end())
+	if(foundMatUniform == matUniformList.end())
 	{
 		ERROR_AND_DIE("Uniform doesn't exist on Material");
 	}
 
 	//Find uniform on meshrenderer
 	auto foundUniform = m_uniforms.find(uniformName);
-	if (foundUniform == m_uniforms.end())
+	if(foundUniform == m_uniforms.end())
 	{
 		int * newData = new int[foundMatUniform->second->m_size];
 		newData[0] = (uniformValue);
@@ -378,14 +378,14 @@ void MeshRenderer::SetUniform(std::string const & uniformName, float uniformValu
 
 	//Find uniform on material
 	auto foundMatUniform = matUniformList.find(uniformName);
-	if (foundMatUniform == matUniformList.end())
+	if(foundMatUniform == matUniformList.end())
 	{
 		ERROR_AND_DIE("Uniform doesn't exist on Material");
 	}
 
 	//Find uniform on meshrenderer
 	auto foundUniform = m_uniforms.find(uniformName);
-	if (foundUniform == m_uniforms.end())
+	if(foundUniform == m_uniforms.end())
 	{
 		Vector2f * newData = new Vector2f[foundMatUniform->second->m_size];
 		newData[0] = (uniformValue);
@@ -408,14 +408,14 @@ void MeshRenderer::SetUniform(std::string const & uniformName, Vector2f const &u
 
 	//Find uniform on material
 	auto foundMatUniform = matUniformList.find(uniformName);
-	if (foundMatUniform == matUniformList.end())
+	if(foundMatUniform == matUniformList.end())
 	{
 		ERROR_AND_DIE("Uniform doesn't exist on Material");
 	}
 
 	//Find uniform on meshrenderer
 	auto foundUniform = m_uniforms.find(uniformName);
-	if (foundUniform == m_uniforms.end())
+	if(foundUniform == m_uniforms.end())
 	{
 		Vector2f * newData = new Vector2f[foundMatUniform->second->m_size];
 		newData[0] = (uniformValue);
@@ -438,14 +438,14 @@ void MeshRenderer::SetUniform(std::string const & uniformName, Vector3f const &u
 
 	//Find uniform on material
 	auto foundMatUniform = matUniformList.find(uniformName);
-	if (foundMatUniform == matUniformList.end())
+	if(foundMatUniform == matUniformList.end())
 	{
 		ERROR_AND_DIE("Uniform doesn't exist on Material");
 	}
 
 	//Find uniform on meshrenderer
 	auto foundUniform = m_uniforms.find(uniformName);
-	if (foundUniform == m_uniforms.end())
+	if(foundUniform == m_uniforms.end())
 	{
 		Vector3f * newData = new Vector3f[foundMatUniform->second->m_size];
 		newData[0] = (uniformValue);
@@ -468,14 +468,14 @@ void MeshRenderer::SetUniform(std::string const & uniformName, Vector4f const &u
 
 	//Find uniform on material
 	auto foundMatUniform = matUniformList.find(uniformName);
-	if (foundMatUniform == matUniformList.end())
+	if(foundMatUniform == matUniformList.end())
 	{
 		ERROR_AND_DIE("Uniform doesn't exist on Material");
 	}
 
 	//Find uniform on meshrenderer
 	auto foundUniform = m_uniforms.find(uniformName);
-	if (foundUniform == m_uniforms.end())
+	if(foundUniform == m_uniforms.end())
 	{
 		Vector4f * newData = new Vector4f[foundMatUniform->second->m_size];
 		newData[0] = (uniformValue);
@@ -498,14 +498,14 @@ void MeshRenderer::SetUniform(std::string const & uniformName, Vector4i const & 
 
 	//Find uniform on material
 	auto foundMatUniform = matUniformList.find(uniformName);
-	if (foundMatUniform == matUniformList.end())
+	if(foundMatUniform == matUniformList.end())
 	{
 		ERROR_AND_DIE("Uniform doesn't exist on Material");
 	}
 
 	//Find uniform on meshrenderer
 	auto foundUniform = m_uniforms.find(uniformName);
-	if (foundUniform == m_uniforms.end())
+	if(foundUniform == m_uniforms.end())
 	{
 		Vector4i * newData = new Vector4i[foundMatUniform->second->m_size];
 		newData[0] = (uniformValue);
@@ -528,7 +528,7 @@ void MeshRenderer::SetUniform(std::string const & uniformName, Matrix4f const & 
 
 	//Find uniform on material
 	auto foundMatUniform = matUniformList.find(uniformName);
-	if (foundMatUniform == matUniformList.end())
+	if(foundMatUniform == matUniformList.end())
 	{
 		//ERROR_AND_DIE( "Uniform doesn't exist on Material" );
 		return;
@@ -536,7 +536,7 @@ void MeshRenderer::SetUniform(std::string const & uniformName, Matrix4f const & 
 
 	//Find uniform on meshrenderer
 	auto foundUniform = m_uniforms.find(uniformName);
-	if (foundUniform == m_uniforms.end())
+	if(foundUniform == m_uniforms.end())
 	{
 		Matrix4f * newData = new Matrix4f[foundMatUniform->second->m_size];
 		newData[0] = (uniformValue);
@@ -559,14 +559,14 @@ void MeshRenderer::SetUniform(std::string const & uniformName, Color const & uni
 
 	//Find uniform on material
 	auto foundMatUniform = matUniformList.find(uniformName);
-	if (foundMatUniform == matUniformList.end())
+	if(foundMatUniform == matUniformList.end())
 	{
 		ERROR_AND_DIE("Uniform doesn't exist on Material");
 	}
 
 	//Find uniform on meshrenderer
 	auto foundUniform = m_uniforms.find(uniformName);
-	if (foundUniform == m_uniforms.end())
+	if(foundUniform == m_uniforms.end())
 	{
 		Vector4f * newData = new Vector4f[foundMatUniform->second->m_size];
 		newData[0] = (uniformValue.GetVector4f());
@@ -590,14 +590,14 @@ void MeshRenderer::SetUniform(std::string const & uniformName, std::string const
 
 	//Find uniform on material
 	auto foundMatUniform = matUniformList.find(uniformName);
-	if (foundMatUniform == matUniformList.end())
+	if(foundMatUniform == matUniformList.end())
 	{
 		ERROR_AND_DIE("Uniform doesn't exist on Material");
 	}
 
 	//Find uniform on meshrenderer
 	auto foundUniform = m_uniforms.find(uniformName);
-	if (foundUniform == m_uniforms.end())
+	if(foundUniform == m_uniforms.end())
 	{
 		size_t * newData = new size_t[foundMatUniform->second->m_size];
 		newData[0] = (generatedTexture->m_openglTextureID);
@@ -620,14 +620,14 @@ void MeshRenderer::SetUniform(std::string const & uniformName, Texture const * u
 
 	//Find uniform on material
 	auto foundMatUniform = matUniformList.find(uniformName);
-	if (foundMatUniform == matUniformList.end())
+	if(foundMatUniform == matUniformList.end())
 	{
 		ERROR_AND_DIE("Uniform doesn't exist on Material");
 	}
 
 	//Find uniform on meshrenderer
 	auto foundUniform = m_uniforms.find(uniformName);
-	if (foundUniform == m_uniforms.end())
+	if(foundUniform == m_uniforms.end())
 	{
 		size_t * newData = new size_t[foundMatUniform->second->m_size];
 		newData[0] = (uniformValue->m_openglTextureID);
@@ -649,7 +649,7 @@ void MeshRenderer::SetUniform(std::string const & uniformName, int * uniformValu
 	std::map<std::string, Uniform*> uniformList = m_material->GetUniformList();
 
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if (uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
+	if(uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(int) * uniformSize;
@@ -668,7 +668,7 @@ void MeshRenderer::SetUniform(std::string const & uniformName, int * uniformValu
 	}
 
 	//update the data
-	else if (m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName] != nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(int) * uniformSize;
@@ -689,7 +689,7 @@ void MeshRenderer::SetUniform(std::string const &uniformName, float *uniformValu
 	std::map<std::string, Uniform*> uniformList = m_material->GetUniformList();
 
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if (uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
+	if(uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(float) * uniformSize;
@@ -708,7 +708,7 @@ void MeshRenderer::SetUniform(std::string const &uniformName, float *uniformValu
 	}
 
 	//update the data
-	else if (m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName] != nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(float) * uniformSize;
@@ -729,7 +729,7 @@ void MeshRenderer::SetUniform(std::string const &uniformName, Vector2f *uniformV
 	std::map<std::string, Uniform*> uniformList = m_material->GetUniformList();
 
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if (uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
+	if(uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector2f) * uniformSize;
@@ -748,7 +748,7 @@ void MeshRenderer::SetUniform(std::string const &uniformName, Vector2f *uniformV
 	}
 
 	//update the data
-	else if (m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName] != nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector2f) * uniformSize;
@@ -769,7 +769,7 @@ void MeshRenderer::SetUniform(std::string const &uniformName, Vector3f *uniformV
 	std::map<std::string, Uniform*> uniformList = m_material->GetUniformList();
 
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if (uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
+	if(uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector3f) * uniformSize;
@@ -788,7 +788,7 @@ void MeshRenderer::SetUniform(std::string const &uniformName, Vector3f *uniformV
 	}
 
 	//update the data
-	else if (m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName] != nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector3f) * uniformSize;
@@ -809,7 +809,7 @@ void MeshRenderer::SetUniform(std::string const & uniformName, Vector4f * unifor
 	std::map<std::string, Uniform*> uniformList = m_material->GetUniformList();
 
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if (uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
+	if(uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector4f) * uniformSize;
@@ -828,7 +828,7 @@ void MeshRenderer::SetUniform(std::string const & uniformName, Vector4f * unifor
 	}
 
 	//update the data
-	else if (m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName] != nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector4f) * uniformSize;
@@ -850,7 +850,7 @@ void MeshRenderer::SetUniform(std::string const &uniformName, Matrix4f * uniform
 	std::map<std::string, Uniform*> uniformList = m_material->GetUniformList();
 
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if (uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
+	if(uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(Matrix4f) * uniformSize;
@@ -869,7 +869,7 @@ void MeshRenderer::SetUniform(std::string const &uniformName, Matrix4f * uniform
 	}
 
 	//update the data
-	else if (m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName] != nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(Matrix4f) * uniformSize;
@@ -900,7 +900,7 @@ void MeshRenderer::SetUniform(std::vector<Light> const &uniformLights, int light
 	float lightOuterAngle[16];
 	float lightStrengthInside[16];
 	float lightStrengthOutside[16];
-	for (unsigned int lightIndex = 0; lightIndex < uniformLights.size(); ++lightIndex)
+	for(unsigned int lightIndex = 0; lightIndex < uniformLights.size(); ++lightIndex)
 	{
 		lightColor[lightIndex] = uniformLights[lightIndex].m_lightColor.GetVector4f();
 		lightPosition[lightIndex] = uniformLights[lightIndex].m_position;

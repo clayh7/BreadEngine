@@ -63,12 +63,12 @@ UIBox::~UIBox()
 //-------------------------------------------------------------------------------------------------
 void UIBox::Update()
 {
-	if (m_hidden)
+	if(m_hidden)
 	{
 		return;
 	}
 
-	if (m_dirty)
+	if(m_dirty)
 	{
 		UpdateRenderers();
 		m_dirty = false;
@@ -81,7 +81,7 @@ void UIBox::Update()
 //-------------------------------------------------------------------------------------------------
 void UIBox::Render() const
 {
-	if (m_hidden)
+	if(m_hidden)
 	{
 		return;
 	}
@@ -173,24 +173,24 @@ Transform UIBox::CalcBackgroundTransform()
 void UIBox::PopulateFromXML(XMLNode const & node)
 {
 	//Set properties from XML
-	for (int childPropertyIndex = 0; childPropertyIndex < node.nChildNode(); ++childPropertyIndex)
+	for(int childPropertyIndex = 0; childPropertyIndex < node.nChildNode(); ++childPropertyIndex)
 	{
 		XMLNode childProperty = node.getChildNode(childPropertyIndex);
 		//Border
-		if (strcmp(childProperty.getName(), PROPERTY_BORDER_COLOR) == 0)
+		if(strcmp(childProperty.getName(), PROPERTY_BORDER_COLOR) == 0)
 		{
 			Color borderColor = ReadXMLAttribute(childProperty, STRING_VALUE, Color::BLACK);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_BORDER_COLOR, borderColor, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_BORDER_SIZE) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_BORDER_SIZE) == 0)
 		{
 			float borderSize = ReadXMLAttribute(childProperty, STRING_VALUE, 0.f);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_BORDER_SIZE, borderSize, ParseState(state));
 		}
 		//Background
-		else if (strcmp(childProperty.getName(), PROPERTY_BACKGROUND_COLOR) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_BACKGROUND_COLOR) == 0)
 		{
 			Color backgroundColor = ReadXMLAttribute(childProperty, STRING_VALUE, Color::WHITE);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");

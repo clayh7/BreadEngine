@@ -61,7 +61,7 @@ public:
 		auto found = m_properties.find(propertyNameHash);
 
 		//Could not find property
-		if (found == m_properties.end())
+		if(found == m_properties.end())
 		{
 			return ePropertyGetResult_FAILED_NOT_PRESENT;
 		}
@@ -74,7 +74,7 @@ public:
 			NamedProperty<T> * typedProperty = dynamic_cast<NamedProperty<T>*>(property);
 
 			//Property is correct type
-			if (typedProperty)
+			if(typedProperty)
 			{
 				out_propertyValue = typedProperty->m_data;
 				return ePropertyGetResult_SUCCESS;
@@ -100,7 +100,7 @@ public:
 		auto found = m_properties.find(propertyNameHash);
 
 		//Could not find property
-		if (found == m_properties.end())
+		if(found == m_properties.end())
 		{
 			NamedProperty<T> * addProperty = new NamedProperty<T>(propertyValue);
 			m_properties.insert(std::pair<size_t, NamedPropertyBase*>(propertyNameHash, addProperty));
@@ -115,7 +115,7 @@ public:
 			NamedProperty<T> * typedProperty = dynamic_cast<NamedProperty<T>*>(property);
 
 			//Property is correct type
-			if (typedProperty)
+			if(typedProperty)
 			{
 				typedProperty->m_data = propertyValue;
 				return ePropertySetResult_SUCCESS_UPDATE;

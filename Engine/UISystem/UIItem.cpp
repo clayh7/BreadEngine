@@ -72,12 +72,12 @@ UIItem::~UIItem()
 //-------------------------------------------------------------------------------------------------
 void UIItem::Update()
 {
-	if (m_hidden)
+	if(m_hidden)
 	{
 		return;
 	}
 
-	if (m_dirty || IsHeld())
+	if(m_dirty || IsHeld())
 	{
 		UpdateRenderers();
 		m_dirty = false;
@@ -91,7 +91,7 @@ void UIItem::Update()
 void UIItem::Render() const
 {
 	//#TODO: Bug, it'll get draw twice if it's currently held, because we need to draw it again after the UISystem so it shows on top of everything else...
-	if (m_hidden)
+	if(m_hidden)
 	{
 		return;
 	}
@@ -107,13 +107,13 @@ Vector2f UIItem::GetSize() const
 	UIContainer * parentContainer = dynamic_cast<UIContainer*>(m_parent);
 
 	//Currently held
-	if (IsHeld())
+	if(IsHeld())
 	{
 		return UIWidget::GetSize();
 	}
 
 	//our parent is a container
-	else if (parentContainer)
+	else if(parentContainer)
 	{
 		return parentContainer->GetItemSize();
 	}
@@ -151,7 +151,7 @@ void UIItem::UpdateRenderers()
 	//Update Sprite ID
 	std::string currentSpriteID;
 	GetProperty(PROPERTY_SPRITE_ID, currentSpriteID);
-	if (currentSpriteID != m_spriteData->m_id)
+	if(currentSpriteID != m_spriteData->m_id)
 	{
 		m_spriteData = g_SpriteRenderSystem->GetSpriteResource(currentSpriteID);
 		m_quad->SetUniform("uTexDiffuse", m_spriteData->GetTexture());
@@ -192,10 +192,10 @@ Transform UIItem::CalcItemTransform()
 void UIItem::PopulateFromXML(XMLNode const & node)
 {
 	//Set properties from XML
-	for (int childPropertyIndex = 0; childPropertyIndex < node.nChildNode(); ++childPropertyIndex)
+	for(int childPropertyIndex = 0; childPropertyIndex < node.nChildNode(); ++childPropertyIndex)
 	{
 		XMLNode childProperty = node.getChildNode(childPropertyIndex);
-		if (strcmp(childProperty.getName(), PROPERTY_SPRITE_ID) == 0)
+		if(strcmp(childProperty.getName(), PROPERTY_SPRITE_ID) == 0)
 		{
 			std::string spriteID = ReadXMLAttribute(childProperty, STRING_VALUE, DEFAULT_SPRIE_ID);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
@@ -214,14 +214,14 @@ Vector2f UIItem::GetWorldPosition(eAnchor const & anchor, UIWidget const * forCh
 	UIContainer * parentContainer = dynamic_cast<UIContainer*>(m_parent);
 
 	//Currently held
-	if (IsHeld())
+	if(IsHeld())
 	{
 		Vector2f cursorPosition = UISystem::GetCursorUIPosition();
 		currentWorldPosition += cursorPosition;
 	}
 
 	//our parent is a container
-	else if (parentContainer)
+	else if(parentContainer)
 	{
 		Vector2f centerOfItem = parentContainer->GetPositionForItem(this);
 		currentWorldPosition += centerOfItem;
@@ -248,7 +248,7 @@ bool UIItem::IsHeld() const
 //-------------------------------------------------------------------------------------------------
 void UIItem::OnItemPickup(NamedProperties &)
 {
-	if (GetState() == eWidgetState_HIGHLIGHTED)
+	if(GetState() == eWidgetState_HIGHLIGHTED)
 	{
 		g_UISystem->SetHeldItem(this);
 	}
@@ -259,7 +259,7 @@ void UIItem::OnItemPickup(NamedProperties &)
 void UIItem::OnItemDrop(NamedProperties &)
 {
 	//Only drop this item if it was the one being held
-	if (!IsHeld())
+	if(!IsHeld())
 	{
 		return;
 	}
@@ -272,10 +272,10 @@ void UIItem::OnItemDrop(NamedProperties &)
 	UIContainer * parentContainer = dynamic_cast<UIContainer*>(m_parent);
 
 	//If you dropped the item over a container and you were previously in a container
-	if (selectedContainer && parentContainer)
+	if(selectedContainer && parentContainer)
 	{
 		//If there is still room in the selected container
-		if (!selectedContainer->IsFull())
+		if(!selectedContainer->IsFull())
 		{
 			//This also removes this from its current parent
 			selectedContainer->AddItem(this);
@@ -285,12 +285,12 @@ void UIItem::OnItemDrop(NamedProperties &)
 
 	//Alternatively, if you drop this item on an item, add it to that item's container
 	UIItem * selectedItem = dynamic_cast<UIItem*>(selectedWidget);
-	if (selectedItem)
+	if(selectedItem)
 	{
 		selectedContainer = dynamic_cast<UIContainer*>(selectedItem->m_parent);
-		if (selectedContainer && parentContainer)
+		if(selectedContainer && parentContainer)
 		{
-			if (!selectedContainer->IsFull())
+			if(!selectedContainer->IsFull())
 			{
 				selectedContainer->AddItem(this);
 				return;

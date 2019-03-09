@@ -187,7 +187,7 @@ void Renderer::Initialize()
 void Renderer::ClearScreen(const Color & clearColor)
 {
 	//According to Taylor, setting the clear color takes a long time if done every frame
-	if (clearColor != m_currentClearColor)
+	if(clearColor != m_currentClearColor)
 	{
 		m_currentClearColor = clearColor;
 		glClearColor(clearColor.GetRFloat(), clearColor.GetGFloat(), clearColor.GetBFloat(), clearColor.GetAFloat());
@@ -246,7 +246,7 @@ GLuint Renderer::CreateShader(std::string const &filename, GLenum shader_type)
 	//Check for errors
 	GLint status;
 	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &status);
-	if (status == GL_FALSE)
+	if(status == GL_FALSE)
 	{
 		GLint length;
 		glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &length);
@@ -262,13 +262,13 @@ GLuint Renderer::CreateShader(std::string const &filename, GLenum shader_type)
 		_fullpath(fullPath, &filename[0], _MAX_PATH);
 		std::string parseBufferError = bufferError;
 		bool cont = true;
-		while (cont)
+		while(cont)
 		{
 			int checkIndex = parseBufferError.substr(1).find("ERROR:");
 			std::string errorLine;
 
 			//Last error
-			if (checkIndex == -1)
+			if(checkIndex == -1)
 			{
 				cont = false;
 				errorLine = parseBufferError;
@@ -283,7 +283,7 @@ GLuint Renderer::CreateShader(std::string const &filename, GLenum shader_type)
 			std::string lineNumber = parseBufferError.substr(0, endIndex);
 
 			//Prepare next parseBuffer
-			if (cont)
+			if(cont)
 			{
 				int nextIndex = parseBufferError.find("ERROR:");
 				parseBufferError = parseBufferError.substr(nextIndex);
@@ -322,7 +322,7 @@ GLuint Renderer::CreateAndLinkProgram(GLuint vs, GLuint fs, std::string const &d
 	char fullPath[_MAX_PATH];
 	_fullpath(fullPath, &debugFilepath[0], _MAX_PATH);
 	glGetProgramiv(programID, GL_LINK_STATUS, &status);
-	if (status == GL_FALSE) //#TODO: Make this a function
+	if(status == GL_FALSE) //#TODO: Make this a function
 	{
 		//#TODO: Maybe make the logging of an error its own function
 		GLint logLength;
@@ -368,7 +368,7 @@ void Renderer::UpdateRenderBuffer(GLuint bufferID, void const *data, size_t coun
 //-------------------------------------------------------------------------------------------------
 void Renderer::CreateOrUpdateRenderBuffer(GLuint * bufferID, void const *data, size_t count, size_t elem_size, GLenum const &usage /*= GL_STATIC_DRAW */)
 {
-	if (*bufferID == NULL)
+	if(*bufferID == NULL)
 	{
 		*bufferID = CreateRenderBuffer(data, count, elem_size, usage);
 	}
@@ -391,7 +391,7 @@ void Renderer::BindMeshToVAO(GLuint vaoID, Mesh const *mesh, Material const *mat
 	glBindBuffer(GL_ARRAY_BUFFER, vboID);
 
 	//Bind Properties
-	for (VertexDefinition vertexLayout : layout)
+	for(VertexDefinition vertexLayout : layout)
 	{
 		//Map Types
 		GLenum type = GetVertexDataType(vertexLayout.m_type);
@@ -400,7 +400,7 @@ void Renderer::BindMeshToVAO(GLuint vaoID, Mesh const *mesh, Material const *mat
 		GLboolean normalize = vertexLayout.m_normalized ? GL_TRUE : GL_FALSE;
 		size_t attributeHash = std::hash<std::string>{}(vertexLayout.m_name);
 		auto foundAttribute = attributes.find(attributeHash);
-		if (foundAttribute != attributes.end())
+		if(foundAttribute != attributes.end())
 		{
 			int bindPoint = foundAttribute->second->GetBindPoint();
 			BindShaderProgramProperty(bindPoint, vertexLayout.m_count, type, normalize, vertexLayout.m_stride, vertexLayout.m_offset);
@@ -416,7 +416,7 @@ void Renderer::BindMeshToVAO(GLuint vaoID, Mesh const *mesh, Material const *mat
 	//Unbind VBO
 	glBindBuffer(GL_ARRAY_BUFFER, NULL);
 
-	if (iboID != NULL)
+	if(iboID != NULL)
 	{
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboID);
 	}
@@ -430,9 +430,9 @@ void Renderer::BindMeshToVAO(GLuint vaoID, Mesh const *mesh, Material const *mat
 void Renderer::BindShaderProgramProperty(int bindPoint, GLint count, GLenum type, GLboolean normalize, GLsizei stride, GLsizei offset)
 {
 	//Position to bind
-	if (bindPoint >= 0)
+	if(bindPoint >= 0)
 	{
-		if (type == GL_UNSIGNED_INT)
+		if(type == GL_UNSIGNED_INT)
 		{
 			glEnableVertexAttribArray(bindPoint);
 			glVertexAttribIPointer(bindPoint, count, type, stride, (GLvoid*)offset);
@@ -461,7 +461,7 @@ void Renderer::BindShaderProgramProperty(int bindPoint, GLint count, GLenum type
 //-------------------------------------------------------------------------------------------------
 void Renderer::BindTextureSampler(GLuint samplerID, GLuint textureID, unsigned int textureIndexPort, int bindLocation)
 {
-	if (textureID != NULL)
+	if(textureID != NULL)
 	{
 		glActiveTexture(GL_TEXTURE0 + textureIndexPort);
 		glBindTexture(GL_TEXTURE_2D, textureID);
@@ -474,7 +474,7 @@ void Renderer::BindTextureSampler(GLuint samplerID, GLuint textureID, unsigned i
 //-------------------------------------------------------------------------------------------------
 GLenum Renderer::GetVertexDataType(VertexDataType const & type) const
 {
-	switch (type)
+	switch(type)
 	{
 	case VertexDataType_FLOAT:
 		return GL_FLOAT;
@@ -495,10 +495,10 @@ void Renderer::SetShaderProgramUniforms(GLuint samplerID, std::map<std::string, 
 {
 	GLuint textureID = NULL;
 	unsigned int textureIndexPort = 0;
-	for (auto uniformIter = uniformList.begin(); uniformIter != uniformList.end(); ++uniformIter)
+	for(auto uniformIter = uniformList.begin(); uniformIter != uniformList.end(); ++uniformIter)
 	{
 		Uniform* currentUniform = uniformIter->second;
-		switch (currentUniform->m_type)
+		switch(currentUniform->m_type)
 		{
 		case GL_INT:
 			glUniform1iv(currentUniform->m_bindPoint, currentUniform->m_size, (GLint*)currentUniform->m_data);
@@ -520,7 +520,7 @@ void Renderer::SetShaderProgramUniforms(GLuint samplerID, std::map<std::string, 
 			break;
 		case GL_SAMPLER_2D:
 			textureID = *((unsigned int*)currentUniform->m_data);
-			if (textureID != NULL)
+			if(textureID != NULL)
 			{
 				std::string uniformName = currentUniform->m_name;
 				BindTextureSampler(samplerID, textureID, textureIndexPort, currentUniform->m_bindPoint);
@@ -570,9 +570,9 @@ void Renderer::MeshRender(MeshRenderer const * meshRenderer)
 	glBindVertexArray(vaoID);
 
 	//Draw Vertexes
-	for (DrawInstruction instruction : meshRenderer->GetDrawInstructions())
+	for(DrawInstruction instruction : meshRenderer->GetDrawInstructions())
 	{
-		if (!instruction.m_useIndexBuffer)
+		if(!instruction.m_useIndexBuffer)
 		{
 			glDrawArrays(instruction.GetPrimitiveType(), instruction.m_startIndex, instruction.m_count);
 		}
@@ -592,7 +592,7 @@ void Renderer::MeshRender(MeshRenderer const * meshRenderer)
 //-------------------------------------------------------------------------------------------------
 void Renderer::DeleteFramebuffer(Framebuffer *fbo)
 {
-	if (m_activeFBO == fbo)
+	if(m_activeFBO == fbo)
 	{
 		BindFramebuffer(nullptr);
 	}
@@ -605,13 +605,13 @@ void Renderer::DeleteFramebuffer(Framebuffer *fbo)
 //Will only have one FBO bound at a time
 void Renderer::BindFramebuffer(Framebuffer *fbo)
 {
-	if (m_activeFBO == fbo)
+	if(m_activeFBO == fbo)
 	{
 		return;
 	}
 
 	m_activeFBO = fbo;
-	if (fbo == nullptr)
+	if(fbo == nullptr)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
 		Vector2i windowDimensions = GetWindowDimensions();
@@ -624,7 +624,7 @@ void Renderer::BindFramebuffer(Framebuffer *fbo)
 
 		GLenum renderTargets[32];
 		unsigned int colorCount = fbo->m_colorTargets.size();
-		for (unsigned int i = 0; i < colorCount; ++i)
+		for(unsigned int i = 0; i < colorCount; ++i)
 		{
 			renderTargets[i] = GL_COLOR_ATTACHMENT0 + i;
 		}
@@ -637,7 +637,7 @@ void Renderer::BindFramebuffer(Framebuffer *fbo)
 //Only use for debug purposes
 void Renderer::FramebufferCopyToBack(Framebuffer *fbo)
 {
-	if (fbo == nullptr)
+	if(fbo == nullptr)
 	{
 		return;
 	}
@@ -681,15 +681,15 @@ void Renderer::ApplyRenderState(RenderState const &renderState)
 //-------------------------------------------------------------------------------------------------
 GLenum Renderer::GetOpenGLDrawMode(const ePrimitiveType& drawMode) const
 {
-	if (drawMode == ePrimitiveType_LINES)
+	if(drawMode == ePrimitiveType_LINES)
 		return GL_LINES;
-	if (drawMode == ePrimitiveType_POINTS)
+	if(drawMode == ePrimitiveType_POINTS)
 		return GL_POINTS;
-	if (drawMode == ePrimitiveType_QUADS)
+	if(drawMode == ePrimitiveType_QUADS)
 		return GL_QUADS;
-	if (drawMode == ePrimitiveType_TRIANGLES)
+	if(drawMode == ePrimitiveType_TRIANGLES)
 		return GL_TRIANGLES;
-	if (drawMode == ePrimitiveType_TRIANGLE_FAN)
+	if(drawMode == ePrimitiveType_TRIANGLE_FAN)
 		return GL_TRIANGLE_FAN;
 
 	//Default, shouldn't happen
@@ -701,11 +701,11 @@ GLenum Renderer::GetOpenGLDrawMode(const ePrimitiveType& drawMode) const
 void Renderer::SetCullFace(bool enable)
 {
 	//No redundant actions
-	if (m_currentRenderState.m_backfaceCullingEnabled == enable)
+	if(m_currentRenderState.m_backfaceCullingEnabled == enable)
 		return;
 	m_currentRenderState.m_backfaceCullingEnabled = enable;
 
-	if (enable)
+	if(enable)
 		glEnable(GL_CULL_FACE);
 	else
 		glDisable(GL_CULL_FACE);
@@ -716,11 +716,11 @@ void Renderer::SetCullFace(bool enable)
 void Renderer::SetDepthTest(bool enable)
 {
 	//No redundant actions
-	if (m_currentRenderState.m_depthTestingEnabled == enable)
+	if(m_currentRenderState.m_depthTestingEnabled == enable)
 		return;
 	m_currentRenderState.m_depthTestingEnabled = enable;
 
-	if (enable)
+	if(enable)
 		glEnable(GL_DEPTH_TEST);
 	else
 		glDisable(GL_DEPTH_TEST);
@@ -731,11 +731,11 @@ void Renderer::SetDepthTest(bool enable)
 void Renderer::SetDepthWrite(bool enable)
 {
 	//No redundant actions
-	if (m_currentRenderState.m_depthWritingEnabled == enable)
+	if(m_currentRenderState.m_depthWritingEnabled == enable)
 		return;
 	m_currentRenderState.m_depthWritingEnabled = enable;
 
-	if (enable)
+	if(enable)
 	{
 		glDepthMask(GL_TRUE);
 	}
@@ -765,23 +765,23 @@ void Renderer::DisableAlphaTesting()
 void Renderer::SetBlending(const eBlending& setBlendingMode)
 {
 	//No redundant actions
-	if (m_currentRenderState.m_blendingMode == setBlendingMode)
+	if(m_currentRenderState.m_blendingMode == setBlendingMode)
 		return;
 	m_currentRenderState.m_blendingMode = setBlendingMode;
 
-	if (setBlendingMode == eBlending_NORMAL)
+	if(setBlendingMode == eBlending_NORMAL)
 	{
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
-	else if (setBlendingMode == eBlending_ADDITIVE)
+	else if(setBlendingMode == eBlending_ADDITIVE)
 	{
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	}
-	else if (setBlendingMode == eBlending_SUBTRACTIVE)
+	else if(setBlendingMode == eBlending_SUBTRACTIVE)
 	{
 		glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
 	}
-	else if (setBlendingMode == eBlending_INVERTED)
+	else if(setBlendingMode == eBlending_INVERTED)
 	{
 		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
 	}
@@ -792,19 +792,19 @@ void Renderer::SetBlending(const eBlending& setBlendingMode)
 void Renderer::SetDrawMode(eDrawMode const &drawMode)
 {
 	//No redundant actions
-	if (m_currentRenderState.m_drawMode == drawMode)
+	if(m_currentRenderState.m_drawMode == drawMode)
 		return;
 	m_currentRenderState.m_drawMode = drawMode;
 
-	if (drawMode == eDrawMode_FULL)
+	if(drawMode == eDrawMode_FULL)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
-	else if (drawMode == eDrawMode_LINE)
+	else if(drawMode == eDrawMode_LINE)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
-	else if (drawMode == eDrawMode_POINT)
+	else if(drawMode == eDrawMode_POINT)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
 	}
@@ -815,11 +815,11 @@ void Renderer::SetDrawMode(eDrawMode const &drawMode)
 void Renderer::SetWindingOrder(bool clockwise)
 {
 	//No redundant actions
-	if (m_currentRenderState.m_windingClockwise == clockwise)
+	if(m_currentRenderState.m_windingClockwise == clockwise)
 		return;
 	m_currentRenderState.m_windingClockwise = clockwise;
 
-	if (clockwise)
+	if(clockwise)
 	{
 		glCullFace(GL_FRONT);
 	}
@@ -847,7 +847,7 @@ void Renderer::SetLineWidth(float size)
 void Renderer::SetPointSize(float size)
 {
 	//No redundant changes
-	if (m_currentPointSize == size)
+	if(m_currentPointSize == size)
 		return;
 
 	m_currentPointSize = size;

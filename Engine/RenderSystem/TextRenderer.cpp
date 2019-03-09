@@ -20,7 +20,7 @@ TextRenderer::TextRenderer(std::string const & content, Vector2f const & screenP
 	, m_textMesh(nullptr)
 	, m_textMaterial(nullptr)
 {
-	if (!m_font)
+	if(!m_font)
 	{
 		m_font = g_RenderSystem->GetDefaultFont();
 	}
@@ -47,6 +47,14 @@ TextRenderer::TextRenderer(std::string const & content, Vector2f const & screenP
 
 
 //-------------------------------------------------------------------------------------------------
+TextRenderer::TextRenderer()
+	: TextRenderer("", Vector2f::ZERO)
+{
+	// Nothing
+}
+
+
+//-------------------------------------------------------------------------------------------------
 TextRenderer::~TextRenderer()
 {
 	delete m_textMesh;
@@ -59,7 +67,7 @@ void TextRenderer::SetText(std::string const & content)
 {
 	//Rebuilding Mesh is expensive, only update if new
 	size_t contentHash = std::hash<std::string>{}(content);
-	if (m_contentHash != contentHash)
+	if(m_contentHash != contentHash)
 	{
 		m_content = content;
 		m_contentHash = contentHash;
@@ -73,7 +81,7 @@ void TextRenderer::SetText(std::string const & content)
 void TextRenderer::SetSize(float size)
 {
 	//Rebuilding Mesh is expensive, only update if new
-	if (m_size != size)
+	if(m_size != size)
 	{
 		m_size = size;
 		m_extents = m_textMesh->Update(m_content, m_size, m_font);
@@ -85,7 +93,7 @@ void TextRenderer::SetSize(float size)
 void TextRenderer::SetFont(BitmapFont const * font)
 {
 	//Rebuilding Mesh is expensive, only update if new
-	if (m_font != font)
+	if(m_font != font)
 	{
 		m_font = font;
 		m_extents = m_textMesh->Update(m_content, m_size, m_font);
@@ -97,7 +105,7 @@ void TextRenderer::SetFont(BitmapFont const * font)
 void TextRenderer::SetPosition(Vector2f const & screenPosition)
 {
 	//Rebuilding Mesh is expensive, only update if new
-	if (!(m_screenPosition == screenPosition))
+	if(!(m_screenPosition == screenPosition))
 	{
 		m_screenPosition = screenPosition;
 		SetPositionWithAlignment();
@@ -115,7 +123,7 @@ void TextRenderer::SetColor(Color const & color)
 //-------------------------------------------------------------------------------------------------
 void TextRenderer::SetAlignment(eAlignment const & alignment)
 {
-	if (m_alignment != alignment)
+	if(m_alignment != alignment)
 	{
 		m_alignment = alignment;
 		SetPositionWithAlignment();
@@ -135,7 +143,7 @@ void TextRenderer::SetPositionWithAlignment()
 {
 	//Vector3f newPosition = Engine::ScreenToClipSpace( m_screenPosition );
 	Vector3f newPosition = m_screenPosition;
-	switch (m_alignment)
+	switch(m_alignment)
 	{
 	case eAlignment_LEFT:
 		newPosition += Vector3f(0.f, m_extents.y / 2.f, 0.f);

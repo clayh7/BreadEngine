@@ -27,7 +27,7 @@ XboxController::XboxController()
 	, m_rightStick(0.f, 0.f)
 {
 	//Clear all buttons
-	for (int i = 0; i < XboxButton_Count; i++)
+	for(int i = 0; i < XboxButton_Count; i++)
 	{
 		m_buttons[i].m_frameNumberLastChanged = 0;
 		m_buttons[i].m_isDown = false;
@@ -50,7 +50,7 @@ void XboxController::Update(int controllerIndex, int currentFrame)
 	memset(&xboxControllerState, 0, sizeof(xboxControllerState));
 
 	DWORD errorStatus = XInputGetState(controllerIndex, &xboxControllerState);
-	if (errorStatus == ERROR_SUCCESS)
+	if(errorStatus == ERROR_SUCCESS)
 	{
 		//If we even get in here then that means this controller is connected
 		m_isConnected = true;
@@ -100,9 +100,9 @@ void XboxController::SetButtonStatus(int buttonInput)
 //-------------------------------------------------------------------------------------------------
 void XboxController::ParseInputSetTo(XboxHexCode const & hexToCheck, XboxButton const & setButton, int checkButton)
 {
-	if ((checkButton & hexToCheck) == hexToCheck)
+	if((checkButton & hexToCheck) == hexToCheck)
 	{
-		if (!m_buttons[setButton].m_isDown)
+		if(!m_buttons[setButton].m_isDown)
 		{
 			m_buttons[setButton].m_isDown = true;
 			m_buttons[setButton].m_frameNumberLastChanged = m_currentFrameNumber;
@@ -110,7 +110,7 @@ void XboxController::ParseInputSetTo(XboxHexCode const & hexToCheck, XboxButton 
 	}
 	else
 	{
-		if (m_buttons[setButton].m_isDown)
+		if(m_buttons[setButton].m_isDown)
 		{
 			m_buttons[setButton].m_isDown = false;
 			m_buttons[setButton].m_frameNumberLastChanged = m_currentFrameNumber;
@@ -128,9 +128,9 @@ void XboxController::SetStickStatus(const float& leftStickXRaw, const float& lef
 	float radius_leftStick = sqrt(leftStickYRaw * leftStickYRaw + leftStickXRaw * leftStickXRaw);
 	float normalizedRadius = 0.f;
 
-	if (radius_leftStick < STICK_DEADZONE_MIN)
+	if(radius_leftStick < STICK_DEADZONE_MIN)
 		normalizedRadius = 0.f;
-	else if (radius_leftStick > STICK_DEADZONE_MAX)
+	else if(radius_leftStick > STICK_DEADZONE_MAX)
 		normalizedRadius = 1.f;
 	else
 		normalizedRadius = RangeMapNormalize(STICK_DEADZONE_MIN, STICK_DEADZONE_MAX, radius_leftStick);
@@ -143,9 +143,9 @@ void XboxController::SetStickStatus(const float& leftStickXRaw, const float& lef
 	float thetaRadians_rightStick = atan2(rightStickYRaw, rightStickXRaw);
 	float radius_rightStick = sqrt(rightStickYRaw * rightStickYRaw + rightStickXRaw * rightStickXRaw);
 
-	if (radius_rightStick < STICK_DEADZONE_MIN)
+	if(radius_rightStick < STICK_DEADZONE_MIN)
 		normalizedRadius = 0.f;
-	else if (radius_rightStick > STICK_DEADZONE_MAX)
+	else if(radius_rightStick > STICK_DEADZONE_MAX)
 		normalizedRadius = 1.f;
 	else
 		normalizedRadius = RangeMapNormalize(STICK_DEADZONE_MIN, STICK_DEADZONE_MAX, radius_rightStick);
@@ -189,9 +189,9 @@ bool XboxController::WasButtonJustReleased(XboxButton const & checkButton) const
 //-------------------------------------------------------------------------------------------------
 float XboxController::GetTrigger(XboxTrigger const & checkTrigger) const
 {
-	if (checkTrigger == XboxTrigger_Left)
+	if(checkTrigger == XboxTrigger_Left)
 		return m_leftTrigger;
-	else if (checkTrigger == XboxTrigger_Right)
+	else if(checkTrigger == XboxTrigger_Right)
 		return m_rightTrigger;
 	else
 		return 0.f;
@@ -201,16 +201,16 @@ float XboxController::GetTrigger(XboxTrigger const & checkTrigger) const
 //-------------------------------------------------------------------------------------------------
 bool XboxController::IsStickMoving(XboxStick const & checkStick) const
 {
-	if (checkStick == XboxStick_Left)
+	if(checkStick == XboxStick_Left)
 	{
-		if (m_leftStick.x != 0.f && m_leftStick.y != 0.f)
+		if(m_leftStick.x != 0.f && m_leftStick.y != 0.f)
 			return true;
 		else
 			return false;
 	}
 	else
 	{
-		if (m_rightStick.x != 0.f && m_rightStick.y != 0.f)
+		if(m_rightStick.x != 0.f && m_rightStick.y != 0.f)
 			return true;
 		else
 			return false;
@@ -221,7 +221,7 @@ bool XboxController::IsStickMoving(XboxStick const & checkStick) const
 //-------------------------------------------------------------------------------------------------
 Vector2f XboxController::GetStickPosition(XboxStick const & checkStick) const
 {
-	if (checkStick == XboxStick_Left)
+	if(checkStick == XboxStick_Left)
 		return m_leftStick;
 	else
 		return m_rightStick;
@@ -231,7 +231,7 @@ Vector2f XboxController::GetStickPosition(XboxStick const & checkStick) const
 //-------------------------------------------------------------------------------------------------
 float XboxController::GetStickDirectionRadians(XboxStick const & checkStick) const
 {
-	if (checkStick == XboxStick_Left)
+	if(checkStick == XboxStick_Left)
 		return m_leftStickRadians;
 	else
 		return m_rightStickRadians;

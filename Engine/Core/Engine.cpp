@@ -9,7 +9,7 @@
 #include <windows.h>
 #include <stdarg.h>
 
-#include "Engine/AudioSystem/Audio.hpp"
+#include "Engine/AudioSystem/BAudioSystem.hpp"
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Core/Time.hpp"
 #include "Engine/DebugSystem/BProfiler.hpp"
@@ -33,7 +33,6 @@ extern Engine * g_EngineSystem = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 //Name on top game window
-STATIC char const * Engine::APP_NAME = "Bread v0.8";
 STATIC float const Engine::PERCENT_OF_SCREEN = 0.8f;
 STATIC float const Engine::ASPECT_RATIO = 16.f / 9.f;
 
@@ -42,14 +41,14 @@ STATIC float const Engine::ASPECT_RATIO = 16.f / 9.f;
 LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam)
 {
 	//Only run if these both exist
-	if (!g_ConsoleSystem || !g_InputSystem)
+	if(!g_ConsoleSystem || !g_InputSystem)
 	{
 		return DefWindowProc(windowHandle, wmMessageCode, wParam, lParam);
 	}
 
 	unsigned char asKey = (unsigned char)wParam;
 
-	switch (wmMessageCode)
+	switch(wmMessageCode)
 	{
 	case WM_CLOSE:
 	case WM_DESTROY:
@@ -58,7 +57,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
 		return 0;
 
 	case WM_KEYDOWN:
-		if (g_ConsoleSystem->IsOpen())
+		if(g_ConsoleSystem->IsOpen())
 		{
 			g_ConsoleSystem->PressKey(asKey);
 		}
@@ -69,7 +68,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
 		break;
 
 	case WM_KEYUP:
-		if (g_ConsoleSystem->IsOpen())
+		if(g_ConsoleSystem->IsOpen())
 		{
 			g_ConsoleSystem->ReleaseKey(asKey);
 		}
@@ -85,42 +84,42 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
 
 		//This gets called before input is created
 	case WM_SETFOCUS:
-		if (g_InputSystem) //Make sure it exists first
+		if(g_InputSystem) //Make sure it exists first
 		{
 			g_InputSystem->SetFocus(true);
 		}
 		break;
 
 	case WM_LBUTTONDOWN:
-		if (!g_ConsoleSystem->IsOpen())
+		if(!g_ConsoleSystem->IsOpen())
 		{
 			g_InputSystem->SetMouseStatus(eMouseButton_LEFT, true);
 		}
 		break;
 
 	case WM_LBUTTONUP:
-		if (!g_ConsoleSystem->IsOpen())
+		if(!g_ConsoleSystem->IsOpen())
 		{
 			g_InputSystem->SetMouseStatus(eMouseButton_LEFT, false);
 		}
 		break;
 
 	case WM_RBUTTONDOWN:
-		if (!g_ConsoleSystem->IsOpen())
+		if(!g_ConsoleSystem->IsOpen())
 		{
 			g_InputSystem->SetMouseStatus(eMouseButton_RIGHT, true);
 		}
 		break;
 
 	case WM_RBUTTONUP:
-		if (!g_ConsoleSystem->IsOpen())
+		if(!g_ConsoleSystem->IsOpen())
 		{
 			g_InputSystem->SetMouseStatus(eMouseButton_RIGHT, false);
 		}
 		break;
 
 	case WM_MOUSEWHEEL:
-		if (g_ConsoleSystem->IsOpen())
+		if(g_ConsoleSystem->IsOpen())
 		{
 			g_ConsoleSystem->MoveMouseWheel((int)GET_WHEEL_DELTA_WPARAM(wParam));
 		}
@@ -163,7 +162,7 @@ Engine::Engine(HINSTANCE applicationInstanceHandle)
 	//Create All Engine Systems
 	g_MemoryAnalyticsSystem = new MemoryAnalytics();
 	EventSystem::Startup();
-	g_AudioSystem = new BAudio();
+	BAudioSystem::Startup();
 	g_InputSystem = new Input();
 	g_RenderSystem = new Renderer();
 	m_UICamera = new Camera3D(false);
@@ -212,8 +211,7 @@ Engine::~Engine()
 	delete g_InputSystem;
 	g_InputSystem = nullptr;
 
-	delete g_AudioSystem;
-	g_AudioSystem = nullptr;
+	BAudioSystem::Shutdown();
 
 	EventSystem::Shutdown();
 
@@ -229,10 +227,10 @@ Engine::~Engine()
 void RunMessagePump()
 {
 	MSG queuedMessage;
-	for (;; )
+	for(;; )
 	{
 		const BOOL wasMessagePresent = PeekMessage(&queuedMessage, NULL, 0, 0, PM_REMOVE);
-		if (!wasMessagePresent)
+		if(!wasMessagePresent)
 		{
 			break;
 		}
@@ -257,7 +255,7 @@ void Engine::Update()
 	m_UICamera->Update();
 	g_InputSystem->Update();
 	g_MemoryAnalyticsSystem->Update();
-	g_AudioSystem->Update();
+	BAudioSystem::Update();
 	g_DebugSystem->Update();
 	g_ConsoleSystem->Update();
 
@@ -286,7 +284,7 @@ void Engine::UpdateTime()
 	double elapsedTime = (timeThisFrameBegan - m_timeLastFrameBegan);
 	double totalFrameTime = 1.0 / targetFPS;
 
-	if (g_limitFPS && elapsedTime < totalFrameTime)
+	if(g_limitFPS && elapsedTime < totalFrameTime)
 	{
 		double waitTime = (totalFrameTime - elapsedTime) * 1000.0 - 0.5;
 		std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(waitTime));
@@ -300,7 +298,7 @@ void Engine::UpdateTime()
 	m_timeLastFrameBegan = timeThisFrameBegan;
 
 	//Update clock system
-	for (Clock * clock : Clock::s_baseClocks)
+	for(Clock * clock : Clock::s_baseClocks)
 	{
 		clock->Update(Time::DELTA_SECONDS);
 	}
@@ -365,10 +363,10 @@ void Engine::CreateOpenGLWindow(HINSTANCE applicationInstanceHandle)
 
 	CalculateLargestWindow();
 
-	RECT windowRect = { m_offsetXFromWindowsDesktop,
+	RECT windowRect = {m_offsetXFromWindowsDesktop,
 		m_offsetYFromWindowsDesktop,
 		m_offsetXFromWindowsDesktop + m_windowPhysicalWidth,
-		m_offsetYFromWindowsDesktop + m_windowPhysicalHeight };
+		m_offsetYFromWindowsDesktop + m_windowPhysicalHeight};
 	AdjustWindowRectEx(&windowRect, windowStyleFlags, FALSE, windowStyleExFlags);
 
 	WCHAR windowTitle[1024];
@@ -424,7 +422,7 @@ void Engine::CalculateLargestWindow()
 	float aspect = GetWindowAspectRatio();
 
 	//Width is largest
-	if (workingAspect > aspect)
+	if(workingAspect > aspect)
 	{
 		m_windowPhysicalHeight = (int)workingSpaceHeight;
 		m_windowPhysicalWidth = (int)(workingSpaceHeight * aspect);
@@ -459,7 +457,7 @@ void Engine::SetWindowHandle(HWND & handle)
 //-------------------------------------------------------------------------------------------------
 void Engine::SetFullscreen(bool isFullscreen)
 {
-	if (m_isFullscreen != isFullscreen)
+	if(m_isFullscreen != isFullscreen)
 	{
 		m_isFullscreen = isFullscreen;
 	}
@@ -535,7 +533,7 @@ void Engine::ConsolePrintf(Color const & color, const char* format, ...)
 //-------------------------------------------------------------------------------------------------
 STATIC Vector2i Engine::GetWindowDimensions()
 {
-	if (g_EngineSystem)
+	if(g_EngineSystem)
 	{
 		return Vector2i(g_EngineSystem->m_windowPhysicalWidth, g_EngineSystem->m_windowPhysicalHeight);
 	}

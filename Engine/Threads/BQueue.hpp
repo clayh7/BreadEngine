@@ -38,7 +38,7 @@ public:
 	{
 		bool result = false;
 		m_criticalSection.Lock();
-		if (!empty())
+		if(!empty())
 		{
 			*out_value = front();
 			pop();

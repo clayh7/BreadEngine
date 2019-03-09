@@ -217,7 +217,7 @@ Euler Quaternion::GetEuler() const
 	sqz = z * z;
 
 	euler.m_pitchDegreesAboutX = RadToDeg((float)asin(2.0 * (w * y - x * z)));
-	if (PI_OVER_2 - fabs(euler.m_pitchDegreesAboutX) > EPSILON)
+	if(PI_OVER_2 - fabs(euler.m_pitchDegreesAboutX) > EPSILON)
 	{
 		euler.m_yawDegreesAboutY = Atan2Degrees((float)(2.0 * (x * y + w * z)), (float)(sqx - sqy - sqz + sqw));
 		euler.m_rollDegreesAboutZ = Atan2Degrees((float)(2.0 * (w * x + y * z)), (float)(sqw - sqx - sqy + sqz));
@@ -229,7 +229,7 @@ Euler Quaternion::GetEuler() const
 		euler.m_rollDegreesAboutZ = 0.0f;
 
 		// If facing down, reverse yaw
-		if (euler.m_pitchDegreesAboutX < 0)
+		if(euler.m_pitchDegreesAboutX < 0)
 			euler.m_yawDegreesAboutY = RadToDeg(PI) - euler.m_yawDegreesAboutY;
 	}
 	return euler;

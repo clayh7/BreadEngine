@@ -19,7 +19,7 @@ bool FileBinaryReader::Open(std::string const &filename)
 	std::string mode = "rb"; //I don't know any other mode
 
 	errno_t error = fopen_s(&fileHandle, filename.c_str(), mode.c_str());
-	if (error != 0)
+	if(error != 0)
 	{
 		return false;
 	}
@@ -31,7 +31,7 @@ bool FileBinaryReader::Open(std::string const &filename)
 //-------------------------------------------------------------------------------------------------
 void FileBinaryReader::Close()
 {
-	if (fileHandle != nullptr)
+	if(fileHandle != nullptr)
 	{
 		fclose(fileHandle);
 		fileHandle = nullptr;
@@ -88,7 +88,7 @@ FileBinaryWriter::FileBinaryWriter()
 bool FileBinaryWriter::Open(std::string const &filename, bool append /*= false */)
 {
 	std::string mode;
-	if (append)
+	if(append)
 	{
 		mode = "ab"; //append
 	}
@@ -98,7 +98,7 @@ bool FileBinaryWriter::Open(std::string const &filename, bool append /*= false *
 	}
 
 	errno_t error = fopen_s(&fileHandle, filename.c_str(), mode.c_str());
-	if (error != 0)
+	if(error != 0)
 	{
 		return false;
 	}
@@ -110,7 +110,7 @@ bool FileBinaryWriter::Open(std::string const &filename, bool append /*= false *
 //-------------------------------------------------------------------------------------------------
 void FileBinaryWriter::Close()
 {
-	if (fileHandle != nullptr)
+	if(fileHandle != nullptr)
 	{
 		fclose(fileHandle);
 		fileHandle = nullptr;
@@ -173,13 +173,13 @@ std::vector<std::string> EnumerateFilesInFolder(std::string const &relativeDirec
 	int error = 0;
 	struct _finddata_t fileInfo;
 	intptr_t searchHandle = _findfirst(searchPathPattern.c_str(), &fileInfo);
-	while (searchHandle != -1 && !error)
+	while(searchHandle != -1 && !error)
 	{
 		std::string relativePathToFile = Stringf("%s%s", relativeDirectoryPath.c_str(), fileInfo.name);
 		bool isDirectory = fileInfo.attrib & _A_SUBDIR ? true : false;
 		bool isHidden = fileInfo.attrib & _A_HIDDEN ? true : false;
 
-		if (!isDirectory && !isHidden)
+		if(!isDirectory && !isHidden)
 		{
 			foundFiles.push_back(relativePathToFile);
 		}
@@ -202,7 +202,7 @@ bool LoadBinaryFileToBuffer(std::string const & filePath, std::string& out_buffe
 	errno_t errorSuccess = fopen_s(&ptrToFile, filePath.c_str(), "rb");
 
 	//Make sure it opened something
-	if (errorSuccess != 0)
+	if(errorSuccess != 0)
 		return false;
 
 	//Reading
@@ -227,7 +227,7 @@ bool SaveBufferToBinaryFile(std::string const &filePath, std::string const &buff
 	errno_t errorSuccess = fopen_s(&ptrToFile, filePath.c_str(), "wb");
 
 	//Make sure it opened something
-	if (errorSuccess != 0)
+	if(errorSuccess != 0)
 		return false;
 
 	//Writing
@@ -248,7 +248,7 @@ bool LoadBinaryFileToBuffer(std::string const & filePath, std::vector< unsigned 
 	errno_t errorSuccess = fopen_s(&ptrToFile, filePath.c_str(), "rb");
 
 	//Make sure it opened something
-	if (errorSuccess != 0)
+	if(errorSuccess != 0)
 		return false;
 
 	//Reading
@@ -273,7 +273,7 @@ bool SaveBufferToBinaryFile(std::string const & filePath, const std::vector< uns
 	errno_t errorSuccess = fopen_s(&ptrToFile, filePath.c_str(), "wb");
 
 	//Make sure it opened something
-	if (errorSuccess != 0)
+	if(errorSuccess != 0)
 		return false;
 
 	//Writing
@@ -294,7 +294,7 @@ bool LoadBinaryFileToBuffer(std::string const & filePath, std::vector< float >& 
 	errno_t errorSuccess = fopen_s(&ptrToFile, filePath.c_str(), "rb");
 
 	//Make sure it opened something
-	if (errorSuccess != 0)
+	if(errorSuccess != 0)
 		return false;
 
 	//Reading
@@ -319,7 +319,7 @@ bool SaveBufferToBinaryFile(std::string const & filePath, const std::vector< flo
 	errno_t errorSuccess = fopen_s(&ptrToFile, filePath.c_str(), "wb");
 
 	//Make sure it opened something
-	if (errorSuccess != 0)
+	if(errorSuccess != 0)
 		return false;
 
 	//Writing

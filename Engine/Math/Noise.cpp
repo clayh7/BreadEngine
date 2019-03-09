@@ -42,7 +42,7 @@ float Compute1dFractalNoise(float position, float scale, unsigned int numOctaves
 	float currentAmplitude = 1.f;
 	float currentPosition = position * (1.f / scale);
 
-	for (unsigned int octaveNum = 0; octaveNum < numOctaves; ++octaveNum)
+	for(unsigned int octaveNum = 0; octaveNum < numOctaves; ++octaveNum)
 	{
 		// Determine noise values at nearby integer "grid point" positions
 		float positionFloor = FastFloor(currentPosition);
@@ -68,7 +68,7 @@ float Compute1dFractalNoise(float position, float scale, unsigned int numOctaves
 	}
 
 	// Re-normalize total noise to within [-1,1] and fix octaves pulling us far away from limits
-	if (renormalize && totalAmplitude > 0.f)
+	if(renormalize && totalAmplitude > 0.f)
 	{
 		totalNoise /= totalAmplitude;				// Amplitude exceeds 1.0 if octaves are used!
 		totalNoise = (totalNoise * 0.5f) + 0.5f;	// Map to [0,1]
@@ -91,7 +91,7 @@ float Compute2dFractalNoise(float posX, float posY, float scale, unsigned int nu
 	float invScale = (1.f / scale);
 	Vector2f currentPos(posX * invScale, posY * invScale);
 
-	for (unsigned int octaveNum = 0; octaveNum < numOctaves; ++octaveNum)
+	for(unsigned int octaveNum = 0; octaveNum < numOctaves; ++octaveNum)
 	{
 		// Determine noise values at nearby integer "grid point" positions
 		Vector2f cellMins(FastFloor(currentPos.x), FastFloor(currentPos.y));
@@ -127,7 +127,7 @@ float Compute2dFractalNoise(float posX, float posY, float scale, unsigned int nu
 	}
 
 	// Re-normalize total noise to within [-1,1] and fix octaves pulling us far away from limits
-	if (renormalize && totalAmplitude > 0.f)
+	if(renormalize && totalAmplitude > 0.f)
 	{
 		totalNoise /= totalAmplitude;				// Amplitude exceeds 1.0 if octaves are used
 		totalNoise = (totalNoise * 0.5f) + 0.5f;	// Map to [0,1]
@@ -150,7 +150,7 @@ float Compute3dFractalNoise(float posX, float posY, float posZ, float scale, uns
 	float invScale = (1.f / scale);
 	Vector3f currentPos(posX * invScale, posY * invScale, posZ * invScale);
 
-	for (unsigned int octaveNum = 0; octaveNum < numOctaves; ++octaveNum)
+	for(unsigned int octaveNum = 0; octaveNum < numOctaves; ++octaveNum)
 	{
 		// Determine noise values at nearby integer "grid point" positions
 		Vector3f cellMins(FastFloor(currentPos.x), FastFloor(currentPos.y), FastFloor(currentPos.z));
@@ -203,7 +203,7 @@ float Compute3dFractalNoise(float posX, float posY, float posZ, float scale, uns
 	}
 
 	// Re-normalize total noise to within [-1,1] and fix octaves pulling us far away from limits
-	if (renormalize && totalAmplitude > 0.f)
+	if(renormalize && totalAmplitude > 0.f)
 	{
 		totalNoise /= totalAmplitude;				// Amplitude exceeds 1.0 if octaves are used
 		totalNoise = (totalNoise * 0.5f) + 0.5f;	// Map to [0,1]
@@ -226,7 +226,7 @@ float Compute4dFractalNoise(float posX, float posY, float posZ, float posT, floa
 	float invScale = (1.f / scale);
 	Vector4f currentPos(posX * invScale, posY * invScale, posZ * invScale, posT * invScale);
 
-	for (unsigned int octaveNum = 0; octaveNum < numOctaves; ++octaveNum)
+	for(unsigned int octaveNum = 0; octaveNum < numOctaves; ++octaveNum)
 	{
 		// Determine noise values at nearby integer "grid point" positions
 		Vector4f cellMins(FastFloor(currentPos.x), FastFloor(currentPos.y), FastFloor(currentPos.z), FastFloor(currentPos.w));
@@ -301,7 +301,7 @@ float Compute4dFractalNoise(float posX, float posY, float posZ, float posT, floa
 	}
 
 	// Re-normalize total noise to within [-1,1] and fix octaves pulling us far away from limits
-	if (renormalize && totalAmplitude > 0.f)
+	if(renormalize && totalAmplitude > 0.f)
 	{
 		totalNoise /= totalAmplitude;				// Amplitude exceeds 1.0 if octaves are used
 		totalNoise = (totalNoise * 0.5f) + 0.5f;	// Map to [0,1]
@@ -321,14 +321,14 @@ float Compute4dFractalNoise(float posX, float posY, float posZ, float posT, floa
 float Compute1dPerlinNoise(float position, float scale, unsigned int numOctaves, float octavePersistence, float octaveScale, bool renormalize, unsigned int seed)
 {
 	const float OCTAVE_OFFSET = 0.636764989593174f; // Translation/bias to add to each octave
-	const float gradients[2] = { -1.f, 1.f }; // 1D unit "gradient" vectors; one back, one forward
+	const float gradients[2] = {-1.f, 1.f}; // 1D unit "gradient" vectors; one back, one forward
 
 	float totalNoise = 0.f;
 	float totalAmplitude = 0.f;
 	float currentAmplitude = 1.f;
 	float currentPosition = position * (1.f / scale);
 
-	for (unsigned int octaveNum = 0; octaveNum < numOctaves; ++octaveNum)
+	for(unsigned int octaveNum = 0; octaveNum < numOctaves; ++octaveNum)
 	{
 		// Determine random "gradient vectors" (just +1 or -1 for 1D Perlin) for surrounding corners
 		float positionFloor = (float)FastFloor(currentPosition);
@@ -359,7 +359,7 @@ float Compute1dPerlinNoise(float position, float scale, unsigned int numOctaves,
 	}
 
 	// Re-normalize total noise to within [-1,1] and fix octaves pulling us far away from limits
-	if (renormalize && totalAmplitude > 0.f)
+	if(renormalize && totalAmplitude > 0.f)
 	{
 		totalNoise /= totalAmplitude;				// Amplitude exceeds 1.0 if octaves are used
 		totalNoise = (totalNoise * 0.5f) + 0.5f;	// Map to [0,1]
@@ -397,7 +397,7 @@ float Compute2dPerlinNoise(float posX, float posY, float scale, unsigned int num
 	float invScale = (1.f / scale);
 	Vector2f currentPos(posX * invScale, posY * invScale);
 
-	for (unsigned int octaveNum = 0; octaveNum < numOctaves; ++octaveNum)
+	for(unsigned int octaveNum = 0; octaveNum < numOctaves; ++octaveNum)
 	{
 		// Determine random unit "gradient vectors" for surrounding corners
 		Vector2f cellMins(FastFloor(currentPos.x), FastFloor(currentPos.y));
@@ -450,7 +450,7 @@ float Compute2dPerlinNoise(float posX, float posY, float scale, unsigned int num
 	}
 
 	// Re-normalize total noise to within [-1,1] and fix octaves pulling us far away from limits
-	if (renormalize && totalAmplitude > 0.f)
+	if(renormalize && totalAmplitude > 0.f)
 	{
 		totalNoise /= totalAmplitude;				// Amplitude exceeds 1.0 if octaves are used
 		totalNoise = (totalNoise * 0.5f) + 0.5f;	// Map to [0,1]
@@ -489,7 +489,7 @@ float Compute3dPerlinNoise(float posX, float posY, float posZ, float scale, unsi
 	float invScale = (1.f / scale);
 	Vector3f currentPos(posX * invScale, posY * invScale, posZ * invScale);
 
-	for (unsigned int octaveNum = 0; octaveNum < numOctaves; ++octaveNum)
+	for(unsigned int octaveNum = 0; octaveNum < numOctaves; ++octaveNum)
 	{
 		// Determine random unit "gradient vectors" for surrounding corners
 		Vector3f cellMins(FastFloor(currentPos.x), FastFloor(currentPos.y), FastFloor(currentPos.z));
@@ -568,7 +568,7 @@ float Compute3dPerlinNoise(float posX, float posY, float posZ, float scale, unsi
 	}
 
 	// Re-normalize total noise to within [-1,1] and fix octaves pulling us far away from limits
-	if (renormalize && totalAmplitude > 0.f)
+	if(renormalize && totalAmplitude > 0.f)
 	{
 		totalNoise /= totalAmplitude;				// Amplitude exceeds 1.0 if octaves are used
 		totalNoise = (totalNoise * 0.5f) + 0.5f;	// Map to [0,1]
@@ -615,7 +615,7 @@ float Compute4dPerlinNoise(float posX, float posY, float posZ, float posT, float
 	float invScale = (1.f / scale);
 	Vector4f currentPos(posX * invScale, posY * invScale, posZ * invScale, posT * invScale);
 
-	for (unsigned int octaveNum = 0; octaveNum < numOctaves; ++octaveNum)
+	for(unsigned int octaveNum = 0; octaveNum < numOctaves; ++octaveNum)
 	{
 		// Determine random unit "gradient vectors" for 16 surrounding 4D (hypercube) cell corners
 		Vector4f cellMins(FastFloor(currentPos.x), FastFloor(currentPos.y), FastFloor(currentPos.z), FastFloor(currentPos.w));
@@ -740,7 +740,7 @@ float Compute4dPerlinNoise(float posX, float posY, float posZ, float posT, float
 	}
 
 	// Re-normalize total noise to within [-1,1] and fix octaves pulling us far away from limits
-	if (renormalize && totalAmplitude > 0.f)
+	if(renormalize && totalAmplitude > 0.f)
 	{
 		totalNoise /= totalAmplitude;				// Amplitude exceeds 1.0 if octaves are used
 		totalNoise = (totalNoise * 0.5f) + 0.5f;	// Map to [0,1]

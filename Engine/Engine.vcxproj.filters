@@ -84,9 +84,6 @@
     <ClCompile Include="InputSystem\XboxController.cpp">
       <Filter>InputSystem</Filter>
     </ClCompile>
-    <ClCompile Include="AudioSystem\Audio.cpp">
-      <Filter>AudioSystem</Filter>
-    </ClCompile>
     <ClCompile Include="Math\Euler.cpp">
       <Filter>Math</Filter>
     </ClCompile>
@@ -392,6 +389,9 @@
     <ClCompile Include="Net\RCS\RCSConnection.cpp" />
     <ClCompile Include="Utils\StreamWriter.cpp" />
     <ClCompile Include="Utils\StreamReader.cpp" />
+    <ClCompile Include="AudioSystem\BAudioSystem.cpp">
+      <Filter>AudioSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Time.hpp">
@@ -405,9 +405,6 @@
     </ClInclude>
     <ClInclude Include="..\ThirdParty\stb\stb_image_write.h">
       <Filter>ThirdParty\stb</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioSystem\Audio.hpp">
-      <Filter>AudioSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\ThirdParty\fmod\fmod.h">
       <Filter>ThirdParty\fmod</Filter>
@@ -747,6 +744,9 @@
     <ClInclude Include="Net\RCS\RCSConnection.hpp" />
     <ClInclude Include="Utils\StreamWriter.hpp" />
     <ClInclude Include="Utils\StreamReader.hpp" />
+    <ClInclude Include="AudioSystem\BAudioSystem.hpp">
+      <Filter>AudioSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\ThirdParty\fmod\fmodex_vc.lib">

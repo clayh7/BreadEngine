@@ -76,26 +76,26 @@ void OnJoinRequest(NetSender const & sender, NetMessage const & message)
 	message.ReadString(&(request.username));
 	message.Read<size_t>(&(request.password));
 
-	if (request.version != currentSession->GetNetSessionVersion())
+	if(request.version != currentSession->GetNetSessionVersion())
 	{
 		currentSession->SendDeny(sender.fromAddress, eNetSessionError_JOIN_DENIED_WRONG_VERSION, request.nuonce);
 	}
-	else if (!currentSession->IsHost())
+	else if(!currentSession->IsHost())
 	{
 		currentSession->SendDeny(sender.fromAddress, eNetSessionError_JOIN_DENIED_NOT_HOST, request.nuonce);
 	}
 	//#TODO: implement listening
-	else if (false)
+	else if(false)
 	{
 		currentSession->SendDeny(sender.fromAddress, eNetSessionError_JOIN_DENIED_NOT_ACCEPTING_NEW_CONNECTIONS, request.nuonce);
 	}
 	//TODO: implement max capacity
-	else if (false)
+	else if(false)
 	{
 		currentSession->SendDeny(sender.fromAddress, eNetSessionError_JOIN_DENIED_FULL, request.nuonce);
 	}
 	//Socket Address == GUID
-	else if (currentSession->IsDuplicateGUID(StringFromSockAddr(&sender.fromAddress)))
+	else if(currentSession->IsDuplicateGUID(StringFromSockAddr(&sender.fromAddress)))
 	{
 		currentSession->SendDeny(sender.fromAddress, eNetSessionError_JOIN_DENIED_GUID_IN_USE, request.nuonce);
 	}
@@ -111,7 +111,7 @@ void OnJoinRequest(NetSender const & sender, NetMessage const & message)
 		bool success = false;
 		joinEvent.Get("canJoin", success);
 
-		if (success)
+		if(success)
 		{
 			//Create new connection
 			byte_t index = currentSession->GetNextFreeIndex();
@@ -156,11 +156,11 @@ void OnJoinDeny(NetSender const & sender, NetMessage const & message)
 	message.Read<uint8_t>(&reason);
 
 	NetConnection * self = sender.session->GetSelf();
-	if (sender.session->GetState() != eNetSessionState_JOINING)
+	if(sender.session->GetState() != eNetSessionState_JOINING)
 	{
 		return;
 	}
-	else if (self->m_lastJoinRequestNuonce != nuonce)
+	else if(self->m_lastJoinRequestNuonce != nuonce)
 	{
 		return;
 	}
@@ -187,14 +187,14 @@ void OnJoinAccept(NetSender const & sender, NetMessage const & message)
 	NetSession * currentSession = sender.session;
 
 	//Must be in joining state
-	if (currentSession->GetState() != eNetSessionState_JOINING)
+	if(currentSession->GetState() != eNetSessionState_JOINING)
 	{
 		return;
 	}
 
 	//Must have connection to self
 	NetConnection * currentConnection = currentSession->GetSelf();
-	if (!currentConnection)
+	if(!currentConnection)
 	{
 		return;
 	}
@@ -203,7 +203,7 @@ void OnJoinAccept(NetSender const & sender, NetMessage const & message)
 	uint32_t nuonce;
 	message.Read<uint32_t>(&(nuonce));
 
-	if (currentConnection->m_lastJoinRequestNuonce != nuonce)
+	if(currentConnection->m_lastJoinRequestNuonce != nuonce)
 	{
 		return;
 	}
@@ -239,13 +239,13 @@ void OnLeave(NetSender const & sender, NetMessage const &)
 	NetConnection * connection = sender.session->GetNetConnection(sender.connection->GetIndex());
 
 	//Host left, so I should leave
-	if (connection == sender.session->GetHost())
+	if(connection == sender.session->GetHost())
 	{
 		sender.session->ChangeState(eNetSessionState_DISCONNECTED);
 	}
 
 	//Someone else left
-	else if (connection)
+	else if(connection)
 	{
 		sender.session->Disconnect(&connection);
 	}
@@ -268,13 +268,13 @@ NetSession::NetSession(uint16_t gameVersion /*= 0U*/)
 	, m_gameVersion(gameVersion)
 {
 	//Clear out all connections
-	for (size_t index = 0; index < MAX_CONNECTIONS; ++index)
+	for(size_t index = 0; index < MAX_CONNECTIONS; ++index)
 	{
 		m_connections[index] = nullptr;
 	}
 
 	//Clear out all messages
-	for (size_t defIndex = 0; defIndex < MAX_DEFINITIONS; ++defIndex)
+	for(size_t defIndex = 0; defIndex < MAX_DEFINITIONS; ++defIndex)
 	{
 		m_messageDefinitions[defIndex] = nullptr;
 	}
@@ -317,7 +317,7 @@ NetSession::~NetSession()
 	//Delete all registered messages
 	//I had to keep track of my number of message definitions, but not the number of connections I had
 	//message definitions was breaking when deleting a nullptr, weird.
-	for (size_t defIndex = 0; defIndex < m_definitionCount; ++defIndex)
+	for(size_t defIndex = 0; defIndex < m_definitionCount; ++defIndex)
 	{
 		delete m_messageDefinitions[defIndex];
 		m_messageDefinitions[defIndex] = nullptr;
@@ -350,11 +350,11 @@ void NetSession::ProcessOutgoingPackets()
 {
 	static float timeSinceLastUpdate = 0.f;
 	timeSinceLastUpdate += Time::DELTA_SECONDS;
-	if (timeSinceLastUpdate >= SEND_RATE)
+	if(timeSinceLastUpdate >= SEND_RATE)
 	{
-		for (size_t index = 0; index < MAX_CONNECTIONS; ++index)
+		for(size_t index = 0; index < MAX_CONNECTIONS; ++index)
 		{
-			if (!m_connections[index])
+			if(!m_connections[index])
 			{
 				continue;
 			}
@@ -365,7 +365,7 @@ void NetSession::ProcessOutgoingPackets()
 		}
 
 		//I only want to process packets at most once per frame
-		while (timeSinceLastUpdate >= SEND_RATE)
+		while(timeSinceLastUpdate >= SEND_RATE)
 		{
 			timeSinceLastUpdate -= SEND_RATE;
 		}
@@ -376,25 +376,25 @@ void NetSession::ProcessOutgoingPackets()
 //-------------------------------------------------------------------------------------------------
 void NetSession::CheckForDisconnect()
 {
-	if (m_host)
+	if(m_host)
 	{
 		float timeElapsed = (float)(Time::TOTAL_SECONDS - m_host->m_timeLastRecv);
-		if (timeElapsed > DISCONNECT_INTERVAL_SECONDS && m_connectionTimeouts)
+		if(timeElapsed > DISCONNECT_INTERVAL_SECONDS && m_connectionTimeouts)
 		{
 			g_ConsoleSystem->AddLog("Connection to host timed out", Console::BAD);
 			ChangeState(eNetSessionState_DISCONNECTED);
 		}
 	}
 
-	for (size_t index = 0; index < MAX_CONNECTIONS; ++index)
+	for(size_t index = 0; index < MAX_CONNECTIONS; ++index)
 	{
-		if (!m_connections[index])
+		if(!m_connections[index])
 		{
 			continue;
 		}
 
 		float timeElapsed = (float)(Time::TOTAL_SECONDS - m_connections[index]->m_timeLastRecv);
-		if (timeElapsed > DISCONNECT_INTERVAL_SECONDS && m_connectionTimeouts)
+		if(timeElapsed > DISCONNECT_INTERVAL_SECONDS && m_connectionTimeouts)
 		{
 			g_ConsoleSystem->AddLog(Stringf("Connection %d timed out", index), Console::BAD);
 			Disconnect(&m_connections[index]);
@@ -406,7 +406,7 @@ void NetSession::CheckForDisconnect()
 //-------------------------------------------------------------------------------------------------
 void NetSession::RegisterMessage(eNetMessageType const & type, MessageCallback * cb, byte_t const & setTypeFlags /*= 0*/, byte_t const & setOptionFlags /*= 0*/, byte_t const & setChannel /*= 0 */)
 {
-	if (GetState() != eNetSessionState_INVALID)
+	if(GetState() != eNetSessionState_INVALID)
 	{
 		g_ConsoleSystem->AddLog("Can only register messages before starting", Console::BAD);
 		return;
@@ -427,7 +427,7 @@ void NetSession::RegisterMessage(eNetMessageType const & type, MessageCallback *
 //-------------------------------------------------------------------------------------------------
 bool NetSession::Start(unsigned int port, unsigned int range /*= PORT_RANGE*/)
 {
-	if (GetState() != eNetSessionState_INVALID)
+	if(GetState() != eNetSessionState_INVALID)
 	{
 		g_ConsoleSystem->AddLog("Net Session already started", Console::BAD);
 		return false;
@@ -437,7 +437,7 @@ bool NetSession::Start(unsigned int port, unsigned int range /*= PORT_RANGE*/)
 	m_channel.Bind(NetworkUtils::GetLocalHostName(), port, range);
 
 	//If socket is connected
-	if (IsConnected())
+	if(IsConnected())
 	{
 		//Set our state to ready, but no host connection
 		ChangeState(eNetSessionState_DISCONNECTED);
@@ -460,12 +460,12 @@ bool NetSession::Start(unsigned int port, unsigned int range /*= PORT_RANGE*/)
 //-------------------------------------------------------------------------------------------------
 void NetSession::Stop()
 {
-	if (GetState() == eNetSessionState_INVALID)
+	if(GetState() == eNetSessionState_INVALID)
 	{
 		g_ConsoleSystem->AddLog("Net Session not currently running", Console::BAD);
 		return;
 	}
-	else if (GetState() != eNetSessionState_DISCONNECTED)
+	else if(GetState() != eNetSessionState_DISCONNECTED)
 	{
 		g_ConsoleSystem->AddLog("Must be disconnected to stop", Console::BAD);
 		return;
@@ -480,7 +480,7 @@ void NetSession::Stop()
 //-------------------------------------------------------------------------------------------------
 void NetSession::Host(char const * username, size_t password /*= 0*/)
 {
-	if (GetState() != eNetSessionState_DISCONNECTED)
+	if(GetState() != eNetSessionState_DISCONNECTED)
 	{
 		g_ConsoleSystem->AddLog("Must be disconnected to host", Console::BAD);
 		return;
@@ -489,7 +489,7 @@ void NetSession::Host(char const * username, size_t password /*= 0*/)
 	//Make a connection for yourself at conn_index 0
 	ChangeState(eNetSessionState_HOSTING);
 	m_host = CreateConnection(HOST_INDEX, m_channel.GetAddress(), GetAddressString(), username);
-	if (m_host)
+	if(m_host)
 	{
 		m_host->SetPassword(password);
 		ChangeState(eNetSessionState_CONNECTED);
@@ -508,7 +508,7 @@ void NetSession::Host(char const * username, size_t password /*= 0*/)
 //-------------------------------------------------------------------------------------------------
 void NetSession::Join(sockaddr_in const & hostAddress, char const * username, size_t password /*= 0*/)
 {
-	if (GetState() != eNetSessionState_DISCONNECTED)
+	if(GetState() != eNetSessionState_DISCONNECTED)
 	{
 		g_ConsoleSystem->AddLog("Must be disconnected to join a host", Console::BAD);
 		return;
@@ -516,7 +516,7 @@ void NetSession::Join(sockaddr_in const & hostAddress, char const * username, si
 
 	g_ConsoleSystem->AddLog(Stringf("Joining: %s", StringFromSockAddr(&hostAddress)), Console::GOOD);
 	m_host = CreateConnection(HOST_INDEX, hostAddress, StringFromSockAddr(&hostAddress), " ");
-	if (m_host)
+	if(m_host)
 	{
 		ChangeState(eNetSessionState_JOINING);
 
@@ -544,7 +544,7 @@ void NetSession::Join(sockaddr_in const & hostAddress, char const * username, si
 //-------------------------------------------------------------------------------------------------
 void NetSession::Leave()
 {
-	if (GetState() != eNetSessionState_CONNECTED)
+	if(GetState() != eNetSessionState_CONNECTED)
 	{
 		g_ConsoleSystem->AddLog("Must be connected to a host to leave", Console::BAD);
 		return;
@@ -552,10 +552,10 @@ void NetSession::Leave()
 
 	//send everyone else a LEAVE message
 	NetMessage leave(eNetMessageType_LEAVE, GetSelf()->GetIndex());
-	for (uint8_t connIndex = 0; connIndex < MAX_CONNECTIONS; ++connIndex)
+	for(uint8_t connIndex = 0; connIndex < MAX_CONNECTIONS; ++connIndex)
 	{
 		NetConnection * conn = GetNetConnection(connIndex);
-		if (conn && conn != m_self)
+		if(conn && conn != m_self)
 		{
 			conn->AddMessage(leave);
 			conn->SendPacket();
@@ -579,19 +579,19 @@ NetConnection * NetSession::CreateConnection(ConnectionInfo const & connInfo) co
 //-------------------------------------------------------------------------------------------------
 NetConnection * NetSession::CreateConnection(byte_t index, sockaddr_in const & address, std::string const & guid, std::string const & username) const
 {
-	if (GetState() == eNetSessionState_INVALID)
+	if(GetState() == eNetSessionState_INVALID)
 	{
 		g_ConsoleSystem->AddLog("Net Session not currently running", Console::BAD);
 		return nullptr;
 	}
 
-	if (m_connections[index])
+	if(m_connections[index])
 	{
 		g_ConsoleSystem->AddLog("Connection index already exists", Console::BAD);
 		return nullptr;
 	}
 
-	if (IsDuplicateGUID(guid))
+	if(IsDuplicateGUID(guid))
 	{
 		g_ConsoleSystem->AddLog("GUID already exists", Console::BAD);
 		return nullptr;
@@ -605,13 +605,13 @@ NetConnection * NetSession::CreateConnection(byte_t index, sockaddr_in const & a
 //-------------------------------------------------------------------------------------------------
 void NetSession::DisconnectOtherClientConnections()
 {
-	for (size_t index = 0; index < MAX_CONNECTIONS; ++index)
+	for(size_t index = 0; index < MAX_CONNECTIONS; ++index)
 	{
-		if (m_connections[index] == m_host)
+		if(m_connections[index] == m_host)
 		{
 			//Nothing
 		}
-		else if (m_connections[index] == m_self)
+		else if(m_connections[index] == m_self)
 		{
 			//Nothing
 		}
@@ -626,7 +626,7 @@ void NetSession::DisconnectOtherClientConnections()
 //-------------------------------------------------------------------------------------------------
 void NetSession::Connect(NetConnection * connection)
 {
-	if (m_connections[connection->GetIndex()])
+	if(m_connections[connection->GetIndex()])
 	{
 		g_ConsoleSystem->AddLog("Connection already exists", Console::BAD);
 		return;
@@ -648,13 +648,13 @@ void NetSession::Connect(NetConnection * connection)
 void NetSession::Disconnect(NetConnection ** connection)
 {
 	//We can call this on a nullptr, no big deal
-	if ((*connection) == nullptr)
+	if((*connection) == nullptr)
 	{
 		return;
 	}
 
 	//If you're host, clear the host and trigger leave
-	if (m_self == m_host && (*connection) == m_host)
+	if(m_self == m_host && (*connection) == m_host)
 	{
 		//Trigger Leave Event
 		NamedProperties netEvent;
@@ -665,7 +665,7 @@ void NetSession::Disconnect(NetConnection ** connection)
 
 	byte_t index = (*connection)->GetIndex();
 	//Must have been temp, delete them
-	if (index == INVALID_INDEX)
+	if(index == INVALID_INDEX)
 	{
 		delete *connection;
 		*connection = nullptr;
@@ -673,7 +673,7 @@ void NetSession::Disconnect(NetConnection ** connection)
 	}
 	//You don't exist, this is a problem... but we'll still clear you out anyways
 	//Aaand the 'temp' host will call this, this is fine
-	else if (m_connections[index] == nullptr)
+	else if(m_connections[index] == nullptr)
 	{
 		delete *connection;
 		*connection = nullptr;
@@ -698,9 +698,9 @@ void NetSession::Disconnect(NetConnection ** connection)
 //-------------------------------------------------------------------------------------------------
 void NetSession::AddMessageToAllClients(NetMessage & message)
 {
-	for (byte_t connIndex = 0; connIndex < MAX_CONNECTIONS; ++connIndex)
+	for(byte_t connIndex = 0; connIndex < MAX_CONNECTIONS; ++connIndex)
 	{
-		if (m_connections[connIndex] == nullptr)
+		if(m_connections[connIndex] == nullptr)
 		{
 			continue;
 		}
@@ -713,7 +713,7 @@ void NetSession::AddMessageToAllClients(NetMessage & message)
 //-------------------------------------------------------------------------------------------------
 void NetSession::SendDirect(sockaddr_in const & address, NetMessage & message) const
 {
-	if (GetState() == eNetSessionState_INVALID)
+	if(GetState() == eNetSessionState_INVALID)
 	{
 		g_ConsoleSystem->AddLog("Start session first", Console::BAD);
 		return;
@@ -721,7 +721,7 @@ void NetSession::SendDirect(sockaddr_in const & address, NetMessage & message) c
 
 	NetMessageDefinition const * definition = GetDefinition(message.GetNetMessageType());
 
-	if (definition->IsReliable())
+	if(definition->IsReliable())
 	{
 		g_ConsoleSystem->AddLog("Cannot send direct a message that is reliable", Console::BAD);
 		return;
@@ -777,15 +777,15 @@ void NetSession::ProcessPacket(NetPacket & packet)
 	packet.m_senderInfo.connection = GetNetConnection(packet.m_senderInfo.fromAddress);
 
 	//Still need to make packets with no contents
-	if (header.messageCount == 0)
+	if(header.messageCount == 0)
 	{
-		if (packet.m_senderInfo.connection != nullptr)
+		if(packet.m_senderInfo.connection != nullptr)
 		{
 			packet.m_senderInfo.connection->MarkPacketReceived(header);
 		}
 	}
 
-	for (size_t messageIndex = 0; messageIndex < header.messageCount; ++messageIndex)
+	for(size_t messageIndex = 0; messageIndex < header.messageCount; ++messageIndex)
 	{
 		//Read Message
 		NetMessage message;
@@ -795,9 +795,9 @@ void NetSession::ProcessPacket(NetPacket & packet)
 		//message.m_ackID = header.packetAck;
 
 		//Validate and process
-		if (packet.m_senderInfo.connection != nullptr)
+		if(packet.m_senderInfo.connection != nullptr)
 		{
-			if (IsValidMessage(packet.m_senderInfo, message))
+			if(IsValidMessage(packet.m_senderInfo, message))
 			{
 				packet.m_senderInfo.connection->ProcessMessage(packet.m_senderInfo, message);
 				packet.m_senderInfo.connection->MarkPacketReceived(header);
@@ -810,7 +810,7 @@ void NetSession::ProcessPacket(NetPacket & packet)
 		}
 		else
 		{
-			if (!message.m_definition->IsConnectionless())
+			if(!message.m_definition->IsConnectionless())
 			{
 				++m_invalidMessageCount;
 				continue;
@@ -819,11 +819,11 @@ void NetSession::ProcessPacket(NetPacket & packet)
 			message.Process(packet.m_senderInfo);
 
 			//Check again and mark received
-			if (message.m_definition->IsReliable())
+			if(message.m_definition->IsReliable())
 			{
 				packet.m_senderInfo.connection = GetNetConnection(packet.m_senderInfo.fromAddress);
 			}
-			if (packet.m_senderInfo.connection != nullptr)
+			if(packet.m_senderInfo.connection != nullptr)
 			{
 				packet.m_senderInfo.connection->MarkPacketReceived(header);
 			}
@@ -846,7 +846,7 @@ void NetSession::ReadMessage(NetPacket const & packet, NetMessage * out_message)
 	out_message->m_definition = GetDefinition((eNetMessageType)out_message->m_type);
 
 	//Definition does not exist on session
-	if (!out_message->m_definition)
+	if(!out_message->m_definition)
 	{
 		++m_invalidMessageCount;
 		packet.Advance(messageSize);
@@ -854,21 +854,21 @@ void NetSession::ReadMessage(NetPacket const & packet, NetMessage * out_message)
 	}
 
 	//Read Index
-	if (!out_message->m_definition->IsConnectionless())
+	if(!out_message->m_definition->IsConnectionless())
 	{
 		packet.Read(&(out_message->m_senderIndex));
 		messageSize -= 1; //One less because we just read a byte
 	}
 
 	//Read ReliableID
-	if (out_message->m_definition->IsReliable())
+	if(out_message->m_definition->IsReliable())
 	{
 		packet.Read(&(out_message->m_reliableID));
 		messageSize -= 2; //Two less because we just read 2 bytes
 	}
 
 	//Read SequenceID
-	if (out_message->m_definition->IsReliable() && out_message->m_definition->IsSequence())
+	if(out_message->m_definition->IsReliable() && out_message->m_definition->IsSequence())
 	{
 		packet.Read(&(out_message->m_sequenceID));
 		messageSize -= 2; //Two less because we just read 2 bytes
@@ -886,7 +886,7 @@ void NetSession::ReadMessage(NetPacket const & packet, NetMessage * out_message)
 //-------------------------------------------------------------------------------------------------
 void NetSession::PrintError(eNetSessionError const & error)
 {
-	switch (error)
+	switch(error)
 	{
 	case eNetSessionError_JOIN_HOST_TIMEOUT:
 		g_ConsoleSystem->AddLog("Join host timed out", Console::BAD);
@@ -917,7 +917,7 @@ void NetSession::PrintError(eNetSessionError const & error)
 void NetSession::ChangeState(eNetSessionState const & newState)
 {
 	//Never change to the same state
-	if (m_state == newState)
+	if(m_state == newState)
 	{
 		ERROR_AND_DIE("Net Session State change to the same state");
 	}
@@ -931,7 +931,7 @@ void NetSession::ChangeState(eNetSessionState const & newState)
 //-------------------------------------------------------------------------------------------------
 void NetSession::EnterState(eNetSessionState const & state)
 {
-	switch (state)
+	switch(state)
 	{
 	case eNetSessionState_DISCONNECTED:
 		Disconnect(&m_self);
@@ -949,7 +949,7 @@ void NetSession::EnterState(eNetSessionState const & state)
 //-------------------------------------------------------------------------------------------------
 void NetSession::LeaveState(eNetSessionState const & state)
 {
-	switch (state)
+	switch(state)
 	{
 	case eNetSessionState_INVALID:
 		break;
@@ -963,7 +963,7 @@ void NetSession::LeaveState(eNetSessionState const & state)
 void NetSession::UpdateState(eNetSessionState const & state)
 {
 	BProfiler::StartSample("NET UPDATE");
-	switch (state)
+	switch(state)
 	{
 	case eNetSessionState_INVALID:
 		break;
@@ -985,13 +985,13 @@ void NetSession::UpdateState(eNetSessionState const & state)
 //-------------------------------------------------------------------------------------------------
 NetConnection * NetSession::GetNetConnection(sockaddr_in const & address) const
 {
-	for (size_t index = 0; index < MAX_CONNECTIONS; ++index)
+	for(size_t index = 0; index < MAX_CONNECTIONS; ++index)
 	{
-		if (!m_connections[index])
+		if(!m_connections[index])
 		{
 			continue;
 		}
-		if (IsEqual(m_connections[index]->GetAddress(), address))
+		if(IsEqual(m_connections[index]->GetAddress(), address))
 		{
 			return m_connections[index];
 		}
@@ -1099,10 +1099,10 @@ uint32_t NetSession::GetNuonce() const
 byte_t NetSession::GetNextFreeIndex() const
 {
 	byte_t check = 0;
-	while (m_connections[check])
+	while(m_connections[check])
 	{
 		++check;
-		if (check == INVALID_INDEX)
+		if(check == INVALID_INDEX)
 		{
 			return INVALID_INDEX;
 		}
@@ -1126,12 +1126,12 @@ bool NetSession::IsValidPacket(NetPacket const & packet, size_t packetSize) cons
 
 	size_t totalSize = packet.GetCurrentOffset();
 	//Stride over each message and sum up the size
-	for (uint8_t messageNum = 0; messageNum < header.messageCount; ++messageNum)
+	for(uint8_t messageNum = 0; messageNum < header.messageCount; ++messageNum)
 	{
 		uint16_t messageSize;
 		packet.Read<uint16_t>(&messageSize);
 		totalSize += sizeof(uint16_t) + messageSize; //size variable + reported size
-		if (totalSize > packetSize)
+		if(totalSize > packetSize)
 		{
 			return false;
 		}
@@ -1151,32 +1151,32 @@ bool NetSession::IsValidMessage(NetSender const & senderInfo, NetMessage const &
 	bool valid = true;
 
 	//Definition doesn't exist
-	if (!message.m_definition)
+	if(!message.m_definition)
 	{
 		valid = false;
 	}
-	else if (message.m_definition->IsReliable())
+	else if(message.m_definition->IsReliable())
 	{
-		if (message.m_reliableID == NetMessage::INVALID_RELIABLE_ID)
+		if(message.m_reliableID == NetMessage::INVALID_RELIABLE_ID)
 		{
 			valid = false;
 		}
 	}
 
-	if (!message.m_definition->IsConnectionless())
+	if(!message.m_definition->IsConnectionless())
 	{
 		//Needs connection and connection == nullptr
-		if (!senderInfo.connection)
+		if(!senderInfo.connection)
 		{
 			valid = false;
 		}
 		//Needs connection but connection index doesn't exist
-		else if (!IsValidConnectionIndex(message.m_senderIndex))
+		else if(!IsValidConnectionIndex(message.m_senderIndex))
 		{
 			valid = false;
 		}
 		//from index and written index doesn't match
-		else if (senderInfo.connection->GetIndex() != message.m_senderIndex)
+		else if(senderInfo.connection->GetIndex() != message.m_senderIndex)
 		{
 			valid = false;
 		}
@@ -1189,7 +1189,7 @@ bool NetSession::IsValidMessage(NetSender const & senderInfo, NetMessage const &
 //-------------------------------------------------------------------------------------------------
 bool NetSession::IsValidConnectionIndex(byte_t index) const
 {
-	if (index < MAX_CONNECTIONS)
+	if(index < MAX_CONNECTIONS)
 	{
 		return m_connections[index] != nullptr;
 	}
@@ -1200,15 +1200,15 @@ bool NetSession::IsValidConnectionIndex(byte_t index) const
 //-------------------------------------------------------------------------------------------------
 bool NetSession::IsDuplicateGUID(std::string const & check) const
 {
-	for (byte_t connIndex = 0; connIndex < MAX_CONNECTIONS; ++connIndex)
+	for(byte_t connIndex = 0; connIndex < MAX_CONNECTIONS; ++connIndex)
 	{
 		//Skip connections that don't exist
-		if (!m_connections[connIndex])
+		if(!m_connections[connIndex])
 		{
 			continue;
 		}
 
-		if (strcmp(m_connections[connIndex]->GetGUID(), check.c_str()) == 0)
+		if(strcmp(m_connections[connIndex]->GetGUID(), check.c_str()) == 0)
 		{
 			return true;
 		}

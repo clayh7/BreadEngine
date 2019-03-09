@@ -16,7 +16,7 @@ STATIC bool NetworkSystem::Startup()
 {
 	WSADATA wsa_data;
 	int error = WSAStartup(MAKEWORD(2, 2), &wsa_data); //version 2.2
-	if (error == SOCKET_ERROR)
+	if(error == SOCKET_ERROR)
 	{
 		NetworkUtils::ReportError();
 	}
@@ -34,7 +34,7 @@ STATIC void NetworkSystem::Shutdown()
 	EventSystem::TriggerEvent(NETWORK_SHUTDOWN);
 
 	int error = WSACleanup();
-	if (error == SOCKET_ERROR)
+	if(error == SOCKET_ERROR)
 	{
 		NetworkUtils::ReportError();
 	}

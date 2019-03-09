@@ -114,7 +114,7 @@ void MergeSort(Item * itemArray, size_t length)
 template<typename Item>
 void MergeSort(Item * itemArray, Item * helper, int low, int high)
 {
-	if (low < high)
+	if(low < high)
 	{
 		int middle = (low + high) / 2;
 		MergeSort(itemArray, helper, low, middle); //Left half
@@ -127,7 +127,7 @@ template<typename Item>
 void Merge(Item * itemArray, Item * helper, int low, int middle, int high)
 {
 	//Copy array to helper
-	for (int i = low; i <= high; ++i)
+	for(int i = low; i <= high; ++i)
 	{
 		helper[i] = itemArray[i];
 	}
@@ -137,9 +137,9 @@ void Merge(Item * itemArray, Item * helper, int low, int middle, int high)
 	int current = low;
 
 	//Compare and copy into original array
-	while (helperLeft <= middle && helperRight <= high)
+	while(helperLeft <= middle && helperRight <= high)
 	{
-		if (helper[helperLeft] <= helper[helperRight])
+		if(helper[helperLeft] <= helper[helperRight])
 		{
 			itemArray[current] = helper[helperLeft];
 			++helperLeft;
@@ -153,7 +153,7 @@ void Merge(Item * itemArray, Item * helper, int low, int middle, int high)
 	}
 
 	//Copy whats left of the left side
-	while (helperLeft <= middle)
+	while(helperLeft <= middle)
 	{
 		itemArray[current] = helper[helperLeft];
 		++current;

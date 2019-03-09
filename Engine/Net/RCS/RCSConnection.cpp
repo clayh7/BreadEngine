@@ -38,13 +38,13 @@ void RCSConnection::Receive()
 	char buffer[BUFFER_SIZE];
 	int readLength = m_tcpSocket->Receive(buffer, BUFFER_SIZE);
 
-	while (readLength > 0)
+	while(readLength > 0)
 	{
-		for (int index = 0; index < readLength; ++index)
+		for(int index = 0; index < readLength; ++index)
 		{
 			char readChar = buffer[index];
 			AddToBuffer(readChar);
-			if (readChar == eRCSMessageType_END)
+			if(readChar == eRCSMessageType_END)
 			{
 				CreateMessageEvent();
 				ClearMessageBuffer();

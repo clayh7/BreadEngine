@@ -29,23 +29,23 @@ Vector3f WavesFunc(void const *userArgs, float x, float y)
 	PlaneData const *plane = (PlaneData const*)userArgs;
 
 	float z = 0;
-	if (plane->effectIndex == 0)
+	if(plane->effectIndex == 0)
 	{
 		z = sin(x * y);
 	}
-	else if (plane->effectIndex == 1)
+	else if(plane->effectIndex == 1)
 	{
 		z = x * y * y * y - y * x * x * x;
 	}
-	else if (plane->effectIndex == 2)
+	else if(plane->effectIndex == 2)
 	{
 		z = cos(abs(x) + abs(y));
 	}
-	else if (plane->effectIndex == 3)
+	else if(plane->effectIndex == 3)
 	{
 		z = cos(abs(x) + abs(y))*(abs(x) + abs(y));
 	}
-	else if (plane->effectIndex == 4)
+	else if(plane->effectIndex == 4)
 	{
 		z = sin(sqrt(x*x + y*y));
 	}

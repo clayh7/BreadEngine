@@ -27,7 +27,7 @@ SOCKET CreateUDPSocektExample(char const * addr,
 		SOCK_DGRAM, // UDP for now
 		AI_PASSIVE);  // And something we can bind (and therefore listen on)
 
-	if (info_list == nullptr)
+	if(info_list == nullptr)
 	{
 		// no addresses match - FAIL
 		return false;
@@ -36,27 +36,27 @@ SOCKET CreateUDPSocektExample(char const * addr,
 	// Alright, try to create a SOCKET from this addr info
 	SOCKET my_socket = INVALID_SOCKET;
 	addrinfo * iter = info_list;
-	while ((iter != nullptr) && (my_socket == INVALID_SOCKET))
+	while((iter != nullptr) && (my_socket == INVALID_SOCKET))
 	{
 		// First, create a socket for this address.
 		// family, socktype, and protocol are provided by the addrinfo
 		// if you wanted to be manual, for an TCP/IPv4 socket you'd use
 		// AF_INET, SOCK_DGRAM, IPPROTO_UDP
 		my_socket = socket(iter->ai_family, iter->ai_socktype, iter->ai_protocol);
-		if (my_socket != INVALID_SOCKET)
+		if(my_socket != INVALID_SOCKET)
 		{
 			// Okay, we were able to create it,
 			// Now try to bind it (associates the address (ex: 192.168.1.52:4325) to this 
 			// socket so it will receive information for it.
 			int result = bind(my_socket, iter->ai_addr, (int)(iter->ai_addrlen));
-			if (SOCKET_ERROR != result)
+			if(SOCKET_ERROR != result)
 			{
 				// Set it to non-block - since we'll be working with this on our main thread
 				SetBlocking(my_socket, false);
 
 				// Save off the address if available.
 				ASSERT_RECOVERABLE(iter->ai_addrlen == sizeof(sockaddr_in), "Invalid UDP address length.");
-				if (nullptr != out_addr)
+				if(nullptr != out_addr)
 				{
 					memcpy(out_addr, iter->ai_addr, iter->ai_addrlen);
 				}
@@ -86,33 +86,33 @@ SOCKET CreateUDPSocekt(char const * addr, size_t port, sockaddr_in * out_addr, s
 	//stick first port in as a string
 	addrinfo * info_list = AllocAddressesForHost(addr, Stringf("%u", port).c_str(), AF_INET, SOCK_DGRAM, AI_PASSIVE);
 
-	if (info_list == nullptr)
+	if(info_list == nullptr)
 	{
 		return false;
 	}
 
 	SOCKET my_socket = INVALID_SOCKET;
 	addrinfo * iter = info_list;
-	while ((iter != nullptr) && (my_socket == INVALID_SOCKET))
+	while((iter != nullptr) && (my_socket == INVALID_SOCKET))
 	{
 		my_socket = socket(iter->ai_family, iter->ai_socktype, iter->ai_protocol);
-		if (my_socket != INVALID_SOCKET)
+		if(my_socket != INVALID_SOCKET)
 		{
 			int result = SOCKET_ERROR;
 			//Test all ports, then continue to the next available family
-			for (size_t testPort = port; testPort < port + range; ++testPort)
+			for(size_t testPort = port; testPort < port + range; ++testPort)
 			{
 				sockaddr_in * testAddress = (sockaddr_in*)iter->ai_addr;
 				testAddress->sin_port = htons((uint16_t)testPort);
 				result = bind(my_socket, (sockaddr*)testAddress, (int)(iter->ai_addrlen));
-				if (SOCKET_ERROR != result)
+				if(SOCKET_ERROR != result)
 				{
 					// Set it to non-block - since we'll be working with this on our main thread
 					SetBlocking(my_socket, false);
 
 					// Save off the address if available.
 					ASSERT_RECOVERABLE(iter->ai_addrlen == sizeof(sockaddr_in), "Invalid UDP address length.");
-					if (nullptr != out_addr)
+					if(nullptr != out_addr)
 					{
 						memcpy(out_addr, iter->ai_addr, iter->ai_addrlen);
 					}
@@ -121,7 +121,7 @@ SOCKET CreateUDPSocekt(char const * addr, size_t port, sockaddr_in * out_addr, s
 			}
 
 			//If no connection, clean up socket and continue to the next one
-			if (SOCKET_ERROR == result)
+			if(SOCKET_ERROR == result)
 			{
 				// Cleanup on Fail.
 				closesocket(my_socket);
@@ -184,7 +184,7 @@ size_t SocketSendTo(SOCKET mySocket,
 	void const * data,
 	size_t const dataSize)
 {
-	if (mySocket != INVALID_SOCKET)
+	if(mySocket != INVALID_SOCKET)
 	{
 		// send will return the amount of data actually sent.
 		// It SHOULD match, or be an error.  
@@ -195,7 +195,7 @@ size_t SocketSendTo(SOCKET mySocket,
 			(sockaddr const*)&toAddr, // who we're sending to
 			sizeof(sockaddr_in));  // size of that structure
 
-		if (size > 0)
+		if(size > 0)
 		{
 			return size;
 		}
@@ -221,7 +221,7 @@ size_t SocketReceiveFrom(sockaddr_in * out_fromAddr,
 	void * data,
 	size_t const maxSize)
 {
-	if (mySocket != INVALID_SOCKET)
+	if(mySocket != INVALID_SOCKET)
 	{
 		// recv will return amount of data read, should always be <= buffer_size
 		// Also, if you send, say, 3 KB with send, recv may actually
@@ -238,7 +238,7 @@ size_t SocketReceiveFrom(sockaddr_in * out_fromAddr,
 			(sockaddr*)&addr, // Who sent the message
 			&addrlen);       // length of their address
 
-		if (size > 0)
+		if(size > 0)
 		{
 			// We're only doing IPv4 - if we got a non-IPv4 address
 			// assume it's garbage

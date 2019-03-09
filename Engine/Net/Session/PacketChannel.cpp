@@ -20,7 +20,7 @@ PacketChannel::PacketChannel()
 //-------------------------------------------------------------------------------------------------
 PacketChannel::~PacketChannel()
 {
-	for (auto packetIter : m_orderedPackets)
+	for(auto packetIter : m_orderedPackets)
 	{
 		delete packetIter.second;
 		packetIter.second = nullptr;
@@ -48,10 +48,10 @@ void PacketChannel::RecvPackets(NetSession * currentSession)
 	packet.m_senderInfo.session = currentSession;
 
 	//Recieve Packets
-	while (read > 0)
+	while(read > 0)
 	{
 		//Packet is Invalid
-		if (!currentSession->IsValidPacket(packet, read))
+		if(!currentSession->IsValidPacket(packet, read))
 		{
 			read = Recv(&address, packet.GetBuffer(), NetPacket::MAX_SIZE);
 			++currentSession->m_invalidPacketCount;
@@ -59,10 +59,10 @@ void PacketChannel::RecvPackets(NetSession * currentSession)
 		}
 
 		//Skip packet if within drop rate
-		if (RandomFloatZeroToOne() >= m_dropRate)
+		if(RandomFloatZeroToOne() >= m_dropRate)
 		{
 			packet.m_senderInfo.fromAddress = address;
-			if (m_latency == Range<double>::ZERO)
+			if(m_latency == Range<double>::ZERO)
 			{
 				currentSession->ProcessPacket(packet);
 			}
@@ -80,11 +80,11 @@ void PacketChannel::RecvPackets(NetSession * currentSession)
 	}
 
 	//Process Packets
-	if (m_orderedPackets.size() > 0)
+	if(m_orderedPackets.size() > 0)
 	{
-		for (auto packetIter = m_orderedPackets.begin(); packetIter != m_orderedPackets.end(); /*Nothing*/)
+		for(auto packetIter = m_orderedPackets.begin(); packetIter != m_orderedPackets.end(); /*Nothing*/)
 		{
-			if (packetIter->first <= currentTime)
+			if(packetIter->first <= currentTime)
 			{
 				currentSession->ProcessPacket(*(packetIter->second));
 				delete packetIter->second;

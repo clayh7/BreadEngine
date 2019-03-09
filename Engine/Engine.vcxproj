@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClCompile Include="..\ThirdParty\Parsers\XMLParser.cpp" />
     <ClCompile Include="..\ThirdParty\stb\stb_image.c" />
-    <ClCompile Include="AudioSystem\Audio.cpp" />
+    <ClCompile Include="AudioSystem\BAudioSystem.cpp" />
     <ClCompile Include="Core\Array.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="Core\EngineCommon.cpp" />
@@ -152,7 +152,7 @@
     <ClInclude Include="..\ThirdParty\OpenGL\wglext.h" />
     <ClInclude Include="..\ThirdParty\Parsers\XMLParser.hpp" />
     <ClInclude Include="..\ThirdParty\stb\stb_image_write.h" />
-    <ClInclude Include="AudioSystem\Audio.hpp" />
+    <ClInclude Include="AudioSystem\BAudioSystem.hpp" />
     <ClInclude Include="Core\Array.hpp" />
     <ClInclude Include="Core\BuildConfig.hpp" />
     <ClInclude Include="Core\Engine.hpp" />

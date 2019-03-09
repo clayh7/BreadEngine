@@ -360,7 +360,7 @@ public:
 																	//-------------------------------------------------------------------------
 	char		IsContentEmpty() const;
 	bool		isUsed() const { return d ? d->wasNodeUsed : true; }
-	void		markUsed() const { if (d) d->wasNodeUsed = true; }
+	void		markUsed() const { if(d) d->wasNodeUsed = true; }
 	bool		hasUnusedAttributes() const;
 	char 		hasText() const;
 	//-------------------------------------------------------------------------

@@ -33,7 +33,7 @@ Camera3D::Camera3D(Vector3f const & position /*= Vector3::ZERO*/, Euler const & 
 	, m_mouseControl(false)
 	, m_fitToWindow(true)
 {
-	if (perspective)
+	if(perspective)
 	{
 		float aspect = 16.f / 9.f;
 		m_projection.MakePerspective(60.f, aspect, 0.01f, 1000.f);
@@ -56,12 +56,12 @@ Camera3D::~Camera3D()
 //-------------------------------------------------------------------------------------------------
 void Camera3D::Update()
 {
-	if (m_mouseControl)
+	if(m_mouseControl)
 	{
 		UpdateInput();
 	}
 
-	if (m_fitToWindow)
+	if(m_fitToWindow)
 	{
 		Vector2f uiDimensions = Vector2f((float)UISystem::VIRTUAL_WIDTH, (float)UISystem::VIRTUAL_HEIGHT);
 		m_projection.MakeOrthonormal(uiDimensions.x, uiDimensions.y, -100.f, 100.f);
@@ -85,37 +85,37 @@ void Camera3D::UpdateInput()
 
 	float moveSpeed = MOVE_SPEED * Time::DELTA_SECONDS;
 
-	if (g_InputSystem->IsKeyDown(Input::KEY_SHIFT))
+	if(g_InputSystem->IsKeyDown(Input::KEY_SHIFT))
 	{
 		moveSpeed *= 4.f;
 	}
 
-	if (g_InputSystem->IsKeyDown('W'))
+	if(g_InputSystem->IsKeyDown('W'))
 	{
 		m_position += GetForwardXY() * moveSpeed;
 	}
 
-	if (g_InputSystem->IsKeyDown('S'))
+	if(g_InputSystem->IsKeyDown('S'))
 	{
 		m_position -= GetForwardXY() * moveSpeed;
 	}
 
-	if (g_InputSystem->IsKeyDown('A'))
+	if(g_InputSystem->IsKeyDown('A'))
 	{
 		m_position += GetLeftXY() * moveSpeed;
 	}
 
-	if (g_InputSystem->IsKeyDown('D'))
+	if(g_InputSystem->IsKeyDown('D'))
 	{
 		m_position -= GetLeftXY() * moveSpeed;
 	}
 
-	if (g_InputSystem->IsKeyDown('E'))
+	if(g_InputSystem->IsKeyDown('E'))
 	{
 		m_position.y += moveSpeed;
 	}
 
-	if (g_InputSystem->IsKeyDown('Q'))
+	if(g_InputSystem->IsKeyDown('Q'))
 	{
 		m_position.y -= moveSpeed;
 	}

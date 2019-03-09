@@ -34,7 +34,7 @@ const std::string Stringf(const int maxLength, const char* format, ...)
 {
 	char textLiteralSmall[STRINGF_STACK_LOCAL_TEMP_LENGTH];
 	char* textLiteral = textLiteralSmall;
-	if (maxLength > STRINGF_STACK_LOCAL_TEMP_LENGTH)
+	if(maxLength > STRINGF_STACK_LOCAL_TEMP_LENGTH)
 		textLiteral = new char[maxLength];
 
 	va_list variableArgumentList;
@@ -44,7 +44,7 @@ const std::string Stringf(const int maxLength, const char* format, ...)
 	textLiteral[maxLength - 1] = '\0'; // In case vsnprintf overran (doesn't auto-terminate)
 
 	std::string returnValue(textLiteral);
-	if (maxLength > STRINGF_STACK_LOCAL_TEMP_LENGTH)
+	if(maxLength > STRINGF_STACK_LOCAL_TEMP_LENGTH)
 		delete[] textLiteral;
 
 	return returnValue;
@@ -68,7 +68,7 @@ std::vector<std::string> SplitString(std::string const & rawString, char delimit
 	size_t rangeIndex = workingString.find(delimiter);
 
 	//Loop and parse each before delimiter
-	while (rangeIndex != std::string::npos)
+	while(rangeIndex != std::string::npos)
 	{
 		result.push_back(workingString.substr(0, rangeIndex));
 		workingString = workingString.substr(rangeIndex + 1);
@@ -76,7 +76,7 @@ std::vector<std::string> SplitString(std::string const & rawString, char delimit
 	}
 
 	//Add last part
-	if (workingString != "")
+	if(workingString != "")
 	{
 		result.push_back(workingString);
 	}
@@ -92,7 +92,7 @@ std::vector<size_t> FindIndicies(std::string const & rawString, char delimiter)
 	size_t delimiterIndex = workingString.find(delimiter);
 
 	//Loop and parse each before delimiter
-	while (delimiterIndex != std::string::npos)
+	while(delimiterIndex != std::string::npos)
 	{
 		result.push_back(delimiterIndex);
 		workingString = workingString.substr(delimiterIndex + 1);
@@ -107,20 +107,20 @@ std::vector<size_t> FindIndicies(std::string const & rawString, char delimiter)
 bool AllUnique(std::string const & rawString)
 {
 	size_t const CHAR_COUNT = 256;
-	if (rawString.size() > CHAR_COUNT)
+	if(rawString.size() > CHAR_COUNT)
 	{
 		return false;
 	}
 
 	bool uniqueCheck[CHAR_COUNT];
-	for (size_t uniqueIndex = 0; uniqueIndex < CHAR_COUNT; ++uniqueIndex)
+	for(size_t uniqueIndex = 0; uniqueIndex < CHAR_COUNT; ++uniqueIndex)
 	{
 		uniqueCheck[uniqueIndex] = false;
 	}
-	for (size_t charIndex = 0; charIndex < rawString.size(); ++charIndex)
+	for(size_t charIndex = 0; charIndex < rawString.size(); ++charIndex)
 	{
 		char const & checkChar = rawString[charIndex];
-		if (uniqueCheck[checkChar])
+		if(uniqueCheck[checkChar])
 		{
 			return false;
 		}
@@ -135,14 +135,14 @@ void Reverse(char * str)
 {
 	size_t MAX_LENGTH = 4092;
 	size_t length = strnlen(str, MAX_LENGTH);
-	if (length <= 1)
+	if(length <= 1)
 	{
 		return;
 	}
 
 	size_t startIndex = 0;
 	size_t endIndex = length - 1;
-	while (startIndex < endIndex)
+	while(startIndex < endIndex)
 	{
 		char temp = str[startIndex];
 		str[startIndex] = str[endIndex];
@@ -178,7 +178,7 @@ bool IsPermutation(std::string const & str1, std::string const & str2)
 {
 	//Make sure they're the same length
 	size_t length = str1.size();
-	if (length != str1.size())
+	if(length != str1.size())
 	{
 		return false;
 	}
@@ -194,9 +194,9 @@ bool IsPermutation(std::string const & str1, std::string const & str2)
 	MergeSort(sorted2, length);
 
 	//Make sure they are equal
-	for (size_t index = 0; index < length; ++index)
+	for(size_t index = 0; index < length; ++index)
 	{
-		if (sorted1[index] != sorted2[index])
+		if(sorted1[index] != sorted2[index])
 		{
 			return false;
 		}
@@ -213,9 +213,9 @@ std::string CompressString(std::string const & str)
 	size_t charCount = 1;
 	size_t compressedLength = 0;
 	size_t stringLength = str.size();
-	for (size_t index = 1; index < stringLength; ++index)
+	for(size_t index = 1; index < stringLength; ++index)
 	{
-		if (charCurrent != str[index])
+		if(charCurrent != str[index])
 		{
 			compressed.append(std::to_string(charCount));
 			compressed.append(1U, charCurrent);
@@ -227,7 +227,7 @@ std::string CompressString(std::string const & str)
 		{
 			++charCount;
 		}
-		if (compressedLength >= stringLength)
+		if(compressedLength >= stringLength)
 		{
 			return str;
 		}

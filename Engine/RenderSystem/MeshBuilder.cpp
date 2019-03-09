@@ -17,21 +17,21 @@
 STATIC std::vector<MeshBuilder*> MeshBuilder::CombineAllWithSameMaterialID(std::vector<MeshBuilder*> const & meshBuilders)
 {
 	std::vector<MeshBuilder*> combinedMeshBuilders;
-	for (MeshBuilder const * mb : meshBuilders)
+	for(MeshBuilder const * mb : meshBuilders)
 	{
 		MeshBuilder * foundMb = nullptr;
 
 		//Check if materialID already exists
-		for (MeshBuilder * checkMb : combinedMeshBuilders)
+		for(MeshBuilder * checkMb : combinedMeshBuilders)
 		{
-			if (checkMb->GetMaterialID() == mb->GetMaterialID())
+			if(checkMb->GetMaterialID() == mb->GetMaterialID())
 			{
 				foundMb = checkMb;
 			}
 		}
 
 		//If not, make a new MeshBuilder
-		if (foundMb == nullptr)
+		if(foundMb == nullptr)
 		{
 			foundMb = new MeshBuilder();
 			combinedMeshBuilders.push_back(foundMb);
@@ -42,18 +42,18 @@ STATIC std::vector<MeshBuilder*> MeshBuilder::CombineAllWithSameMaterialID(std::
 
 		//Add all verts
 		unsigned int currentIndex = (unsigned int)foundMb->m_vertexes.size();
-		for (Vertex_Master const & addVert : mb->GetVertexData())
+		for(Vertex_Master const & addVert : mb->GetVertexData())
 		{
 			foundMb->m_vertexes.push_back(addVert);
 		}
 
 		//Add all indicies
-		for (unsigned int const & addIndex : mb->GetIndexBuffer())
+		for(unsigned int const & addIndex : mb->GetIndexBuffer())
 		{
 			foundMb->m_indicies.push_back(currentIndex + addIndex);
 		}
 
-		for (DrawInstruction di : mb->GetDrawInstructions())
+		for(DrawInstruction di : mb->GetDrawInstructions())
 		{
 			di.m_useIndexBuffer = foundMb->m_useIBO;
 			di.m_startIndex = foundMb->m_startVertex;
@@ -76,16 +76,16 @@ STATIC MeshBuilder * MeshBuilder::CreateSkeletonMesh(Skeleton const * skeleton)
 	Vector3f start;
 	Vector3f end;
 	builder->SetColor(Color::BLACK);
-	for (int boneIndex = 0; boneIndex < skeleton->GetJointCount(); ++boneIndex)
+	for(int boneIndex = 0; boneIndex < skeleton->GetJointCount(); ++boneIndex)
 	{
-		if (skeleton->GetBonePositions(boneIndex, &start, &end))
+		if(skeleton->GetBonePositions(boneIndex, &start, &end))
 		{
 			builder->AddLine(start, end);
 		}
 	}
 
 	builder->SetColor(Color::RED);
-	for (int jointIndex = 0; jointIndex < skeleton->GetJointCount(); ++jointIndex)
+	for(int jointIndex = 0; jointIndex < skeleton->GetJointCount(); ++jointIndex)
 	{
 		builder->AddCube(skeleton->GetJointPosition(jointIndex), 0.5f);
 		builder->SetColor(Color::WHITE);
@@ -117,7 +117,7 @@ MeshBuilder::~MeshBuilder()
 //-------------------------------------------------------------------------------------------------
 void MeshBuilder::Begin()
 {
-	if (m_useIBO)
+	if(m_useIBO)
 	{
 		m_startVertex = m_indicies.size();
 	}
@@ -132,7 +132,7 @@ void MeshBuilder::Begin()
 void MeshBuilder::End()
 {
 	int vertexCount = 0;
-	if (m_useIBO)
+	if(m_useIBO)
 	{
 		vertexCount = m_indicies.size();
 	}
@@ -410,12 +410,12 @@ void MeshBuilder::AddPatch(PatchFunc *patchFunc, void const *userData, float xSt
 
 	float const delta = .01f; // artificially small value, can go smaller
 
-	for (int iy = 0; iy < yVertexCount; ++iy)
+	for(int iy = 0; iy < yVertexCount; ++iy)
 	{
 		x = xStart;
 		u = 0.0f;
 
-		for (int ix = 0; ix < xVertexCount; ++ix)
+		for(int ix = 0; ix < xVertexCount; ++ix)
 		{
 			SetUV0(u, v);
 
@@ -445,9 +445,9 @@ void MeshBuilder::AddPatch(PatchFunc *patchFunc, void const *userData, float xSt
 	}
 
 	// Next, add all the indices for this patch
-	for (int iy = 0; iy < ySections; ++iy)
+	for(int iy = 0; iy < ySections; ++iy)
 	{
-		for (int ix = 0; ix < xSections; ++ix)
+		for(int ix = 0; ix < xSections; ++ix)
 		{
 			unsigned int bottomLeft = (unsigned int)(startVertexIndex + (iy * xVertexCount) + ix);
 			unsigned int bottomRight = (unsigned int)(bottomLeft + 1);
@@ -579,9 +579,9 @@ void MeshBuilder::AddQuadIndicies(unsigned int tl, unsigned int tr, unsigned int
 uint32_t MeshBuilder::GetNextIndex() const
 {
 	uint32_t largest = 0;
-	for (uint32_t checkIndex : m_indicies)
+	for(uint32_t checkIndex : m_indicies)
 	{
-		if (largest <= checkIndex)
+		if(largest <= checkIndex)
 		{
 			largest = checkIndex + 1;
 		}
@@ -603,7 +603,7 @@ void MeshBuilder::ClearBoneWeights()
 //#TODO: Maybe make indicies not shorts
 void MeshBuilder::MeshReduction()
 {
-	if (m_useIBO)
+	if(m_useIBO)
 	{
 		ERROR_AND_DIE("Currently don't support mesh reduction with IBOs");
 	}
@@ -617,23 +617,23 @@ void MeshBuilder::MeshReduction()
 	m_indicies.clear();
 	m_indicies.reserve(m_vertexes.size());
 
-	for (DrawInstruction & instruction : m_drawInstructions)
+	for(DrawInstruction & instruction : m_drawInstructions)
 	{
 		instruction.m_useIndexBuffer = true;
 		instruction.m_startIndex = reducedVerticies.size();
-		for (unsigned int vertIndex = 0; vertIndex < instruction.m_count; ++vertIndex)
+		for(unsigned int vertIndex = 0; vertIndex < instruction.m_count; ++vertIndex)
 		{
 			bool notFound = true;
-			for (int reducedIndex = (int)reducedVerticies.size() - 1; /*notFound &&*/ reducedIndex >= 0; --reducedIndex)
+			for(int reducedIndex = (int)reducedVerticies.size() - 1; /*notFound &&*/ reducedIndex >= 0; --reducedIndex)
 			{
-				if (reducedVerticies[reducedIndex].Equals(m_vertexes[vertIndex]))
+				if(reducedVerticies[reducedIndex].Equals(m_vertexes[vertIndex]))
 				{
 					m_indicies.push_back((unsigned int)reducedIndex);
 					notFound = false;
 					break;
 				}
 			}
-			if (notFound)
+			if(notFound)
 			{
 				reducedVerticies.push_back(m_vertexes[vertIndex]);
 				m_indicies.push_back((unsigned int)indexCount);
@@ -652,7 +652,7 @@ void MeshBuilder::MeshReduction()
 void MeshBuilder::ReadFromFile(std::string const &filename)
 {
 	FileBinaryReader reader;
-	if (reader.Open(filename))
+	if(reader.Open(filename))
 	{
 		ReadFromStream(reader);
 	}
@@ -668,7 +668,7 @@ void MeshBuilder::ReadFromFile(std::string const &filename)
 void MeshBuilder::WriteToFile(std::string const &filename) const
 {
 	FileBinaryWriter writer;
-	if (writer.Open(filename))
+	if(writer.Open(filename))
 	{
 		WriteToStream(writer);
 	}
@@ -694,7 +694,7 @@ void MeshBuilder::ReadFromStream(IBinaryReader &reader)
 	//FILE VERSION
 	uint32_t version;
 	reader.Read<uint32_t>(&version);
-	if (version != FILE_VERSION)
+	if(version != FILE_VERSION)
 	{
 		ERROR_AND_DIE("Wrong file version! Update your file by loading the fbx and saving the mesh again.");
 	}
@@ -730,39 +730,39 @@ uint32_t MeshBuilder::ReadDataMask(IBinaryReader &reader)
 	uint32_t mask = 0;
 	std::string dataMask;
 	reader.ReadString(&dataMask);
-	while (strcmp(dataMask.c_str(), "end") != 0)
+	while(strcmp(dataMask.c_str(), "end") != 0)
 	{
-		if (strcmp(dataMask.c_str(), "position") == 0)
+		if(strcmp(dataMask.c_str(), "position") == 0)
 		{
 			mask |= (1 << eMeshData_POSITION);
 		}
 
-		else if (strcmp(dataMask.c_str(), "color") == 0)
+		else if(strcmp(dataMask.c_str(), "color") == 0)
 		{
 			mask |= (1 << eMeshData_COLOR);
 		}
 
-		else if (strcmp(dataMask.c_str(), "uv0") == 0)
+		else if(strcmp(dataMask.c_str(), "uv0") == 0)
 		{
 			mask |= (1 << eMeshData_UV0);
 		}
 
-		else if (strcmp(dataMask.c_str(), "uv1") == 0)
+		else if(strcmp(dataMask.c_str(), "uv1") == 0)
 		{
 			mask |= (1 << eMeshData_UV1);
 		}
 
-		else if (strcmp(dataMask.c_str(), "tangent") == 0)
+		else if(strcmp(dataMask.c_str(), "tangent") == 0)
 		{
 			mask |= (1 << eMeshData_TANGENT);
 		}
 
-		else if (strcmp(dataMask.c_str(), "bitangent") == 0)
+		else if(strcmp(dataMask.c_str(), "bitangent") == 0)
 		{
 			mask |= (1 << eMeshData_BITANGENT);
 		}
 
-		else if (strcmp(dataMask.c_str(), "normal") == 0)
+		else if(strcmp(dataMask.c_str(), "normal") == 0)
 		{
 			mask |= (1 << eMeshData_NORMAL);
 		}
@@ -778,39 +778,39 @@ uint32_t MeshBuilder::ReadDataMask(IBinaryReader &reader)
 void MeshBuilder::ReadVerticies(IBinaryReader &reader, uint32_t count, uint32_t dataMask)
 {
 	m_vertexes.resize(count);
-	for (uint32_t vertIndex = 0; vertIndex < count; ++vertIndex)
+	for(uint32_t vertIndex = 0; vertIndex < count; ++vertIndex)
 	{
-		if ((dataMask & (BIT(eMeshData_POSITION))) != 0)
+		if((dataMask & (BIT(eMeshData_POSITION))) != 0)
 		{
 			reader.Read<Vector3f>(&(m_vertexStamp.m_position));
 		}
 
-		if ((dataMask & (BIT(eMeshData_COLOR))) != 0)
+		if((dataMask & (BIT(eMeshData_COLOR))) != 0)
 		{
 			reader.Read<Color>(&(m_vertexStamp.m_color));
 		}
 
-		if ((dataMask & (BIT(eMeshData_UV0))) != 0)
+		if((dataMask & (BIT(eMeshData_UV0))) != 0)
 		{
 			reader.Read<Vector2f>(&(m_vertexStamp.m_uv0));
 		}
 
-		if ((dataMask & (BIT(eMeshData_UV1))) != 0)
+		if((dataMask & (BIT(eMeshData_UV1))) != 0)
 		{
 			reader.Read<Vector2f>(&(m_vertexStamp.m_uv1));
 		}
 
-		if ((dataMask & (BIT(eMeshData_TANGENT))) != 0)
+		if((dataMask & (BIT(eMeshData_TANGENT))) != 0)
 		{
 			reader.Read<Vector3f>(&(m_vertexStamp.m_tangent));
 		}
 
-		if ((dataMask & (BIT(eMeshData_BITANGENT))) != 0)
+		if((dataMask & (BIT(eMeshData_BITANGENT))) != 0)
 		{
 			reader.Read<Vector3f>(&(m_vertexStamp.m_bitangent));
 		}
 
-		if ((dataMask & (BIT(eMeshData_NORMAL))) != 0)
+		if((dataMask & (BIT(eMeshData_NORMAL))) != 0)
 		{
 			reader.Read<Vector3f>(&(m_vertexStamp.m_normal));
 		}
@@ -825,7 +825,7 @@ void MeshBuilder::ReadVerticies(IBinaryReader &reader, uint32_t count, uint32_t 
 void MeshBuilder::ReadIndicies(IBinaryReader &reader, uint32_t count)
 {
 	m_indicies.resize(count);
-	for (uint32_t index = 0; index < count; ++index)
+	for(uint32_t index = 0; index < count; ++index)
 	{
 		reader.Read<unsigned int>(&(m_indicies[index]));
 	}
@@ -836,7 +836,7 @@ void MeshBuilder::ReadIndicies(IBinaryReader &reader, uint32_t count)
 void MeshBuilder::ReadDrawInstructions(IBinaryReader &reader, uint32_t count)
 {
 	m_drawInstructions.resize(count);
-	for (uint32_t instructionIndex = 0; instructionIndex < count; ++instructionIndex)
+	for(uint32_t instructionIndex = 0; instructionIndex < count; ++instructionIndex)
 	{
 		reader.Read<DrawInstruction>(&(m_drawInstructions[instructionIndex]));
 	}
@@ -877,37 +877,37 @@ void MeshBuilder::WriteToStream(IBinaryWriter &writer) const
 //-------------------------------------------------------------------------------------------------
 void MeshBuilder::WriteDataMask(IBinaryWriter &writer, uint32_t dataMask) const
 {
-	if ((dataMask & (BIT(eMeshData_POSITION))) != 0)
+	if((dataMask & (BIT(eMeshData_POSITION))) != 0)
 	{
 		writer.WriteString("position");
 	}
 
-	if ((dataMask & (BIT(eMeshData_COLOR))) != 0)
+	if((dataMask & (BIT(eMeshData_COLOR))) != 0)
 	{
 		writer.WriteString("color");
 	}
 
-	if ((dataMask & (BIT(eMeshData_UV0))) != 0)
+	if((dataMask & (BIT(eMeshData_UV0))) != 0)
 	{
 		writer.WriteString("uv0");
 	}
 
-	if ((dataMask & (BIT(eMeshData_UV1))) != 0)
+	if((dataMask & (BIT(eMeshData_UV1))) != 0)
 	{
 		writer.WriteString("uv1");
 	}
 
-	if ((dataMask & (BIT(eMeshData_TANGENT))) != 0)
+	if((dataMask & (BIT(eMeshData_TANGENT))) != 0)
 	{
 		writer.WriteString("tangent");
 	}
 
-	if ((dataMask & (BIT(eMeshData_BITANGENT))) != 0)
+	if((dataMask & (BIT(eMeshData_BITANGENT))) != 0)
 	{
 		writer.WriteString("bitangent");
 	}
 
-	if ((dataMask & (BIT(eMeshData_NORMAL))) != 0)
+	if((dataMask & (BIT(eMeshData_NORMAL))) != 0)
 	{
 		writer.WriteString("normal");
 	}
@@ -919,39 +919,39 @@ void MeshBuilder::WriteDataMask(IBinaryWriter &writer, uint32_t dataMask) const
 //-------------------------------------------------------------------------------------------------
 void MeshBuilder::WriteVerticies(IBinaryWriter & writer, uint32_t dataMask) const
 {
-	for (uint32_t vertIndex = 0; vertIndex < m_vertexes.size(); ++vertIndex)
+	for(uint32_t vertIndex = 0; vertIndex < m_vertexes.size(); ++vertIndex)
 	{
-		if ((dataMask & (BIT(eMeshData_POSITION))) != 0)
+		if((dataMask & (BIT(eMeshData_POSITION))) != 0)
 		{
 			writer.Write<Vector3f>(m_vertexes[vertIndex].m_position);
 		}
 
-		if ((dataMask & (BIT(eMeshData_COLOR))) != 0)
+		if((dataMask & (BIT(eMeshData_COLOR))) != 0)
 		{
 			writer.Write<Color>(m_vertexes[vertIndex].m_color);
 		}
 
-		if ((dataMask & (BIT(eMeshData_UV0))) != 0)
+		if((dataMask & (BIT(eMeshData_UV0))) != 0)
 		{
 			writer.Write<Vector2f>(m_vertexes[vertIndex].m_uv0);
 		}
 
-		if ((dataMask & (BIT(eMeshData_UV1))) != 0)
+		if((dataMask & (BIT(eMeshData_UV1))) != 0)
 		{
 			writer.Write<Vector2f>(m_vertexes[vertIndex].m_uv1);
 		}
 
-		if ((dataMask & (BIT(eMeshData_TANGENT))) != 0)
+		if((dataMask & (BIT(eMeshData_TANGENT))) != 0)
 		{
 			writer.Write<Vector3f>(m_vertexes[vertIndex].m_tangent);
 		}
 
-		if ((dataMask & (BIT(eMeshData_BITANGENT))) != 0)
+		if((dataMask & (BIT(eMeshData_BITANGENT))) != 0)
 		{
 			writer.Write<Vector3f>(m_vertexes[vertIndex].m_bitangent);
 		}
 
-		if ((dataMask & (BIT(eMeshData_NORMAL))) != 0)
+		if((dataMask & (BIT(eMeshData_NORMAL))) != 0)
 		{
 			writer.Write<Vector3f>(m_vertexes[vertIndex].m_normal);
 		}
@@ -962,7 +962,7 @@ void MeshBuilder::WriteVerticies(IBinaryWriter & writer, uint32_t dataMask) cons
 //-------------------------------------------------------------------------------------------------
 void MeshBuilder::WriteIndicies(IBinaryWriter & writer) const
 {
-	for (uint32_t index = 0; index < m_indicies.size(); ++index)
+	for(uint32_t index = 0; index < m_indicies.size(); ++index)
 	{
 		writer.Write<unsigned int>(m_indicies[index]);
 	}
@@ -972,7 +972,7 @@ void MeshBuilder::WriteIndicies(IBinaryWriter & writer) const
 //-------------------------------------------------------------------------------------------------
 void MeshBuilder::WriteDrawInstructions(IBinaryWriter & writer) const
 {
-	for (uint32_t instructionIndex = 0; instructionIndex < m_drawInstructions.size(); ++instructionIndex)
+	for(uint32_t instructionIndex = 0; instructionIndex < m_drawInstructions.size(); ++instructionIndex)
 	{
 		writer.Write<DrawInstruction>(m_drawInstructions[instructionIndex]);
 	}

@@ -30,7 +30,7 @@ void Skeleton::AddJoint(const char * jointName, int parentJointIndex, Matrix4f c
 void Skeleton::ReadFromFile(std::string const & filename)
 {
 	FileBinaryReader reader;
-	if (reader.Open(filename))
+	if(reader.Open(filename))
 	{
 		ReadFromStream(reader);
 	}
@@ -46,7 +46,7 @@ void Skeleton::ReadFromFile(std::string const & filename)
 void Skeleton::WriteToFile(std::string const & filename) const
 {
 	FileBinaryWriter writer;
-	if (writer.Open(filename))
+	if(writer.Open(filename))
 	{
 		WriteToStream(writer);
 	}
@@ -76,7 +76,7 @@ Vector3f Skeleton::GetJointPosition(int index) const
 bool Skeleton::GetBonePositions(int index, Vector3f * out_position0, Vector3f * out_position1) const
 {
 	int parentIndex = m_parentIndicies[index];
-	if (parentIndex == -1)
+	if(parentIndex == -1)
 	{
 		out_position0 = nullptr;
 		out_position1 = nullptr;
@@ -106,9 +106,9 @@ int Skeleton::GetLastAddJointIndex() const
 //-------------------------------------------------------------------------------------------------
 int Skeleton::GetJointIndexFromName(std::string const & name) const
 {
-	for (int jointIndex = 0; jointIndex < GetJointCount(); ++jointIndex)
+	for(int jointIndex = 0; jointIndex < GetJointCount(); ++jointIndex)
 	{
-		if (m_names[jointIndex] == name)
+		if(m_names[jointIndex] == name)
 		{
 			return jointIndex;
 		}
@@ -136,7 +136,7 @@ Joint Skeleton::GetJoint(int const index) const
 std::vector<Matrix4f> Skeleton::GetCurrentMatricies() const
 {
 	std::vector<Matrix4f> result;
-	for (unsigned int jointIndex = 0; jointIndex < m_modelToBoneSpace.size(); ++jointIndex)
+	for(unsigned int jointIndex = 0; jointIndex < m_modelToBoneSpace.size(); ++jointIndex)
 	{
 		result.push_back(m_modelToBoneSpace[jointIndex] * m_boneToModeSpace[jointIndex]);
 	}
@@ -157,7 +157,7 @@ void Skeleton::ReadFromStream(IBinaryReader &reader)
 	//FILE VERSION
 	uint32_t version;
 	reader.Read<uint32_t>(&version);
-	if (version != FILE_VERSION)
+	if(version != FILE_VERSION)
 	{
 		ERROR_AND_DIE("Wrong file version! Update your file by loading the fbx and saving the skeleton again.");
 	}
@@ -178,16 +178,16 @@ void Skeleton::ReadFromStream(IBinaryReader &reader)
 
 	//Read all joint data
 	float matData[16];
-	for (int jointIndex = 0; jointIndex < (int)jointCount; ++jointIndex)
+	for(int jointIndex = 0; jointIndex < (int)jointCount; ++jointIndex)
 	{
 		reader.ReadString(&m_names[jointIndex]);
 		reader.Read<int>(&m_parentIndicies[jointIndex]);
-		for (int matIndex = 0; matIndex < 16; ++matIndex)
+		for(int matIndex = 0; matIndex < 16; ++matIndex)
 		{
 			reader.Read<float>(&matData[matIndex]);
 		}
 		m_modelToBoneSpace[jointIndex] = matData;
-		for (int matIndex = 0; matIndex < 16; ++matIndex)
+		for(int matIndex = 0; matIndex < 16; ++matIndex)
 		{
 			reader.Read<float>(&matData[matIndex]);
 		}
@@ -207,15 +207,15 @@ void Skeleton::WriteToStream(IBinaryWriter &writer) const
 	writer.Write<uint32_t>(jointCount);
 
 	//Write all joint data
-	for (int jointIndex = 0; jointIndex < jointCount; ++jointIndex)
+	for(int jointIndex = 0; jointIndex < jointCount; ++jointIndex)
 	{
 		writer.WriteString(m_names[jointIndex]);
 		writer.Write<int>(m_parentIndicies[jointIndex]);
-		for (int matIndex = 0; matIndex < 16; ++matIndex)
+		for(int matIndex = 0; matIndex < 16; ++matIndex)
 		{
 			writer.Write<float>(m_modelToBoneSpace[jointIndex].m_data[matIndex]);
 		}
-		for (int matIndex = 0; matIndex < 16; ++matIndex)
+		for(int matIndex = 0; matIndex < 16; ++matIndex)
 		{
 			writer.Write<float>(m_boneToModeSpace[jointIndex].m_data[matIndex]);
 		}

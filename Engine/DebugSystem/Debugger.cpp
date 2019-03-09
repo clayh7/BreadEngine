@@ -65,7 +65,7 @@ Debugger::Debugger()
 	Vector2i windowDimensions = GetWindowDimensions();
 	float topOfWindow = static_cast<float>(windowDimensions.y - 15.f);
 
-	for (int index = 0; index < m_lineCount; ++index)
+	for(int index = 0; index < m_lineCount; ++index)
 	{
 		Vector2f linePosition = Vector2f(10.f, topOfWindow - DEBUG_LINE_SPACING * index);
 		m_debugTexts.push_back(new TextRenderer(" ", linePosition));
@@ -74,27 +74,27 @@ Debugger::Debugger()
 	//LoggingSystem = new Logger( );
 	//LoggingSystem->Begin( );
 
-	BProfiler::Initialize();
+	BProfiler::Startup();
 
-#ifdef MEMORY_TRACKING
+#if MEMORY_TRACKING >= 1
 	g_ConsoleSystem->RegisterCommand("debug_memory", &DebugMemoryCommand, " : Show/Hide memory allocation info.");
 	g_ConsoleSystem->RegisterCommand("debug_flush", &DebugFlushCommand, " : Print memory callstack to the debug log.");
-#endif // MEMORY_TRACKING
+#endif // MEMORY_TRACKING >= 1
 }
 
 
 //-------------------------------------------------------------------------------------------------
 Debugger::~Debugger()
 {
-	for (TextRenderer * textRenderer : m_debugTexts)
+	for(TextRenderer * textRenderer : m_debugTexts)
 	{
 		delete textRenderer;
 		textRenderer = nullptr;
 	}
 	m_debugTexts.clear();
 
-	BProfiler::Destroy();
-	
+	BProfiler::Shutdown();
+
 	delete LoggingSystem;
 	LoggingSystem = nullptr;
 }
@@ -105,30 +105,30 @@ void Debugger::Update()
 {
 	int currentLine = 0;
 
-	if (m_showFPSDebug)
+	if(m_showFPSDebug)
 	{
 		UpdateTextFPS(currentLine);
 	}
 
 	//#TODO: Currently handled by the Profiler, may update this later to make it like UE4
-	if (m_showUnitDebug)
+	if(m_showUnitDebug)
 	{
 		//UpdateTextUnit( currentLine );
 	}
 
-#ifdef MEMORY_TRACKING
-	if (m_showMemoryDebug)
+#if MEMORY_TRACKING >= 1
+	if(m_showMemoryDebug)
 	{
 		UpdateTextMemory(currentLine);
 	}
-#endif // MEMORY_TRACKING
+#endif // MEMORY_TRACKING >= 1
 
-#if MEMORY_TRACKING == 1
-	if (m_showMemoryDebug)
+#if MEMORY_TRACKING >= 2
+	if(m_showMemoryDebug)
 	{
 		UpdateTextMemoryVerbose(currentLine);
 	}
-#endif // MEMORY_TRACKING == 1
+#endif // MEMORY_TRACKING >= 2
 
 	ClearTextRemaining(currentLine);
 }
@@ -141,15 +141,15 @@ void Debugger::UpdateTextFPS(int & currentLine)
 	std::string debugText = Stringf("FPS: %.1f", fps);
 	//debugText = Stringf( "DRAW: %d", g_EngineSystem->GetCurrentDrawCalls( ) );
 	Color fpsColor = Color::WHITE;
-	if (fps < 30.0f)
+	if(fps < 30.0f)
 	{
 		fpsColor = Color::RED;
 	}
-	else if (fps < 45.0f)
+	else if(fps < 45.0f)
 	{
 		fpsColor = Color::ORANGE;
 	}
-	else if (fps < 55.0f)
+	else if(fps < 55.0f)
 	{
 		fpsColor = Color::YELLOW;
 	}
@@ -166,11 +166,11 @@ void Debugger::UpdateTextUnit(int & currentLine)
 	float gameTime = 2.0f;
 	std::string debugText = Stringf("Game: %.1fms", gameTime);
 	Color unitColor = Color::WHITE;
-	if (gameTime > 16.0f)
+	if(gameTime > 16.0f)
 	{
 		unitColor = Color::RED;
 	}
-	else if (gameTime > 8.0f)
+	else if(gameTime > 8.0f)
 	{
 		unitColor = Color::YELLOW;
 	}
@@ -182,11 +182,11 @@ void Debugger::UpdateTextUnit(int & currentLine)
 	float renderTime = 2.5f;
 	debugText = Stringf("Render: %.1fms", renderTime);
 	unitColor = Color::WHITE;
-	if (gameTime > 16.0f)
+	if(gameTime > 16.0f)
 	{
 		unitColor = Color::RED;
 	}
-	else if (gameTime > 8.0f)
+	else if(gameTime > 8.0f)
 	{
 		unitColor = Color::YELLOW;
 	}
@@ -228,15 +228,15 @@ void Debugger::UpdateTextMemoryVerbose(int & currentLine)
 
 	//Order them base on allocation size
 	std::map<size_t, CallstackStats> orderedStats;
-	for (auto callstackStatsItem : callstackStatsMap)
+	for(auto callstackStatsItem : callstackStatsMap)
 	{
 		orderedStats.insert(std::pair<size_t, CallstackStats>(callstackStatsItem.second.totalBytes, callstackStatsItem.second));
 	}
 
-	for (auto callstackStatsIter = orderedStats.end(); callstackStatsIter != orderedStats.begin(); )
+	for(auto callstackStatsIter = orderedStats.end(); callstackStatsIter != orderedStats.begin(); )
 	{
 		--callstackStatsIter;
-		if (currentLine + 2 <= m_lineCount)
+		if(currentLine + 2 <= m_lineCount)
 		{
 			CallstackStats & callstackStats = callstackStatsIter->second;
 			std::string stats = Stringf("Allocations: %u | Bytes: %u", callstackStats.totalAllocations, callstackStats.totalBytes);
@@ -259,7 +259,7 @@ void Debugger::UpdateTextMemoryVerbose(int & currentLine)
 void Debugger::ClearTextRemaining(int & currentLine)
 {
 	//Clear the rest
-	while (currentLine < m_lineCount)
+	while(currentLine < m_lineCount)
 	{
 		m_debugTexts[currentLine]->SetText(" ");
 		m_debugTexts[currentLine]->Update();
@@ -272,9 +272,9 @@ void Debugger::ClearTextRemaining(int & currentLine)
 //#TODO: Make the Debug renders a single draw call each
 void Debugger::Render() const
 {
-	if (m_showFPSDebug || m_showUnitDebug || m_showMemoryDebug)
+	if(m_showFPSDebug || m_showUnitDebug || m_showMemoryDebug)
 	{
-		for (size_t memDebugIndex = 0; memDebugIndex < m_debugTexts.size(); ++memDebugIndex)
+		for(size_t memDebugIndex = 0; memDebugIndex < m_debugTexts.size(); ++memDebugIndex)
 		{
 			m_debugTexts[memDebugIndex]->Render();
 		}

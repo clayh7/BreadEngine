@@ -11,10 +11,21 @@
 #include "Engine/Utils/StringUtils.hpp"
 
 
-
 //-------------------------------------------------------------------------------------------------
-BProfiler * BProfiler::s_ProfilerSystem = nullptr;
-char const * BProfiler::ROOT_SAMPLE = "FRAME";
+STATIC char const * BProfiler::ROOT_SAMPLE = "FRAME";
+STATIC bool BProfiler::s_initialized = false;
+STATIC bool BProfiler::s_toBeEnabled = false;
+STATIC bool BProfiler::s_toBePinged = false;
+STATIC bool BProfiler::s_enabled = false;
+STATIC bool BProfiler::s_reportList = false;
+STATIC bool BProfiler::s_show = true;
+STATIC BitmapFont * BProfiler::s_profilerFont = nullptr;
+STATIC uint64_t BProfiler::s_previousFrameTotalTime = 0;
+STATIC BProfilerSample * BProfiler::s_currentSample = nullptr;
+STATIC BProfilerSample * BProfiler::s_currentSampleSet = nullptr;
+STATIC BProfilerSample * BProfiler::s_previousSampleSet = nullptr;
+STATIC ObjectPool<BProfilerSample> BProfiler::s_samplePool = ObjectPool<BProfilerSample>(POOL_SIZE);
+STATIC std::vector<TextRenderer*, UntrackedAllocator<TextRenderer*>> BProfiler::s_profilerLines;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -53,247 +64,98 @@ void ToggleReportLayoutCommand(Command const &)
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void BProfiler::Initialize()
+STATIC void BProfiler::Startup()
 {
-#ifdef DEBUG_PROFILER
-	if (!s_ProfilerSystem)
+#if DEBUG_PROFILER
+	if(s_initialized)
 	{
-		s_ProfilerSystem = new BProfiler();
+		return;
 	}
-#endif
+	s_profilerFont = BitmapFont::CreateOrGetFont("Data/Fonts/ClayFont.png");
+	g_ConsoleSystem->RegisterCommand("profiler_enable", EnableProfilerCommand, " : Tracks samples injected in code and reports on screen.");
+	g_ConsoleSystem->RegisterCommand("profiler_disable", DisableProfilerCommand, " : Stops tracking samples injected in code and reports on screen.");
+	g_ConsoleSystem->RegisterCommand("profiler_ping", PingProfilerCommand, " : Tracks one sample.");
+	g_ConsoleSystem->RegisterCommand("profiler_layout", ToggleReportLayoutCommand, " : Change the profiler's report layout. List/Flat");
+	s_profilerLines.reserve(LINE_COUNT);
+	for(int lineIndex = 0; lineIndex < LINE_COUNT; ++lineIndex)
+	{
+		TextRenderer * profilerLine = new TextRenderer("", Vector2f(50.f, 850.f - 20.f * lineIndex), 13, s_profilerFont);
+		s_profilerLines.push_back(profilerLine);
+	}
+	s_initialized = true;
+#endif // DEBUG_PROFILER
 }
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void BProfiler::Destroy()
+STATIC void BProfiler::Shutdown()
 {
-	delete s_ProfilerSystem;
-	s_ProfilerSystem = nullptr;
+#if DEBUG_PROFILER
+	if(s_initialized)
+	{
+		s_currentSample = nullptr;
+		s_samplePool.Destroy();
+		for(int lineIndex = 0; lineIndex < LINE_COUNT; ++lineIndex)
+		{
+			delete s_profilerLines[lineIndex];
+			s_profilerLines[lineIndex] = nullptr;
+		}
+		s_profilerLines.clear();
+	}
+#endif // DEBUG_PROFILER
 }
 
 
 //-------------------------------------------------------------------------------------------------
 STATIC void BProfiler::Update()
 {
-#ifdef DEBUG_PROFILER
-	if (!s_ProfilerSystem)
-	{
-		s_ProfilerSystem->UpdateInput();
-		s_ProfilerSystem->FrameMark();
-	}
-#endif
-}
-
-
-//-------------------------------------------------------------------------------------------------
-STATIC void BProfiler::Render()
-{
-#ifdef DEBUG_PROFILER
-	if (!s_ProfilerSystem)
+	if(!s_initialized)
 	{
 		return;
 	}
 
-	if (!s_ProfilerSystem->m_show)
+#if DEBUG_PROFILER
+	//Frame Mark
+	if(s_enabled)
 	{
-		return;
-	}
+		ASSERT_RECOVERABLE(s_currentSample == s_currentSampleSet, "Current Sample is not the root sample");
 
-	if (!s_ProfilerSystem->m_previousSampleSet)
-	{
-		return;
+		//Clear last Sample Set
+		if(s_previousSampleSet)
+		{
+			Delete(s_previousSampleSet);
+		}
+		if(s_currentSample)
+		{
+			StopSample();
+		}
+		//Swap current sample set to previous
+		s_previousSampleSet = s_currentSampleSet;
+		if(s_previousSampleSet)
+		{
+			s_previousFrameTotalTime = s_previousSampleSet->opCountEnd - s_previousSampleSet->opCountStart;
+		}
 	}
-
-	//Render previous frame's sample set
-	if (s_ProfilerSystem->m_reportList)
+	s_enabled = s_toBeEnabled;
+	if(s_enabled)
 	{
-		int line = 0;
-		std::multimap<int, BProfilerReport> listReport;
-		s_ProfilerSystem->GenerateListReport(*s_ProfilerSystem->m_previousSampleSet, line, 0, listReport);
-		s_ProfilerSystem->RenderReport(listReport);
+		StartSample(ROOT_SAMPLE);
+		s_currentSampleSet = s_currentSample;
 	}
-	else
+	//Ping only one frame
+	if(s_toBePinged)
 	{
-		std::multimap<int, BProfilerReport> flatReport;
-		s_ProfilerSystem->GenerateFlatReport(*s_ProfilerSystem->m_previousSampleSet, flatReport);
-		s_ProfilerSystem->RenderReport(flatReport);
+		s_toBeEnabled = false;
+		s_toBePinged = false;
 	}
 #endif // DEBUG_PROFILER
 }
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void BProfiler::StartSample(char const * sampleTag)
+void GenerateListReport(BProfilerSample const & sample, int & index, int depth, std::multimap<int, BProfilerReport> & report, uint64_t previousFrameTotalTime)
 {
-#ifdef DEBUG_PROFILER
-	if (!s_ProfilerSystem || !s_ProfilerSystem->m_enabled)
-	{
-		return;
-	}
-
-	BProfilerSample * previousSample = s_ProfilerSystem->m_currentSample;
-	if (previousSample)
-	{
-		s_ProfilerSystem->m_currentSample = s_ProfilerSystem->m_samplePool.Alloc();
-		s_ProfilerSystem->m_currentSample->SetTag(sampleTag);
-		s_ProfilerSystem->m_currentSample->parent = previousSample;
-
-		previousSample->AddChild(s_ProfilerSystem->m_currentSample);
-	}
-#endif // DEBUG_PROFILER
-}
-
-
-//-------------------------------------------------------------------------------------------------
-STATIC void BProfiler::StopSample()
-{
-#ifdef DEBUG_PROFILER
-	if (!s_ProfilerSystem || !s_ProfilerSystem->m_enabled)
-	{
-		return;
-	}
-
-	if (s_ProfilerSystem->m_currentSample)
-	{
-		s_ProfilerSystem->m_currentSample->opCountEnd = Time::GetCurrentOpCount();
-		s_ProfilerSystem->m_currentSample = s_ProfilerSystem->m_currentSample->parent;
-	}
-	else
-	{
-		ASSERT_RECOVERABLE(s_ProfilerSystem->m_currentSample, "No current sample in profiler, too many StopSample()'s");
-	}
-#endif // DEBUG_PROFILER
-}
-
-
-//-------------------------------------------------------------------------------------------------
-STATIC void BProfiler::SetEnabled(bool isEnabled)
-{
-	if (s_ProfilerSystem)
-	{
-		s_ProfilerSystem->m_toBeEnabled = isEnabled;
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
-STATIC void BProfiler::SetPing()
-{
-	if (s_ProfilerSystem)
-	{
-		s_ProfilerSystem->m_toBePinged = true;
-		s_ProfilerSystem->m_toBeEnabled = true;
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
-STATIC void BProfiler::ToggleLayout()
-{
-	if (s_ProfilerSystem)
-	{
-		s_ProfilerSystem->m_reportList = !s_ProfilerSystem->m_reportList;
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
-STATIC void BProfiler::SetProfilerVisible(bool show)
-{
-	if (s_ProfilerSystem)
-	{
-		s_ProfilerSystem->m_show = show;
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
-STATIC void BProfiler::IncrementNews()
-{
-	if (s_ProfilerSystem && s_ProfilerSystem->m_currentSample)
-	{
-		s_ProfilerSystem->m_currentSample->newCount++;
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
-STATIC void BProfiler::IncrementDeletes()
-{
-	if (s_ProfilerSystem && s_ProfilerSystem->m_currentSample)
-	{
-		s_ProfilerSystem->m_currentSample->deleteCount++;
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
-STATIC void BProfiler::Delete(BProfilerSample * sample)
-{
-	if (s_ProfilerSystem)
-	{
-		s_ProfilerSystem->m_samplePool.Delete(sample);
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
-bool BProfiler::IsEnabled()
-{
-	return (s_ProfilerSystem && s_ProfilerSystem->m_enabled);
-}
-
-
-//-------------------------------------------------------------------------------------------------
-BProfiler::BProfiler()
-	: m_toBeEnabled(false)
-	, m_toBePinged(false)
-	, m_enabled(false)
-	, m_reportList(false)
-	, m_show(true)
-	, m_profilerFont(nullptr)
-	, m_previousFrameTotalTime(0)
-	, m_currentSample(nullptr)
-	, m_currentSampleSet(nullptr)
-	, m_previousSampleSet(nullptr)
-	, m_samplePool(POOL_SIZE)
-{
-#ifdef DEBUG_PROFILER
-	m_profilerFont = BitmapFont::CreateOrGetFont("Data/Fonts/ClayFont.png");
-	g_ConsoleSystem->RegisterCommand("profiler_enable", EnableProfilerCommand, " : Tracks samples injected in code and reports on screen.");
-	g_ConsoleSystem->RegisterCommand("profiler_disable", DisableProfilerCommand, " : Stops tracking samples injected in code and reports on screen.");
-	g_ConsoleSystem->RegisterCommand("profiler_ping", PingProfilerCommand, " : Tracks one sample.");
-	g_ConsoleSystem->RegisterCommand("profiler_layout", ToggleReportLayoutCommand, " : Change the profiler's report layout. List/Flat");
-	for (int lineIndex = 0; lineIndex < LINE_COUNT; ++lineIndex)
-	{
-		TextRenderer * profilerLine = new TextRenderer("", Vector2f(50.f, 850.f - 20.f * lineIndex), 13, m_profilerFont);
-		m_profilerLines.push_back(profilerLine);
-	}
-#endif // DEBUG_PROFILER
-}
-
-
-//-------------------------------------------------------------------------------------------------
-BProfiler::~BProfiler()
-{
-#ifdef DEBUG_PROFILER
-	m_currentSample = nullptr;
-	m_samplePool.Destroy();
-
-	for (int lineIndex = 0; lineIndex < LINE_COUNT; ++lineIndex)
-	{
-		delete m_profilerLines[lineIndex];
-		m_profilerLines[lineIndex] = nullptr;
-	}
-	m_profilerLines.clear();
-#endif // DEBUG_PROFILER
-}
-
-
-//-------------------------------------------------------------------------------------------------
-void BProfiler::GenerateListReport(BProfilerSample const & sample, int & index, int depth, std::multimap<int, BProfilerReport> & report) const
-{
-#ifdef DEBUG_PROFILER
+#if DEBUG_PROFILER
 	BProfilerReport reportNode;
 	reportNode.index = index;
 	reportNode.tag = sample.tag;
@@ -303,15 +165,15 @@ void BProfiler::GenerateListReport(BProfilerSample const & sample, int & index, 
 	reportNode.newCount = sample.newCount;
 	reportNode.deleteCount = sample.deleteCount;
 	BProfilerSample * child = sample.children;
-	while (child)
+	while(child)
 	{
 		index += 1;
 		reportNode.childrenTime += (child->opCountEnd - child->opCountStart);
-		GenerateListReport(*child, index, depth + 1, report);
+		GenerateListReport(*child, index, depth + 1, report, previousFrameTotalTime);
 		child = child->next;
 	}
 	reportNode.selfTime = reportNode.totalTime - reportNode.childrenTime;
-	reportNode.percent = ((float)((reportNode.totalTime * 1000) / m_previousFrameTotalTime)) / 10.f;
+	reportNode.percent = ((float)((reportNode.totalTime * 1000) / previousFrameTotalTime)) / 10.f;
 	report.insert(std::pair<int, BProfilerReport>(reportNode.index, reportNode));
 #endif // DEBUG_PROFILER
 }
@@ -320,10 +182,10 @@ void BProfiler::GenerateListReport(BProfilerSample const & sample, int & index, 
 //-------------------------------------------------------------------------------------------------
 void PopulateTagList(BProfilerSample const & sample, std::set<char const *> & tags)
 {
-#ifdef DEBUG_PROFILER
+#if DEBUG_PROFILER
 	tags.insert(sample.tag);
 	BProfilerSample * child = sample.children;
-	while (child)
+	while(child)
 	{
 		PopulateTagList(*child, tags);
 		child = child->next;
@@ -335,15 +197,15 @@ void PopulateTagList(BProfilerSample const & sample, std::set<char const *> & ta
 //-------------------------------------------------------------------------------------------------
 void PopulateReportFromSample(BProfilerReport & reportData, BProfilerSample const & sample)
 {
-#ifdef DEBUG_PROFILER
+#if DEBUG_PROFILER
 	//Add contents
-	if (reportData.tag == sample.tag)
+	if(reportData.tag == sample.tag)
 	{
 		reportData.newCount += sample.newCount;
 		reportData.deleteCount += sample.deleteCount;
 		reportData.totalTime += sample.opCountEnd - sample.opCountStart;
 		BProfilerSample * checkChild = sample.children;
-		while (checkChild)
+		while(checkChild)
 		{
 			reportData.childrenTime += (checkChild->opCountEnd - checkChild->opCountStart);
 			checkChild = checkChild->next;
@@ -353,7 +215,7 @@ void PopulateReportFromSample(BProfilerReport & reportData, BProfilerSample cons
 
 	//Continue down tree
 	BProfilerSample * child = sample.children;
-	while (child)
+	while(child)
 	{
 		PopulateReportFromSample(reportData, *child);
 		child = child->next;
@@ -361,18 +223,19 @@ void PopulateReportFromSample(BProfilerReport & reportData, BProfilerSample cons
 #endif // DEBUG_PROFILER
 }
 
+
 //-------------------------------------------------------------------------------------------------
-void BProfiler::GenerateFlatReport(BProfilerSample const & sample, std::multimap<int, BProfilerReport> & report) const
+void GenerateFlatReport(BProfilerSample const & sample, std::multimap<int, BProfilerReport> & report, uint64_t previousFrameTotalTime)
 {
-#ifdef DEBUG_PROFILER
+#if DEBUG_PROFILER
 	std::set<char const *> tagNames;
 	PopulateTagList(sample, tagNames);
-	for (auto tagName : tagNames)
+	for(auto tagName : tagNames)
 	{
 		BProfilerReport currentReport;
 		currentReport.tag = tagName;
 		PopulateReportFromSample(currentReport, sample);
-		currentReport.percent = ((float)((currentReport.selfTime * 1000) / m_previousFrameTotalTime)) / 10.f;
+		currentReport.percent = ((float)((currentReport.selfTime * 1000) / previousFrameTotalTime)) / 10.f;
 		//This is to sort it by percent, lowest number is sorted to the top
 		report.insert(std::pair<int, BProfilerReport>(-(int)(currentReport.percent * 100.f), currentReport));
 	}
@@ -381,74 +244,177 @@ void BProfiler::GenerateFlatReport(BProfilerSample const & sample, std::multimap
 
 
 //-------------------------------------------------------------------------------------------------
-void BProfiler::RenderReport(std::multimap<int, BProfilerReport> const & report) const
+STATIC void BProfiler::Render()
 {
-#ifdef DEBUG_PROFILER
-	m_profilerLines[0]->SetText(Stringf("TAG                  TIME      SELF TIME  PERCENT  NEW   DELETE"));
-	m_profilerLines[0]->Update();
-	m_profilerLines[0]->Render();
-	int count = 1;
-	for (auto reportData : report)
+#if DEBUG_PROFILER
+	if(!s_initialized)
 	{
-		BProfilerReport const & profilerReport = reportData.second;
-		double timeSeconds = Time::GetTimeFromOpCount(profilerReport.totalTime);
-		double selfTimeSeconds = Time::GetTimeFromOpCount(profilerReport.selfTime);
-		std::string tag = Stringf("%.*s%s", profilerReport.depth, "--------------------", profilerReport.tag);
-		m_profilerLines[count]->SetText(Stringf("%-20s %06.2fms  %06.2fms   %5.1f%%   %-6d%-6d", tag.c_str(), timeSeconds*1000.0, selfTimeSeconds*1000.0, profilerReport.percent, profilerReport.newCount, profilerReport.deleteCount));
-		m_profilerLines[count]->Update();
-		m_profilerLines[count]->Render();
-		count += 1;
-		if (count >= LINE_COUNT)
-		{
-			return;
-		}
+		return;
+	}
+
+	if(!s_show)
+	{
+		return;
+	}
+
+	if(!s_previousSampleSet)
+	{
+		return;
+	}
+
+	//Render previous frame's sample set
+	if(s_reportList)
+	{
+		int line = 0;
+		std::multimap<int, BProfilerReport> listReport;
+		GenerateListReport(*s_previousSampleSet, line, 0, listReport, s_previousFrameTotalTime);
+		RenderReport(listReport);
+	}
+	else
+	{
+		std::multimap<int, BProfilerReport> flatReport;
+		GenerateFlatReport(*s_previousSampleSet, flatReport, s_previousFrameTotalTime);
+		RenderReport(flatReport);
 	}
 #endif // DEBUG_PROFILER
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void BProfiler::UpdateInput()
+STATIC void BProfiler::StartSample(char const * sampleTag)
 {
-	//Nothing
+#if DEBUG_PROFILER
+	if(!s_initialized || !s_enabled)
+	{
+		return;
+	}
+
+	BProfilerSample * previousSample = s_currentSample;
+	s_currentSample = s_samplePool.Alloc();
+	if(s_currentSample)
+	{
+		s_currentSample->SetTag(sampleTag);
+		s_currentSample->parent = previousSample;
+	}
+
+	if(previousSample)
+	{
+		previousSample->AddChild(s_currentSample);
+	}
+#endif // DEBUG_PROFILER
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void BProfiler::FrameMark()
+STATIC void BProfiler::StopSample()
 {
-#ifdef DEBUG_PROFILER
-	if (m_enabled)
+#if DEBUG_PROFILER
+	if(!s_initialized || !s_enabled)
 	{
-		ASSERT_RECOVERABLE(m_currentSample == m_currentSampleSet, "Current Sample is not the root sample");
+		return;
+	}
 
-		//Clear last Sample Set
-		if (m_previousSampleSet)
-		{
-			Delete(m_previousSampleSet);
-		}
-		if (m_currentSample)
-		{
-			StopSample();
-		}
-		//Swap current sample set to previous
-		m_previousSampleSet = m_currentSampleSet;
-		if (m_previousSampleSet)
-		{
-			m_previousFrameTotalTime = m_previousSampleSet->opCountEnd - m_previousSampleSet->opCountStart;
-		}
-	}
-	m_enabled = m_toBeEnabled;
-	if (m_enabled)
+	if(s_currentSample)
 	{
-		StartSample(ROOT_SAMPLE);
-		m_currentSampleSet = m_currentSample;
+		s_currentSample->opCountEnd = Time::GetCurrentOpCount();
+		s_currentSample = s_currentSample->parent;
 	}
-	//Ping only one frame
-	if (m_toBePinged)
+	else
 	{
-		m_toBeEnabled = false;
-		m_toBePinged = false;
+		ASSERT_RECOVERABLE(s_currentSample, "No current sample in profiler, too many StopSample()'s");
+	}
+#endif // DEBUG_PROFILER
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC void BProfiler::SetEnabled(bool isEnabled)
+{
+	s_toBeEnabled = isEnabled;
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC void BProfiler::SetPing()
+{
+	s_toBePinged = true;
+	s_toBeEnabled = true;
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC void BProfiler::ToggleLayout()
+{
+	s_reportList = !s_reportList;
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC void BProfiler::SetProfilerVisible(bool show)
+{
+	s_show = show;
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC void BProfiler::IncrementNews()
+{
+	if(s_initialized && s_currentSample)
+	{
+		s_currentSample->newCount++;
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC void BProfiler::IncrementDeletes()
+{
+	if(s_initialized && s_currentSample)
+	{
+		s_currentSample->deleteCount++;
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC void BProfiler::Delete(BProfilerSample * sample)
+{
+	if(s_initialized)
+	{
+		s_samplePool.Delete(sample);
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC bool BProfiler::IsEnabled()
+{
+	return (s_initialized && s_enabled);
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC void BProfiler::RenderReport(std::multimap<int, BProfilerReport> const & report)
+{
+#if DEBUG_PROFILER
+	s_profilerLines[0]->SetText(Stringf("TAG                  TIME      SELF TIME  PERCENT  NEW   DELETE"));
+	s_profilerLines[0]->Update();
+	s_profilerLines[0]->Render();
+	int count = 1;
+	for(auto reportData : report)
+	{
+		BProfilerReport const & profilerReport = reportData.second;
+		double timeSeconds = Time::GetTimeFromOpCount(profilerReport.totalTime);
+		double selfTimeSeconds = Time::GetTimeFromOpCount(profilerReport.selfTime);
+		std::string tag = Stringf("%.*s%s", profilerReport.depth, "--------------------", profilerReport.tag);
+		s_profilerLines[count]->SetText(Stringf("%-20s %06.2fms  %06.2fms   %5.1f%%   %-6d%-6d", tag.c_str(), timeSeconds*1000.0, selfTimeSeconds*1000.0, profilerReport.percent, profilerReport.newCount, profilerReport.deleteCount));
+		s_profilerLines[count]->Update();
+		s_profilerLines[count]->Render();
+		count += 1;
+		if(count >= LINE_COUNT)
+		{
+			return;
+		}
 	}
 #endif // DEBUG_PROFILER
 }

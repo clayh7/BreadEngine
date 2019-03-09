@@ -27,7 +27,7 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, std::vector<Te
 //-------------------------------------------------------------------------------------------------
 Framebuffer::~Framebuffer()
 {
-	for (Texture *currentTex : m_colorTargets)
+	for(Texture *currentTex : m_colorTargets)
 	{
 		delete currentTex;
 		currentTex = nullptr;
@@ -42,7 +42,7 @@ Framebuffer::~Framebuffer()
 void Framebuffer::Initialize(unsigned int width, unsigned int height, std::vector<TextureFormat> const & colorFormats, TextureFormat const & depthStencilFormat)
 {
 	std::vector<Texture*> colorTargets;
-	for (unsigned int colorIndex = 0; colorIndex < colorFormats.size(); ++colorIndex)
+	for(unsigned int colorIndex = 0; colorIndex < colorFormats.size(); ++colorIndex)
 	{
 		TextureFormat format = colorFormats[colorIndex];
 		colorTargets.push_back(new Texture(width, height, format));
@@ -53,7 +53,7 @@ void Framebuffer::Initialize(unsigned int width, unsigned int height, std::vecto
 	//Create the Framebuffer Object
 	unsigned int fboHandle;
 	glGenFramebuffers(1, &fboHandle);
-	if (fboHandle == NULL)
+	if(fboHandle == NULL)
 	{
 		ERROR_AND_DIE("No handle created.")
 	}
@@ -65,7 +65,7 @@ void Framebuffer::Initialize(unsigned int width, unsigned int height, std::vecto
 	unsigned int colorCount = colorFormats.size();
 
 	//Set textures
-	for (unsigned int currentColor = 0; currentColor < colorCount; ++currentColor)
+	for(unsigned int currentColor = 0; currentColor < colorCount; ++currentColor)
 	{
 		m_colorTargets.push_back(colorTargets[currentColor]);
 	}
@@ -77,7 +77,7 @@ void Framebuffer::Initialize(unsigned int width, unsigned int height, std::vecto
 	glBindFramebuffer(GL_FRAMEBUFFER, fboHandle);
 
 	// Bind our color targets to our FBO
-	for (unsigned int i = 0; i < colorCount; ++i)
+	for(unsigned int i = 0; i < colorCount; ++i)
 	{
 		Texture *tex = colorTargets[i];
 		glFramebufferTexture
@@ -90,7 +90,7 @@ void Framebuffer::Initialize(unsigned int width, unsigned int height, std::vecto
 	}
 
 	// Bind depth stencil if it exists
-	if (nullptr != depthStencilTarget)
+	if(nullptr != depthStencilTarget)
 	{
 		glFramebufferTexture
 		(
@@ -103,7 +103,7 @@ void Framebuffer::Initialize(unsigned int width, unsigned int height, std::vecto
 
 	//Make sure everything was bound correctly
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if (status != GL_FRAMEBUFFER_COMPLETE)
+	if(status != GL_FRAMEBUFFER_COMPLETE)
 	{
 		ERROR_AND_DIE("Buffer creation failed.");
 	}

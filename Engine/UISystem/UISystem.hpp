@@ -107,7 +107,7 @@ public:
 	template<typename T>
 	T * GetWidgetByName(std::string const & name)
 	{
-		if (strcmp(name.c_str(), DEFAULT_NAME) == 0)
+		if(strcmp(name.c_str(), DEFAULT_NAME) == 0)
 		{
 			return nullptr;
 		}

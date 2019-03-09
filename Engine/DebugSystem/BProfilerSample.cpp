@@ -21,7 +21,7 @@ BProfilerSample::BProfilerSample()
 //-------------------------------------------------------------------------------------------------
 BProfilerSample::~BProfilerSample()
 {
-	while (children)
+	while(children)
 	{
 		BProfilerSample * deleteSample = children;
 		children = children->next;

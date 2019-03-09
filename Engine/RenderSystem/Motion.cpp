@@ -18,7 +18,7 @@ Motion::Motion(std::string const & motionName, float timeSpan, float framerate, 
 	, m_targetSkeleton(skeleton)
 {
 	m_frameCount = (int)ceil(framerate * timeSpan) + 1;
-	if (m_targetSkeleton == nullptr)
+	if(m_targetSkeleton == nullptr)
 	{
 		m_jointCount = 0;
 	}
@@ -41,7 +41,7 @@ Motion::~Motion()
 void Motion::ApplyMotionToSkeleton(float time)
 {
 	//Temporary Looping time
-	switch (m_extrapolationMode)
+	switch(m_extrapolationMode)
 	{
 	case eExtrapolationMode_CLAMP:
 		time = Clamp(time, 0.f, m_totalLengthSeconds);
@@ -51,7 +51,7 @@ void Motion::ApplyMotionToSkeleton(float time)
 		break;
 	case eExtrapolationMode_PING_PONG:
 		time = fmodf(time, m_totalLengthSeconds * 2.f);
-		if (time > m_totalLengthSeconds)
+		if(time > m_totalLengthSeconds)
 		{
 			time = (m_totalLengthSeconds * 2.f) - time;
 		}
@@ -64,7 +64,7 @@ void Motion::ApplyMotionToSkeleton(float time)
 	GetFrameIndicesWithBlend(time, &frame0, &frame1, &blend);
 
 	uint32_t jointCount = m_targetSkeleton->GetJointCount();
-	for (uint32_t jointIndex = 0; jointIndex < jointCount; ++jointIndex)
+	for(uint32_t jointIndex = 0; jointIndex < jointCount; ++jointIndex)
 	{
 		Matrix4f mat0 = GetJointKeyframe(jointIndex, frame0);
 		Matrix4f mat1 = GetJointKeyframe(jointIndex, frame1);
@@ -92,12 +92,12 @@ void Motion::GetFrameIndicesWithBlend(float inTime, uint32_t * out_frameIndex0, 
 	*out_frameIndex0 = (uint32_t)floor(inTime / m_frameTime);
 	*out_frameIndex1 = *out_frameIndex0 + 1;
 
-	if (*out_frameIndex0 == (uint32_t)(m_frameCount - 1))
+	if(*out_frameIndex0 == (uint32_t)(m_frameCount - 1))
 	{
 		*out_frameIndex1 = m_frameCount - 1;
 		*out_blend = 0.0f;
 	}
-	else if (*out_frameIndex0 == (uint32_t)(m_frameCount - 2))
+	else if(*out_frameIndex0 == (uint32_t)(m_frameCount - 2))
 	{
 		float lastFrameTime = m_totalLengthSeconds - (m_frameTime * *out_frameIndex0);
 		*out_blend = fmodf(inTime, m_frameTime) / lastFrameTime;
@@ -151,7 +151,7 @@ void Motion::SetTargetSkeleton(Skeleton * targetSkeleton)
 void Motion::ReadFromFile(std::string const & filename)
 {
 	FileBinaryReader reader;
-	if (reader.Open(filename))
+	if(reader.Open(filename))
 	{
 		ReadFromStream(reader);
 	}
@@ -167,7 +167,7 @@ void Motion::ReadFromFile(std::string const & filename)
 void Motion::WriteToFile(std::string const & filename)
 {
 	FileBinaryWriter writer;
-	if (writer.Open(filename))
+	if(writer.Open(filename))
 	{
 		WriteToStream(writer);
 	}
@@ -185,7 +185,7 @@ void Motion::ReadFromStream(IBinaryReader &reader)
 	//FILE VERSION
 	uint32_t version;
 	reader.Read<uint32_t>(&version);
-	if (version != FILE_VERSION)
+	if(version != FILE_VERSION)
 	{
 		ERROR_AND_DIE("Wrong file version! Update your file by loading the fbx and saving the skeleton again.");
 	}
@@ -213,15 +213,15 @@ void Motion::ReadFromStream(IBinaryReader &reader)
 	float matData[16];
 	uint32_t keyframeIndex = 0;
 
-	while (keyframeIndex < keyframeCount)
+	while(keyframeIndex < keyframeCount)
 	{
 		uint32_t keyframeNum;
 		reader.Read<uint32_t>(&keyframeNum); //#TODO: randomly becomes large for UnityChan
-		for (int matIndex = 0; matIndex < 16; ++matIndex)
+		for(int matIndex = 0; matIndex < 16; ++matIndex)
 		{
 			reader.Read<float>(&matData[matIndex]);
 		}
-		for (uint32_t repeatMat = 0; repeatMat < keyframeNum; ++repeatMat)
+		for(uint32_t repeatMat = 0; repeatMat < keyframeNum; ++repeatMat)
 		{
 			m_keyframes[keyframeIndex] = matData;
 			keyframeIndex++;
@@ -252,16 +252,16 @@ void Motion::WriteToStream(IBinaryWriter &writer) const
 	//Write all keyframe data (RLE)
 	uint32_t keyframeNum = 1;
 	Matrix4f currentKeyframeMatrix = m_keyframes[0];
-	for (uint32_t keyframeIndex = 1; keyframeIndex < keyframeCount; ++keyframeIndex)
+	for(uint32_t keyframeIndex = 1; keyframeIndex < keyframeCount; ++keyframeIndex)
 	{
-		if (m_keyframes[keyframeIndex] == currentKeyframeMatrix)
+		if(m_keyframes[keyframeIndex] == currentKeyframeMatrix)
 		{
 			keyframeNum++;
 		}
 		else
 		{
 			writer.Write<uint32_t>(keyframeNum);
-			for (int matIndex = 0; matIndex < 16; ++matIndex)
+			for(int matIndex = 0; matIndex < 16; ++matIndex)
 			{
 				writer.Write<float>(currentKeyframeMatrix.m_data[matIndex]);
 			}
@@ -272,7 +272,7 @@ void Motion::WriteToStream(IBinaryWriter &writer) const
 
 	//Write last keyframe data
 	writer.Write<uint32_t>(keyframeNum);
-	for (int matIndex = 0; matIndex < 16; ++matIndex)
+	for(int matIndex = 0; matIndex < 16; ++matIndex)
 	{
 		writer.Write<float>(currentKeyframeMatrix.m_data[matIndex]);
 	}

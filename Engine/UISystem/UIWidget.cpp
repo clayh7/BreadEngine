@@ -1,6 +1,6 @@
 #include "Engine/UISystem/UIWidget.hpp"
 
-#include "Engine/AudioSystem/Audio.hpp"
+#include "Engine/AudioSystem/BAudioSystem.hpp"
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/EventSystem/EventSystem.hpp"
 #include "Engine/InputSystem/Input.hpp"
@@ -66,7 +66,7 @@ UIWidget::UIWidget(XMLNode const & node)
 //-------------------------------------------------------------------------------------------------
 UIWidget::~UIWidget()
 {
-	for (UIWidget * child : m_children)
+	for(UIWidget * child : m_children)
 	{
 		delete child;
 		child = nullptr;
@@ -78,12 +78,12 @@ UIWidget::~UIWidget()
 //-------------------------------------------------------------------------------------------------
 void UIWidget::Update()
 {
-	if (m_hidden)
+	if(m_hidden)
 	{
 		return;
 	}
 
-	for (UIWidget * child : m_children)
+	for(UIWidget * child : m_children)
 	{
 		child->Update();
 	}
@@ -93,12 +93,12 @@ void UIWidget::Update()
 //-------------------------------------------------------------------------------------------------
 void UIWidget::Render() const
 {
-	if (m_hidden)
+	if(m_hidden)
 	{
 		return;
 	}
 
-	for (UIWidget const * child : m_children)
+	for(UIWidget const * child : m_children)
 	{
 		child->Render();
 	}
@@ -108,7 +108,7 @@ void UIWidget::Render() const
 //-------------------------------------------------------------------------------------------------
 void UIWidget::AddChild(UIWidget * widget)
 {
-	if (widget->m_parent)
+	if(widget->m_parent)
 	{
 		widget->m_parent->RemoveChild(widget);
 	}
@@ -121,10 +121,10 @@ void UIWidget::AddChild(UIWidget * widget)
 //-------------------------------------------------------------------------------------------------
 void UIWidget::RemoveChild(UIWidget * widget)
 {
-	for (auto childIter = m_children.begin(); childIter != m_children.end(); ++childIter)
+	for(auto childIter = m_children.begin(); childIter != m_children.end(); ++childIter)
 	{
 		UIWidget * child = *childIter;
-		if (child == widget)
+		if(child == widget)
 		{
 			widget->m_parent = nullptr;
 			m_children.erase(childIter);
@@ -155,7 +155,7 @@ void UIWidget::ChangeState(eWidgetState const & state)
 //-------------------------------------------------------------------------------------------------
 void UIWidget::Highlight()
 {
-	if (m_state == eWidgetState_ENABLED)
+	if(m_state == eWidgetState_ENABLED)
 	{
 		std::string highlightEventName = "";
 		GetProperty(PROPERTY_ON_HIGHLIGHT, highlightEventName);
@@ -169,7 +169,7 @@ void UIWidget::Highlight()
 //-------------------------------------------------------------------------------------------------
 void UIWidget::Unhighlight()
 {
-	if (m_state == eWidgetState_HIGHLIGHTED || m_state == eWidgetState_PRESSED)
+	if(m_state == eWidgetState_HIGHLIGHTED || m_state == eWidgetState_PRESSED)
 	{
 		ChangeState(eWidgetState_ENABLED);
 	}
@@ -179,7 +179,7 @@ void UIWidget::Unhighlight()
 //-------------------------------------------------------------------------------------------------
 void UIWidget::Press()
 {
-	if (m_state == eWidgetState_HIGHLIGHTED)
+	if(m_state == eWidgetState_HIGHLIGHTED)
 	{
 		std::string pressedEventName = "";
 		GetProperty(PROPERTY_ON_PRESSED, pressedEventName);
@@ -193,7 +193,7 @@ void UIWidget::Press()
 //-------------------------------------------------------------------------------------------------
 void UIWidget::Release()
 {
-	if (m_state == eWidgetState_PRESSED)
+	if(m_state == eWidgetState_PRESSED)
 	{
 		std::string releasedEventName = "";
 		GetProperty(PROPERTY_ON_RELEASED, releasedEventName);
@@ -207,7 +207,7 @@ void UIWidget::Release()
 //-------------------------------------------------------------------------------------------------
 void UIWidget::Disable()
 {
-	if (m_state != eWidgetState_DISABLED)
+	if(m_state != eWidgetState_DISABLED)
 	{
 		ChangeState(eWidgetState_DISABLED);
 	}
@@ -217,7 +217,7 @@ void UIWidget::Disable()
 //-------------------------------------------------------------------------------------------------
 void UIWidget::Enable()
 {
-	if (m_state == eWidgetState_DISABLED)
+	if(m_state == eWidgetState_DISABLED)
 	{
 		ChangeState(eWidgetState_ENABLED);
 	}
@@ -230,10 +230,10 @@ void UIWidget::Dirty()
 {
 	m_dirty = true;
 	m_recalculateSize = true;
-	for (size_t childIndex = 0; childIndex < m_children.size(); ++childIndex)
+	for(size_t childIndex = 0; childIndex < m_children.size(); ++childIndex)
 	{
 		UIWidget * child = m_children[childIndex];
-		if (child)
+		if(child)
 		{
 			child->Dirty();
 		}
@@ -244,24 +244,24 @@ void UIWidget::Dirty()
 //-------------------------------------------------------------------------------------------------
 UIWidget * UIWidget::FindWidgetUnderPosition(Vector2f const & position)
 {
-	if (m_hidden)
+	if(m_hidden)
 	{
 		return nullptr;
 	}
 
 	//Go through children in reverse order, find the first one that contains the cursor
-	for (int childIndex = (int)m_children.size() - 1; childIndex >= 0; --childIndex)
+	for(int childIndex = (int)m_children.size() - 1; childIndex >= 0; --childIndex)
 	{
 		UIWidget * child = m_children[childIndex];
 		UIWidget * foundWidget = child->FindWidgetUnderPosition(position);
-		if (foundWidget)
+		if(foundWidget)
 		{
 			return foundWidget;
 		}
 	}
 
 	//If it's not in my children, check myself
-	if (IsPointInside(position))
+	if(IsPointInside(position))
 	{
 		return this;
 	}
@@ -282,7 +282,7 @@ UIWidget * UIWidget::GetParent() const
 //-------------------------------------------------------------------------------------------------
 Vector2f UIWidget::GetSize() const
 {
-	if (!m_recalculateSize)
+	if(!m_recalculateSize)
 	{
 		return m_lastSize;
 	}
@@ -294,36 +294,36 @@ Vector2f UIWidget::GetSize() const
 	eDock currentDock = GetDock();
 
 	//Match parent for docking
-	if (m_parent)
+	if(m_parent)
 	{
-		if (currentDock == eDock_BOTTOM)
+		if(currentDock == eDock_BOTTOM)
 		{
 			Vector2f parentSize = m_parent->GetSizeForChild(this);
 			currentSize.x = parentSize.x;
 		}
-		else if (currentDock == eDock_TOP)
+		else if(currentDock == eDock_TOP)
 		{
 			Vector2f parentSize = m_parent->GetSizeForChild(this);
 			currentSize.x = parentSize.x;
 		}
-		else if (currentDock == eDock_LEFT)
+		else if(currentDock == eDock_LEFT)
 		{
 			Vector2f parentSize = m_parent->GetSizeForChild(this);
 			currentSize.y = parentSize.y;
 		}
-		else if (currentDock == eDock_RIGHT)
+		else if(currentDock == eDock_RIGHT)
 		{
 			Vector2f parentSize = m_parent->GetSizeForChild(this);
 			currentSize.y = parentSize.y;
 		}
-		else if (currentDock == eDock_FILL)
+		else if(currentDock == eDock_FILL)
 		{
 			Vector2f parentSize = m_parent->GetSizeForChild(this);
 			currentSize = parentSize;
 		}
 	}
 
-	if (m_recalculateSize)
+	if(m_recalculateSize)
 	{
 		m_recalculateSize = false;
 		m_lastSize = currentSize;
@@ -368,7 +368,7 @@ void UIWidget::EnterState(eWidgetState const & state)
 	Dirty();
 	PlayUISound();
 
-	switch (state)
+	switch(state)
 	{
 	case eWidgetState_HIGHLIGHTED:
 	{
@@ -385,7 +385,7 @@ void UIWidget::EnterState(eWidgetState const & state)
 //-------------------------------------------------------------------------------------------------
 void UIWidget::ExitState(eWidgetState const & state)
 {
-	switch (state)
+	switch(state)
 	{
 	case eWidgetState_PRESSED:
 		break;
@@ -407,76 +407,76 @@ void UIWidget::PopulateFromXML(XMLNode const & node)
 	m_name = ReadXMLAttribute(node, "name", UISystem::DEFAULT_NAME);
 
 	//Recurse and create children
-	for (int childIndex = 0; childIndex < node.nChildNode(); ++childIndex)
+	for(int childIndex = 0; childIndex < node.nChildNode(); ++childIndex)
 	{
 		XMLNode const & childData = node.getChildNode(childIndex);
 		std::string childName = childData.getName();
 		UIWidget * childWidget = UISystem::CreateWidgetFromName(childName, childData);
-		if (childWidget)
+		if(childWidget)
 		{
 			AddChild(childWidget);
 		}
 	}
 
 	//Set properties from XML
-	for (int childPropertyIndex = 0; childPropertyIndex < node.nChildNode(); ++childPropertyIndex)
+	for(int childPropertyIndex = 0; childPropertyIndex < node.nChildNode(); ++childPropertyIndex)
 	{
 		XMLNode childProperty = node.getChildNode(childPropertyIndex);
 		//Set hidden to be true or false immediately if property is present
-		if (strcmp(childProperty.getName(), PROPERTY_HIDDEN) == 0)
+		if(strcmp(childProperty.getName(), PROPERTY_HIDDEN) == 0)
 		{
 			std::string hidden = ReadXMLAttribute(childProperty, STRING_VALUE, "");
 			m_hidden = strcmp(hidden.c_str(), "false") != 0;
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_ANCHOR) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_ANCHOR) == 0)
 		{
 			std::string anchor = ReadXMLAttribute(childProperty, STRING_VALUE, "");
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_ANCHOR, ParseAnchor(anchor), ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_DOCK) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_DOCK) == 0)
 		{
 			std::string dock = ReadXMLAttribute(childProperty, STRING_VALUE, "");
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_DOCK, ParseDock(dock), ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_OFFSET) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_OFFSET) == 0)
 		{
 			Vector2f offset = ReadXMLAttribute(childProperty, STRING_VALUE, Vector2f::ZERO);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_OFFSET, offset, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_WIDTH) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_WIDTH) == 0)
 		{
 			float width = ReadXMLAttribute(childProperty, STRING_VALUE, 100.f);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_WIDTH, width, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_HEIGHT) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_HEIGHT) == 0)
 		{
 			float height = ReadXMLAttribute(childProperty, STRING_VALUE, 100.f);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_HEIGHT, height, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_SOUND) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_SOUND) == 0)
 		{
 			std::string sound = ReadXMLAttribute(childProperty, STRING_VALUE, "error");
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_SOUND, sound, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_ON_HIGHLIGHT) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_ON_HIGHLIGHT) == 0)
 		{
 			std::string onHighlight = ReadXMLAttribute(childProperty, STRING_VALUE, "");
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_ON_HIGHLIGHT, onHighlight, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_ON_PRESSED) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_ON_PRESSED) == 0)
 		{
 			std::string onPressed = ReadXMLAttribute(childProperty, STRING_VALUE, "");
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_ON_PRESSED, onPressed, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_ON_RELEASED) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_ON_RELEASED) == 0)
 		{
 			std::string onReleased = ReadXMLAttribute(childProperty, STRING_VALUE, "");
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
@@ -491,10 +491,10 @@ void UIWidget::PlayUISound()
 {
 	std::string soundFile;
 	GetProperty(PROPERTY_SOUND, soundFile);
-	SoundID sound = g_AudioSystem->CreateOrGetSound(Stringf("Data/Audio/%s", soundFile.c_str()));
-	if (sound != BAudio::MISSING_SOUND_ID)
+	SoundID sound = BAudioSystem::CreateOrGetSound(Stringf("Data/Audio/%s", soundFile.c_str()));
+	if(sound != BAudioSystem::MISSING_SOUND_ID)
 	{
-		g_AudioSystem->PlayAudio(sound);
+		BAudioSystem::PlaySound(sound);
 	}
 }
 
@@ -507,9 +507,9 @@ bool UIWidget::IsPointInside(Vector2f const & position) const
 	Vector2f topRight = GetWorldPosition(eAnchor_TOP_RIGHT);
 
 	//Is within bounds
-	if (position.x > bottomLeft.x && position.y > bottomLeft.y)
+	if(position.x > bottomLeft.x && position.y > bottomLeft.y)
 	{
-		if (position.x < topRight.x && position.y < topRight.y)
+		if(position.x < topRight.x && position.y < topRight.y)
 		{
 			return true;
 		}
@@ -526,34 +526,34 @@ Vector2f UIWidget::GetSizeForChild(UIWidget const * forChild /*= nullptr */) con
 	Vector2f currentSize = GetSize();
 
 	//Shrink space for docking
-	if (forChild != nullptr)
+	if(forChild != nullptr)
 	{
-		for (UIWidget * child : m_children)
+		for(UIWidget * child : m_children)
 		{
-			if (child == forChild)
+			if(child == forChild)
 			{
 				return currentSize;
 			}
 
 			Vector2f childSize = child->GetSize();
 			eDock childDock = child->GetDock();
-			if (childDock == eDock_BOTTOM)
+			if(childDock == eDock_BOTTOM)
 			{
 				currentSize.y -= childSize.y;
 			}
-			else if (childDock == eDock_TOP)
+			else if(childDock == eDock_TOP)
 			{
 				currentSize.y -= childSize.y;
 			}
-			else if (childDock == eDock_LEFT)
+			else if(childDock == eDock_LEFT)
 			{
 				currentSize.x -= childSize.x;
 			}
-			else if (childDock == eDock_RIGHT)
+			else if(childDock == eDock_RIGHT)
 			{
 				currentSize.x -= childSize.x;
 			}
-			else if (childDock == eDock_FILL)
+			else if(childDock == eDock_FILL)
 			{
 				currentSize -= childSize;
 			}
@@ -573,7 +573,7 @@ Vector2f UIWidget::GetLocalPosition(eAnchor const & anchor) const
 	Vector2f currentSize = GetSize();
 
 	Vector2f result;
-	switch (anchor)
+	switch(anchor)
 	{
 	case eAnchor_TOP_LEFT:
 		result = Vector2f(0.f, currentSize.y);
@@ -629,17 +629,17 @@ Vector2f UIWidget::GetWorldPosition(eAnchor const & anchor, UIWidget const * for
 	Vector2f currentWorldPosition = GetLocalPosition(anchor) + currentOffset;
 
 	//(basically) If we're not the root node
-	if (m_parent)
+	if(m_parent)
 	{
 		currentWorldPosition += m_parent->GetWorldPosition(currentAnchor, this) - GetLocalPosition(currentAnchor);
 	}
 
 	//Shift position for docking children
-	if (forChild != nullptr)
+	if(forChild != nullptr)
 	{
-		for (UIWidget * child : m_children)
+		for(UIWidget * child : m_children)
 		{
-			if (child == forChild)
+			if(child == forChild)
 			{
 				return currentWorldPosition;
 			}
@@ -647,52 +647,52 @@ Vector2f UIWidget::GetWorldPosition(eAnchor const & anchor, UIWidget const * for
 			Vector2f childSize = child->GetSize();
 			eDock childDock = child->GetDock();
 			eDock checkDock = forChild->GetDock(); //The docking of the child you are trying to find
-			if (childDock == eDock_BOTTOM)
+			if(childDock == eDock_BOTTOM)
 			{
-				if (checkDock == eDock_BOTTOM)
+				if(checkDock == eDock_BOTTOM)
 				{
 					currentWorldPosition.y += childSize.y;
 				}
-				else if (checkDock == eDock_LEFT
+				else if(checkDock == eDock_LEFT
 					|| checkDock == eDock_RIGHT
 					|| checkDock == eDock_FILL)
 				{
 					currentWorldPosition.y += childSize.y / 2.f;
 				}
 			}
-			else if (childDock == eDock_TOP)
+			else if(childDock == eDock_TOP)
 			{
-				if (checkDock == eDock_TOP)
+				if(checkDock == eDock_TOP)
 				{
 					currentWorldPosition.y -= childSize.y;
 				}
-				else if (checkDock == eDock_LEFT
+				else if(checkDock == eDock_LEFT
 					|| checkDock == eDock_RIGHT
 					|| checkDock == eDock_FILL)
 				{
 					currentWorldPosition.y -= childSize.y / 2.f;
 				}
 			}
-			else if (childDock == eDock_LEFT)
+			else if(childDock == eDock_LEFT)
 			{
-				if (checkDock == eDock_LEFT)
+				if(checkDock == eDock_LEFT)
 				{
 					currentWorldPosition.x += childSize.x;
 				}
-				else if (checkDock == eDock_TOP
+				else if(checkDock == eDock_TOP
 					|| checkDock == eDock_BOTTOM
 					|| checkDock == eDock_FILL)
 				{
 					currentWorldPosition.x += childSize.x / 2.f;
 				}
 			}
-			else if (childDock == eDock_RIGHT)
+			else if(childDock == eDock_RIGHT)
 			{
-				if (checkDock == eDock_RIGHT)
+				if(checkDock == eDock_RIGHT)
 				{
 					currentWorldPosition.x -= childSize.x;
 				}
-				else if (checkDock == eDock_TOP
+				else if(checkDock == eDock_TOP
 					|| checkDock == eDock_BOTTOM
 					|| checkDock == eDock_FILL)
 				{
@@ -718,23 +718,23 @@ eAnchor UIWidget::GetAnchor() const
 	eDock currentDock = GetDock();
 
 	//Adjust for specific docking
-	if (currentDock == eDock_BOTTOM)
+	if(currentDock == eDock_BOTTOM)
 	{
 		currentAnchor = eAnchor_BOTTOM;
 	}
-	else if (currentDock == eDock_TOP)
+	else if(currentDock == eDock_TOP)
 	{
 		currentAnchor = eAnchor_TOP;
 	}
-	else if (currentDock == eDock_LEFT)
+	else if(currentDock == eDock_LEFT)
 	{
 		currentAnchor = eAnchor_LEFT;
 	}
-	else if (currentDock == eDock_RIGHT)
+	else if(currentDock == eDock_RIGHT)
 	{
 		currentAnchor = eAnchor_RIGHT;
 	}
-	else if (currentDock == eDock_FILL)
+	else if(currentDock == eDock_FILL)
 	{
 		currentAnchor = eAnchor_CENTER;
 	}
@@ -752,7 +752,7 @@ Vector2f UIWidget::GetOffset() const
 	eDock currentDock = GetDock();
 
 	//No offset if you are docked
-	if (currentDock != eDock_NONE)
+	if(currentDock != eDock_NONE)
 	{
 		currentOffset = Vector2f::ZERO;
 	}

@@ -17,7 +17,7 @@ STATIC ShaderProgram const * ShaderProgram::CreateOrGetShaderProgram(const std::
 	size_t nameHash = std::hash<std::string>{}(totalString);
 
 	auto found = s_shaderProgramRegistry.find(nameHash);
-	if (found != s_shaderProgramRegistry.end())
+	if(found != s_shaderProgramRegistry.end())
 	{
 		return found->second;
 	}
@@ -32,7 +32,7 @@ STATIC ShaderProgram const * ShaderProgram::CreateOrGetShaderProgram(const std::
 //-------------------------------------------------------------------------------------------------
 STATIC void ShaderProgram::DestroyRegistry()
 {
-	for (auto shaderIndex = s_shaderProgramRegistry.begin(); shaderIndex != s_shaderProgramRegistry.end(); ++shaderIndex)
+	for(auto shaderIndex = s_shaderProgramRegistry.begin(); shaderIndex != s_shaderProgramRegistry.end(); ++shaderIndex)
 	{
 		delete shaderIndex->second;
 		shaderIndex->second = nullptr;

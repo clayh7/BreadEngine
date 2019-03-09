@@ -38,11 +38,11 @@ void DebugLevelCommand(Command const & command)
 //-------------------------------------------------------------------------------------------------
 void HandleMessage(LogMessage * message)
 {
-	if (message->warningLevel <= LoggingSystem->m_logLevelThreshold)
+	if(message->warningLevel <= LoggingSystem->m_logLevelThreshold)
 	{
 		fwrite(message->messageString, sizeof(char), message->messageSize, LoggingSystem->GetFileHandle());
 	}
-	if (message->warningLevel <= LoggingSystem->m_debugLevelThreshold)
+	if(message->warningLevel <= LoggingSystem->m_debugLevelThreshold)
 	{
 		DebuggerPrintf(message->messageString);
 	}
@@ -53,7 +53,7 @@ void HandleMessage(LogMessage * message)
 void HandleRemainingMessages()
 {
 	LogMessage * msg;
-	while (LoggingSystem->m_messages->PopFront(&msg))
+	while(LoggingSystem->m_messages->PopFront(&msg))
 	{
 		HandleMessage(msg);
 		delete msg;
@@ -65,10 +65,10 @@ void HandleRemainingMessages()
 void LoggerThreadEntry(void *)
 {
 	LoggingSystem->OpenFile();
-	while (!g_isQuitting && !LoggingSystem->IsFlushReady())
+	while(!g_isQuitting && !LoggingSystem->IsFlushReady())
 	{
 		LogMessage * msg;
-		while (LoggingSystem->m_messages->PopFront(&msg))
+		while(LoggingSystem->m_messages->PopFront(&msg))
 		{
 			HandleMessage(msg);
 			delete msg;
@@ -126,10 +126,10 @@ Logger::Logger()
 	//#TODO: Reduce the number of files down to Max Log size
 	std::vector<std::string> logFiles = EnumerateFilesInFolder("Data/Logs/", "*.Log.txt");
 	int maxLogs = MAX_LOG_HISTORY;
-	if (logFiles.size() >= (unsigned int)maxLogs)
+	if(logFiles.size() >= (unsigned int)maxLogs)
 	{
 		std::string deleteFile = logFiles.front();
-		if (remove(deleteFile.c_str()) != 0)
+		if(remove(deleteFile.c_str()) != 0)
 		{
 			ERROR_AND_DIE("Error deleting file");
 		}
@@ -149,7 +149,7 @@ Logger::~Logger()
 
 	//#TODO: Figure out why there is still a message in m_messages
 	LogMessage * message;
-	while (m_messages->PopFront(&message))
+	while(m_messages->PopFront(&message))
 	{
 		delete message;
 		message = nullptr;
@@ -172,7 +172,7 @@ void Logger::LogPrintfv(WarningLevel const & level, char const * format, va_list
 	DateTime now = Time::GetNow();
 	std::string timestamp = Stringf("%.2d:%.2d:%.2d", now.tm_hour, now.tm_min, now.tm_sec);
 	std::string formattedMessage = Stringf("%s [LEVEL %u] %s\n", timestamp.c_str(), level, textLiteral);
-	if (m_messages && !m_flushLogger)
+	if(m_messages && !m_flushLogger)
 	{
 		char * messageString = CreateNewCString(formattedMessage);
 		LogMessage * constructedMessage = new LogMessage(messageString, formattedMessage.size(), level);
@@ -212,7 +212,7 @@ void Logger::LogPrintfWithCallstack(WarningLevel const & level, char const * for
 	//Add callstack to message queue
 	Callstack * callstack = CallstackSystem::Allocate(1);
 	CallstackLine * lines = CallstackSystem::GetLines(callstack); //And here it is twice
-	for (unsigned int index = 0; index < callstack->frame_count; ++index)
+	for(unsigned int index = 0; index < callstack->frame_count; ++index)
 	{
 		std::string callstackMesage = Stringf("%s\n%s(%u)\n", lines[index].function_name, lines[index].filename, lines[index].line);
 		char * callstackString = CreateNewCString(callstackMesage);
@@ -225,7 +225,7 @@ void Logger::LogPrintfWithCallstack(WarningLevel const & level, char const * for
 //-------------------------------------------------------------------------------------------------
 void Logger::LogFlush()
 {
-	if (!m_flushLogger)
+	if(!m_flushLogger)
 	{
 		m_flushLogger = true;
 		m_loggerThread->Join();
@@ -260,7 +260,7 @@ void Logger::OpenFile()
 	errno_t errorSuccess = fopen_s(&m_fileHandle, m_logFilename.c_str(), "wb");
 
 	//Make sure it opened something
-	if (errorSuccess != 0)
+	if(errorSuccess != 0)
 	{
 		ERROR_AND_DIE("Failed to open file");
 	}

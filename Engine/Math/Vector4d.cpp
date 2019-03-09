@@ -156,7 +156,7 @@ void Vector4d::SetXYZW(double setX, double setY, double setZ, double setW)
 void Vector4d::Normalize()
 {
 	double length = Length();
-	if (length == 0.f)
+	if(length == 0.f)
 		return;
 	double oneOverLength = 1.f / length;
 	x *= oneOverLength;

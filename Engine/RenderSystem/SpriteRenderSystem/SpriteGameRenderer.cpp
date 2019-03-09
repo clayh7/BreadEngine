@@ -22,7 +22,7 @@
 void EnableLayerCommand(Command const & command)
 {
 	int layer = command.GetArg(0, 0);
-	if (g_SpriteRenderSystem->SetLayerEnabled(layer, true))
+	if(g_SpriteRenderSystem->SetLayerEnabled(layer, true))
 	{
 		g_ConsoleSystem->AddLog(Stringf("Layer %d enabled", layer), Console::GOOD);
 	}
@@ -37,7 +37,7 @@ void EnableLayerCommand(Command const & command)
 void DisableLayerCommand(Command const & command)
 {
 	int layer = command.GetArg(0, 0);
-	if (g_SpriteRenderSystem->SetLayerEnabled(layer, false))
+	if(g_SpriteRenderSystem->SetLayerEnabled(layer, false))
 	{
 		g_ConsoleSystem->AddLog(Stringf("Layer %d disabled", layer), Console::GOOD);
 	}
@@ -120,7 +120,7 @@ SpriteGameRenderer::~SpriteGameRenderer()
 	delete m_screenEffect;
 	m_screenEffect = nullptr;
 
-	for (Material * deleteMaterial : m_screenMaterials)
+	for(Material * deleteMaterial : m_screenMaterials)
 	{
 		delete deleteMaterial;
 		deleteMaterial = nullptr;
@@ -133,21 +133,21 @@ SpriteGameRenderer::~SpriteGameRenderer()
 	delete m_fboEffect;
 	m_fboEffect = nullptr;
 
-	for (auto deleteResource : m_spriteResourceDatabase)
+	for(auto deleteResource : m_spriteResourceDatabase)
 	{
 		delete deleteResource.second;
 		deleteResource.second = nullptr;
 	}
 	m_spriteResourceDatabase.clear();
 
-	for (auto deleteResource : m_spriteSheetResourceDatabase)
+	for(auto deleteResource : m_spriteSheetResourceDatabase)
 	{
 		delete deleteResource.second;
 		deleteResource.second = nullptr;
 	}
 	m_spriteSheetResourceDatabase.clear();
 
-	for (auto deleteLayer : m_spriteLayers)
+	for(auto deleteLayer : m_spriteLayers)
 	{
 		delete deleteLayer.second;
 		deleteLayer.second = nullptr;
@@ -174,14 +174,14 @@ void SpriteGameRenderer::Render()
 	g_RenderSystem->ClearScreen(m_clearColor);
 
 	//Render Sprite layers
-	for (auto spriteLayerIter = m_spriteLayers.begin(); spriteLayerIter != m_spriteLayers.end(); ++spriteLayerIter)
+	for(auto spriteLayerIter = m_spriteLayers.begin(); spriteLayerIter != m_spriteLayers.end(); ++spriteLayerIter)
 	{
 		//Render layer of sprites
 		SpriteLayer * currentLayer = spriteLayerIter->second;
 		RenderLayer(currentLayer);
 
 		//Apply FBO effects
-		for (eMaterialEffect const & effectID : currentLayer->m_effects)
+		for(eMaterialEffect const & effectID : currentLayer->m_effects)
 		{
 			g_RenderSystem->BindFramebuffer(m_fboEffect);
 			m_screenEffect->SetMaterial(m_screenMaterials[effectID]);
@@ -203,14 +203,14 @@ void SpriteGameRenderer::Render()
 void SpriteGameRenderer::RenderLayer(SpriteLayer const * layer) const
 {
 	//Only draw enabled layers
-	if (!layer->IsEnabled())
+	if(!layer->IsEnabled())
 	{
 		return;
 	}
 
 	//Traverse sprite list and draw each one to screen
 	Sprite * currentSprite = layer->m_listStart;
-	while (currentSprite != nullptr)
+	while(currentSprite != nullptr)
 	{
 		RenderSprite(currentSprite);
 		currentSprite = currentSprite->m_nextSprite;
@@ -221,12 +221,12 @@ void SpriteGameRenderer::RenderLayer(SpriteLayer const * layer) const
 //-------------------------------------------------------------------------------------------------
 void SpriteGameRenderer::RenderSprite(Sprite const * sprite) const
 {
-	if (!sprite->IsEnabled())
+	if(!sprite->IsEnabled())
 	{
 		return;
 	}
 
-	if (!IsSpriteOnScreen(sprite))
+	if(!IsSpriteOnScreen(sprite))
 	{
 		return;
 	}
@@ -237,7 +237,7 @@ void SpriteGameRenderer::RenderSprite(Sprite const * sprite) const
 	//Setup Material
 	Material * spriteMaterial = sprite->GetMaterial();
 
-	if (sprite->m_ignoreView)
+	if(sprite->m_ignoreView)
 	{
 		spriteMaterial->SetUniform("uView", Matrix4f::IDENTITY);
 	}
@@ -280,16 +280,16 @@ void SpriteGameRenderer::SetupMaterialEffects()
 void SpriteGameRenderer::LoadAllSpriteResources()
 {
 	std::vector<std::string> spriteFiles = EnumerateFilesInFolder("Data/Sprites/", "*.Sprite.xml");
-	for (std::string const & spriteFile : spriteFiles)
+	for(std::string const & spriteFile : spriteFiles)
 	{
 		XMLNode spriteFileNode = XMLNode::openFileHelper(spriteFile.c_str()).getChildNode(0);
 
 		//Load all the sprite sheets
-		for (int spriteIndex = 0; spriteIndex < spriteFileNode.nChildNode(); ++spriteIndex)
+		for(int spriteIndex = 0; spriteIndex < spriteFileNode.nChildNode(); ++spriteIndex)
 		{
 			XMLNode spriteData = spriteFileNode.getChildNode(spriteIndex);
 			std::string name = spriteData.getName();
-			if (name == SPRITE_SHEET_RESOURCE_NAME)
+			if(name == SPRITE_SHEET_RESOURCE_NAME)
 			{
 				std::string spriteSheetID = ReadXMLAttribute(spriteData, "id", "");
 				std::string spriteSheetFilename = ReadXMLAttribute(spriteData, "filename", "error");
@@ -299,16 +299,16 @@ void SpriteGameRenderer::LoadAllSpriteResources()
 		}
 
 		//Load all the sprite resources
-		for (int spriteIndex = 0; spriteIndex < spriteFileNode.nChildNode(); ++spriteIndex)
+		for(int spriteIndex = 0; spriteIndex < spriteFileNode.nChildNode(); ++spriteIndex)
 		{
 			XMLNode spriteData = spriteFileNode.getChildNode(spriteIndex);
 			std::string name = spriteData.getName();
-			if (name == SPRITE_RESOURCE_NAME)
+			if(name == SPRITE_RESOURCE_NAME)
 			{
 				std::string spriteID = ReadXMLAttribute(spriteData, "id", "");
 				std::string spriteFilename = ReadXMLAttribute(spriteData, "filename", "error");
 				//Must be a sprite from a sprite sheet
-				if (spriteFilename == "error")
+				if(spriteFilename == "error")
 				{
 					int spriteSheetIndex = ReadXMLAttribute(spriteData, "index", 0);
 					std::string spriteSheetID = ReadXMLAttribute(spriteData, "spriteSheet", "error");
@@ -331,7 +331,7 @@ void SpriteGameRenderer::AddSpriteResource(std::string const & id, std::string c
 	auto foundResource = m_spriteResourceDatabase.find(idHash);
 
 	//Does not exist yet
-	if (foundResource == m_spriteResourceDatabase.end())
+	if(foundResource == m_spriteResourceDatabase.end())
 	{
 		SpriteResource * spriteResource = new SpriteResource(id, filename);
 		m_spriteResourceDatabase.insert(std::pair<size_t, SpriteResource*>(idHash, spriteResource));
@@ -346,7 +346,7 @@ void SpriteGameRenderer::AddSpriteResource(std::string const & id, std::string c
 	auto foundResource = m_spriteResourceDatabase.find(idHash);
 
 	//Does not exist yet
-	if (foundResource == m_spriteResourceDatabase.end())
+	if(foundResource == m_spriteResourceDatabase.end())
 	{
 		SpriteSheetResource const * spriteSheetResource = GetSpriteSheetResource(spriteSheetID);
 		SpriteResource * spriteResource = new SpriteResource(id, spriteSheetResource, spriteSheetIndex);
@@ -362,7 +362,7 @@ void SpriteGameRenderer::AddSpriteSheetResource(std::string const & spriteSheetI
 	auto foundResource = m_spriteSheetResourceDatabase.find(idHash);
 
 	//Does not exist yet
-	if (foundResource == m_spriteSheetResourceDatabase.end())
+	if(foundResource == m_spriteSheetResourceDatabase.end())
 	{
 		SpriteSheetResource * spriteSheetResource = new SpriteSheetResource(spriteSheetID, spriteSheetFilename, spriteSheetSize);
 		m_spriteSheetResourceDatabase.insert(std::pair<size_t, SpriteSheetResource*>(idHash, spriteSheetResource));
@@ -375,7 +375,7 @@ bool SpriteGameRenderer::AddLayerEffect(int layer, eMaterialEffect const & effec
 {
 	//Return true if setting the layer effect was successful
 	auto foundLayer = m_spriteLayers.find(layer);
-	if (foundLayer != m_spriteLayers.end())
+	if(foundLayer != m_spriteLayers.end())
 	{
 		foundLayer->second->AddEffect(effect);
 		return true;
@@ -392,7 +392,7 @@ bool SpriteGameRenderer::ClearLayerEffects(int layer)
 {
 	//Return true if clearing the layer effects was successful
 	auto foundLayer = m_spriteLayers.find(layer);
-	if (foundLayer != m_spriteLayers.end())
+	if(foundLayer != m_spriteLayers.end())
 	{
 		foundLayer->second->RemoveAllEffects();
 		return true;
@@ -409,7 +409,7 @@ void SpriteGameRenderer::ExportSpriteDatabase(std::string const & filename)
 {
 	XMLNode databaseRoot = XMLNode::createXMLTopNode("SpriteResources");
 	std::string outFile = Stringf("Data/Sprites/%s.Sprite.xml", filename.c_str());
-	for (auto spriteResourceIter : m_spriteResourceDatabase)
+	for(auto spriteResourceIter : m_spriteResourceDatabase)
 	{
 		SpriteResource * resource = spriteResourceIter.second;
 		XMLNode resourceNode = databaseRoot.addChild("SpriteResource");
@@ -424,7 +424,7 @@ void SpriteGameRenderer::ExportSpriteDatabase(std::string const & filename)
 SpriteLayer * SpriteGameRenderer::CreateOrGetLayer(int layer) const
 {
 	auto layerFound = m_spriteLayers.find(layer);
-	if (layerFound != m_spriteLayers.end())
+	if(layerFound != m_spriteLayers.end())
 	{
 		return layerFound->second;
 	}
@@ -442,7 +442,7 @@ SpriteResource const * SpriteGameRenderer::GetSpriteResource(std::string const &
 {
 	size_t spriteIDHash = std::hash<std::string>{}(spriteID);
 	auto spriteResourceFound = m_spriteResourceDatabase.find(spriteIDHash);
-	if (spriteResourceFound == m_spriteResourceDatabase.end())
+	if(spriteResourceFound == m_spriteResourceDatabase.end())
 	{
 		ERROR_AND_DIE("Sprite resource not found.");
 	}
@@ -455,7 +455,7 @@ SpriteSheetResource const * SpriteGameRenderer::GetSpriteSheetResource(std::stri
 {
 	size_t spriteSheetIDHash = std::hash<std::string>{}(spriteSheetID);
 	auto spriteSheetResourceFound = m_spriteSheetResourceDatabase.find(spriteSheetIDHash);
-	if (spriteSheetResourceFound == m_spriteSheetResourceDatabase.end())
+	if(spriteSheetResourceFound == m_spriteSheetResourceDatabase.end())
 	{
 		ERROR_AND_DIE("Sprite Sheet resource not found.");
 	}
@@ -502,7 +502,7 @@ Matrix4f SpriteGameRenderer::GetView() const
 bool SpriteGameRenderer::IsSpriteOnScreen(Sprite const * sprite) const
 {
 	//If you ignore the view matrix, never cull!
-	if (sprite->m_ignoreView)
+	if(sprite->m_ignoreView)
 	{
 		return true;
 	}
@@ -518,7 +518,7 @@ bool SpriteGameRenderer::IsSpriteOnScreen(Sprite const * sprite) const
 //-------------------------------------------------------------------------------------------------
 void SpriteGameRenderer::ResetVirtualScreen()
 {
-	if (m_aspectRatio > 1.f)
+	if(m_aspectRatio > 1.f)
 	{
 		m_virtualScreen.x = m_virtualSize * m_aspectRatio;
 		m_virtualScreen.y = m_virtualSize;
@@ -567,7 +567,7 @@ bool SpriteGameRenderer::SetLayerEnabled(int layer, bool isEnabled)
 {
 	//Return true if setting layer was successful
 	auto foundLayer = m_spriteLayers.find(layer);
-	if (foundLayer != m_spriteLayers.end())
+	if(foundLayer != m_spriteLayers.end())
 	{
 		foundLayer->second->SetEnabled(isEnabled);
 		return true;

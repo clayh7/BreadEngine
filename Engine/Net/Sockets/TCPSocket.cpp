@@ -19,7 +19,7 @@ TCPSocket::~TCPSocket()
 int TCPSocket::Connect(SocketAddressPtr address)
 {
 	int error = connect(m_socket, &(address->m_sockAddr), address->GetSize());
-	if (error == SOCKET_ERROR)
+	if(error == SOCKET_ERROR)
 	{
 		return NetworkUtils::ReportError();
 	}
@@ -32,7 +32,7 @@ int TCPSocket::Connect(SocketAddressPtr address)
 int TCPSocket::Bind(SocketAddressPtr address)
 {
 	int error = bind(m_socket, &(address->m_sockAddr), address->GetSize());
-	if (error == SOCKET_ERROR)
+	if(error == SOCKET_ERROR)
 	{
 		return NetworkUtils::ReportError();
 	}
@@ -45,7 +45,7 @@ int TCPSocket::Bind(SocketAddressPtr address)
 int TCPSocket::Listen(int backlog)
 {
 	int error = listen(m_socket, backlog);
-	if (error == SOCKET_ERROR)
+	if(error == SOCKET_ERROR)
 	{
 		return NetworkUtils::ReportError();
 	}
@@ -59,7 +59,7 @@ TCPSocketPtr TCPSocket::Accept()
 	sockaddr fromAddress;
 	int fromLength = sizeof(fromAddress);
 	SOCKET newSocket = accept(m_socket, &fromAddress, &fromLength);
-	if (newSocket != INVALID_SOCKET)
+	if(newSocket != INVALID_SOCKET)
 	{
 		TCPSocket * tcpSocket = new TCPSocket(newSocket);
 		tcpSocket->SetAddress(fromAddress);
@@ -76,7 +76,7 @@ TCPSocketPtr TCPSocket::Accept()
 int TCPSocket::Send(void const * data, int length)
 {
 	int bytesSentCount = send(m_socket, static_cast<char const *>(data), length, 0);
-	if (bytesSentCount < 0)
+	if(bytesSentCount < 0)
 	{
 		NetworkUtils::ReportError();
 	}
@@ -88,7 +88,7 @@ int TCPSocket::Send(void const * data, int length)
 int TCPSocket::Receive(void * buffer, int length)
 {
 	int bytesReceivedCount = recv(m_socket, static_cast<char*>(buffer), length, 0);
-	if (bytesReceivedCount < 0)
+	if(bytesReceivedCount < 0)
 	{
 		NetworkUtils::ReportError(false);
 	}
@@ -101,7 +101,7 @@ void TCPSocket::SetBlocking(bool isBlocking)
 {
 	u_long blocking = isBlocking ? 0 : 1;
 	int error = ioctlsocket(m_socket, FIONBIO, &blocking);
-	if (error == SOCKET_ERROR)
+	if(error == SOCKET_ERROR)
 	{
 		NetworkUtils::ReportError();
 	}

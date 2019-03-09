@@ -18,7 +18,7 @@ static const char *FMOD_ErrorString(FMOD_RESULT errcode) __attribute__((unused))
 
 static const char *FMOD_ErrorString(FMOD_RESULT errcode)
 {
-	switch (errcode)
+	switch(errcode)
 	{
 	case FMOD_ERR_ALREADYLOCKED:          return "Tried to call lock a second time before unlock was called. ";
 	case FMOD_ERR_BADCOMMAND:             return "Tried to call a function on a data type that does not allow this type of functionality (ie calling Sound::lock on a streaming sound). ";

@@ -106,7 +106,7 @@ UITextField::~UITextField()
 //-------------------------------------------------------------------------------------------------
 void UITextField::Update()
 {
-	if (m_hidden)
+	if(m_hidden)
 	{
 		return;
 	}
@@ -114,7 +114,7 @@ void UITextField::Update()
 	//Make blinking cursor at the end of the line
 	UpdateBlinkingLine();
 
-	if (m_dirty)
+	if(m_dirty)
 	{
 		UpdateRenderers();
 		m_dirty = false;
@@ -127,14 +127,14 @@ void UITextField::Update()
 //-------------------------------------------------------------------------------------------------
 void UITextField::Render() const
 {
-	if (m_hidden)
+	if(m_hidden)
 	{
 		return;
 	}
 
 	m_background->Render();
 	m_border->Render();
-	if (m_content == "")
+	if(m_content == "")
 	{
 		m_hint->Render();
 		m_text->Render();
@@ -172,12 +172,12 @@ void UITextField::Select() const
 //-------------------------------------------------------------------------------------------------
 void UITextField::UpdateBlinkingLine()
 {
-	if (IsSelected())
+	if(IsSelected())
 	{
 		m_blinkTimer += Time::DELTA_SECONDS;
-		if (m_blinkTimer > BLINK_DELAY_SECONDS)
+		if(m_blinkTimer > BLINK_DELAY_SECONDS)
 		{
-			while (m_blinkTimer > BLINK_DELAY_SECONDS)
+			while(m_blinkTimer > BLINK_DELAY_SECONDS)
 			{
 				m_blinkTimer -= BLINK_DELAY_SECONDS;
 			}
@@ -215,7 +215,7 @@ void UITextField::UpdateRenderers()
 	CreateBorderMesh(m_borderMesh);
 
 	Color borderColor;
-	if (IsSelected())
+	if(IsSelected())
 	{
 		GetProperty(PROPERTY_BORDER_SELECTED_COLOR, borderColor);
 	}
@@ -248,15 +248,15 @@ void UITextField::UpdateRenderers()
 	GetProperty(PROPERTY_TEXT_COLOR, textColor);
 	GetProperty(PROPERTY_TEXT_SIZE, textSize);
 	GetProperty(PROPERTY_TEXT_ALIGNMENT, textAlignment);
-	if (textAlignment == eAlignment_LEFT)
+	if(textAlignment == eAlignment_LEFT)
 	{
 		textPosition = GetWorldPosition(eAnchor_LEFT);
 	}
-	if (textAlignment == eAlignment_CENTER)
+	if(textAlignment == eAlignment_CENTER)
 	{
 		textPosition = GetWorldPosition(eAnchor_CENTER);
 	}
-	if (textAlignment == eAlignment_RIGHT)
+	if(textAlignment == eAlignment_RIGHT)
 	{
 		textPosition = GetWorldPosition(eAnchor_RIGHT);
 	}
@@ -281,15 +281,15 @@ void UITextField::UpdateRenderers()
 	GetProperty(PROPERTY_HINT_COLOR, hintColor);
 	GetProperty(PROPERTY_HINT_SIZE, hintSize);
 	GetProperty(PROPERTY_HINT_ALIGNMENT, hintAlignment);
-	if (hintAlignment == eAlignment_LEFT)
+	if(hintAlignment == eAlignment_LEFT)
 	{
 		hintPosition = GetWorldPosition(eAnchor_LEFT);
 	}
-	if (hintAlignment == eAlignment_CENTER)
+	if(hintAlignment == eAlignment_CENTER)
 	{
 		hintPosition = GetWorldPosition(eAnchor_CENTER);
 	}
-	if (hintAlignment == eAlignment_RIGHT)
+	if(hintAlignment == eAlignment_RIGHT)
 	{
 		hintPosition = GetWorldPosition(eAnchor_RIGHT);
 	}
@@ -347,10 +347,10 @@ std::string UITextField::GetDisplayContent() const
 	GetProperty(PROPERTY_PASSWORD, password);
 	std::string display = m_content;
 	std::string blinkingLine = ((m_showBlinkingLine) ? "|" : "");
-	if (password)
+	if(password)
 	{
 		display = "";
-		for (size_t index = 0; index < m_content.size(); ++index)
+		for(size_t index = 0; index < m_content.size(); ++index)
 		{
 			display += '*';
 		}
@@ -363,81 +363,81 @@ std::string UITextField::GetDisplayContent() const
 void UITextField::PopulateFromXML(XMLNode const & node)
 {
 	//Set properties from XML
-	for (int childPropertyIndex = 0; childPropertyIndex < node.nChildNode(); ++childPropertyIndex)
+	for(int childPropertyIndex = 0; childPropertyIndex < node.nChildNode(); ++childPropertyIndex)
 	{
 		XMLNode childProperty = node.getChildNode(childPropertyIndex);
 		//Border
-		if (strcmp(childProperty.getName(), PROPERTY_BORDER_COLOR) == 0)
+		if(strcmp(childProperty.getName(), PROPERTY_BORDER_COLOR) == 0)
 		{
 			Color borderColor = ReadXMLAttribute(childProperty, STRING_VALUE, Color::BLACK);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_BORDER_COLOR, borderColor, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_BORDER_SELECTED_COLOR) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_BORDER_SELECTED_COLOR) == 0)
 		{
 			Color selectedColor = ReadXMLAttribute(childProperty, STRING_VALUE, Color::WHITE);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_BORDER_SELECTED_COLOR, selectedColor, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_BORDER_SIZE) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_BORDER_SIZE) == 0)
 		{
 			float borderSize = ReadXMLAttribute(childProperty, STRING_VALUE, 0.f);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_BORDER_SIZE, borderSize, ParseState(state));
 		}
 		//Background
-		else if (strcmp(childProperty.getName(), PROPERTY_BACKGROUND_COLOR) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_BACKGROUND_COLOR) == 0)
 		{
 			Color backgroundColor = ReadXMLAttribute(childProperty, STRING_VALUE, Color::WHITE);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_BACKGROUND_COLOR, backgroundColor, ParseState(state));
 		}
 		//Text
-		else if (strcmp(childProperty.getName(), PROPERTY_TEXT_COLOR) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_TEXT_COLOR) == 0)
 		{
 			Color textColor = ReadXMLAttribute(childProperty, STRING_VALUE, Color::WHITE);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_TEXT_COLOR, textColor, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_TEXT_SIZE) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_TEXT_SIZE) == 0)
 		{
 			float textSize = ReadXMLAttribute(childProperty, STRING_VALUE, 12.f);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_TEXT_SIZE, textSize, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_TEXT_ALIGNMENT) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_TEXT_ALIGNMENT) == 0)
 		{
 			std::string alignment = ReadXMLAttribute(childProperty, STRING_VALUE, "");
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_TEXT_ALIGNMENT, ParseAlignment(alignment), ParseState(state));
 		}
 		//Hint
-		else if (strcmp(childProperty.getName(), PROPERTY_HINT_COLOR) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_HINT_COLOR) == 0)
 		{
 			Color hintColor = ReadXMLAttribute(childProperty, STRING_VALUE, Color::WHITE);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_HINT_COLOR, hintColor, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_HINT) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_HINT) == 0)
 		{
 			std::string hint = ReadXMLAttribute(childProperty, STRING_VALUE, "");
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_HINT, hint, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_HINT_SIZE) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_HINT_SIZE) == 0)
 		{
 			float hintSize = ReadXMLAttribute(childProperty, STRING_VALUE, 12.f);
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_HINT_SIZE, hintSize, ParseState(state));
 		}
-		else if (strcmp(childProperty.getName(), PROPERTY_HINT_ALIGNMENT) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_HINT_ALIGNMENT) == 0)
 		{
 			std::string alignment = ReadXMLAttribute(childProperty, STRING_VALUE, "");
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
 			SetProperty(PROPERTY_HINT_ALIGNMENT, ParseAlignment(alignment), ParseState(state));
 		}
 		//Password
-		else if (strcmp(childProperty.getName(), PROPERTY_PASSWORD) == 0)
+		else if(strcmp(childProperty.getName(), PROPERTY_PASSWORD) == 0)
 		{
 			std::string password = ReadXMLAttribute(childProperty, STRING_VALUE, "");
 			std::string state = ReadXMLAttribute(childProperty, STRING_STATE, "");
@@ -451,7 +451,7 @@ void UITextField::PopulateFromXML(XMLNode const & node)
 //-------------------------------------------------------------------------------------------------
 void UITextField::OnAddChar(NamedProperties & charTypedEvent)
 {
-	if (IsSelected())
+	if(IsSelected())
 	{
 		//Get character
 		unsigned char asKey;
@@ -468,10 +468,10 @@ void UITextField::OnAddChar(NamedProperties & charTypedEvent)
 //-------------------------------------------------------------------------------------------------
 void UITextField::OnRemoveChar(NamedProperties &)
 {
-	if (IsSelected())
+	if(IsSelected())
 	{
 		//Remove the last (far right) character from text
-		if (m_content.size() > 0)
+		if(m_content.size() > 0)
 		{
 			m_content = m_content.substr(0, m_content.size() - 1);
 			//m_text->SetText( content );

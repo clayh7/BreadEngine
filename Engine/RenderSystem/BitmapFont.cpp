@@ -28,7 +28,7 @@ std::string CutToNthOccurence(std::string const & stringToParse, int num, std::s
 {
 	std::size_t dataIndex = stringToParse.find(delimeter);
 	std::string cutString = stringToParse.substr(dataIndex + 1);
-	for (int lineCount = 0; lineCount < num; ++lineCount)
+	for(int lineCount = 0; lineCount < num; ++lineCount)
 	{
 		std::size_t dataIndex = cutString.find(delimeter);
 		cutString = cutString.substr(dataIndex + 1);
@@ -47,7 +47,7 @@ BitmapFont::BitmapFont(std::string const & bitmapFontInfo, bool parseFNT /*= tru
 	m_glyphs.resize(256);
 
 	//Not Parsing .fnt file
-	if (!parseFNT) //basically means this is mono-spaced font
+	if(!parseFNT) //basically means this is mono-spaced font
 	{
 		GenerateTexture(bitmapFontInfo);
 
@@ -62,7 +62,7 @@ BitmapFont::BitmapFont(std::string const & bitmapFontInfo, bool parseFNT /*= tru
 		int glyphHeight = m_texelSize.y / spriteSheetSize.y;
 
 		//Building Glyph List
-		for (int glyphIndex = 0; glyphIndex < glyphCount; ++glyphIndex)
+		for(int glyphIndex = 0; glyphIndex < glyphCount; ++glyphIndex)
 		{
 			int glyphX = (glyphIndex % spriteSheetSize.x)*glyphWidth;
 			int glyphY = (glyphIndex / spriteSheetSize.x) * glyphHeight;
@@ -88,14 +88,14 @@ BitmapFont::BitmapFont(std::string const & bitmapFontInfo, bool parseFNT /*= tru
 		m_size = GetInt(fileData, "size=");
 
 		//Clear glyph list
-		for (unsigned char glyphIndex = 0; glyphIndex < 255; ++glyphIndex)
+		for(unsigned char glyphIndex = 0; glyphIndex < 255; ++glyphIndex)
 		{
 			m_glyphs[glyphIndex] = nullptr;
 		}
 
 		//Building Glyph List
 		int glyphCount = GetInt(fileData, "chars count=");
-		for (int glyphLine = 0; glyphLine < glyphCount; ++glyphLine)
+		for(int glyphLine = 0; glyphLine < glyphCount; ++glyphLine)
 		{
 			std::string charInfoString = CutToNthOccurence(fileData, glyphLine, "char id=");
 			int glyphID = GetInt(charInfoString, "id=");
@@ -112,7 +112,7 @@ BitmapFont::BitmapFont(std::string const & bitmapFontInfo, bool parseFNT /*= tru
 
 		//Building Kerning List
 		int kerningCount = GetInt(fileData, "kernings count=");
-		for (int kerningLine = 0; kerningLine < kerningCount; ++kerningLine)
+		for(int kerningLine = 0; kerningLine < kerningCount; ++kerningLine)
 		{
 			std::string kerningInfoString = CutToNthOccurence(fileData, kerningLine, "kerning "); //space after 'kerning ' is important, so it doesn't find 'kernings'
 			unsigned int kerningFirst = (unsigned int)GetInt(kerningInfoString, "first=");
@@ -128,7 +128,7 @@ BitmapFont::BitmapFont(std::string const & bitmapFontInfo, bool parseFNT /*= tru
 			kerningCompactIndex |= kerningSecond;
 
 			auto kerningFound = m_kernings.find(kerningCompactIndex);
-			if (kerningFound == m_kernings.end())
+			if(kerningFound == m_kernings.end())
 			{
 				m_kernings[kerningCompactIndex] = new Kerning(kerningFirst, kerningSecond, kerningAmount);
 			}
@@ -146,14 +146,14 @@ BitmapFont::BitmapFont(std::string const & bitmapFontInfo, bool parseFNT /*= tru
 //-------------------------------------------------------------------------------------------------
 BitmapFont::~BitmapFont()
 {
-	for (Glyph * deleteGlyph : m_glyphs)
+	for(Glyph * deleteGlyph : m_glyphs)
 	{
 		delete deleteGlyph;
 		deleteGlyph = nullptr;
 	}
 	m_glyphs.clear();
 
-	for (auto deleteKerning : m_kernings)
+	for(auto deleteKerning : m_kernings)
 	{
 		delete deleteKerning.second;
 		deleteKerning.second = nullptr;
@@ -195,7 +195,7 @@ BitmapFont* BitmapFont::CreateOrGetFont(std::string const & bitmapFontName)
 {
 	size_t nameHash = std::hash<std::string>{}(bitmapFontName);
 	auto foundFontIter = s_fontRegistry.find(nameHash);
-	if (foundFontIter != s_fontRegistry.end())
+	if(foundFontIter != s_fontRegistry.end())
 		return foundFontIter->second;
 
 	std::string delimiter = ".";
@@ -211,7 +211,7 @@ BitmapFont* BitmapFont::CreateOrGetFont(std::string const & bitmapFontName)
 //-------------------------------------------------------------------------------------------------
 void BitmapFont::DestroyRegistry()
 {
-	for (auto deleteFont : s_fontRegistry)
+	for(auto deleteFont : s_fontRegistry)
 	{
 		delete deleteFont.second;
 		deleteFont.second = nullptr;
@@ -273,7 +273,7 @@ Glyph const * BitmapFont::GetGlyph(unsigned char glyphToDraw) const
 Kerning const & BitmapFont::GetKerning(Glyph const * previousGlyph, Glyph const * glyph) const
 {
 	//If a glyph doesn't exist, return nothing
-	if (previousGlyph == nullptr || glyph == nullptr)
+	if(previousGlyph == nullptr || glyph == nullptr)
 	{
 		return DOES_NOT_EXIST;
 	}
@@ -285,7 +285,7 @@ Kerning const & BitmapFont::GetKerning(Glyph const * previousGlyph, Glyph const 
 	kerningCompactIndex = kerningCompactIndex << 4;
 	kerningCompactIndex |= secondID;
 	auto foundFontIter = m_kernings.find(kerningCompactIndex);
-	if (foundFontIter != m_kernings.end())
+	if(foundFontIter != m_kernings.end())
 	{
 		return *foundFontIter->second;
 	}

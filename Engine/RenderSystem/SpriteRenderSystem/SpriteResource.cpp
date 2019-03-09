@@ -38,13 +38,13 @@ SpriteResource::SpriteResource(std::string const & id, SpriteSheetResource const
 SpriteResource::~SpriteResource()
 {
 	//These may not have been set, may only be in SpriteSheetResources
-	if (m_material)
+	if(m_material)
 	{
 		delete m_material;
 	}
 	m_material = nullptr;
 
-	if (m_filename)
+	if(m_filename)
 	{
 		delete m_filename;
 	}
@@ -58,7 +58,7 @@ SpriteResource::~SpriteResource()
 //-------------------------------------------------------------------------------------------------
 Material * SpriteResource::GetMaterial() const
 {
-	if (m_spriteSheetResource)
+	if(m_spriteSheetResource)
 	{
 		return m_spriteSheetResource->GetMaterial();
 	}
@@ -72,7 +72,7 @@ Material * SpriteResource::GetMaterial() const
 //-------------------------------------------------------------------------------------------------
 Texture const * SpriteResource::GetTexture() const
 {
-	if (m_spriteSheetResource)
+	if(m_spriteSheetResource)
 	{
 		return m_spriteSheetResource->GetTexture();
 	}
@@ -86,7 +86,7 @@ Texture const * SpriteResource::GetTexture() const
 //-------------------------------------------------------------------------------------------------
 AABB2f SpriteResource::GetUVBounds() const
 {
-	if (m_spriteSheetResource)
+	if(m_spriteSheetResource)
 	{
 		return m_spriteSheetResource->GetTexCoordsForSpriteIndex(m_spriteSheetIndex);
 	}

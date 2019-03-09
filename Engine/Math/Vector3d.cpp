@@ -148,7 +148,7 @@ void Vector3d::SetXYZ(double setX, double setY, double setZ)
 void Vector3d::Normalize()
 {
 	double length = Length();
-	if (length == 0.f)
+	if(length == 0.f)
 		return;
 	double oneOverLength = 1.f / length;
 	x *= oneOverLength;

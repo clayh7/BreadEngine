@@ -292,7 +292,7 @@ void Matrix4f::MakePerspective(float fovDegreesY, float aspect, float nearZ, flo
 
 	float w = size;
 	float h = size;
-	if (aspect > 1.0f)
+	if(aspect > 1.0f)
 	{
 		w /= aspect;
 	}
@@ -495,9 +495,9 @@ void Matrix4f::SetScale(Vector3f const &scaleVector)
 //-------------------------------------------------------------------------------------------------
 bool Matrix4f::operator==(Matrix4f const & rhs) const
 {
-	for (int index = 0; index < 16; ++index)
+	for(int index = 0; index < 16; ++index)
 	{
-		if (m_data[index] != rhs.m_data[index])
+		if(m_data[index] != rhs.m_data[index])
 			return false;
 	}
 	return true;

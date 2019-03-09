@@ -97,7 +97,7 @@ public:
 	template <typename T_ObjectType, typename T_FunctionType>
 	static void RegisterEvent(std::string const & eventName, T_ObjectType * object, T_FunctionType function)
 	{
-		if (s_registeredSubscribers == nullptr)
+		if(s_registeredSubscribers == nullptr)
 		{
 			EventSystem::Startup();
 		}
@@ -112,7 +112,7 @@ public:
 		subscriber->m_function = function;
 
 		//If subscription exists, add to it
-		if (foundEventSubscription != s_registeredSubscribers->end())
+		if(foundEventSubscription != s_registeredSubscribers->end())
 		{
 			std::vector<SubscriberBase*> & eventSubscription = foundEventSubscription->second;
 			eventSubscription.push_back(subscriber);
@@ -132,19 +132,19 @@ public:
 	static void EventSystem::Unregister(T_ObjectType * subscriber)
 	{
 		//std::pair<size_t,std::vector<SubscriberBase*>> const 
-		for (auto & eventSubscriptionPair : *s_registeredSubscribers)
+		for(auto & eventSubscriptionPair : *s_registeredSubscribers)
 		{
 			std::vector<SubscriberBase*> & eventSubscription = eventSubscriptionPair.second;
-			for (auto subscriberIter = eventSubscription.begin(); subscriberIter != eventSubscription.end(); /*Nothing*/)
+			for(auto subscriberIter = eventSubscription.begin(); subscriberIter != eventSubscription.end(); /*Nothing*/)
 			{
 				SubscriberBase * subscriberBase = *subscriberIter;
 				T_ObjectType * object = static_cast<T_ObjectType*>(subscriberBase->GetObject());
 
 				//Make sure subscriber is the correct type
-				if (object)
+				if(object)
 				{
 					//Make sure subscriber matches our criteria
-					if (object == subscriber)
+					if(object == subscriber)
 					{
 						//Remove the subscriber
 						delete subscriberBase;

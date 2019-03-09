@@ -174,7 +174,9 @@
     <None Include="..\..\Run_Win32\Data\Shaders\tangent.vert" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="..\..\Run_Win32\Data\Sprites\SpriteResources.Sprite.xml" />
+    <Xml Include="..\..\Run_Win32\Data\Sprites\SpriteResources.Sprite.xml">
+      <SubType>Designer</SubType>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\Run_Win32\Data\Fonts\ClayFont.png" />

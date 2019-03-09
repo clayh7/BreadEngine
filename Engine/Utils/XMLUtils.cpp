@@ -6,7 +6,7 @@
 // Destroys all the allocated data for an XMLNode tree. 
 void DestroyXMLDocument(XMLNode& xmlDocumentToDestroy)
 {
-	while (!xmlDocumentToDestroy.getParentNode().isEmpty())
+	while(!xmlDocumentToDestroy.getParentNode().isEmpty())
 	{
 		xmlDocumentToDestroy = xmlDocumentToDestroy.getParentNode();
 	}
@@ -18,7 +18,7 @@ void DestroyXMLDocument(XMLNode& xmlDocumentToDestroy)
 //-------------------------------------------------------------------------------------------------
 std::string GetXMLErrorDescForErrorCode(XMLError xmlErrorCode)
 {
-	switch (xmlErrorCode)
+	switch(xmlErrorCode)
 	{
 	case eXMLErrorNone:
 	case eXMLErrorMissingEndTag:					return "MissingEndTag";
@@ -81,7 +81,7 @@ std::string GetXMLAttributeAsString(const XMLNode& node, std::string const & att
 	wasAttributePresent_out = false;
 
 	// First try to get it as an attribute with that property name
-	if (node.getAttribute(attributeName.c_str()))
+	if(node.getAttribute(attributeName.c_str()))
 	{
 		attributeValue = node.getAttribute(attributeName.c_str());
 		wasAttributePresent_out = true;
@@ -91,14 +91,14 @@ std::string GetXMLAttributeAsString(const XMLNode& node, std::string const & att
 	{
 		// Second try to get it as a child node with that name
 		XMLNode		childNode = node.getChildNode(attributeName.c_str());
-		if (childNode.hasText())
+		if(childNode.hasText())
 		{
 			attributeValue = childNode.getText();
 			wasAttributePresent_out = true;
 			node.markUsed();
 		}
 		// Third, try to get it as an attribute named "Value" of the child node with that property name
-		else if (!childNode.isEmpty())
+		else if(!childNode.isEmpty())
 		{
 			attributeValue = GetXMLAttributeAsString(childNode, "value", wasAttributePresent_out);
 			node.markUsed();
@@ -121,7 +121,7 @@ bool GetXMLNodeByNameSearchingFromPosition(const XMLNode& parentNode, std::strin
 
 	childNode_out = parentNode.getChildNode(childName.c_str(), &position_inout);
 
-	if (!childNode_out.isEmpty())
+	if(!childNode_out.isEmpty())
 	{
 		childNode_out.markUsed();
 		wasFound = true;
@@ -137,7 +137,7 @@ std::string ReadXMLAttribute(const XMLNode& node, std::string const & propertyNa
 	bool wasPropertyPresent = false;
 
 	std::string	outValue = GetXMLAttributeOfType < std::string >(node, propertyName, wasPropertyPresent);
-	if (!wasPropertyPresent)
+	if(!wasPropertyPresent)
 		outValue = defaultValue;
 
 	return outValue;

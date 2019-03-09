@@ -42,7 +42,7 @@ Uniform::Uniform(int bindPoint, int length, int size, unsigned int type, std::st
 //-------------------------------------------------------------------------------------------------
 Uniform::~Uniform()
 {
-	switch (m_type)
+	switch(m_type)
 	{
 	case GL_INT:
 	{

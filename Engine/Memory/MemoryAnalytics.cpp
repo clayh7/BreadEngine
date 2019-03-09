@@ -14,14 +14,14 @@ MemoryAnalytics * g_MemoryAnalyticsSystem = nullptr;
 
 
 //#TODO: Definitely does NOT track bytes leaked correctly
-#ifdef MEMORY_TRACKING
+#if MEMORY_TRACKING >= 1
 //-------------------------------------------------------------------------------------------------
 void * Allocate(size_t numBytes, eMemoryTag tag)
 {
 	BProfiler::IncrementNews();
 
 	size_t totalSize = numBytes + sizeof(size_t) * 2;
-	if (!g_MemoryAnalyticsSystem || !g_MemoryAnalyticsSystem->m_trackMemory)
+	if(!g_MemoryAnalyticsSystem || !g_MemoryAnalyticsSystem->m_trackMemory)
 	{
 		size_t * ptr = (size_t*)malloc(totalSize);
 		ptr += 2;
@@ -37,7 +37,7 @@ void * Allocate(size_t numBytes, eMemoryTag tag)
 	g_MemoryAnalyticsSystem->m_totalAllocated += numBytes;
 
 	//Track high-water mark
-	if (g_MemoryAnalyticsSystem->m_totalAllocated > g_MemoryAnalyticsSystem->m_highestTotalAllocated)
+	if(g_MemoryAnalyticsSystem->m_totalAllocated > g_MemoryAnalyticsSystem->m_highestTotalAllocated)
 	{
 		g_MemoryAnalyticsSystem->m_highestTotalAllocated = g_MemoryAnalyticsSystem->m_totalAllocated;
 	}
@@ -50,7 +50,7 @@ void * Allocate(size_t numBytes, eMemoryTag tag)
 
 	//Add allocation stack to map
 	auto foundAllocation = g_MemoryAnalyticsSystem->m_callstackMap.find(ptr);
-	if (foundAllocation == g_MemoryAnalyticsSystem->m_callstackMap.end()) // No duplicates
+	if(foundAllocation == g_MemoryAnalyticsSystem->m_callstackMap.end()) // No duplicates
 	{
 		g_MemoryAnalyticsSystem->m_callstackMap.insert(std::pair<void*, Callstack*>(ptr, CallstackSystem::Allocate(2)));
 	}
@@ -91,13 +91,15 @@ void * operator new [](size_t numBytes, eMemoryTag tag)
 	return Allocate(numBytes, tag);
 }
 
-
+#include <Windows.h>
+#include <iostream>
+#include <sstream>
 //-------------------------------------------------------------------------------------------------
 void Deallocate(void * ptr)
 {
 	BProfiler::IncrementDeletes();
 
-	if (!g_MemoryAnalyticsSystem || !g_MemoryAnalyticsSystem->m_trackMemory)
+	if(!g_MemoryAnalyticsSystem || !g_MemoryAnalyticsSystem->m_trackMemory)
 	{
 		size_t * ptrStart = (size_t *)ptr;
 		ptrStart -= 2;
@@ -116,7 +118,7 @@ void Deallocate(void * ptr)
 	//metaData is now at the start of the data and ready to be freed
 
 	//Update allocation trackers
-	if (g_MemoryAnalyticsSystem->m_numAllocations == 0)
+	if(g_MemoryAnalyticsSystem->m_numAllocations == 0)
 	{
 		//Too many deallocations
 		__debugbreak();
@@ -129,7 +131,7 @@ void Deallocate(void * ptr)
 	}
 
 	auto foundAllocation = g_MemoryAnalyticsSystem->m_callstackMap.find(ptr);
-	if (foundAllocation != g_MemoryAnalyticsSystem->m_callstackMap.end())
+	if(foundAllocation != g_MemoryAnalyticsSystem->m_callstackMap.end())
 	{
 		CallstackSystem::Free(foundAllocation->second);
 		g_MemoryAnalyticsSystem->m_callstackMap.erase(foundAllocation);
@@ -160,7 +162,7 @@ void operator delete [](void * ptr)
 {
 	Deallocate(ptr);
 }
-#endif
+#endif // MEMORY_TRACKING >= 1
 
 
 //-------------------------------------------------------------------------------------------------
@@ -194,7 +196,7 @@ void MemoryAnalytics::Update()
 {
 	//Run once every second
 	float elapsedTime = Time::TOTAL_SECONDS - m_timeStampOfPreviousAnalysis;
-	if (elapsedTime >= 1.f)
+	if(elapsedTime >= 1.f)
 	{
 		m_timeStampOfPreviousAnalysis = Time::TOTAL_SECONDS;
 		m_allocationsInTheLastSecond = m_allocationsForOneSecond;
@@ -203,9 +205,9 @@ void MemoryAnalytics::Update()
 		m_averageDeallocationsPerSecond = (float)m_deallocationsInTheLastSecond / elapsedTime;
 		m_allocationsForOneSecond = 0;
 		m_deallocationsForOneSecond = 0;
-#if MEMORY_TRACKING == 1
+#if MEMORY_TRACKING >= 2
 		PopulateCallstackStats();
-#endif // MEMORY_TRACKING == 1
+#endif // MEMORY_TRACKING >= 2
 	}
 }
 
@@ -213,7 +215,7 @@ void MemoryAnalytics::Update()
 //-------------------------------------------------------------------------------------------------
 void MemoryAnalytics::MemoryAnalyticsStartUp()
 {
-#ifdef MEMORY_TRACKING
+#if MEMORY_TRACKING >= 1
 	m_trackMemory = true; //If it wasn't already tracking memory, start tracking now
 	m_startupAllocations = m_numAllocations;
 	CallstackSystem::Init();
@@ -222,19 +224,19 @@ void MemoryAnalytics::MemoryAnalyticsStartUp()
 	DebuggerPrintf("Allocations: %u \n", m_numAllocations);
 	DebuggerPrintf("Bytes Allocated: %u \n", m_totalAllocated);
 	DebuggerPrintf("//=============================================================================================\n\n");
-#endif
+#endif // MEMORY_TRACKING >= 1
 }
 
 
 //-------------------------------------------------------------------------------------------------
 void MemoryAnalytics::MemoryAnalyticsShutDown()
 {
-#ifdef MEMORY_TRACKING
+#if MEMORY_TRACKING >= 1
 	m_trackMemory = false;
-#if (MEMORY_TRACKING == 1)
+#if MEMORY_TRACKING >= 2
 	Flush();
-#endif
-	if (m_startupAllocations != m_numAllocations)
+#endif // MEMORY_TRACKING >= 2
+	if(m_startupAllocations != m_numAllocations)
 	{
 		ASSERT_RECOVERABLE(false, "Memory Leaks");
 	}
@@ -244,37 +246,37 @@ void MemoryAnalytics::MemoryAnalyticsShutDown()
 	DebuggerPrintf("Bytes Leaked: %u \n", m_totalAllocated);
 	DebuggerPrintf("//=============================================================================================\n\n");
 	CallstackSystem::Destroy();
-#endif
+#endif // MEMORY_TRACKING >= 1
 }
 
 
 //-------------------------------------------------------------------------------------------------
 std::string MemoryAnalytics::GetMemoryAllocationsString() const
 {
-#ifdef MEMORY_TRACKING
+#if MEMORY_TRACKING >= 1
 	return Stringf("Allocations: %u | Bytes Allocated: %u | Most Bytes: %u",
 		m_numAllocations,
 		m_totalAllocated,
 		m_highestTotalAllocated
 	);
-#else
+#else // MEMORY_TRACKING == 0
 	return "No memory debug tracking.";
-#endif
+#endif // MEMORY_TRACKING >= 1
 }
 
 
 //-------------------------------------------------------------------------------------------------
 std::string MemoryAnalytics::GetMemoryAveragesString() const
 {
-#ifdef MEMORY_TRACKING
+#if MEMORY_TRACKING >= 1
 	return Stringf("Average Allocations: %.1f | Average Deallocations: %.1f | Allocation Rate: %.1f",
 		m_averageAllocationsPerSecond,
 		m_averageDeallocationsPerSecond,
 		(m_averageAllocationsPerSecond - m_averageDeallocationsPerSecond)
 	);
-#else
+#else // MEMORY_TRACKING == 0
 	return " ";
-#endif
+#endif // MEMORY_TRACKING >= 1
 }
 
 
@@ -282,7 +284,7 @@ std::string MemoryAnalytics::GetMemoryAveragesString() const
 void MemoryAnalytics::Flush()
 {
 	PopulateCallstackStats(); //Calls CallstackGetLines()
-	for (auto callstackStatsItem : m_callstackStatsMap)
+	for(auto callstackStatsItem : m_callstackStatsMap)
 	{
 		DebuggerPrintf("\n//---------------------------------------------------------------------------------------------\n\n");
 		CallstackStats & foundStats = callstackStatsItem.second;
@@ -291,7 +293,7 @@ void MemoryAnalytics::Flush()
 		Callstack * currentCallstack = foundStats.callstackPtr;
 		CallstackLine * lines = CallstackSystem::GetLines(currentCallstack); //And here it is twice
 		DebuggerPrintf(Stringf("Allocations: %u | Bytes: %u\n", leakedAllocations, leakedBytes).c_str());
-		for (unsigned int index = 0; index < currentCallstack->frame_count; ++index)
+		for(unsigned int index = 0; index < currentCallstack->frame_count; ++index)
 		{
 			DebuggerPrintf(Stringf("%s\n%s(%u)\n", lines[index].function_name, lines[index].filename, lines[index].line).c_str());
 		}
@@ -304,7 +306,7 @@ void MemoryAnalytics::PopulateCallstackStats()
 {
 	CleanUpCallstackStats();
 
-	for (auto callstackItem : m_callstackMap)
+	for(auto callstackItem : m_callstackMap)
 	{
 		g_MemoryAnalyticsSystem->LockCallstackMap();
 		size_t * leakedPtr = (size_t*)(callstackItem.first);
@@ -319,7 +321,7 @@ void MemoryAnalytics::PopulateCallstackStats()
 		//Find associated allocation location's allocation stats
 		auto callstackStatsItem = m_callstackStatsMap.find(callstackHash);
 		//Add it to map
-		if (callstackStatsItem == m_callstackStatsMap.end())
+		if(callstackStatsItem == m_callstackStatsMap.end())
 		{
 			CallstackStats newStats;
 			newStats.callstackPtr = currentCallstack;
@@ -344,7 +346,7 @@ void MemoryAnalytics::PopulateCallstackStats()
 //-------------------------------------------------------------------------------------------------
 void MemoryAnalytics::CleanUpCallstackStats()
 {
-	for (auto callstackStatsItem : m_callstackStatsMap)
+	for(auto callstackStatsItem : m_callstackStatsMap)
 	{
 		delete callstackStatsItem.second.lineAndNumber;
 		callstackStatsItem.second.lineAndNumber = nullptr;

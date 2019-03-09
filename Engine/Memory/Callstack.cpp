@@ -36,7 +36,7 @@ STATIC CallstackLine CallstackSystem::s_callstackBuffer[MAX_DEPTH];
 bool CallstackSystem::Init()
 {
 	g_DebugHelp = LoadLibraryA("dbghelp.dll");
-	if (g_DebugHelp == nullptr)
+	if(g_DebugHelp == nullptr)
 	{
 		ASSERT_RECOVERABLE(false, "DebugHelp didn't load");
 		return false;
@@ -100,7 +100,7 @@ CallstackLine * CallstackSystem::GetLines(Callstack * cs)
 	LineInfo.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
 
 	unsigned int count = cs->frame_count;
-	for (unsigned int i = 0; i < count; ++i)
+	for(unsigned int i = 0; i < count; ++i)
 	{
 		CallstackLine * line = &(s_callstackBuffer[i]);
 		DWORD64 ptr = (DWORD64)(cs->frameDataPtr[i]);
@@ -114,7 +114,7 @@ CallstackLine * CallstackSystem::GetLines(Callstack * cs)
 			&LineDisplacement,		// Displacement will be stored here by the function 
 			&LineInfo);			// File name / line information will be stored here 
 
-		if (bRet)
+		if(bRet)
 		{
 			line->line = LineInfo.LineNumber;
 			char const * filename = LineInfo.FileName;
@@ -154,7 +154,7 @@ CallstackLine & CallstackSystem::GetTopLine(Callstack * cs)
 		&LineDisplacement,		// Displacement will be stored here by the function 
 		&LineInfo);			// File name / line information will be stored here 
 
-	if (bRet)
+	if(bRet)
 	{
 		line->line = LineInfo.LineNumber;
 		char const * filename = LineInfo.FileName;

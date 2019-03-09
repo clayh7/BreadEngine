@@ -46,22 +46,22 @@ Vector2i::Vector2i(std::string const & valueRange)
 	char splitToken = ',';
 	size_t foundComma = valueRange.find(',');
 	//Otherwise use ~ as the comma splitter
-	if (foundComma == std::string::npos)
+	if(foundComma == std::string::npos)
 	{
 		splitToken = '~';
 	}
 	std::vector<std::string> values = SplitString(valueRange, splitToken);
-	if (values.size() == 0)
+	if(values.size() == 0)
 	{
 		x = 0;
 		y = 0;
 	}
-	else if (values.size() == 1)
+	else if(values.size() == 1)
 	{
 		SetTypeFromString(x, values[0]);
 		SetTypeFromString(y, values[0]);
 	}
-	else if (values.size() == 2)
+	else if(values.size() == 2)
 	{
 		SetTypeFromString(x, values[0]);
 		SetTypeFromString(y, values[1]);
@@ -126,11 +126,11 @@ bool Vector2i::operator==(Vector2i const & check) const
 //-------------------------------------------------------------------------------------------------
 bool Vector2i::operator<(Vector2i const & check) const
 {
-	if (x < check.x)
+	if(x < check.x)
 	{
 		return true;
 	}
-	else if (check.x == x && y < check.y)
+	else if(check.x == x && y < check.y)
 	{
 		return true;
 	}

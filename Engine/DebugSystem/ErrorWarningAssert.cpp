@@ -25,12 +25,12 @@ bool IsDebuggerAvailable()
 
 	// Get a handle to KERNEL32.DLL
 	static HINSTANCE hInstanceKernel32 = GetModuleHandle(TEXT("KERNEL32"));
-	if (!hInstanceKernel32)
+	if(!hInstanceKernel32)
 		return false;
 
 	// Get a handle to the IsDebuggerPresent() function in KERNEL32.DLL
 	static IsDebuggerPresentFunc* isDebuggerPresentFunc = (IsDebuggerPresentFunc*)GetProcAddress(hInstanceKernel32, "IsDebuggerPresent");
-	if (!isDebuggerPresentFunc)
+	if(!isDebuggerPresentFunc)
 		return false;
 
 	// Now CALL that function and return its result
@@ -54,7 +54,7 @@ void DebuggerPrintf(char const * messageFormat, ...)
 	messageLiteral[MESSAGE_MAX_LENGTH - 1] = '\0'; // In case vsnprintf overran (doesn't auto-terminate)
 
 #if defined( PLATFORM_WINDOWS )
-	if (IsDebuggerAvailable())
+	if(IsDebuggerAvailable())
 	{
 		OutputDebugStringA(messageLiteral);
 	}
@@ -70,7 +70,7 @@ void DebuggerPrintf(char const * messageFormat, ...)
 #if defined( PLATFORM_WINDOWS )
 UINT GetWindowsMessageBoxIconFlagForSeverityLevel(SeverityLevel severity)
 {
-	switch (severity)
+	switch(severity)
 	{
 	case SEVERITY_INFORMATION:		return MB_ICONASTERISK;		// blue circle with 'i' in Windows 7
 	case SEVERITY_QUESTION:			return MB_ICONQUESTION;		// blue circle with '?' in Windows 7
@@ -85,16 +85,16 @@ UINT GetWindowsMessageBoxIconFlagForSeverityLevel(SeverityLevel severity)
 //-----------------------------------------------------------------------------------------------
 char const * FindStartOfFileNameWithinFilePath(char const * filePath)
 {
-	if (filePath == nullptr)
+	if(filePath == nullptr)
 		return nullptr;
 
 	size_t pathLen = strlen(filePath);
 	char const * scan = filePath + pathLen; // start with null terminator after last character
-	while (scan > filePath)
+	while(scan > filePath)
 	{
 		--scan;
 
-		if (*scan == '/' || *scan == '\\')
+		if(*scan == '/' || *scan == '\\')
 		{
 			++scan;
 			break;
@@ -201,16 +201,16 @@ __declspec(noreturn) void FatalError(char const * filePath, char const * functio
 {
 	//Get Error message
 	std::string errorMessage = reasonForError;
-	if (reasonForError.empty())
+	if(reasonForError.empty())
 	{
-		if (conditionText)
+		if(conditionText)
 			errorMessage = Stringf("ERROR: \"%s\" is false!", conditionText);
 		else
 			errorMessage = "Unspecified fatal error";
 	}
 
 	//Print Error message to LoggerSystem
-	if (LoggingSystem)
+	if(LoggingSystem)
 	{
 		LoggingSystem->LogPrintf(WarningLevel_SEVERE, errorMessage.c_str());
 		LoggingSystem->LogFlush();
@@ -223,13 +223,13 @@ __declspec(noreturn) void FatalError(char const * filePath, char const * functio
 	std::string fullMessageText = errorMessage;
 	fullMessageText += "\n\nThe application will now close.\n";
 	bool isDebuggerPresent = (IsDebuggerPresent() == TRUE);
-	if (isDebuggerPresent)
+	if(isDebuggerPresent)
 	{
 		fullMessageText += "\nDEBUGGER DETECTED!\nWould you like to break and debug?\n  (Yes=debug, No=quit)\n";
 	}
 
 	fullMessageText += "\n---------- Debugging Details Follow ----------\n";
-	if (conditionText)
+	if(conditionText)
 	{
 		fullMessageText += Stringf("\nThis error was triggered by a run-time condition check:\n  %s\n  from %s(), line %i in %s\n",
 			conditionText, functionName, lineNum, fileName);
@@ -245,11 +245,11 @@ __declspec(noreturn) void FatalError(char const * filePath, char const * functio
 	DebuggerPrintf("%s(%d): %s\n", filePath, lineNum, errorMessage.c_str()); // Use this specific format so Visual Studio users can double-click to jump to file-and-line of error
 	DebuggerPrintf("==============================================================================\n\n");
 
-	if (isDebuggerPresent)
+	if(isDebuggerPresent)
 	{
 		bool isAnswerYes = SystemDialogue_YesNo(fullMessageTitle, fullMessageText, SEVERITY_FATAL);
 		ShowCursor(TRUE);
-		if (isAnswerYes)
+		if(isAnswerYes)
 		{
 			__debugbreak();
 		}
@@ -269,16 +269,16 @@ void RecoverableWarning(char const * filePath, char const * functionName, int li
 {
 	//Get error message
 	std::string errorMessage = reasonForWarning;
-	if (reasonForWarning.empty())
+	if(reasonForWarning.empty())
 	{
-		if (conditionText)
+		if(conditionText)
 			errorMessage = Stringf("WARNING: \"%s\" is false!", conditionText);
 		else
 			errorMessage = "Unspecified warning";
 	}
 
 	//Log warning in debugger
-	if (LoggingSystem)
+	if(LoggingSystem)
 	{
 		LoggingSystem->LogPrintf(WarningLevel_ASSERT_RECOVERABLE, errorMessage.c_str());
 	}
@@ -290,7 +290,7 @@ void RecoverableWarning(char const * filePath, char const * functionName, int li
 	std::string fullMessageText = errorMessage;
 
 	bool isDebuggerPresent = (IsDebuggerPresent() == TRUE);
-	if (isDebuggerPresent)
+	if(isDebuggerPresent)
 	{
 		fullMessageText += "\n\nDEBUGGER DETECTED!\nWould you like to continue running?\n  (Yes=continue, No=quit, Cancel=debug)\n";
 	}
@@ -300,7 +300,7 @@ void RecoverableWarning(char const * filePath, char const * functionName, int li
 	}
 
 	fullMessageText += "\n---------- Debugging Details Follow ----------\n";
-	if (conditionText)
+	if(conditionText)
 	{
 		fullMessageText += Stringf("\nThis warning was triggered by a run-time condition check:\n  %s\n  from %s(), line %i in %s\n",
 			conditionText, functionName, lineNum, fileName);
@@ -316,15 +316,15 @@ void RecoverableWarning(char const * filePath, char const * functionName, int li
 	DebuggerPrintf("%s(%d): %s\n", filePath, lineNum, errorMessage.c_str()); // Use this specific format so Visual Studio users can double-click to jump to file-and-line of error
 	DebuggerPrintf("------------------------------------------------------------------------------\n\n");
 
-	if (isDebuggerPresent)
+	if(isDebuggerPresent)
 	{
 		int answerCode = SystemDialogue_YesNoCancel(fullMessageTitle, fullMessageText, SEVERITY_WARNING);
 		ShowCursor(TRUE);
-		if (answerCode == 0) // "NO"
+		if(answerCode == 0) // "NO"
 		{
 			exit(0);
 		}
-		else if (answerCode == -1) // "CANCEL"
+		else if(answerCode == -1) // "CANCEL"
 		{
 			__debugbreak();
 		}
@@ -333,7 +333,7 @@ void RecoverableWarning(char const * filePath, char const * functionName, int li
 	{
 		bool isAnswerYes = SystemDialogue_YesNo(fullMessageTitle, fullMessageText, SEVERITY_WARNING);
 		ShowCursor(TRUE);
-		if (!isAnswerYes)
+		if(!isAnswerYes)
 		{
 			exit(0);
 		}

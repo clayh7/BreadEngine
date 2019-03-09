@@ -60,7 +60,7 @@ Vector2f::Vector2f(Vector2i const & setVector)
 //-------------------------------------------------------------------------------------------------
 Vector2f::Vector2f(std::string valuePair)
 {
-	if (valuePair.size() == 0)
+	if(valuePair.size() == 0)
 	{
 		x = 0;
 		y = 0;
@@ -69,29 +69,29 @@ Vector2f::Vector2f(std::string valuePair)
 
 	size_t rangePosition = valuePair.find('~');
 	size_t commaPosition = valuePair.find(',');
-	if (rangePosition < valuePair.size())
+	if(rangePosition < valuePair.size())
 	{
 		std::vector<std::string> values = SplitString(valuePair, '~');
-		if (values.size() == 1)
+		if(values.size() == 1)
 		{
 			SetTypeFromString(x, values[0]);
 			SetTypeFromString(y, values[0]);
 		}
-		else if (values.size() == 2)
+		else if(values.size() == 2)
 		{
 			SetTypeFromString(x, values[0]);
 			SetTypeFromString(y, values[1]);
 		}
 	}
-	else if (commaPosition < valuePair.size())
+	else if(commaPosition < valuePair.size())
 	{
 		std::vector<std::string> values = SplitString(valuePair, ',');
-		if (values.size() == 1)
+		if(values.size() == 1)
 		{
 			SetTypeFromString(x, values[0]);
 			SetTypeFromString(y, values[0]);
 		}
-		else if (values.size() == 2)
+		else if(values.size() == 2)
 		{
 			SetTypeFromString(x, values[0]);
 			SetTypeFromString(y, values[1]);
@@ -212,7 +212,7 @@ Vector2f Vector2f::Normal()
 void Vector2f::Normalize()
 {
 	float length = Length();
-	if (length <= 0.f)
+	if(length <= 0.f)
 	{
 		return;
 	}

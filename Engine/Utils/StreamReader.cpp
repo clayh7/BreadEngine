@@ -72,7 +72,7 @@ void StreamReader::SetBuffer(StreamWriter const & writer)
 //-------------------------------------------------------------------------------------------------
 void StreamReader::SetBuffer(StreamWriter const * writer)
 {
-	if (writer != nullptr)
+	if(writer != nullptr)
 	{
 		SetBuffer(*writer);
 	}

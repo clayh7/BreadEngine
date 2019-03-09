@@ -188,7 +188,7 @@ int RandomIntZeroToMax()
 //Returns int [0 - randomCap) [including 0, excluding randomCap)
 int RandomInt(int randomCap)
 {
-	if (randomCap > 0)
+	if(randomCap > 0)
 		return rand() % randomCap;
 	else
 		return 0;
@@ -240,7 +240,7 @@ Vector3f RandomUnitVectorSphere()
 		randX = (RandomFloatZeroToOne() * 2) - 1.f;
 		randY = (RandomFloatZeroToOne() * 2) - 1.f;
 		constraint = (randX * randX) + (randY * randY);
-	} while (constraint >= 1.f);
+	} while(constraint >= 1.f);
 
 	float randX2 = randX * randX;
 	float randY2 = randY * randY;
@@ -314,10 +314,10 @@ bool OverlapDiscs(const Vector2f& center1, float radius1, const Vector2f& center
 //-------------------------------------------------------------------------------------------------
 bool OverlapAABB2s(AABB2f const & box1, AABB2f const box2)
 {
-	if (box1.maxs.x < box2.mins.x) return false;
-	if (box1.mins.x > box2.maxs.x) return false;
-	if (box1.maxs.y < box2.mins.y) return false;
-	if (box1.mins.y > box2.maxs.y) return false;
+	if(box1.maxs.x < box2.mins.x) return false;
+	if(box1.mins.x > box2.maxs.x) return false;
+	if(box1.maxs.y < box2.mins.y) return false;
+	if(box1.mins.y > box2.maxs.y) return false;
 	return true; // boxes overlap
 }
 
@@ -326,22 +326,22 @@ bool OverlapAABB2s(AABB2f const & box1, AABB2f const box2)
 bool OverlapDiscAndAABB2(Vector2f const & center, float radius, AABB2f const & box)
 {
 	float left = center.x + radius;
-	if (left < box.mins.x)
+	if(left < box.mins.x)
 	{
 		return false;
 	}
 	float right = center.x - radius;
-	if (right > box.maxs.x)
+	if(right > box.maxs.x)
 	{
 		return false;
 	}
 	float bottom = center.y + radius;
-	if (bottom < box.mins.y)
+	if(bottom < box.mins.y)
 	{
 		return false;
 	}
 	float top = center.y - radius;
-	if (top > box.maxs.y)
+	if(top > box.maxs.y)
 	{
 		return false;
 	}
@@ -411,9 +411,9 @@ float RangeMapNormalize(float inputStart, float inputEnd, float inputValue)
 {
 	ASSERT_RECOVERABLE(inputStart < inputEnd, "Starting value should be less than Ending value.");
 
-	if (inputValue < inputStart)
+	if(inputValue < inputStart)
 		return inputStart;
-	if (inputValue > inputEnd)
+	if(inputValue > inputEnd)
 		return inputEnd;
 
 	float inputRange = inputEnd - inputStart;
@@ -437,9 +437,9 @@ float RangeMap(float inputStart, float inputEnd, float inputValue, float outputS
 //-------------------------------------------------------------------------------------------------
 float Clamp(float numToClamp, float minNum, float maxNum)
 {
-	if (numToClamp < minNum)
+	if(numToClamp < minNum)
 		return minNum;
-	else if (numToClamp > maxNum)
+	else if(numToClamp > maxNum)
 		return maxNum;
 	return numToClamp;
 }
@@ -448,9 +448,9 @@ float Clamp(float numToClamp, float minNum, float maxNum)
 //-------------------------------------------------------------------------------------------------
 int Clamp(int numToClamp, int minNum, int maxNum)
 {
-	if (numToClamp < minNum)
+	if(numToClamp < minNum)
 		return minNum;
-	else if (numToClamp > maxNum)
+	else if(numToClamp > maxNum)
 		return maxNum;
 	return numToClamp;
 }
@@ -460,15 +460,15 @@ int Clamp(int numToClamp, int minNum, int maxNum)
 Vector2f Clamp(Vector2f const & vecToClamp, Vector2f const & minVec, Vector2f const & maxVec)
 {
 	float x = vecToClamp.x;
-	if (x < minVec.x)
+	if(x < minVec.x)
 		x = minVec.x;
-	else if (x > maxVec.x)
+	else if(x > maxVec.x)
 		x = maxVec.x;
 
 	float y = vecToClamp.y;
-	if (y < minVec.y)
+	if(y < minVec.y)
 		y = minVec.y;
-	else if (y > maxVec.y)
+	else if(y > maxVec.y)
 		y = maxVec.y;
 
 	return Vector2f(x, y);
@@ -537,12 +537,12 @@ int RoundToNearestInt(float numToRound)
 // Credit: Squirrel Eiserloh
 float FastFloor(float f)
 {
-	if (f >= 0.f)
+	if(f >= 0.f)
 		return (float)(int)f;
 	else
 	{
 		float f2 = (float)(int)f;
-		if (f == f2)
+		if(f == f2)
 			return f2;
 		else
 			return f2 - 1.f;
@@ -556,13 +556,13 @@ float FastFloor(float f)
 // Credit: Squirrel Eiserloh
 int FastFloorToInt(float f)
 {
-	if (f >= 0.f)
+	if(f >= 0.f)
 		return (int)f;
 	else
 	{
 		int i = (int)f;
 		float f2 = (float)i;
-		if (f == f2)
+		if(f == f2)
 			return i;
 		else
 			return i - 1;
@@ -834,14 +834,14 @@ size_t HashMemory(void const * memory, size_t const memorySize)
 	size_t byte;
 	size_t mask;
 
-	for (memIndex = 0; memIndex < memorySize; ++memIndex)
+	for(memIndex = 0; memIndex < memorySize; ++memIndex)
 	{
 		// Get next byte.
 		byte = bytes[memIndex];
 		hash = hash ^ byte;
 
 		// Do eight times.
-		for (repeat = 0; repeat < 8; ++repeat)
+		for(repeat = 0; repeat < 8; ++repeat)
 		{
 			//added 0x00000000 infront of minus because it gave me a warning trying to use negative on something unsigned.
 			mask = 0x00000000 - (hash & 1);

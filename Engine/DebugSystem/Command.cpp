@@ -7,7 +7,7 @@
 Command::Command(std::string const & command)
 {
 	unsigned int firstSpace = command.find(' ');
-	if (firstSpace == std::string::npos)
+	if(firstSpace == std::string::npos)
 	{
 		firstSpace = command.length();
 		m_argsString = "";
@@ -19,7 +19,7 @@ Command::Command(std::string const & command)
 	m_name = command.substr(0, firstSpace);
 	std::string parseList = m_argsString;
 	std::string nextArg = GetNextArg(&parseList);
-	while (nextArg != "")
+	while(nextArg != "")
 	{
 		m_args.push_back(nextArg);
 		nextArg = GetNextArg(&parseList);
@@ -45,7 +45,7 @@ bool Command::HasArg(unsigned int argIndex) const
 // Override GetArg function for const char *
 std::string Command::GetArg(unsigned int argIndex, char const * defaultValue) const
 {
-	if (!HasArg(argIndex))
+	if(!HasArg(argIndex))
 	{
 		return std::string(defaultValue);
 	}
@@ -60,7 +60,7 @@ std::string Command::GetRemainingString(unsigned int argIndex) const
 {
 	std::string result = GetArg(argIndex, "");
 	++argIndex;
-	while (HasArg(argIndex))
+	while(HasArg(argIndex))
 	{
 		result.append(" ");
 		result.append(GetArg(argIndex, ""));
@@ -73,12 +73,12 @@ std::string Command::GetRemainingString(unsigned int argIndex) const
 //-------------------------------------------------------------------------------------------------
 std::string const Command::GetNextArg(std::string *parseArgList)
 {
-	if (*parseArgList == "")
+	if(*parseArgList == "")
 		return "";
 
 	unsigned int firstSpace = parseArgList->find(' ');
 	std::string nextArg;
-	if (firstSpace == std::string::npos)
+	if(firstSpace == std::string::npos)
 	{
 		nextArg = *parseArgList;
 		*parseArgList = "";
@@ -90,7 +90,7 @@ std::string const Command::GetNextArg(std::string *parseArgList)
 	}
 
 	//Skip single spaces
-	if (nextArg == "")
+	if(nextArg == "")
 		return GetNextArg(parseArgList);
 	return nextArg;
 }
