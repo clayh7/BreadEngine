@@ -1,7 +1,12 @@
+# Always built
+*.suo
+*.VC.db
+
 # Temporary Output
 Temporary/
 
-# Log Files
+# Log files
+Logs/
 *.Log.txt
 
 # Prerequisites
