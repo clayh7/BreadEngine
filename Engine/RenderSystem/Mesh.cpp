@@ -1,6 +1,6 @@
 #include "Engine/RenderSystem/Mesh.hpp"
 
-#include "Engine/RenderSystem/Renderer.hpp"
+#include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/RenderSystem/BitmapFont.hpp"
 #include "Engine/RenderSystem/Glyph.hpp"
 #include "Engine/RenderSystem/Kerning.hpp"
@@ -10,15 +10,19 @@
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC std::vector<Mesh*, UntrackedAllocator<Mesh*>> Mesh::s_defaultMeshes;
+STATIC std::vector<Mesh*, UntrackedAllocator<Mesh*>> * Mesh::s_defaultMeshes = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
 STATIC void Mesh::InitializeDefaultMeshes()
 {
-	for(int meshIndex = 0; meshIndex < eMeshShape_COUNT; ++meshIndex)
+	if(!s_defaultMeshes)
 	{
-		s_defaultMeshes.push_back(new Mesh((eMeshShape)meshIndex));
+		s_defaultMeshes = new STATIC std::vector<Mesh *, UntrackedAllocator<Mesh *>>();
+		for(int meshIndex = 0; meshIndex < eMeshShape_COUNT; ++meshIndex)
+		{
+			s_defaultMeshes->push_back(new Mesh((eMeshShape)meshIndex));
+		}
 	}
 }
 
@@ -26,18 +30,33 @@ STATIC void Mesh::InitializeDefaultMeshes()
 //-------------------------------------------------------------------------------------------------
 STATIC void Mesh::DestroyDefaultMeshes()
 {
+	if(!s_defaultMeshes)
+	{
+		return;
+	}
+
 	for(int meshIndex = 0; meshIndex < eMeshShape_COUNT; ++meshIndex)
 	{
-		delete s_defaultMeshes[meshIndex];
-		s_defaultMeshes[meshIndex] = nullptr;
+		delete (*s_defaultMeshes)[meshIndex];
+		(*s_defaultMeshes)[meshIndex] = nullptr;
 	}
+
+	delete s_defaultMeshes;
+	s_defaultMeshes = nullptr;
 }
 
 
 //-------------------------------------------------------------------------------------------------
 STATIC Mesh const * Mesh::GetMeshShape(eMeshShape const & meshShape)
 {
-	return s_defaultMeshes[meshShape];
+	if(s_defaultMeshes)
+	{
+		return (*s_defaultMeshes)[meshShape];
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 
@@ -65,6 +84,12 @@ Mesh::Mesh(eMeshShape const & shape)
 	, m_iboID(NULL)
 	//, m_vertexType( vertexType )
 {
+	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	if(!RSystem)
+	{
+		ERROR_AND_DIE("No Render System.");
+	}
+
 	//Create object
 	switch(shape)
 	{//Remember Tex Coords: TL(0,0) BR(1,1)
@@ -81,7 +106,7 @@ Mesh::Mesh(eMeshShape const & shape)
 		vertexes.push_back(Vertex_PCUTB(Vector3f(-0.5f, +0.5f, +0.0f), Color::WHITE, Vector2f(0.f, 0.f), Vector3f(1.f, 0.f, 0.f), Vector3f(0.f, 1.f, 0.f)));	//topLeft
 
 		//Create VBO
-		m_vboID = g_RenderSystem->CreateRenderBuffer(&vertexes[0], vertexes.size(), sizeof(Vertex_PCUTB));
+		m_vboID = RSystem->CreateRenderBuffer(&vertexes[0], vertexes.size(), sizeof(Vertex_PCUTB));
 
 		//Create IBO
 		uint32_t indicies[] =
@@ -90,7 +115,7 @@ Mesh::Mesh(eMeshShape const & shape)
 			0, 2, 3
 		};
 		int count = 2 * 3;
-		m_iboID = g_RenderSystem->CreateRenderBuffer(&indicies, count, sizeof(indicies[0]));
+		m_iboID = RSystem->CreateRenderBuffer(&indicies, count, sizeof(indicies[0]));
 
 		m_drawInstructions.push_back(DrawInstruction(true, ePrimitiveType_TRIANGLES, 0, count));
 		break;
@@ -154,7 +179,7 @@ Mesh::Mesh(eMeshShape const & shape)
 
 		//Create VBO
 		int count = vertexes.size();
-		m_vboID = g_RenderSystem->CreateRenderBuffer(&vertexes[0], count, sizeof(Vertex_PCUTB));
+		m_vboID = RSystem->CreateRenderBuffer(&vertexes[0], count, sizeof(Vertex_PCUTB));
 
 		//No IBO
 		m_drawInstructions.push_back(DrawInstruction(false, ePrimitiveType_TRIANGLES, 0, count));
@@ -269,10 +294,10 @@ Mesh::Mesh(eMeshShape const & shape)
 		}
 
 		//Create VBO
-		g_RenderSystem->CreateOrUpdateRenderBuffer(&m_vboID, &vertexes[0], vertexes.size(), sizeof(Vertex_PCUTB));
+		RSystem->CreateOrUpdateRenderBuffer(&m_vboID, &vertexes[0], vertexes.size(), sizeof(Vertex_PCUTB));
 
 		//Create IBO
-		g_RenderSystem->CreateOrUpdateRenderBuffer(&m_iboID, &indicies[0], indicies.size(), sizeof(indicies[0]));
+		RSystem->CreateOrUpdateRenderBuffer(&m_iboID, &indicies[0], indicies.size(), sizeof(indicies[0]));
 
 		m_drawInstructions.push_back(DrawInstruction(true, ePrimitiveType_TRIANGLES, 0, indicies.size()));
 		break;
@@ -292,7 +317,7 @@ Mesh::Mesh(eMeshShape const & shape)
 
 		//Create VBO
 		int count = vertexes.size();
-		m_vboID = g_RenderSystem->CreateRenderBuffer(&vertexes[0], count, sizeof(Vertex_PC));
+		m_vboID = RSystem->CreateRenderBuffer(&vertexes[0], count, sizeof(Vertex_PC));
 
 		//No IBO
 		m_drawInstructions.push_back(DrawInstruction(false, ePrimitiveType_LINES, 0, count));
@@ -313,15 +338,15 @@ Mesh::Mesh(eMeshShape const & shape)
 
 		//Create VBO
 		int count = vertexes.size();
-		m_vboID = g_RenderSystem->CreateRenderBuffer(&vertexes[0], count, sizeof(Vertex_PC));
+		m_vboID = RSystem->CreateRenderBuffer(&vertexes[0], count, sizeof(Vertex_PC));
 
 		//No IBO
 		m_drawInstructions.push_back(DrawInstruction(false, ePrimitiveType_LINES, 0, count));
 		break;
 	}
 	default:
-		ERROR_AND_DIE("Shape Mesh not implemented.")
-			break;
+		ERROR_AND_DIE("Shape Mesh not implemented.");
+		break;
 	}
 }
 
@@ -330,9 +355,13 @@ Mesh::Mesh(eMeshShape const & shape)
 Mesh::Mesh(std::string const & textString, float scale /*= 12.f */, BitmapFont const * font /*= nullptr*/)
 	: m_vboID(NULL)
 	, m_iboID(NULL)
-	//, m_vertexType( vertexType )
 {
-	//UpdateText( textString, scale, font );
+	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	if(!RSystem)
+	{
+		ERROR_AND_DIE("No Render System.");
+	}
+
 	std::string asciiText = textString;
 	if(asciiText.size() <= 0)
 	{
@@ -351,7 +380,9 @@ Mesh::Mesh(std::string const & textString, float scale /*= 12.f */, BitmapFont c
 	Vector3f upVector(Vector3f(0.f, 1.f, 0.f));
 
 	if(font == nullptr)
-		font = g_RenderSystem->GetDefaultFont();
+	{
+		font = RSystem->GetDefaultFont();
+	}
 
 	scale /= (float)font->GetFontSize();
 	scale /= (float) 200.f;
@@ -413,11 +444,11 @@ Mesh::Mesh(std::string const & textString, float scale /*= 12.f */, BitmapFont c
 	}
 
 	//Create VBO
-	m_vboID = g_RenderSystem->CreateRenderBuffer(&vertexes[0], vertexes.size(), sizeof(Vertex_PCU));
+	m_vboID = RSystem->CreateRenderBuffer(&vertexes[0], vertexes.size(), sizeof(Vertex_PCU));
 
 	//Create IBO
 	int count = indicies.size();
-	m_iboID = g_RenderSystem->CreateRenderBuffer(&indicies[0], count, sizeof(indicies[0]));
+	m_iboID = RSystem->CreateRenderBuffer(&indicies[0], count, sizeof(indicies[0]));
 
 	m_drawInstructions.push_back(DrawInstruction(true, ePrimitiveType_TRIANGLES, 0, count));
 }
@@ -429,6 +460,11 @@ Mesh::Mesh(MeshBuilder const * meshBuilder, eVertexType const & vertexType)
 	, m_iboID(NULL)
 	, m_vertexType(vertexType)
 {
+	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	if(!RSystem)
+	{
+		ERROR_AND_DIE("No Render System.");
+	}
 	SetVertexLayout(vertexType);
 
 	m_drawInstructions.clear();
@@ -490,13 +526,13 @@ Mesh::Mesh(MeshBuilder const * meshBuilder, eVertexType const & vertexType)
 	}
 
 	//Create VBO
-	m_vboID = g_RenderSystem->CreateRenderBuffer(vertexBuffer, vertexCount, vertexSize);
+	m_vboID = RSystem->CreateRenderBuffer(vertexBuffer, vertexCount, vertexSize);
 	delete vertexBuffer;
 
 	if(meshBuilder->DoesUseIBO())
 	{
 		std::vector<unsigned int> const & indexBuffer = meshBuilder->GetIndexBuffer();
-		m_iboID = g_RenderSystem->CreateRenderBuffer(&indexBuffer[0], indexBuffer.size(), sizeof(indexBuffer[0]));
+		m_iboID = RSystem->CreateRenderBuffer(&indexBuffer[0], indexBuffer.size(), sizeof(indexBuffer[0]));
 	}
 }
 
@@ -582,6 +618,12 @@ void Mesh::SetVertexLayout(eVertexType const & vertexType)
 //-------------------------------------------------------------------------------------------------
 Vector3f Mesh::Update(std::string const & newText, float scale /*= 12.f*/, BitmapFont const * font /*= nullptr */)
 {
+	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	if(!RSystem)
+	{
+		ERROR_AND_DIE("No Render System.");
+	}
+
 	std::string asciiText = newText;
 	if(asciiText.size() <= 0)
 	{
@@ -589,8 +631,8 @@ Vector3f Mesh::Update(std::string const & newText, float scale /*= 12.f*/, Bitma
 	}
 	ASSERT_RECOVERABLE(asciiText.size() > 0, "Can only create mesh for strings at least the size of 1.")
 
-		//Vertex Definition Layout
-		SetVertexLayout(eVertexType_PCU);
+	//Vertex Definition Layout
+	SetVertexLayout(eVertexType_PCU);
 	std::vector<Vertex_PCU> vertexes;
 	std::vector<unsigned int> indicies;
 	unsigned int vertIndex = 0;
@@ -600,7 +642,9 @@ Vector3f Mesh::Update(std::string const & newText, float scale /*= 12.f*/, Bitma
 	Vector3f upVector(Vector3f(0.f, 1.f, 0.f));
 
 	if(font == nullptr)
-		font = g_RenderSystem->GetDefaultFont();
+	{
+		font = RSystem->GetDefaultFont();
+	}
 
 	scale /= (float)font->GetFontSize();
 
@@ -675,11 +719,11 @@ Vector3f Mesh::Update(std::string const & newText, float scale /*= 12.f*/, Bitma
 	}
 
 	//Update VBO
-	g_RenderSystem->UpdateRenderBuffer(m_vboID, &vertexes[0], vertexes.size(), sizeof(Vertex_PCU), GL_DYNAMIC_DRAW);
+	RSystem->UpdateRenderBuffer(m_vboID, &vertexes[0], vertexes.size(), sizeof(Vertex_PCU), GL_DYNAMIC_DRAW);
 
 	//Create IBO
 	int count = indicies.size();
-	g_RenderSystem->UpdateRenderBuffer(m_iboID, &indicies[0], count, sizeof(indicies[0]), GL_DYNAMIC_DRAW);
+	RSystem->UpdateRenderBuffer(m_iboID, &indicies[0], count, sizeof(indicies[0]), GL_DYNAMIC_DRAW);
 
 	m_drawInstructions.clear();
 	m_drawInstructions.push_back(DrawInstruction(true, ePrimitiveType_TRIANGLES, 0, count));
@@ -691,6 +735,12 @@ Vector3f Mesh::Update(std::string const & newText, float scale /*= 12.f*/, Bitma
 //-------------------------------------------------------------------------------------------------
 void Mesh::Update(MeshBuilder const * meshBuilder)
 {
+	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	if(!RSystem)
+	{
+		ERROR_AND_DIE("No Render System.");
+	}
+
 	m_drawInstructions.clear();
 	m_drawInstructions = meshBuilder->GetDrawInstructions();
 
@@ -760,12 +810,12 @@ void Mesh::Update(MeshBuilder const * meshBuilder)
 	}
 
 	//Update VBO
-	g_RenderSystem->CreateOrUpdateRenderBuffer(&m_vboID, vertexBuffer, vertexCount, vertexSize, GL_DYNAMIC_DRAW);
+	RSystem->CreateOrUpdateRenderBuffer(&m_vboID, vertexBuffer, vertexCount, vertexSize, GL_DYNAMIC_DRAW);
 
 	//Update IBO
 	if(meshBuilder->DoesUseIBO())
 	{
 		std::vector<unsigned int> const & indexBuffer = meshBuilder->GetIndexBuffer();
-		g_RenderSystem->CreateOrUpdateRenderBuffer(&m_iboID, &indexBuffer[0], indexBuffer.size(), sizeof(indexBuffer[0]), GL_DYNAMIC_DRAW);
+		RSystem->CreateOrUpdateRenderBuffer(&m_iboID, &indexBuffer[0], indexBuffer.size(), sizeof(indexBuffer[0]), GL_DYNAMIC_DRAW);
 	}
 }

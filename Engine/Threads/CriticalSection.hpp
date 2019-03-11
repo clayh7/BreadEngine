@@ -16,7 +16,7 @@ private:
 	//-------------------------------------------------------------------------------------------------
 public:
 	CriticalSection();
-	CriticalSection(const CriticalSection & copy) = delete; // removes the constructor
+	CriticalSection(CriticalSection const & copy) = delete; // removes the copy constructor
 
 	void Lock();
 	void Unlock();

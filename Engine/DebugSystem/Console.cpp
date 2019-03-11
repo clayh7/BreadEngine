@@ -7,8 +7,8 @@
 #include "Engine/DebugSystem/Logger.hpp"
 #include "Engine/Utils/MathUtils.hpp"
 #include "Engine/Math/AABB2f.hpp"
-#include "Engine/Net/RCS/RemoteCommandServer.hpp"
-#include "Engine/RenderSystem/Renderer.hpp"
+#include "Engine/NetworkSystem/RCS/RemoteCommandServer.hpp"
+#include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/RenderSystem/RenderState.hpp"
 #include "Engine/RenderSystem/Mesh.hpp"
 #include "Engine/RenderSystem/Material.hpp"
@@ -320,9 +320,15 @@ void Console::Render() const
 		return;
 	}
 
+	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	if(!RSystem)
+	{
+		return;
+	}
+
 	//Render console box
-	g_RenderSystem->MeshRender(m_consoleBox);
-	g_RenderSystem->MeshRender(m_consoleBoxBottom);
+	RSystem->MeshRender(m_consoleBox);
+	RSystem->MeshRender(m_consoleBoxBottom);
 	m_consoleLineTextRenderer->Render();
 
 	//Render the lines in the box

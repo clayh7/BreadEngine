@@ -5,7 +5,7 @@
 #include "Engine/DebugSystem/BProfiler.hpp"
 #include "Engine/DebugSystem/Console.hpp"
 #include "Engine/InputSystem/Input.hpp"
-#include "Engine/RenderSystem/Renderer.hpp"
+#include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Game/Game.hpp"
 #define STATIC
 
@@ -59,9 +59,6 @@ void App::UpdateInputs()
 void App::Render() const
 {
 	BProfiler::StartSample("RENDER GAME");
-
-	//Clear screen
-	g_RenderSystem->ClearScreen(Color::CLAY_GREEN);
 
 	//Draw Game
 	g_GameSystem->Render();

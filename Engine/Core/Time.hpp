@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "Engine/Memory/MemoryAnalytics.hpp"
+#include "Engine/MemorySystem/UntrackedAllocator.hpp"
 
 
 //-------------------------------------------------------------------------------------------------

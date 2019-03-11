@@ -165,7 +165,11 @@ void UITextField::SetText(std::string const & text)
 //-------------------------------------------------------------------------------------------------
 void UITextField::Select() const
 {
-	g_UISystem->Select((UIWidget*)this);
+	UISystem * UIS = UISystem::GetSystem();
+	if(UIS)
+	{
+		UIS->Select((UIWidget*)this);
+	}
 }
 
 

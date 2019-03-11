@@ -4,14 +4,14 @@
 
 
 //-------------------------------------------------------------------------------------------------
-template<typename T>
+template<typename Type>
 class WidgetProperty
 {
 	//-------------------------------------------------------------------------------------------------
 	// Members
 	//-------------------------------------------------------------------------------------------------
 public:
-	T m_value;
+	Type m_value;
 	eWidgetPropertySource m_source;
 	eWidgetState m_state;
 
@@ -19,7 +19,7 @@ public:
 	// Functions
 	//-------------------------------------------------------------------------------------------------
 public:
-	WidgetProperty(T const & value = T(), eWidgetPropertySource source = eWidgetPropertySource_CODE, eWidgetState state = eWidgetState_ALL)
+	WidgetProperty(Type const & value = Type(), eWidgetPropertySource source = eWidgetPropertySource_CODE, eWidgetState state = eWidgetState_ALL)
 		: m_value(value)
 		, m_source(source)
 		, m_state(state)

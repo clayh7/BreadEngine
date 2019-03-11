@@ -7,7 +7,7 @@
 #include "Engine/DebugSystem/Console.hpp"
 #include "Engine/DebugSystem/Logger.hpp"
 #include "Engine/InputSystem/Input.hpp"
-#include "Engine/Memory/MemoryAnalytics.hpp"
+#include "Engine/MemorySystem/BMemorySystem.hpp"
 #include "Engine/Utils/NetworkUtils.hpp"
 #include "Engine/Utils/StringUtils.hpp"
 
@@ -206,13 +206,14 @@ void Debugger::UpdateTextUnit(int & currentLine)
 //-------------------------------------------------------------------------------------------------
 void Debugger::UpdateTextMemory(int & currentLine)
 {
-	std::string debugText = g_MemoryAnalyticsSystem->GetMemoryAllocationsString();
+	std::string debugText;
+	BMemorySystem::GetMemoryAllocationsString(debugText);
 	m_debugTexts[currentLine]->SetText(debugText);
 	m_debugTexts[currentLine]->SetColor(Color::WHITE);
 	m_debugTexts[currentLine]->Update();
 	currentLine += 1;
 
-	debugText = g_MemoryAnalyticsSystem->GetMemoryAveragesString();
+	BMemorySystem::GetMemoryAveragesString(debugText);
 	m_debugTexts[currentLine]->SetText(debugText);
 	m_debugTexts[currentLine]->SetColor(Color::WHITE);
 	m_debugTexts[currentLine]->Update();
@@ -224,13 +225,14 @@ void Debugger::UpdateTextMemory(int & currentLine)
 void Debugger::UpdateTextMemoryVerbose(int & currentLine)
 {
 	//Get the stats
-	UntrackedCallstackStatsMap & callstackStatsMap = g_MemoryAnalyticsSystem->m_callstackStatsMap;
+	BMemorySystem * MSystem = BMemorySystem::GetOrCreateSystem();
+	UntrackedCallstackStatsMap & callstackStatsMap = MSystem->m_callstackStatsMap;
 
 	//Order them base on allocation size
 	std::map<size_t, CallstackStats> orderedStats;
 	for(auto callstackStatsItem : callstackStatsMap)
 	{
-		orderedStats.insert(std::pair<size_t, CallstackStats>(callstackStatsItem.second.totalBytes, callstackStatsItem.second));
+		orderedStats.insert(std::pair<size_t, CallstackStats>(callstackStatsItem.second.m_totalBytes, callstackStatsItem.second));
 	}
 
 	for(auto callstackStatsIter = orderedStats.end(); callstackStatsIter != orderedStats.begin(); )
@@ -239,8 +241,8 @@ void Debugger::UpdateTextMemoryVerbose(int & currentLine)
 		if(currentLine + 2 <= m_lineCount)
 		{
 			CallstackStats & callstackStats = callstackStatsIter->second;
-			std::string stats = Stringf("Allocations: %u | Bytes: %u", callstackStats.totalAllocations, callstackStats.totalBytes);
-			std::string line = callstackStats.lineAndNumber;
+			std::string stats = Stringf("Allocations: %u | Bytes: %u", callstackStats.m_totalAllocations, callstackStats.m_totalBytes);
+			std::string line = callstackStats.m_lineAndNumber;
 			m_debugTexts[currentLine]->SetText(stats);
 			m_debugTexts[currentLine]->SetColor(Color::WHITE);
 			m_debugTexts[currentLine]->Update();
@@ -308,5 +310,5 @@ void Debugger::ToggleDebugMemory()
 //-------------------------------------------------------------------------------------------------
 void Debugger::DebugFlushMemory()
 {
-	g_MemoryAnalyticsSystem->Flush();
+	BMemorySystem::GetOrCreateSystem()->Flush();
 }

@@ -6,6 +6,7 @@
 
 
 //-------------------------------------------------------------------------------------------------
+#include "Engine/MemorySystem/UntrackedAllocator.hpp"
 #include "ThirdParty/fmod/fmod.hpp"
 #include <string>
 #include <vector>
@@ -34,8 +35,8 @@ public:
 private:
 	static bool s_initialized;
 	static FMOD::System * s_fmodSystem;
-	static std::map<size_t, SoundID> s_registeredSoundIDs;
-	static std::vector<FMOD::Sound*> s_registeredSounds;
+	static std::map<size_t, SoundID, std::less<size_t>, UntrackedAllocator<std::pair<size_t, SoundID>>> s_registeredSoundIDs;
+	static std::vector<FMOD::Sound*, UntrackedAllocator<FMOD::Sound*>> s_registeredSounds;
 
 	//-------------------------------------------------------------------------------------------------
 	// Static Functions

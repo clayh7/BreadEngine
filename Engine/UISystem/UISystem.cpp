@@ -12,21 +12,98 @@
 #include "Engine/Utils/XMLUtils.hpp"
 #include "Engine/Utils/FileUtils.hpp"
 #include "Engine/RenderSystem/SpriteRenderSystem/SpriteGameRenderer.hpp"
-#include "Engine/RenderSystem/Renderer.hpp"
+#include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/RenderSystem/Camera3D.hpp"
+
+#include "Engine/UISystem/UIButton.hpp"
+#include "Engine/UISystem/UIBox.hpp"
+#include "Engine/UISystem/UIContainer.hpp"
+#include "Engine/UISystem/UIItem.hpp"
+#include "Engine/UISystem/UILabel.hpp"
+#include "Engine/UISystem/UIProgressBar.hpp"
+#include "Engine/UISystem/UISprite.hpp"
+#include "Engine/UISystem/UITextField.hpp"
 
 
 //-------------------------------------------------------------------------------------------------
 STATIC char const * UISystem::DEFAULT_NAME = "";
 STATIC char const * UISystem::UI_SKIN = "UISkin";
-STATIC std::map<size_t, WidgetCreationFunc*> * UISystem::s_registeredWidgets = nullptr;
-UISystem * g_UISystem = nullptr;
+STATIC UISystem * UISystem::s_UISystem = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
 UIWidgetRegistration::UIWidgetRegistration(std::string const & widgetName, WidgetCreationFunc * creationFunc)
 {
 	UISystem::RegisterWidget(widgetName, creationFunc);
+}
+
+
+//-------------------------------------------------------------------------------------------------
+//My compiler does not compile these classes, and therefore they are not being added
+//So I will explicitly use them here, so that they will all forcibly be compiled
+//void WakeUpUISystem()
+//{
+//	static bool doOnce = true;
+//	if(doOnce)
+//	{
+//		UIWidget();
+//		UIButton();
+//		UIBox();
+//		UIContainer();
+//		UIItem();
+//		UILabel();
+//		UIProgressBar();
+//		UISprite();
+//		UITextField();
+//		doOnce = false;
+//	}
+//}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC void UISystem::Startup()
+{
+	if(!s_UISystem)
+	{
+		s_UISystem = new UISystem();
+		//s_UISystem->UpdateUISpriteRenderer();
+		s_UISystem->LoadUIFromXML();
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC void UISystem::Shutdown()
+{
+	delete s_UISystem;
+	s_UISystem = nullptr;
+}
+
+
+//-------------------------------------------------------------------------------------------------
+void UISystem::Update()
+{
+	if(s_UISystem)
+	{
+		s_UISystem->UpdateSystem();
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+void UISystem::Render()
+{
+	if(s_UISystem)
+	{
+		s_UISystem->RenderSystem();
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC UISystem * UISystem::GetSystem()
+{
+	return s_UISystem;
 }
 
 
@@ -40,34 +117,45 @@ STATIC Vector2f UISystem::ClipToUISystemPosition(Vector3f const & clipVector)
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::RegisterWidget(std::string const & widgetName, WidgetCreationFunc * creationFunc)
+STATIC void UISystem::RegisterWidget(std::string const & widgetName, WidgetCreationFunc * creationFunc)
 {
 	//Create it if it does not exist
-	if(!s_registeredWidgets)
+	if(!s_UISystem)
 	{
-		s_registeredWidgets = new std::map<size_t, WidgetCreationFunc *>();
+		Startup();
 	}
 
-	size_t widgetNameHash = std::hash<std::string>{}(widgetName);
-	s_registeredWidgets->insert(std::pair<size_t, WidgetCreationFunc*>(widgetNameHash, creationFunc));
+	if(s_UISystem && !s_UISystem->m_registeredWidgets)
+	{
+		s_UISystem->m_registeredWidgets = new std::map<size_t, WidgetCreationFunc *>();
+	}
+
+	if(s_UISystem && s_UISystem->m_registeredWidgets)
+	{
+		size_t widgetNameHash = std::hash<std::string>{}(widgetName);
+		s_UISystem->m_registeredWidgets->insert(std::pair<size_t, WidgetCreationFunc*>(widgetNameHash, creationFunc));
+	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-UIWidget * UISystem::CreateWidgetFromName(std::string const & name, XMLNode const & data)
+STATIC UIWidget * UISystem::CreateWidgetFromName(std::string const & name, XMLNode const & data)
 {
-	size_t widgetNameHash = std::hash<std::string>{}(name);
-	auto foundRegisteredWidget = s_registeredWidgets->find(widgetNameHash);
-	if(foundRegisteredWidget != s_registeredWidgets->end())
+	if(s_UISystem && s_UISystem->m_registeredWidgets)
 	{
-		return (foundRegisteredWidget->second)(data);
+		size_t widgetNameHash = std::hash<std::string>{}(name);
+		auto foundRegisteredWidget = s_UISystem->m_registeredWidgets->find(widgetNameHash);
+		if(foundRegisteredWidget != s_UISystem->m_registeredWidgets->end())
+		{
+			return (foundRegisteredWidget->second)(data);
+		}
 	}
 	return nullptr;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Vector2f UISystem::GetCursorUIPosition()
+STATIC Vector2f UISystem::GetCursorUIPosition()
 {
 	Vector2f cursorPosition = g_InputSystem->GetMousePosition(true);
 	Vector3f cursorClipPosition;// = ScreenToClipPosition( cursorPosition );
@@ -83,46 +171,13 @@ Vector2f UISystem::GetCursorUIPosition()
 
 
 //-------------------------------------------------------------------------------------------------
-//My compiler does not compile these classes, and therefore they are not being added
-//So I will explicitly use them here, so that they will all forcibly be compiled
-#include "Engine/UISystem/UIButton.hpp"
-#include "Engine/UISystem/UIBox.hpp"
-#include "Engine/UISystem/UIContainer.hpp"
-#include "Engine/UISystem/UIItem.hpp"
-#include "Engine/UISystem/UILabel.hpp"
-#include "Engine/UISystem/UIProgressBar.hpp"
-#include "Engine/UISystem/UISprite.hpp"
-#include "Engine/UISystem/UITextField.hpp"
-void WakeUpUISystem()
-{
-	static bool doOnce = true;
-	if(doOnce)
-	{
-		UIWidget();
-		UIButton();
-		UIBox();
-		UIContainer();
-		UIItem();
-		UILabel();
-		UIProgressBar();
-		UISprite();
-		UITextField();
-		doOnce = false;
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
 UISystem::UISystem()
-	: m_root(new UIWidget())
+	: m_registeredWidgets(nullptr)
+	, m_root(new UIWidget())
 	, m_highlightedWidget(nullptr)
 	, m_selectedWidget(nullptr)
-	, m_uiSpriteRenderer(new SpriteGameRenderer())
 	, m_heldItem(nullptr)
 {
-	WakeUpUISystem();
-	UpdateUISpriteRenderer();
-
 	//#TODO: Set root to have size of the virtual dimensions
 	//#TODO: Maybe also set the aspect ratio some how?
 	Vector2i windowDimensions = GetWindowDimensions();
@@ -137,31 +192,27 @@ UISystem::~UISystem()
 	delete m_root;
 	m_root = nullptr;
 
-	delete s_registeredWidgets;
-	s_registeredWidgets = nullptr;
-
-	delete m_uiSpriteRenderer;
-	m_uiSpriteRenderer = nullptr;
+	delete m_registeredWidgets;
+	m_registeredWidgets = nullptr;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::UpdateUISpriteRenderer()
-{
-	Vector2i windowDimensions = GetWindowDimensions();
-	m_uiSpriteRenderer->SetAspectRatio((float)windowDimensions.x, (float)windowDimensions.y);
-	//m_uiSpriteRenderer->SetImportSize( 220000.f ); //256
-	m_uiSpriteRenderer->SetImportSize(900.f);
-	m_uiSpriteRenderer->SetVirtualSize((float)windowDimensions.y);
-	m_uiSpriteRenderer->SetClearColor(Color::WHITE);
-	Matrix4f view;
-	view.MakeView(-Vector3f((float)windowDimensions.x / 2.f, (float)windowDimensions.y / 2.f, 0.f));
-	m_uiSpriteRenderer->SetView(view);
-}
+//void UISystem::UpdateUISpriteRenderer()
+//{
+//	Vector2i windowDimensions = GetWindowDimensions();
+//	m_uiSpriteRenderer->SetAspectRatio((float)windowDimensions.x, (float)windowDimensions.y);
+//	m_uiSpriteRenderer->SetImportSize(900.f);
+//	m_uiSpriteRenderer->SetVirtualSize((float)windowDimensions.y);
+//	m_uiSpriteRenderer->SetClearColor(Color::WHITE);
+//	Matrix4f view;
+//	view.MakeView(-Vector3f((float)windowDimensions.x / 2.f, (float)windowDimensions.y / 2.f, 0.f));
+//	m_uiSpriteRenderer->SetView(view);
+//}
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::Update()
+void UISystem::UpdateSystem()
 {
 	//Update root dimensions to match screen
 	//Only update if they've changed so we don't dirty everything every frame
@@ -218,7 +269,7 @@ void UISystem::Update()
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::Render() const
+void UISystem::RenderSystem() const
 {
 	m_root->Render();
 	if(m_heldItem)
@@ -293,10 +344,10 @@ bool UISystem::IsHoldingAnItem() const
 
 
 //-------------------------------------------------------------------------------------------------
-SpriteGameRenderer const * UISystem::GetRenderer() const
-{
-	return m_uiSpriteRenderer;
-}
+//SpriteGameRenderer const * UISystem::GetRenderer() const
+//{
+//	return m_uiSpriteRenderer;
+//}
 
 
 //-------------------------------------------------------------------------------------------------

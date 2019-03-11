@@ -6,7 +6,7 @@
 #include "Engine/RenderSystem/MeshBuilder.hpp"
 #include "Engine/RenderSystem/SpriteRenderSystem/SpriteGameRenderer.hpp"
 #include "Engine/RenderSystem/SpriteRenderSystem/SpriteResource.hpp"
-#include "Engine/RenderSystem/Renderer.hpp"
+#include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/RenderSystem/TextRenderer.hpp"
 #include "Engine/UISystem/UISystem.hpp"
 #include "Engine/UISystem/UICommon.hpp"
@@ -240,8 +240,13 @@ Vector2f UIItem::GetWorldPosition(eAnchor const & anchor, UIWidget const * forCh
 //-------------------------------------------------------------------------------------------------
 bool UIItem::IsHeld() const
 {
-	UIItem * heldItem = g_UISystem->GetHeldItem();
-	return heldItem == this;
+	UISystem * UIS = UISystem::GetSystem();
+	if(UIS)
+	{
+		UIItem * heldItem = UIS->GetHeldItem();
+		return heldItem == this;
+	}
+	return false;
 }
 
 
@@ -250,7 +255,11 @@ void UIItem::OnItemPickup(NamedProperties &)
 {
 	if(GetState() == eWidgetState_HIGHLIGHTED)
 	{
-		g_UISystem->SetHeldItem(this);
+		UISystem * UIS = UISystem::GetSystem();
+		if(UIS)
+		{
+			UIS->SetHeldItem(this);
+		}
 	}
 }
 
@@ -264,10 +273,15 @@ void UIItem::OnItemDrop(NamedProperties &)
 		return;
 	}
 
-	//Important to set holding to null first, else the UISystem will think the cursor is current inside of the held item
-	g_UISystem->SetHeldItem(nullptr);
+	UISystem * UIS = UISystem::GetSystem();
+	if(!UIS)
+	{
+		return;
+	}
 
-	UIWidget * selectedWidget = g_UISystem->GetWidgetUnderCursor();
+	//Important to set holding to null first, else the UISystem will think the cursor is current inside of the held item
+	UIS->SetHeldItem(nullptr);
+	UIWidget * selectedWidget = UIS->GetWidgetUnderCursor();
 	UIContainer * selectedContainer = dynamic_cast<UIContainer*>(selectedWidget);
 	UIContainer * parentContainer = dynamic_cast<UIContainer*>(m_parent);
 

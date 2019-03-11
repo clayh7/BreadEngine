@@ -5,9 +5,9 @@
 #include "Engine/DebugSystem/Console.hpp"
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
 #include "Engine/Utils/StringUtils.hpp"
-#include "Engine/Net/Sockets/SocketAddress.hpp"
-#include "Engine/Net/Sockets/TCPSocket.hpp"
-#include "Engine/Net/Sockets/UDPSocket.hpp"
+#include "Engine/NetworkSystem/Sockets/SocketAddress.hpp"
+#include "Engine/NetworkSystem/Sockets/TCPSocket.hpp"
+#include "Engine/NetworkSystem/Sockets/UDPSocket.hpp"
 
 
 //-------------------------------------------------------------------------------------------------

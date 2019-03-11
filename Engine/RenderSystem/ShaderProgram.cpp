@@ -1,6 +1,6 @@
 #include "Engine/RenderSystem/ShaderProgram.hpp"
 
-#include "Engine/RenderSystem/Renderer.hpp"
+#include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
 
 
@@ -43,13 +43,19 @@ STATIC void ShaderProgram::DestroyRegistry()
 //-------------------------------------------------------------------------------------------------
 ShaderProgram::ShaderProgram(std::string const &vsFilePath, std::string const &fsFilePath)
 {
+	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	if(!RSystem)
+	{
+		return;
+	}
+
 	//Build Vert and Frag Shader
-	unsigned int vertexShaderID = g_RenderSystem->CreateShader(vsFilePath, GL_VERTEX_SHADER);
-	unsigned int fragmentShaderID = g_RenderSystem->CreateShader(fsFilePath, GL_FRAGMENT_SHADER);
+	unsigned int vertexShaderID = RSystem->CreateShader(vsFilePath, GL_VERTEX_SHADER);
+	unsigned int fragmentShaderID = RSystem->CreateShader(fsFilePath, GL_FRAGMENT_SHADER);
 	ASSERT_RECOVERABLE(vertexShaderID != NULL && fragmentShaderID != NULL, "Vertex or Fragment File not loaded correctly.");
 
 	//Build Program
-	m_programID = g_RenderSystem->CreateAndLinkProgram(vertexShaderID, fragmentShaderID, fsFilePath);
+	m_programID = RSystem->CreateAndLinkProgram(vertexShaderID, fragmentShaderID, fsFilePath);
 	ASSERT_RECOVERABLE(m_programID != NULL, "Program did not link.");
 
 	//Release Vert and Frag Shader

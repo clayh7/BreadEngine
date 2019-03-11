@@ -53,7 +53,6 @@ private:
 	double m_timeLastFrameBegan;
 	double m_targetFPS;
 	bool m_isFullscreen;
-	Camera3D * m_UICamera; //#TODO: Make this something that's passed into the UI system, and all MeshRenderer calls use this camera proj/view stuff
 	int m_currentDrawCalls; //#TODO: Put this in RenderSystem
 
 	int m_offsetXFromWindowsDesktop = START_WINDOW_OFFSET;

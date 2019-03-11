@@ -7,7 +7,7 @@
 #include "Engine/DebugSystem/Command.hpp"
 #include "Engine/EventSystem/EventSystem.hpp"
 #include "Engine/Math/Vector2f.hpp"
-#include "Engine/Memory/MemoryAnalytics.hpp"
+#include "Engine/MemorySystem/UntrackedAllocator.hpp"
 #include "Engine/RenderSystem/Color.hpp"
 #include "Engine/Utils/StringUtils.hpp"
 

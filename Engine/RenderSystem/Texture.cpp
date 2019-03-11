@@ -2,7 +2,7 @@
 // Based on code written by Squirrel Eiserloh
 #include "Engine/RenderSystem/Texture.hpp"
 
-#include "Engine/RenderSystem/Renderer.hpp"
+#include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Utils/StringUtils.hpp"

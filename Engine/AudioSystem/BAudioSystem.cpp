@@ -7,13 +7,13 @@
 //-------------------------------------------------------------------------------------------------
 STATIC bool BAudioSystem::s_initialized = false;
 STATIC FMOD::System * BAudioSystem::s_fmodSystem = nullptr;
-STATIC std::map<size_t, SoundID> BAudioSystem::s_registeredSoundIDs;
-STATIC std::vector<FMOD::Sound*> BAudioSystem::s_registeredSounds;
+STATIC std::map<size_t, SoundID, std::less<size_t>, UntrackedAllocator<std::pair<size_t, SoundID>>> BAudioSystem::s_registeredSoundIDs;
+STATIC std::vector<FMOD::Sound*, UntrackedAllocator<FMOD::Sound*>> BAudioSystem::s_registeredSounds;
 
 
-//---------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 // FMOD startup code based on "GETTING STARTED With FMOD Ex Programmer’s API for Windows" document
-//	from the FMOD programming API at http://www.fmod.org/download/
+// from the FMOD programming API at http://www.fmod.org/download/
 STATIC void BAudioSystem::Startup()
 {
 	if(s_initialized)

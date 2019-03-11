@@ -26,12 +26,16 @@ bool IsDebuggerAvailable()
 	// Get a handle to KERNEL32.DLL
 	static HINSTANCE hInstanceKernel32 = GetModuleHandle(TEXT("KERNEL32"));
 	if(!hInstanceKernel32)
+	{
 		return false;
+	}
 
 	// Get a handle to the IsDebuggerPresent() function in KERNEL32.DLL
 	static IsDebuggerPresentFunc* isDebuggerPresentFunc = (IsDebuggerPresentFunc*)GetProcAddress(hInstanceKernel32, "IsDebuggerPresent");
 	if(!isDebuggerPresentFunc)
+	{
 		return false;
+	}
 
 	// Now CALL that function and return its result
 	static BOOL isDebuggerAvailable = isDebuggerPresentFunc();
@@ -85,8 +89,10 @@ UINT GetWindowsMessageBoxIconFlagForSeverityLevel(SeverityLevel severity)
 //-----------------------------------------------------------------------------------------------
 char const * FindStartOfFileNameWithinFilePath(char const * filePath)
 {
-	if(filePath == nullptr)
+	if(!filePath)
+	{
 		return nullptr;
+	}
 
 	size_t pathLen = strlen(filePath);
 	char const * scan = filePath + pathLen; // start with null terminator after last character
@@ -204,9 +210,13 @@ __declspec(noreturn) void FatalError(char const * filePath, char const * functio
 	if(reasonForError.empty())
 	{
 		if(conditionText)
+		{
 			errorMessage = Stringf("ERROR: \"%s\" is false!", conditionText);
+		}
 		else
+		{
 			errorMessage = "Unspecified fatal error";
+		}
 	}
 
 	//Print Error message to LoggerSystem
@@ -217,27 +227,13 @@ __declspec(noreturn) void FatalError(char const * filePath, char const * functio
 	}
 
 	char const * fileName = FindStartOfFileNameWithinFilePath(filePath);
-	//	std::string appName = theApplication ? theApplication->GetApplicationName() : "Unnamed Application";
-	std::string appName = "Unnamed Application";
+	std::string appName = APP_NAME;
 	std::string fullMessageTitle = appName + " :: Error";
 	std::string fullMessageText = errorMessage;
-	fullMessageText += "\n\nThe application will now close.\n";
 	bool isDebuggerPresent = (IsDebuggerPresent() == TRUE);
 	if(isDebuggerPresent)
 	{
-		fullMessageText += "\nDEBUGGER DETECTED!\nWould you like to break and debug?\n  (Yes=debug, No=quit)\n";
-	}
-
-	fullMessageText += "\n---------- Debugging Details Follow ----------\n";
-	if(conditionText)
-	{
-		fullMessageText += Stringf("\nThis error was triggered by a run-time condition check:\n  %s\n  from %s(), line %i in %s\n",
-			conditionText, functionName, lineNum, fileName);
-	}
-	else
-	{
-		fullMessageText += Stringf("\nThis was an unconditional error triggered by reaching\n line %i of %s, in %s()\n",
-			lineNum, fileName, functionName);
+		fullMessageText += "\n\n(Yes=debug, No=quit)\n";
 	}
 
 	DebuggerPrintf("\n==============================================================================\n");
@@ -272,9 +268,13 @@ void RecoverableWarning(char const * filePath, char const * functionName, int li
 	if(reasonForWarning.empty())
 	{
 		if(conditionText)
+		{
 			errorMessage = Stringf("WARNING: \"%s\" is false!", conditionText);
+		}
 		else
+		{
 			errorMessage = "Unspecified warning";
+		}
 	}
 
 	//Log warning in debugger
@@ -285,30 +285,18 @@ void RecoverableWarning(char const * filePath, char const * functionName, int li
 
 	char const * fileName = FindStartOfFileNameWithinFilePath(filePath);
 	//	std::string appName = theApplication ? theApplication->GetApplicationName() : "Unnamed Application";
-	std::string appName = "Unnamed Application";
+	std::string appName = APP_NAME;
 	std::string fullMessageTitle = appName + " :: Warning";
 	std::string fullMessageText = errorMessage;
 
 	bool isDebuggerPresent = (IsDebuggerPresent() == TRUE);
 	if(isDebuggerPresent)
 	{
-		fullMessageText += "\n\nDEBUGGER DETECTED!\nWould you like to continue running?\n  (Yes=continue, No=quit, Cancel=debug)\n";
+		fullMessageText += "\n\n(Yes=continue, No=quit, Cancel=debug)\n";
 	}
 	else
 	{
-		fullMessageText += "\n\nWould you like to continue running?\n  (Yes=continue, No=quit)\n";
-	}
-
-	fullMessageText += "\n---------- Debugging Details Follow ----------\n";
-	if(conditionText)
-	{
-		fullMessageText += Stringf("\nThis warning was triggered by a run-time condition check:\n  %s\n  from %s(), line %i in %s\n",
-			conditionText, functionName, lineNum, fileName);
-	}
-	else
-	{
-		fullMessageText += Stringf("\nThis was an unconditional warning triggered by reaching\n line %i of %s, in %s()\n",
-			lineNum, fileName, functionName);
+		fullMessageText += "\n\n(Yes=continue, No=quit)\n";
 	}
 
 	DebuggerPrintf("\n------------------------------------------------------------------------------\n");

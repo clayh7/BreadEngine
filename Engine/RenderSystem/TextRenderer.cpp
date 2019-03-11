@@ -4,7 +4,7 @@
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
 #include "Engine/RenderSystem/BitmapFont.hpp"
 #include "Engine/RenderSystem/Material.hpp"
-#include "Engine/RenderSystem/Renderer.hpp"
+#include "Engine/RenderSystem/BRenderSystem.hpp"
 
 
 //-------------------------------------------------------------------------------------------------
@@ -20,9 +20,15 @@ TextRenderer::TextRenderer(std::string const & content, Vector2f const & screenP
 	, m_textMesh(nullptr)
 	, m_textMaterial(nullptr)
 {
+	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	if(!RSystem)
+	{
+		ERROR_AND_DIE("No Render System.");
+	}
+
 	if(!m_font)
 	{
-		m_font = g_RenderSystem->GetDefaultFont();
+		m_font = RSystem->GetDefaultFont();
 	}
 	m_textMesh = new Mesh("", 12.f, m_font);
 	m_extents = m_textMesh->Update(m_content, m_size, m_font);
@@ -34,7 +40,7 @@ TextRenderer::TextRenderer(std::string const & content, Vector2f const & screenP
 	SetUniform("uColor", Color::WHITE);
 	SetAlignment(eAlignment_LEFT);
 
-	g_RenderSystem->BindMeshToVAO(m_vaoID, m_mesh, m_material);
+	RSystem->BindMeshToVAO(m_vaoID, m_mesh, m_material);
 
 	//#TODO: Make the matrix proj and view be what they're supposed to be
 	//Set Matricies

@@ -12,7 +12,7 @@
 #include "Engine/RenderSystem/SpriteRenderSystem/Sprite.hpp"
 #include "Engine/RenderSystem/Material.hpp"
 #include "Engine/RenderSystem/MeshRenderer.hpp"
-#include "Engine/RenderSystem/Renderer.hpp"
+#include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/Utils/FileUtils.hpp"
 #include "Engine/Utils/MathUtils.hpp"
 #include "Engine/Utils/XMLUtils.hpp"
@@ -166,12 +166,18 @@ void SpriteGameRenderer::UpdateMaterialEffects()
 //-------------------------------------------------------------------------------------------------
 void SpriteGameRenderer::Render()
 {
+	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	if(!RSystem)
+	{
+		ERROR_AND_DIE("No Render System.");
+	}
+
 	//Save active FBO
-	Framebuffer * startingFBO = g_RenderSystem->GetActiveFBO();
+	Framebuffer * startingFBO = RSystem->GetActiveFBO();
 
 	//Setup current FBO
-	g_RenderSystem->BindFramebuffer(m_fboCurrent);
-	g_RenderSystem->ClearScreen(m_clearColor);
+	RSystem->BindFramebuffer(m_fboCurrent);
+	BRenderSystem::ClearScreen(m_clearColor);
 
 	//Render Sprite layers
 	for(auto spriteLayerIter = m_spriteLayers.begin(); spriteLayerIter != m_spriteLayers.end(); ++spriteLayerIter)
@@ -183,7 +189,7 @@ void SpriteGameRenderer::Render()
 		//Apply FBO effects
 		for(eMaterialEffect const & effectID : currentLayer->m_effects)
 		{
-			g_RenderSystem->BindFramebuffer(m_fboEffect);
+			RSystem->BindFramebuffer(m_fboEffect);
 			m_screenEffect->SetMaterial(m_screenMaterials[effectID]);
 			m_screenEffect->SetUniform("uDiffuseTex", m_fboCurrent->GetColorTexture(0));
 			m_screenEffect->Render();
@@ -192,7 +198,7 @@ void SpriteGameRenderer::Render()
 	}
 
 	//Redraw game onto starting FBO
-	g_RenderSystem->BindFramebuffer(startingFBO);
+	RSystem->BindFramebuffer(startingFBO);
 	m_screenEffect->SetMaterial(m_screenMaterials[eMaterialEffect_NOTHING]);
 	m_screenEffect->SetUniform("uDiffuseTex", m_fboCurrent->GetColorTexture(0));
 	m_screenEffect->Render();

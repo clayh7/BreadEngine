@@ -129,9 +129,6 @@
     <ClCompile Include="RenderSystem\OpenGLExtensions.cpp">
       <Filter>RenderSystem</Filter>
     </ClCompile>
-    <ClCompile Include="RenderSystem\Renderer.cpp">
-      <Filter>RenderSystem</Filter>
-    </ClCompile>
     <ClCompile Include="DebugSystem\Command.cpp">
       <Filter>DebugSystem</Filter>
     </ClCompile>
@@ -234,15 +231,6 @@
     <ClCompile Include="DebugSystem\BProfiler.cpp">
       <Filter>DebugSystem</Filter>
     </ClCompile>
-    <ClCompile Include="Memory\ObjectPool.cpp">
-      <Filter>Memory</Filter>
-    </ClCompile>
-    <ClCompile Include="Memory\Callstack.cpp">
-      <Filter>Memory</Filter>
-    </ClCompile>
-    <ClCompile Include="Memory\MemoryAnalytics.cpp">
-      <Filter>Memory</Filter>
-    </ClCompile>
     <ClCompile Include="Threads\Thread.cpp">
       <Filter>Threads</Filter>
     </ClCompile>
@@ -270,29 +258,11 @@
     <ClCompile Include="Utils\MathUtils.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Net\NetworkSystem.cpp">
-      <Filter>Net</Filter>
-    </ClCompile>
     <ClCompile Include="Utils\NetworkUtils.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Net\Session\NetMessage.cpp">
-      <Filter>Net\Session</Filter>
-    </ClCompile>
-    <ClCompile Include="Net\Session\NetPacket.cpp">
-      <Filter>Net\Session</Filter>
-    </ClCompile>
-    <ClCompile Include="Net\Session\NetSession.cpp">
-      <Filter>Net\Session</Filter>
-    </ClCompile>
     <ClCompile Include="Utils\BytePacker.cpp">
       <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Net\Session\NetConnection.cpp">
-      <Filter>Net\Session</Filter>
-    </ClCompile>
-    <ClCompile Include="Net\Session\PacketChannel.cpp">
-      <Filter>Net\Session</Filter>
     </ClCompile>
     <ClCompile Include="Core\Array.cpp">
       <Filter>Core</Filter>
@@ -346,9 +316,6 @@
     <ClCompile Include="DebugSystem\BProfilerReport.cpp" />
     <ClCompile Include="DebugSystem\BProfilerScopedSample.cpp" />
     <ClCompile Include="DebugSystem\BProfilerSample.cpp" />
-    <ClCompile Include="Net\Session\ConnectionInfo.cpp" />
-    <ClCompile Include="Net\Session\AckBundle.cpp" />
-    <ClCompile Include="Net\Session\NetMessageDefinition.cpp" />
     <ClCompile Include="RenderSystem\Kerning.cpp" />
     <ClCompile Include="Utils\MeshBuilderDataUtils.cpp" />
     <ClCompile Include="UISystem\UIBox.cpp">
@@ -379,18 +346,49 @@
       <Filter>UISystem</Filter>
     </ClCompile>
     <ClCompile Include="DebugSystem\DebugLog.cpp" />
-    <ClCompile Include="Net\Sockets\SocketAddress.cpp" />
-    <ClCompile Include="Net\UDPIP\UDPSock.cpp">
-      <Filter>Net\UDPIP</Filter>
-    </ClCompile>
-    <ClCompile Include="Net\Sockets\UDPSocket.cpp" />
-    <ClCompile Include="Net\Sockets\TCPSocket.cpp" />
-    <ClCompile Include="Net\RCS\RemoteCommandServer.cpp" />
-    <ClCompile Include="Net\RCS\RCSConnection.cpp" />
     <ClCompile Include="Utils\StreamWriter.cpp" />
     <ClCompile Include="Utils\StreamReader.cpp" />
     <ClCompile Include="AudioSystem\BAudioSystem.cpp">
       <Filter>AudioSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="MemorySystem\Callstack.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="MemorySystem\ObjectPool.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="MemorySystem\BMemorySystem.cpp" />
+    <ClCompile Include="RenderSystem\BRenderSystem.cpp">
+      <Filter>RenderSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkSystem\RCS\RCSConnection.cpp" />
+    <ClCompile Include="NetworkSystem\RCS\RemoteCommandServer.cpp" />
+    <ClCompile Include="NetworkSystem\Session\AckBundle.cpp" />
+    <ClCompile Include="NetworkSystem\Session\ConnectionInfo.cpp" />
+    <ClCompile Include="NetworkSystem\Session\NetConnection.cpp">
+      <Filter>Net\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkSystem\Session\NetMessage.cpp">
+      <Filter>Net\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkSystem\Session\NetMessageDefinition.cpp" />
+    <ClCompile Include="NetworkSystem\Session\NetPacket.cpp">
+      <Filter>Net\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkSystem\Session\NetSession.cpp">
+      <Filter>Net\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkSystem\Session\PacketChannel.cpp">
+      <Filter>Net\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkSystem\Sockets\SocketAddress.cpp" />
+    <ClCompile Include="NetworkSystem\Sockets\TCPSocket.cpp" />
+    <ClCompile Include="NetworkSystem\Sockets\UDPSocket.cpp" />
+    <ClCompile Include="NetworkSystem\UDPIP\UDPSock.cpp">
+      <Filter>Net\UDPIP</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkSystem\NetworkSystem.cpp">
+      <Filter>Net</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -476,9 +474,6 @@
       <Filter>RenderSystem</Filter>
     </ClInclude>
     <ClInclude Include="RenderSystem\OpenGLExtensions.hpp">
-      <Filter>RenderSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderSystem\Renderer.hpp">
       <Filter>RenderSystem</Filter>
     </ClInclude>
     <ClInclude Include="DebugSystem\Command.hpp">
@@ -586,15 +581,6 @@
     <ClInclude Include="DebugSystem\BProfiler.hpp">
       <Filter>DebugSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\ObjectPool.hpp">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Callstack.hpp">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\MemoryAnalytics.hpp">
-      <Filter>Memory</Filter>
-    </ClInclude>
     <ClInclude Include="Threads\Thread.hpp">
       <Filter>Threads</Filter>
     </ClInclude>
@@ -628,23 +614,8 @@
     <ClInclude Include="Utils\NetworkUtils.hpp">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Net\Session\NetMessage.hpp">
-      <Filter>Net\Session</Filter>
-    </ClInclude>
-    <ClInclude Include="Net\Session\NetPacket.hpp">
-      <Filter>Net\Session</Filter>
-    </ClInclude>
-    <ClInclude Include="Net\Session\NetSession.hpp">
-      <Filter>Net\Session</Filter>
-    </ClInclude>
     <ClInclude Include="Utils\BytePacker.hpp">
       <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Net\Session\NetConnection.hpp">
-      <Filter>Net\Session</Filter>
-    </ClInclude>
-    <ClInclude Include="Net\Session\PacketChannel.hpp">
-      <Filter>Net\Session</Filter>
     </ClInclude>
     <ClInclude Include="Core\Array.hpp">
       <Filter>Core</Filter>
@@ -698,9 +669,6 @@
     <ClInclude Include="DebugSystem\BProfilerReport.hpp" />
     <ClInclude Include="DebugSystem\BProfilerScopedSample.hpp" />
     <ClInclude Include="DebugSystem\BProfilerSample.hpp" />
-    <ClInclude Include="Net\Session\ConnectionInfo.hpp" />
-    <ClInclude Include="Net\Session\AckBundle.hpp" />
-    <ClInclude Include="Net\Session\NetMessageDefinition.hpp" />
     <ClInclude Include="RenderSystem\Kerning.hpp" />
     <ClInclude Include="Utils\MeshBuilderDataUtils.hpp" />
     <ClInclude Include="UISystem\UIBox.hpp">
@@ -734,18 +702,49 @@
       <Filter>UISystem</Filter>
     </ClInclude>
     <ClInclude Include="DebugSystem\DebugLog.hpp" />
-    <ClInclude Include="Net\Sockets\SocketAddress.hpp" />
-    <ClInclude Include="Net\UDPIP\UDPSock.hpp">
-      <Filter>Net\UDPIP</Filter>
-    </ClInclude>
-    <ClInclude Include="Net\Sockets\UDPSocket.hpp" />
-    <ClInclude Include="Net\Sockets\TCPSocket.hpp" />
-    <ClInclude Include="Net\RCS\RemoteCommandServer.hpp" />
-    <ClInclude Include="Net\RCS\RCSConnection.hpp" />
     <ClInclude Include="Utils\StreamWriter.hpp" />
     <ClInclude Include="Utils\StreamReader.hpp" />
     <ClInclude Include="AudioSystem\BAudioSystem.hpp">
       <Filter>AudioSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="MemorySystem\BMemorySystem.hpp">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="MemorySystem\Callstack.hpp">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="MemorySystem\ObjectPool.hpp">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderSystem\BRenderSystem.hpp">
+      <Filter>RenderSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="MemorySystem\UntrackedAllocator.hpp" />
+    <ClInclude Include="NetworkSystem\RCS\RCSConnection.hpp" />
+    <ClInclude Include="NetworkSystem\RCS\RemoteCommandServer.hpp" />
+    <ClInclude Include="NetworkSystem\Session\AckBundle.hpp" />
+    <ClInclude Include="NetworkSystem\Session\ConnectionInfo.hpp" />
+    <ClInclude Include="NetworkSystem\Session\NetConnection.hpp">
+      <Filter>Net\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkSystem\Session\NetMessage.hpp">
+      <Filter>Net\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkSystem\Session\NetMessageDefinition.hpp" />
+    <ClInclude Include="NetworkSystem\Session\NetPacket.hpp">
+      <Filter>Net\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkSystem\Session\NetSession.hpp">
+      <Filter>Net\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkSystem\Session\PacketChannel.hpp">
+      <Filter>Net\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkSystem\Sockets\SocketAddress.hpp" />
+    <ClInclude Include="NetworkSystem\Sockets\TCPSocket.hpp" />
+    <ClInclude Include="NetworkSystem\Sockets\UDPSocket.hpp" />
+    <ClInclude Include="NetworkSystem\UDPIP\UDPSock.hpp">
+      <Filter>Net\UDPIP</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -754,7 +753,7 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Net\NetworkSystem.hpp">
+    <None Include="NetworkSystem\NetworkSystem.hpp">
       <Filter>Net</Filter>
     </None>
   </ItemGroup>

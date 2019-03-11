@@ -17,10 +17,10 @@
 #include "Engine/DebugSystem/Debugger.hpp"
 #include "Engine/EventSystem/EventSystem.hpp"
 #include "Engine/InputSystem/Input.hpp"
-#include "Engine/Net/NetworkSystem.hpp"
-#include "Engine/Net/RCS/RemoteCommandServer.hpp"
+#include "Engine/NetworkSystem/NetworkSystem.hpp"
+#include "Engine/NetworkSystem/RCS/RemoteCommandServer.hpp"
 #include "Engine/RenderSystem/Camera3D.hpp"
-#include "Engine/RenderSystem/Renderer.hpp"
+#include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/RenderSystem/SpriteRenderSystem/ParticleEngine.hpp"
 #include "Engine/RenderSystem/SpriteRenderSystem/SpriteGameRenderer.hpp"
 #include "Engine/Threads/JobSystem.hpp"
@@ -144,7 +144,6 @@ Engine::Engine(HINSTANCE applicationInstanceHandle)
 	, m_timeLastFrameBegan(0.0)
 	, m_targetFPS(60.0)
 	, m_isFullscreen(false)
-	, m_UICamera(nullptr)
 	, m_currentDrawCalls(0)
 {
 	//Randomize Seed
@@ -160,17 +159,14 @@ Engine::Engine(HINSTANCE applicationInstanceHandle)
 	m_timeLastFrameBegan = Time::GetCurrentTimeSeconds();
 
 	//Create All Engine Systems
-	g_MemoryAnalyticsSystem = new MemoryAnalytics();
+	BMemorySystem::Startup();
 	EventSystem::Startup();
 	BAudioSystem::Startup();
 	g_InputSystem = new Input();
-	g_RenderSystem = new Renderer();
-	m_UICamera = new Camera3D(false);
-	g_RenderSystem->SetActiveCamera(m_UICamera);
+	BRenderSystem::Startup();
 	Console::Startup();
 	g_SpriteRenderSystem = new SpriteGameRenderer();
-	g_UISystem = new UISystem();
-	g_UISystem->LoadUIFromXML();
+	UISystem::Startup();
 	g_DebugSystem = new Debugger();
 
 	//Add a sleep(10) to the job threads
@@ -190,35 +186,26 @@ Engine::~Engine()
 	//delete g_JobSystem;
 	//g_JobSystem = nullptr;
 
-	delete m_UICamera;
-	m_UICamera = nullptr;
-
 	delete g_ConsoleSystem;
 	g_ConsoleSystem = nullptr;
 
 	delete g_DebugSystem;
 	g_DebugSystem = nullptr;
 
-	delete g_UISystem;
-	g_UISystem = nullptr;
+	UISystem::Shutdown();
 
 	delete g_SpriteRenderSystem;
 	g_SpriteRenderSystem = nullptr;
 
-	delete g_RenderSystem;
-	g_RenderSystem = nullptr;
+	BRenderSystem::Shutdown();
 
 	delete g_InputSystem;
 	g_InputSystem = nullptr;
 
 	BAudioSystem::Shutdown();
-
 	EventSystem::Shutdown();
-
 	Clock::DestroyClocks();
-
-	delete g_MemoryAnalyticsSystem;
-	g_MemoryAnalyticsSystem = nullptr;
+	BMemorySystem::Shutdown();
 }
 
 
@@ -252,9 +239,9 @@ void Engine::Update()
 	g_InputSystem->AdvanceFrameNumber();
 	RunMessagePump();
 
-	m_UICamera->Update();
+	BRenderSystem::Update();
 	g_InputSystem->Update();
-	g_MemoryAnalyticsSystem->Update();
+	BMemorySystem::Update();
 	BAudioSystem::Update();
 	g_DebugSystem->Update();
 	g_ConsoleSystem->Update();
@@ -270,7 +257,7 @@ void Engine::Update()
 //-------------------------------------------------------------------------------------------------
 void Engine::LateUpdate()
 {
-	g_UISystem->Update();
+	UISystem::Update();
 }
 
 
@@ -311,7 +298,7 @@ void Engine::Render() const
 	BProfiler::StartSample("RENDER ENGINE");
 
 	EventSystem::TriggerEvent(ENGINE_RENDER_EVENT);
-	g_UISystem->Render();
+	UISystem::Render();
 	g_DebugSystem->Render();
 	g_ConsoleSystem->Render();
 

@@ -774,5 +774,13 @@ eDock UIWidget::GetDock() const
 //-------------------------------------------------------------------------------------------------
 bool UIWidget::IsSelected() const
 {
-	return g_UISystem->GetSelectedWidget() == this;
+	UISystem * UIS = UISystem::GetSystem();
+	if(UIS)
+	{
+		return UIS->GetSelectedWidget() == this;
+	}
+	else
+	{
+		return false;
+	}
 }

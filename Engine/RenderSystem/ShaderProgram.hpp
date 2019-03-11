@@ -2,7 +2,7 @@
 
 #include <map>
 #include <string>
-#include "Engine/Memory/MemoryAnalytics.hpp"
+#include "Engine/MemorySystem/UntrackedAllocator.hpp"
 
 
 //-------------------------------------------------------------------------------------------------

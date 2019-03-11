@@ -47,15 +47,15 @@ public:
 		Set(propertyName3, propertyValue3);
 	}
 
-	template<typename T>
-	ePropertyGetResult Get(std::string const & propertyName, T & out_propertyValue) const
+	template<typename Type>
+	ePropertyGetResult Get(std::string const & propertyName, Type & out_propertyValue) const
 	{
 		//If we don't specify a default value, then we are the default value
 		return Get(propertyName, out_propertyValue, out_propertyValue);
 	}
 
-	template<typename T>
-	ePropertyGetResult Get(std::string const & propertyName, T & out_propertyValue, T const & defaultValue) const
+	template<typename Type>
+	ePropertyGetResult Get(std::string const & propertyName, Type & out_propertyValue, Type const & defaultValue) const
 	{
 		size_t propertyNameHash = std::hash<std::string>{}(propertyName);
 		auto found = m_properties.find(propertyNameHash);
@@ -71,7 +71,7 @@ public:
 		{
 			//Try to cast to the propertyValue type, if it's not the propertyValue type this'll return null
 			NamedPropertyBase * property = found->second;
-			NamedProperty<T> * typedProperty = dynamic_cast<NamedProperty<T>*>(property);
+			NamedProperty<Type> * typedProperty = dynamic_cast<NamedProperty<Type>*>(property);
 
 			//Property is correct type
 			if(typedProperty)
@@ -93,8 +93,8 @@ public:
 	ePropertySetResult Set(std::string const & propertyName, char * propertyValue);
 	ePropertySetResult Set(std::string const & propertyName, char const * propertyValue);
 
-	template<typename T>
-	ePropertySetResult Set(std::string const & propertyName, T const & propertyValue)
+	template<typename Type>
+	ePropertySetResult Set(std::string const & propertyName, Type const & propertyValue)
 	{
 		size_t propertyNameHash = std::hash<std::string>{} (propertyName);
 		auto found = m_properties.find(propertyNameHash);
@@ -102,7 +102,7 @@ public:
 		//Could not find property
 		if(found == m_properties.end())
 		{
-			NamedProperty<T> * addProperty = new NamedProperty<T>(propertyValue);
+			NamedProperty<Type> * addProperty = new NamedProperty<Type>(propertyValue);
 			m_properties.insert(std::pair<size_t, NamedPropertyBase*>(propertyNameHash, addProperty));
 			return ePropertySetResult_SUCCESS_ADDED;
 		}
@@ -112,7 +112,7 @@ public:
 		{
 			//Try to cast to the propertyValue type, if it's not the propertyValue type this'll return null
 			NamedPropertyBase * property = found->second;
-			NamedProperty<T> * typedProperty = dynamic_cast<NamedProperty<T>*>(property);
+			NamedProperty<Type> * typedProperty = dynamic_cast<NamedProperty<Type>*>(property);
 
 			//Property is correct type
 			if(typedProperty)
@@ -125,7 +125,7 @@ public:
 			else
 			{
 				delete found->second;
-				found->second = new NamedProperty<T>(propertyValue);
+				found->second = new NamedProperty<Type>(propertyValue);
 				return ePropertySetResult_SUCCESS_CHANGED_TYPE;
 			}
 		}

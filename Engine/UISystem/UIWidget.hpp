@@ -120,15 +120,15 @@ public:
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	template<typename T>
-	void SetProperty(std::string const & propertyName, T const & propertyValue)
+	template<typename Type>
+	void SetProperty(std::string const & propertyName, Type const & propertyValue)
 	{
 		SetProperty(propertyName, propertyValue, eWidgetPropertySource_WIDGET_SPECIFIC, eWidgetState_ALL);
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	template<typename T>
-	void SetProperty(std::string const & propertyName, T const & propertyValue, eWidgetState state)
+	template<typename Type>
+	void SetProperty(std::string const & propertyName, Type const & propertyValue, eWidgetState state)
 	{
 		SetProperty(propertyName, propertyValue, eWidgetPropertySource_WIDGET_SPECIFIC, state);
 	}
@@ -141,18 +141,18 @@ public:
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	template<typename T>
-	void SetProperty(std::string const & propertyName, T const & propertyValue, eWidgetPropertySource source)
+	template<typename Type>
+	void SetProperty(std::string const & propertyName, Type const & propertyValue, eWidgetPropertySource source)
 	{
 		SetProperty(propertyName, propertyValue, source, eWidgetState_ALL);
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	template<typename T>
-	void SetProperty(std::string const & propertyName, T const & propertyValue,
+	template<typename Type>
+	void SetProperty(std::string const & propertyName, Type const & propertyValue,
 		eWidgetPropertySource source, eWidgetState state)
 	{
-		WidgetProperty<T> propertyData(propertyValue, source, state);
+		WidgetProperty<Type> propertyData(propertyValue, source, state);
 		if(IsHigherPriority(propertyName, propertyData))
 		{
 			m_properties[state].Set(propertyName, propertyData);
@@ -162,10 +162,10 @@ public:
 
 	//-------------------------------------------------------------------------------------------------
 	//Higher priority means we want to keep it, lower means we don't care so don't save it
-	template<typename T>
-	bool IsHigherPriority(std::string const & propertyName, WidgetProperty<T> const & newProperty)
+	template<typename Type>
+	bool IsHigherPriority(std::string const & propertyName, WidgetProperty<Type> const & newProperty)
 	{
-		WidgetProperty<T> currentValue;
+		WidgetProperty<Type> currentValue;
 		ePropertyGetResult result = m_properties[newProperty.m_state].Get(propertyName, currentValue);
 		ASSERT_RECOVERABLE(result != ePropertyGetResult_FAILED_WRONG_TYPE, "Widget Property doesn't match current type");
 
@@ -185,11 +185,11 @@ public:
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	template<typename T>
-	void GetProperty(std::string const & propertyName, T & out_propertyValue) const
+	template<typename Type>
+	void GetProperty(std::string const & propertyName, Type & out_propertyValue) const
 	{
 		//Try to get more specific property
-		WidgetProperty<T> widgetProperty;
+		WidgetProperty<Type> widgetProperty;
 		ePropertyGetResult result = m_properties[m_state].Get(propertyName, widgetProperty);
 
 		if(result != ePropertyGetResult_FAILED_NOT_PRESENT)
@@ -209,19 +209,19 @@ public:
 
 
 	//-------------------------------------------------------------------------------------------------
-	template<typename T>
-	T * FindWidgetByName(std::string const & name)
+	template<typename Type>
+	Type * FindWidgetByName(std::string const & name)
 	{
 		if(m_name == name)
 		{
-			T * widget = static_cast<T*>(this);
+			Type * widget = static_cast<Type*>(this);
 			return widget;
 		}
 
 		//Go through children, find the first one that matches the name
 		for(UIWidget * child : m_children)
 		{
-			T * foundWidget = child->FindWidgetByName<T>(name);
+			Type * foundWidget = child->FindWidgetByName<Type>(name);
 			if(foundWidget)
 			{
 				return foundWidget;

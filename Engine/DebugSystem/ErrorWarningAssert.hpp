@@ -52,68 +52,9 @@ int SystemDialogue_YesNoCancel(std::string const & messageTitle, std::string con
 // Use this when reaching a certain line of code should never happen under any circumstances,
 // and continued execution is dangerous or impossible.
 //
-#define ERROR_AND_DIE( errorMessageText )															\
-{																									\
-	FatalError( __FILE__, __FUNCTION__, __LINE__, errorMessageText );								\
-}
-
-
-//-----------------------------------------------------------------------------------------------
-// ERROR_RECOVERABLE
-//
-// Present in all builds.
-// No condition; always triggers if reached.
-// Depending on the platform, this typically:
-//	- Logs a warning message to the console and/or log file
-//	- Opens an warning/message dialogue box
-//	- Triggers a debug breakpoint (if appropriate development suite is present)
-//	- Continues execution
-//
-#define ERROR_RECOVERABLE( errorMessageText )														\
-{																									\
-	RecoverableWarning( __FILE__, __FUNCTION__, __LINE__, errorMessageText );						\
-}
-
-
-//-----------------------------------------------------------------------------------------------
-// GUARANTEE_OR_DIE
-//
-// Present in all builds.
-// Triggers if condition is false.
-// Depending on the platform, this typically:
-//	- Logs an error message to the console and/or log file
-//	- Opens an error/message dialogue box
-//	- Triggers a debug breakpoint (if appropriate development suite is present)
-//	- Shuts down the app
-//
-#define GUARANTEE_OR_DIE( condition, errorMessageText )												\
-{																									\
-if ( !(condition) )																				\
+#define ERROR_AND_DIE( errorMessageText )														\
 {																								\
-	char const * conditionText = #condition;														\
-	FatalError( __FILE__, __FUNCTION__, __LINE__, errorMessageText, conditionText );			\
-}																								\
-}
-
-
-//-----------------------------------------------------------------------------------------------
-// GUARANTEE_RECOVERABLE
-//
-// Present in all builds.
-// Triggers if condition is false.
-// Depending on the platform, this typically:
-//	- Logs a warning message to the console and/or log file
-//	- Opens an warning/message dialogue box
-//	- Triggers a debug breakpoint (if appropriate development suite is present)
-//	- Continues execution
-//
-#define GUARANTEE_RECOVERABLE( condition, errorMessageText )										\
-{																									\
-if ( !(condition) )																				\
-{																								\
-	char const * conditionText = #condition;														\
-	RecoverableWarning( __FILE__, __FUNCTION__, __LINE__, errorMessageText, conditionText );	\
-}																								\
+	FatalError( __FILE__, __FUNCTION__, __LINE__, errorMessageText );							\
 }
 
 
@@ -128,16 +69,16 @@ if ( !(condition) )																				\
 //	- Triggers a debug breakpoint (if appropriate development suite is present)
 //	- Shuts down the app
 //
-#if defined( DISABLE_ASSERTS )
+#if DISABLE_ASSERTS
 #define ASSERT_OR_DIE( condition, errorMessageText ) { (void)( condition ); }
 #else
-#define ASSERT_OR_DIE( condition, errorMessageText )												\
-{																									\
-if ( !(condition) )																				\
+#define ASSERT_OR_DIE( condition, errorMessageText )											\
 {																								\
-	char const * conditionText = #condition;														\
-	FatalError( __FILE__, __FUNCTION__, __LINE__, errorMessageText, conditionText );			\
-}																								\
+	if ( !(condition) )																			\
+	{																							\
+		char const * conditionText = #condition;												\
+		FatalError( __FILE__, __FUNCTION__, __LINE__, errorMessageText, conditionText );		\
+	}																							\
 }
 #endif
 
@@ -153,15 +94,15 @@ if ( !(condition) )																				\
 //	- Triggers a debug breakpoint (if appropriate development suite is present)
 //	- Continues execution
 //
-#if defined( DISABLE_ASSERTS )
+#if DISABLE_ASSERTS
 #define ASSERT_RECOVERABLE( condition, errorMessageText ) { (void)( condition ); }
 #else
-#define ASSERT_RECOVERABLE( condition, errorMessageText )											\
-{																									\
-if ( !(condition) )																				\
+#define ASSERT_RECOVERABLE( condition, errorMessageText )										\
 {																								\
-	char const * conditionText = #condition;														\
-	RecoverableWarning( __FILE__, __FUNCTION__, __LINE__, errorMessageText, conditionText );	\
-}																								\
+	if ( !(condition) )																			\
+	{																							\
+		char const * conditionText = #condition;												\
+		RecoverableWarning( __FILE__, __FUNCTION__, __LINE__, errorMessageText, conditionText );\
+	}																							\
 }
 #endif

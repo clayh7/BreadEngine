@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "Engine/Memory/MemoryAnalytics.hpp"
+#include "Engine/MemorySystem/UntrackedAllocator.hpp"
 #include "Engine/RenderSystem/Vertex.hpp"
 #include "Engine/RenderSystem/VertexDefinition.hpp"
 #include "Engine/RenderSystem/MeshBuilder.hpp"
@@ -35,7 +35,7 @@ class Mesh
 	//-------------------------------------------------------------------------------------------------
 private:
 	//Static Memory Allocation
-	static std::vector<Mesh*, UntrackedAllocator<Mesh*>> s_defaultMeshes;
+	static std::vector<Mesh*, UntrackedAllocator<Mesh*>> * s_defaultMeshes;
 
 	//-------------------------------------------------------------------------------------------------
 	// Static Functions

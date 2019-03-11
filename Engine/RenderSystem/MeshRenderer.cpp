@@ -5,7 +5,7 @@
 #include "Engine/Math/Matrix4f.hpp"
 #include "Engine/RenderSystem/Material.hpp"
 #include "Engine/RenderSystem/Mesh.hpp"
-#include "Engine/RenderSystem/Renderer.hpp"
+#include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/RenderSystem/Uniform.hpp"
 #include "Engine/RenderSystem/Attribute.hpp"
 #include "Engine/RenderSystem/Texture.hpp"
@@ -34,7 +34,12 @@ MeshRenderer::MeshRenderer(eMeshShape const & meshShape, Transform const &transf
 {
 	CreateVAO();
 
-	g_RenderSystem->BindMeshToVAO(m_vaoID, m_mesh, m_material);
+	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	if(!RSystem)
+	{
+		ERROR_AND_DIE("No Render System.");
+	}
+	RSystem->BindMeshToVAO(m_vaoID, m_mesh, m_material);
 
 	//Clear Matricies
 	SetUniform("uModel", GetModelMatrix());
@@ -53,7 +58,12 @@ MeshRenderer::MeshRenderer(Mesh const * mesh, Transform const & transform /*= Tr
 {
 	CreateVAO();
 
-	g_RenderSystem->BindMeshToVAO(m_vaoID, m_mesh, m_material);
+	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	if(!RSystem)
+	{
+		ERROR_AND_DIE("No Render System.");
+	}
+	RSystem->BindMeshToVAO(m_vaoID, m_mesh, m_material);
 
 	//Clear Matricies
 	SetUniform("uModel", GetModelMatrix());
@@ -72,7 +82,12 @@ MeshRenderer::MeshRenderer(Mesh const * mesh, Material const * material, Transfo
 {
 	CreateVAO();
 
-	g_RenderSystem->BindMeshToVAO(m_vaoID, m_mesh, m_material);
+	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	if(!RSystem)
+	{
+		ERROR_AND_DIE("No Render System.");
+	}
+	RSystem->BindMeshToVAO(m_vaoID, m_mesh, m_material);
 
 	//Clear Matricies
 	SetUniform("uModel", GetModelMatrix());
@@ -101,7 +116,11 @@ void MeshRenderer::Update(bool onScreen /*= false*/)
 	SetUniform("uModel", GetModelMatrix());
 	if(!onScreen)
 	{
-		g_RenderSystem->SetMatrixUniforms(this);
+		BRenderSystem * RSystem = BRenderSystem::GetSystem();
+		if(RSystem)
+		{
+			RSystem->SetMatrixUniforms(this);
+		}
 	}
 	else
 	{
@@ -114,7 +133,11 @@ void MeshRenderer::Update(bool onScreen /*= false*/)
 //-------------------------------------------------------------------------------------------------
 void MeshRenderer::Render() const
 {
-	g_RenderSystem->MeshRender(this);
+	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	if(RSystem)
+	{
+		RSystem->MeshRender(this);
+	}
 }
 
 
@@ -252,9 +275,10 @@ void MeshRenderer::RebindMeshAndMaterialToVAO()
 {
 	if(m_mesh && m_material)
 	{
-		//if (BProfiler::IsEnabled())
+		BRenderSystem * RSystem = BRenderSystem::GetSystem();
+		if(RSystem)
 		{
-			g_RenderSystem->BindMeshToVAO(m_vaoID, m_mesh, m_material);
+			RSystem->BindMeshToVAO(m_vaoID, m_mesh, m_material);
 			UpdateUniformBindpoints();
 		}
 	}

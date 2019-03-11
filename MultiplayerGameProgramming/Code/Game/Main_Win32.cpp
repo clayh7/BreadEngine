@@ -1,15 +1,10 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <gl/gl.h>
-#include <cassert>
-#include <crtdbg.h>
-#include <time.h>
-#pragma comment( lib, "opengl32" ) // Link in the OpenGL32.lib static library
 
 #include "Engine/Core/Engine.hpp"
-#include "Engine/Core/EngineCommon.hpp"
 #include "Engine/DebugSystem/BProfiler.hpp"
-#include "Engine/RenderSystem/Renderer.hpp"
+#include "Engine/RenderSystem/BRenderSystem.hpp"
+#include "Engine/MemorySystem/BMemorySystem.hpp"
 #include "Game/App.hpp"
 
 
@@ -31,7 +26,7 @@ void Render()
 	BProfiler::StartSample("RENDER");
 
 	//Clear Screen
-	g_RenderSystem->ClearScreen(Color::BLACK);
+	BRenderSystem::ClearScreen(Color::CLAY_GREEN);
 
 	//Print world
 	g_AppSystem->Render();
@@ -51,10 +46,10 @@ void RunFrame()
 
 
 //-------------------------------------------------------------------------------------------------
-void Initialize(HINSTANCE applicationInstanceHandle)
+void Startup(HINSTANCE applicationInstanceHandle)
 {
 	//Engine and Game Initialization
-	g_EngineSystem = new Engine(applicationInstanceHandle);
+	g_EngineSystem = new(eMemoryTag_UNTRACKED) Engine(applicationInstanceHandle);
 	g_AppSystem = new App();
 }
 
@@ -74,7 +69,7 @@ void Shutdown()
 //-------------------------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE applicationInstanceHandle, HINSTANCE, LPSTR, int)
 {
-	Initialize(applicationInstanceHandle);
+	Startup(applicationInstanceHandle);
 
 	while(!g_isQuitting)
 	{

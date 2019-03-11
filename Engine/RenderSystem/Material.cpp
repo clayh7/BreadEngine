@@ -1,7 +1,7 @@
 #include "Engine/RenderSystem/Material.hpp"
 
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
-#include "Engine/RenderSystem/Renderer.hpp"
+#include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/RenderSystem/Attribute.hpp"
 #include "Engine/RenderSystem/Uniform.hpp"
 #include "Engine/RenderSystem/Texture.hpp"
@@ -59,8 +59,15 @@ Material::Material(ShaderProgram const *program)
 	: m_samplerID(0)
 	, m_program(program)
 {
+	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	if(!RSystem)
+	{
+		BRenderSystem::Startup();
+		RSystem = BRenderSystem::GetSystem();
+	}
+	
 	//Create Sampler
-	m_samplerID = g_RenderSystem->CreateSampler(GL_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT);
+	m_samplerID = RSystem->CreateSampler(GL_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT);
 
 	//Attribute and Uniform count
 	GLuint progID = m_program->GetShaderProgramID();

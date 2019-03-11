@@ -131,7 +131,7 @@ Logger::Logger()
 		std::string deleteFile = logFiles.front();
 		if(remove(deleteFile.c_str()) != 0)
 		{
-			ERROR_AND_DIE("Error deleting file");
+			ERROR_AND_DIE("Problem deleting file");
 		}
 	}
 #endif // MAX_LOG_HISTORY

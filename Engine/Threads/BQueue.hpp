@@ -1,6 +1,6 @@
 #pragma once
 #include <queue>
-#include "Engine/Memory/MemoryAnalytics.hpp"
+#include "Engine/MemorySystem/BMemorySystem.hpp"
 #include "Engine/Threads/CriticalSection.hpp"
 
 
