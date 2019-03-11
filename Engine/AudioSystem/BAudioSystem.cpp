@@ -5,10 +5,7 @@
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC bool BAudioSystem::s_initialized = false;
-STATIC FMOD::System * BAudioSystem::s_fmodSystem = nullptr;
-STATIC std::map<size_t, SoundID, std::less<size_t>, UntrackedAllocator<std::pair<size_t, SoundID>>> BAudioSystem::s_registeredSoundIDs;
-STATIC std::vector<FMOD::Sound*, UntrackedAllocator<FMOD::Sound*>> BAudioSystem::s_registeredSounds;
+STATIC BAudioSystem * BAudioSystem::s_AudioSystem = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -16,22 +13,100 @@ STATIC std::vector<FMOD::Sound*, UntrackedAllocator<FMOD::Sound*>> BAudioSystem:
 // from the FMOD programming API at http://www.fmod.org/download/
 STATIC void BAudioSystem::Startup()
 {
-	if(s_initialized)
+	if(!s_AudioSystem)
 	{
-		return;
+		s_AudioSystem = new BAudioSystem();
 	}
+}
 
+
+//-------------------------------------------------------------------------------------------------
+STATIC void BAudioSystem::Shutdown()
+{
+	if(s_AudioSystem)
+	{
+		delete s_AudioSystem;
+		s_AudioSystem = nullptr;
+	}
+}
+
+
+//---------------------------------------------------------------------------
+STATIC void BAudioSystem::Update()
+{
+	if(s_AudioSystem && s_AudioSystem->m_fmodSystem)
+	{
+		FMOD_RESULT result = s_AudioSystem->m_fmodSystem->update();
+		ValidateResult(result);
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC BAudioSystem * BAudioSystem::GetSystem()
+{
+	return s_AudioSystem;
+}
+
+
+//---------------------------------------------------------------------------
+STATIC void BAudioSystem::ValidateResult(FMOD_RESULT result)
+{
+	if(result != FMOD_OK)
+	{
+		DebuggerPrintf("AUDIO SYSTEM ERROR: Got error result code %d.\n", result);
+		__debugbreak();
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC SoundID BAudioSystem::CreateOrGetSound(std::string const & soundFileName)
+{
+	if(s_AudioSystem)
+	{
+		return s_AudioSystem->SystemCreateOrGetSound(soundFileName);
+	}
+	return MISSING_SOUND_ID;
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC AudioChannelHandle BAudioSystem::PlaySound(SoundID soundID, float volumeLevel /*= 1.f*/, bool looping /*= false*/)
+{
+	if(s_AudioSystem)
+	{
+		return s_AudioSystem->SystemPlaySound(soundID, volumeLevel, looping);
+	}
+	return nullptr;
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC void BAudioSystem::StopSound(AudioChannelHandle channel)
+{
+	if(s_AudioSystem)
+	{
+		s_AudioSystem->SystemStopSound(channel);
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+BAudioSystem::BAudioSystem()
+	: m_fmodSystem(nullptr)
+{
 	// Create a System object and initialize.
-	FMOD_RESULT result = FMOD::System_Create(&s_fmodSystem);
+	FMOD_RESULT result = FMOD::System_Create(&m_fmodSystem);
 	ValidateResult(result);
 
-	if(!s_fmodSystem)
+	if(!m_fmodSystem)
 	{
-		return;
+		ERROR_AND_DIE("FMOD System was not created.");
 	}
 
 	unsigned int fmodVersion;
-	result = s_fmodSystem->getVersion(&fmodVersion);
+	result = m_fmodSystem->getVersion(&fmodVersion);
 	ValidateResult(result);
 
 	if(fmodVersion < FMOD_VERSION)
@@ -40,108 +115,95 @@ STATIC void BAudioSystem::Startup()
 	}
 
 	int numDrivers;
-	result = s_fmodSystem->getNumDrivers(&numDrivers);
+	result = m_fmodSystem->getNumDrivers(&numDrivers);
 	ValidateResult(result);
 
 	if(numDrivers == 0)
 	{
-		result = s_fmodSystem->setOutput(FMOD_OUTPUTTYPE_NOSOUND);
+		result = m_fmodSystem->setOutput(FMOD_OUTPUTTYPE_NOSOUND);
 		ValidateResult(result);
 	}
 	else
 	{
 		FMOD_CAPS deviceCapabilities;
 		FMOD_SPEAKERMODE speakerMode;
-		result = s_fmodSystem->getDriverCaps(0, &deviceCapabilities, 0, &speakerMode);
+		result = m_fmodSystem->getDriverCaps(0, &deviceCapabilities, 0, &speakerMode);
 		ValidateResult(result);
 
 		// Set the user selected speaker mode.
-		result = s_fmodSystem->setSpeakerMode(speakerMode);
+		result = m_fmodSystem->setSpeakerMode(speakerMode);
 		ValidateResult(result);
 
 		if(deviceCapabilities & FMOD_CAPS_HARDWARE_EMULATED)
 		{
 			// The user has the 'Acceleration' slider set to off! This is really bad
 			// for latency! You might want to warn the user about this.
-			result = s_fmodSystem->setDSPBufferSize(1024, 10);
+			result = m_fmodSystem->setDSPBufferSize(1024, 10);
 			ValidateResult(result);
 		}
 
 		char audioDeviceName[MAX_AUDIO_DEVICE_NAME_LEN];
-		result = s_fmodSystem->getDriverInfo(0, audioDeviceName, MAX_AUDIO_DEVICE_NAME_LEN, 0);
+		result = m_fmodSystem->getDriverInfo(0, audioDeviceName, MAX_AUDIO_DEVICE_NAME_LEN, 0);
 		ValidateResult(result);
 
 		if(strstr(audioDeviceName, "SigmaTel"))
 		{
 			// Sigmatel sound devices crackle for some reason if the format is PCM 16bit.
 			// PCM floating point output seems to solve it.
-			result = s_fmodSystem->setSoftwareFormat(48000, FMOD_SOUND_FORMAT_PCMFLOAT, 0, 0, FMOD_DSP_RESAMPLER_LINEAR);
+			result = m_fmodSystem->setSoftwareFormat(48000, FMOD_SOUND_FORMAT_PCMFLOAT, 0, 0, FMOD_DSP_RESAMPLER_LINEAR);
 			ValidateResult(result);
 		}
 	}
 
-	result = s_fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
+	result = m_fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
 	if(result == FMOD_ERR_OUTPUT_CREATEBUFFER)
 	{
 		// Ok, the speaker mode selected isn't supported by this sound card. Switch it
 		// back to stereo...
-		result = s_fmodSystem->setSpeakerMode(FMOD_SPEAKERMODE_STEREO);
+		result = m_fmodSystem->setSpeakerMode(FMOD_SPEAKERMODE_STEREO);
 		ValidateResult(result);
 
 		// ... and re-init.
-		result = s_fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
+		result = m_fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
 		ValidateResult(result);
 	}
-
-	s_initialized = true;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void BAudioSystem::Shutdown()
+BAudioSystem::~BAudioSystem()
 {
-	if(s_initialized && s_fmodSystem)
+	if(m_fmodSystem)
 	{
-		//delete s_fmodSystem;
-		s_fmodSystem = nullptr;
+		delete m_fmodSystem;
+		m_fmodSystem = nullptr;
 	}
 }
 
 
 //---------------------------------------------------------------------------
-STATIC void BAudioSystem::Update()
+SoundID BAudioSystem::SystemCreateOrGetSound(std::string const & soundFileName)
 {
-	if(s_initialized && s_fmodSystem)
-	{
-		FMOD_RESULT result = s_fmodSystem->update();
-		ValidateResult(result);
-	}
-}
-
-
-//---------------------------------------------------------------------------
-STATIC SoundID BAudioSystem::CreateOrGetSound(std::string const & soundFileName)
-{
-	if(!s_initialized || !s_fmodSystem)
+	if(!s_AudioSystem || !m_fmodSystem)
 	{
 		return MISSING_SOUND_ID;
 	}
 
 	size_t soundFileNameHash = std::hash<std::string>{}(soundFileName);
-	std::map<size_t, SoundID>::iterator found = s_registeredSoundIDs.find(soundFileNameHash);
-	if(found != s_registeredSoundIDs.end())
+	std::map<size_t, SoundID>::iterator found = m_registeredSoundIDs.find(soundFileNameHash);
+	if(found != m_registeredSoundIDs.end())
 	{
 		return found->second;
 	}
 	else
 	{
 		FMOD::Sound* newSound = nullptr;
-		s_fmodSystem->createSound(soundFileName.c_str(), FMOD_DEFAULT, nullptr, &newSound);
+		m_fmodSystem->createSound(soundFileName.c_str(), FMOD_DEFAULT, nullptr, &newSound);
 		if(newSound)
 		{
-			SoundID newSoundID = s_registeredSounds.size();
-			s_registeredSoundIDs[soundFileNameHash] = newSoundID;
-			s_registeredSounds.push_back(newSound);
+			SoundID newSoundID = m_registeredSounds.size();
+			m_registeredSoundIDs[soundFileNameHash] = newSoundID;
+			m_registeredSounds.push_back(newSound);
 			return newSoundID;
 		}
 	}
@@ -151,23 +213,23 @@ STATIC SoundID BAudioSystem::CreateOrGetSound(std::string const & soundFileName)
 
 
 //---------------------------------------------------------------------------
-STATIC AudioChannelHandle BAudioSystem::PlaySound(SoundID soundID, float volumeLevel /*= 1.f*/, bool looping /*= false*/)
+AudioChannelHandle BAudioSystem::SystemPlaySound(SoundID soundID, float volumeLevel /*= 1.f*/, bool looping /*= false*/)
 {
-	if(!s_initialized || !s_fmodSystem)
+	if(!s_AudioSystem || !m_fmodSystem)
 	{
 		return nullptr;
 	}
 
-	unsigned int numSounds = s_registeredSounds.size();
+	unsigned int numSounds = m_registeredSounds.size();
 	if(soundID < 0 || soundID >= numSounds)
 		return nullptr;
 
-	FMOD::Sound * sound = s_registeredSounds[soundID];
+	FMOD::Sound * sound = m_registeredSounds[soundID];
 	if(!sound)
 		return nullptr;
 
 	FMOD::Channel * channelAssignedToSound = nullptr;
-	s_fmodSystem->playSound(FMOD_CHANNEL_FREE, sound, false, &channelAssignedToSound);
+	m_fmodSystem->playSound(FMOD_CHANNEL_FREE, sound, false, &channelAssignedToSound);
 	if(channelAssignedToSound)
 	{
 		channelAssignedToSound->setVolume(volumeLevel);
@@ -182,22 +244,11 @@ STATIC AudioChannelHandle BAudioSystem::PlaySound(SoundID soundID, float volumeL
 
 
 //---------------------------------------------------------------------------
-STATIC void BAudioSystem::StopSound(AudioChannelHandle channel)
+void BAudioSystem::SystemStopSound(AudioChannelHandle channel)
 {
 	FMOD::Channel* fmodChannel = static_cast<FMOD::Channel*>(channel);
 	if(fmodChannel)
 	{
 		fmodChannel->stop();
-	}
-}
-
-
-//---------------------------------------------------------------------------
-STATIC void BAudioSystem::ValidateResult(FMOD_RESULT result)
-{
-	if(result != FMOD_OK)
-	{
-		DebuggerPrintf("AUDIO SYSTEM ERROR: Got error result code %d.\n", result);
-		__debugbreak();
 	}
 }

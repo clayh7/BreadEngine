@@ -33,10 +33,15 @@ public:
 	static unsigned int const MISSING_SOUND_ID = 0xffffffff;
 
 private:
-	static bool s_initialized;
-	static FMOD::System * s_fmodSystem;
-	static std::map<size_t, SoundID, std::less<size_t>, UntrackedAllocator<std::pair<size_t, SoundID>>> s_registeredSoundIDs;
-	static std::vector<FMOD::Sound*, UntrackedAllocator<FMOD::Sound*>> s_registeredSounds;
+	static BAudioSystem * s_AudioSystem;
+
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
+private:
+	FMOD::System * m_fmodSystem;
+	std::map<size_t, SoundID> m_registeredSoundIDs;
+	std::vector<FMOD::Sound*> m_registeredSounds;
 
 	//-------------------------------------------------------------------------------------------------
 	// Static Functions
@@ -45,10 +50,19 @@ public:
 	static void Startup();
 	static void Shutdown();
 	static void Update(); // Must be called at regular intervals (e.g. every frame)
+	static BAudioSystem * GetSystem();
+	static void ValidateResult(FMOD_RESULT result);
 	static SoundID CreateOrGetSound(std::string const & soundFileName);
 	static AudioChannelHandle PlaySound(SoundID soundID, float volumeLevel = 1.f, bool looping = false);
 	static void StopSound(AudioChannelHandle channel);
 
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
 private:
-	static void ValidateResult(FMOD_RESULT result);
+	BAudioSystem();
+	~BAudioSystem();
+	SoundID SystemCreateOrGetSound(std::string const & soundFileName);
+	AudioChannelHandle SystemPlaySound(SoundID soundID, float volumeLevel = 1.f, bool looping = false);
+	void SystemStopSound(AudioChannelHandle channel);
 };
