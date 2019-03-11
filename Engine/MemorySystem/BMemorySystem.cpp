@@ -295,9 +295,6 @@ void BMemorySystem::Deallocate(void * ptr)
 	}
 	else
 	{
-		//#TODO: Problem with deleting LoggMessage* from the Logger thread
-		//Doesn't exist in map and trying to remove it
-		m_numAllocations += 1;
 		__debugbreak();
 	}
 	UnlockCallstackMap();
