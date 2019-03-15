@@ -97,8 +97,9 @@ Vector2f GetPseudoRandomNoiseDirection2D(int positionX, int positionY);
 
 bool IsBitfieldSet(uint16_t bitFlags, size_t bitMask);
 bool IsBitfieldSet(uint8_t bitFlags, size_t bitMask);
-bool IsBitSet(uint16_t bitFlags, size_t bit);
-bool IsBitSet(uint8_t bitFlags, size_t bit);
+bool IsBitSet(uint32_t bitFlags, size_t bitIndex);
+bool IsBitSet(uint16_t bitFlags, size_t bitIndex);
+bool IsBitSet(uint8_t bitFlags, size_t bitIndex);
 void SetBit(uint16_t * out_bitField, size_t bitToSet);
 void SetBit(uint8_t * out_bitField, size_t bitToSet);
 size_t HashMemory(void const * memory, size_t const memorySize);

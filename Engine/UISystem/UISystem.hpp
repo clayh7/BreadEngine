@@ -91,6 +91,8 @@ private:
 	bool IsHoldingAnItem() const;
 	void AddSkinFromXML(XMLNode const & node);
 	void AddWidgetFromXML(XMLNode const & node);
+	void OnMouseDown(NamedProperties & params);
+	void OnMouseUp(NamedProperties & params);
 
 	//-------------------------------------------------------------------------------------------------
 	// Function Templates

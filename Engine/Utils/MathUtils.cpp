@@ -796,6 +796,13 @@ bool IsBitfieldSet(uint8_t bitFlags, size_t bitMask)
 
 
 //-------------------------------------------------------------------------------------------------
+bool IsBitSet(uint32_t bitFlags, size_t bitIndex)
+{
+	return (bitFlags & BIT(bitIndex)) != 0;
+}
+
+
+//-------------------------------------------------------------------------------------------------
 bool IsBitSet(uint16_t bitFlags, size_t bitIndex)
 {
 	return (bitFlags & BIT(bitIndex)) != 0;

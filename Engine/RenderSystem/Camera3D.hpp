@@ -3,6 +3,7 @@
 #include "Engine/Math/Euler.hpp"
 #include "Engine/Math/Vector3f.hpp"
 #include "Engine/Math/Matrix4f.hpp"
+#include "Engine/Core/NamedProperties.hpp"
 
 
 //-------------------------------------------------------------------------------------------------

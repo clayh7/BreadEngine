@@ -34,15 +34,6 @@ public:
 	static float const ASPECT_RATIO;
 
 	//-------------------------------------------------------------------------------------------------
-	// Static Functions
-	//-------------------------------------------------------------------------------------------------
-public:
-	static Vector2i GetWindowDimensions();
-	static Vector2i GetDesktopDimensions();
-	static float GetWindowAspectRatio();
-	static Vector3f ScreenToClipSpace(Vector2f const &screenPosition);
-
-	//-------------------------------------------------------------------------------------------------
 	// Members
 	//-------------------------------------------------------------------------------------------------
 private:
@@ -59,6 +50,15 @@ private:
 	int m_offsetYFromWindowsDesktop = START_WINDOW_OFFSET;
 	int m_windowPhysicalWidth = START_WINDOW_WIDTH;
 	int m_windowPhysicalHeight = START_WINDOW_HEIGHT;
+
+	//-------------------------------------------------------------------------------------------------
+	// Static Functions
+	//-------------------------------------------------------------------------------------------------
+public:
+	static Vector2i GetWindowDimensions();
+	static Vector2i GetDesktopDimensions();
+	static float GetWindowAspectRatio();
+	static Vector3f ScreenToClipSpace(Vector2f const &screenPosition);
 
 	//-------------------------------------------------------------------------------------------------
 	// Functions

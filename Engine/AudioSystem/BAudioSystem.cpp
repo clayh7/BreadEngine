@@ -173,11 +173,7 @@ BAudioSystem::BAudioSystem()
 //-------------------------------------------------------------------------------------------------
 BAudioSystem::~BAudioSystem()
 {
-	if(m_fmodSystem)
-	{
-		delete m_fmodSystem;
-		m_fmodSystem = nullptr;
-	}
+	// Nothing
 }
 
 

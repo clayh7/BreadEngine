@@ -2,7 +2,7 @@
 
 #include "Engine/Core/Time.hpp"
 #include "Engine/EventSystem/EventSystem.hpp"
-#include "Engine/InputSystem/Input.hpp"
+#include "Engine/InputSystem/BMouseKeyboard.hpp"
 #include "Engine/RenderSystem/MeshRenderer.hpp"
 #include "Engine/RenderSystem/MeshBuilder.hpp"
 #include "Engine/RenderSystem/TextRenderer.hpp"
@@ -67,8 +67,8 @@ UITextField::UITextField(std::string const & name /*= ""*/)
 
 	SetupRenderers();
 
-	EventSystem::RegisterEvent(Input::CHAR_TYPED_EVENT, this, &UITextField::OnAddChar);
-	EventSystem::RegisterEvent(Input::BACKSPACE_EVENT, this, &UITextField::OnRemoveChar);
+	EventSystem::RegisterEvent(BMouseKeyboard::EVENT_TYPED_CHAR, this, &UITextField::OnAddChar);
+	EventSystem::RegisterEvent(BMouseKeyboard::EVENT_KEY_DOWN, this, &UITextField::OnRemoveChar);
 }
 
 
@@ -470,8 +470,15 @@ void UITextField::OnAddChar(NamedProperties & charTypedEvent)
 
 
 //-------------------------------------------------------------------------------------------------
-void UITextField::OnRemoveChar(NamedProperties &)
+void UITextField::OnRemoveChar(NamedProperties & params)
 {
+	eKeyboardButton button;
+	params.Get(BMouseKeyboard::PARAM_KEY, button);
+	if(button != eKeyboardButton_BACKSPACE)
+	{
+		return;
+	}
+
 	if(IsSelected())
 	{
 		//Remove the last (far right) character from text

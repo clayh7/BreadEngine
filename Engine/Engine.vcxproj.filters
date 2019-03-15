@@ -78,12 +78,6 @@
     <ClCompile Include="..\ThirdParty\stb\stb_image.c">
       <Filter>ThirdParty\stb</Filter>
     </ClCompile>
-    <ClCompile Include="InputSystem\Input.cpp">
-      <Filter>InputSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="InputSystem\XboxController.cpp">
-      <Filter>InputSystem</Filter>
-    </ClCompile>
     <ClCompile Include="Math\Euler.cpp">
       <Filter>Math</Filter>
     </ClCompile>
@@ -390,16 +384,17 @@
     <ClCompile Include="NetworkSystem\NetworkSystem.cpp">
       <Filter>Net</Filter>
     </ClCompile>
+    <ClCompile Include="InputSystem\BInputSystem.cpp">
+      <Filter>InputSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="InputSystem\BXboxController.cpp">
+      <Filter>InputSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="InputSystem\BMouseKeyboard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Time.hpp">
       <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="InputSystem\Input.hpp">
-      <Filter>InputSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="InputSystem\XboxController.hpp">
-      <Filter>InputSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\ThirdParty\stb\stb_image_write.h">
       <Filter>ThirdParty\stb</Filter>
@@ -746,6 +741,13 @@
     <ClInclude Include="NetworkSystem\UDPIP\UDPSock.hpp">
       <Filter>Net\UDPIP</Filter>
     </ClInclude>
+    <ClInclude Include="InputSystem\BInputSystem.hpp">
+      <Filter>InputSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="InputSystem\BXboxController.hpp">
+      <Filter>InputSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="InputSystem\BMouseKeyboard.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\ThirdParty\fmod\fmodex_vc.lib">

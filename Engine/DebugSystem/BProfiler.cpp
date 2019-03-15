@@ -6,7 +6,7 @@
 #include "Engine/DebugSystem/BProfilerSample.hpp"
 #include "Engine/DebugSystem/Console.hpp"
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
-#include "Engine/InputSystem/Input.hpp"
+#include "Engine/InputSystem/BInputSystem.hpp"
 #include "Engine/RenderSystem/BitmapFont.hpp"
 #include "Engine/Utils/StringUtils.hpp"
 

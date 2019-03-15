@@ -2,7 +2,8 @@
 
 #include "Engine/Core/Time.hpp"
 #include "Engine/Core/EngineCommon.hpp"
-#include "Engine/InputSystem/Input.hpp"
+#include "Engine/EventSystem/EventSystem.hpp"
+#include "Engine/InputSystem/BMouseKeyboard.hpp"
 #include "Engine/Math/Vector2i.hpp"
 #include "Engine/Math/Quaternion.hpp"
 #include "Engine/Math/Euler.hpp"
@@ -78,44 +79,44 @@ void Camera3D::Update()
 //-------------------------------------------------------------------------------------------------
 void Camera3D::UpdateInput()
 {
-	Vector2i mouseDelta = g_InputSystem->GetMouseHoldDeviation();
+	Vector2i mouseDelta = BMouseKeyboard::GetMouseHoldMovement();
 	m_orientation.m_yawDegreesAboutY -= (float)mouseDelta.x * m_sensitivity;
 	m_orientation.m_pitchDegreesAboutX += (float)mouseDelta.y * m_sensitivity;
 	FixAndClampAngles();
 
 	float moveSpeed = MOVE_SPEED * Time::DELTA_SECONDS;
 
-	if(g_InputSystem->IsKeyDown(Input::KEY_SHIFT))
+	if(BMouseKeyboard::GetKeyDown(eKeyboardButton_SHIFT))
 	{
 		moveSpeed *= 4.f;
 	}
 
-	if(g_InputSystem->IsKeyDown('W'))
+	if(BMouseKeyboard::GetKeyDown('W'))
 	{
 		m_position += GetForwardXY() * moveSpeed;
 	}
 
-	if(g_InputSystem->IsKeyDown('S'))
+	if(BMouseKeyboard::GetKeyDown('S'))
 	{
 		m_position -= GetForwardXY() * moveSpeed;
 	}
 
-	if(g_InputSystem->IsKeyDown('A'))
+	if(BMouseKeyboard::GetKeyDown('A'))
 	{
 		m_position += GetLeftXY() * moveSpeed;
 	}
 
-	if(g_InputSystem->IsKeyDown('D'))
+	if(BMouseKeyboard::GetKeyDown('D'))
 	{
 		m_position -= GetLeftXY() * moveSpeed;
 	}
 
-	if(g_InputSystem->IsKeyDown('E'))
+	if(BMouseKeyboard::GetKeyDown('E'))
 	{
 		m_position.y += moveSpeed;
 	}
 
-	if(g_InputSystem->IsKeyDown('Q'))
+	if(BMouseKeyboard::GetKeyDown('Q'))
 	{
 		m_position.y -= moveSpeed;
 	}

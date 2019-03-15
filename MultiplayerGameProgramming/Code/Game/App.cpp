@@ -4,7 +4,7 @@
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/DebugSystem/BProfiler.hpp"
 #include "Engine/DebugSystem/Console.hpp"
-#include "Engine/InputSystem/Input.hpp"
+#include "Engine/InputSystem/BMouseKeyboard.hpp"
 #include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Game/Game.hpp"
 #define STATIC
@@ -48,7 +48,7 @@ void App::Update()
 void App::UpdateInputs()
 {
 	//Quitting App
-	if(g_InputSystem->WasKeyJustPressed(Input::KEY_ESCAPE))
+	if(BMouseKeyboard::GetKeyDown(eKeyboardButton_ESCAPE))
 	{
 		g_isQuitting = true;
 	}

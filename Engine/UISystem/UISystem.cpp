@@ -2,7 +2,8 @@
 
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/DebugSystem/BProfiler.hpp"
-#include "Engine/InputSystem/Input.hpp"
+#include "Engine/EventSystem/EventSystem.hpp"
+#include "Engine/InputSystem/BMouseKeyboard.hpp"
 #include "Engine/Math/Matrix4f.hpp"
 #include "Engine/Math/Vector2f.hpp"
 #include "Engine/Math/Vector3f.hpp"
@@ -157,7 +158,7 @@ STATIC UIWidget * UISystem::CreateWidgetFromName(std::string const & name, XMLNo
 //-------------------------------------------------------------------------------------------------
 STATIC Vector2f UISystem::GetCursorUIPosition()
 {
-	Vector2f cursorPosition = g_InputSystem->GetMousePosition(true);
+	Vector2f cursorPosition = BMouseKeyboard::GetMousePosition(true);
 	Vector3f cursorClipPosition;// = ScreenToClipPosition( cursorPosition );
 	Vector2i windowDimensions = GetWindowDimensions();
 	float x = RangeMap(0.f, (float)windowDimensions.x, cursorPosition.x, -1.f, 1.f);
@@ -183,6 +184,8 @@ UISystem::UISystem()
 	Vector2i windowDimensions = GetWindowDimensions();
 	m_root->SetProperty(UIWidget::PROPERTY_WIDTH, (float)VIRTUAL_WIDTH);
 	m_root->SetProperty(UIWidget::PROPERTY_HEIGHT, (float)VIRTUAL_HEIGHT);
+	EventSystem::RegisterEvent(BMouseKeyboard::EVENT_MOUSE_DOWN, this, &UISystem::OnMouseDown);
+	EventSystem::RegisterEvent(BMouseKeyboard::EVENT_MOUSE_UP, this, &UISystem::OnMouseUp);
 }
 
 
@@ -244,25 +247,6 @@ void UISystem::UpdateSystem()
 			{
 				m_highlightedWidget->Highlight();
 			}
-		}
-	}
-
-	//Pressed widget
-	if(g_InputSystem->WasKeyJustPressed(eMouseButton_LEFT))
-	{
-		if(m_highlightedWidget)
-		{
-			m_highlightedWidget->Press();
-			Select(m_highlightedWidget);
-		}
-	}
-
-	//Released widget
-	if(g_InputSystem->WasKeyJustReleased(eMouseButton_LEFT))
-	{
-		if(m_highlightedWidget)
-		{
-			m_highlightedWidget->Release();
 		}
 	}
 }
@@ -439,5 +423,40 @@ void UISystem::AddWidgetFromXML(XMLNode const & node)
 	if(childWidget)
 	{
 		m_root->AddChild(childWidget);
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+void UISystem::OnMouseDown(NamedProperties & params)
+{
+	eMouseButton button;
+	params.Get(BMouseKeyboard::PARAM_MOUSE_BUTTON, button);
+
+	//Pressed widget
+	if(button == eMouseButton_LEFT)
+	{
+		if(m_highlightedWidget)
+		{
+			m_highlightedWidget->Press();
+			Select(m_highlightedWidget);
+		}
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+void UISystem::OnMouseUp(NamedProperties & params)
+{
+	eMouseButton button;
+	params.Get(BMouseKeyboard::PARAM_MOUSE_BUTTON, button);
+
+	//Released widget
+	if(button == eMouseButton_LEFT)
+	{
+		if(m_highlightedWidget)
+		{
+			m_highlightedWidget->Release();
+		}
 	}
 }

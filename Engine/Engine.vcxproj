@@ -40,8 +40,9 @@
     <ClCompile Include="DebugSystem\ErrorWarningAssert.cpp" />
     <ClCompile Include="DebugSystem\Logger.cpp" />
     <ClCompile Include="EventSystem\EventSystem.cpp" />
-    <ClCompile Include="InputSystem\Input.cpp" />
-    <ClCompile Include="InputSystem\XboxController.cpp" />
+    <ClCompile Include="InputSystem\BInputSystem.cpp" />
+    <ClCompile Include="InputSystem\BMouseKeyboard.cpp" />
+    <ClCompile Include="InputSystem\BXboxController.cpp" />
     <ClCompile Include="Math\AABB2f.cpp" />
     <ClCompile Include="Math\AABB2i.cpp" />
     <ClCompile Include="Math\AABB3.cpp" />
@@ -172,8 +173,9 @@
     <ClInclude Include="DebugSystem\ErrorWarningAssert.hpp" />
     <ClInclude Include="DebugSystem\Logger.hpp" />
     <ClInclude Include="EventSystem\EventSystem.hpp" />
-    <ClInclude Include="InputSystem\Input.hpp" />
-    <ClInclude Include="InputSystem\XboxController.hpp" />
+    <ClInclude Include="InputSystem\BInputSystem.hpp" />
+    <ClInclude Include="InputSystem\BMouseKeyboard.hpp" />
+    <ClInclude Include="InputSystem\BXboxController.hpp" />
     <ClInclude Include="Math\AABB2f.hpp" />
     <ClInclude Include="Math\AABB2i.hpp" />
     <ClInclude Include="Math\AABB3.hpp" />

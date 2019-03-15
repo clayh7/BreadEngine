@@ -16,7 +16,8 @@
 #include "Engine/DebugSystem/Console.hpp"
 #include "Engine/DebugSystem/Debugger.hpp"
 #include "Engine/EventSystem/EventSystem.hpp"
-#include "Engine/InputSystem/Input.hpp"
+#include "Engine/InputSystem/BInputSystem.hpp"
+#include "Engine/Math/Vector2i.hpp"
 #include "Engine/NetworkSystem/NetworkSystem.hpp"
 #include "Engine/NetworkSystem/RCS/RemoteCommandServer.hpp"
 #include "Engine/RenderSystem/Camera3D.hpp"
@@ -35,107 +36,6 @@ extern Engine * g_EngineSystem = nullptr;
 //Name on top game window
 STATIC float const Engine::PERCENT_OF_SCREEN = 0.8f;
 STATIC float const Engine::ASPECT_RATIO = 16.f / 9.f;
-
-
-//-------------------------------------------------------------------------------------------------
-LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam)
-{
-	//Only run if these both exist
-	if(!g_ConsoleSystem || !g_InputSystem)
-	{
-		return DefWindowProc(windowHandle, wmMessageCode, wParam, lParam);
-	}
-
-	unsigned char asKey = (unsigned char)wParam;
-
-	switch(wmMessageCode)
-	{
-	case WM_CLOSE:
-	case WM_DESTROY:
-	case WM_QUIT:
-		g_isQuitting = true;
-		return 0;
-
-	case WM_KEYDOWN:
-		if(g_ConsoleSystem->IsOpen())
-		{
-			g_ConsoleSystem->PressKey(asKey);
-		}
-		else
-		{
-			g_InputSystem->SetKeyStatus(asKey, true);
-		}
-		break;
-
-	case WM_KEYUP:
-		if(g_ConsoleSystem->IsOpen())
-		{
-			g_ConsoleSystem->ReleaseKey(asKey);
-		}
-		else
-		{
-			g_InputSystem->SetKeyStatus(asKey, false);
-		}
-		break;
-
-	case WM_KILLFOCUS:
-		g_InputSystem->SetFocus(false);
-		break;
-
-		//This gets called before input is created
-	case WM_SETFOCUS:
-		if(g_InputSystem) //Make sure it exists first
-		{
-			g_InputSystem->SetFocus(true);
-		}
-		break;
-
-	case WM_LBUTTONDOWN:
-		if(!g_ConsoleSystem->IsOpen())
-		{
-			g_InputSystem->SetMouseStatus(eMouseButton_LEFT, true);
-		}
-		break;
-
-	case WM_LBUTTONUP:
-		if(!g_ConsoleSystem->IsOpen())
-		{
-			g_InputSystem->SetMouseStatus(eMouseButton_LEFT, false);
-		}
-		break;
-
-	case WM_RBUTTONDOWN:
-		if(!g_ConsoleSystem->IsOpen())
-		{
-			g_InputSystem->SetMouseStatus(eMouseButton_RIGHT, true);
-		}
-		break;
-
-	case WM_RBUTTONUP:
-		if(!g_ConsoleSystem->IsOpen())
-		{
-			g_InputSystem->SetMouseStatus(eMouseButton_RIGHT, false);
-		}
-		break;
-
-	case WM_MOUSEWHEEL:
-		if(g_ConsoleSystem->IsOpen())
-		{
-			g_ConsoleSystem->MoveMouseWheel((int)GET_WHEEL_DELTA_WPARAM(wParam));
-		}
-		else
-		{
-			g_InputSystem->SetWheelStatus((int)GET_WHEEL_DELTA_WPARAM(wParam));
-		}
-		break;
-
-	case WM_CHAR:
-		g_InputSystem->AddTypedCharacter(asKey);
-		break;
-	}
-
-	return DefWindowProc(windowHandle, wmMessageCode, wParam, lParam);
-}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -162,7 +62,7 @@ Engine::Engine(HINSTANCE applicationInstanceHandle)
 	BMemorySystem::Startup();
 	EventSystem::Startup();
 	BAudioSystem::Startup();
-	g_InputSystem = new Input();
+	BInputSystem::Startup();
 	BRenderSystem::Startup();
 	Console::Startup();
 	g_SpriteRenderSystem = new SpriteGameRenderer();
@@ -198,34 +98,13 @@ Engine::~Engine()
 	g_SpriteRenderSystem = nullptr;
 
 	BRenderSystem::Shutdown();
-
-	delete g_InputSystem;
-	g_InputSystem = nullptr;
-
+	BInputSystem::Shutdown();
 	BAudioSystem::Shutdown();
 	EventSystem::Shutdown();
 	Clock::DestroyClocks();
 	BMemorySystem::Shutdown();
 }
 
-
-
-//-------------------------------------------------------------------------------------------------
-void RunMessagePump()
-{
-	MSG queuedMessage;
-	for(;; )
-	{
-		const BOOL wasMessagePresent = PeekMessage(&queuedMessage, NULL, 0, 0, PM_REMOVE);
-		if(!wasMessagePresent)
-		{
-			break;
-		}
-
-		TranslateMessage(&queuedMessage);
-		DispatchMessage(&queuedMessage);
-	}
-}
 
 //-------------------------------------------------------------------------------------------------
 void Engine::Update()
@@ -236,11 +115,9 @@ void Engine::Update()
 	BProfiler::StartSample("UPDATE ENGINE");
 
 	//#TODO: Put these two and the Message Pump in InputSystem
-	g_InputSystem->AdvanceFrameNumber();
-	RunMessagePump();
 
+	BInputSystem::Update();
 	BRenderSystem::Update();
-	g_InputSystem->Update();
 	BMemorySystem::Update();
 	BAudioSystem::Update();
 	g_DebugSystem->Update();

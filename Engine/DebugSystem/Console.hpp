@@ -201,9 +201,6 @@ public:
 	std::string const BuildLogFile();
 
 	void ShowHelp();
-	void PressKey(unsigned char asKey);
-	void ReleaseKey(unsigned char asKey);
-	void MoveMouseWheel(int wheelDelta);
 	void SetShadow(unsigned char shadowAmount);
 
 	int GetLogSize() const;
@@ -214,7 +211,9 @@ private:
 	void AddChar(unsigned char newChar);
 	void RemoveLastChar();
 	void ClearConsoleLine();
-	void OnAddChar(NamedProperties & charTypedEvent);
+	void OnTypedChar(NamedProperties & params);
+	void OnKeyDown(NamedProperties & params);
+	void OnMouseWheel(NamedProperties & params);
 
 	//-------------------------------------------------------------------------------------------------
 	// Function Templates

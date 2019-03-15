@@ -1,11 +1,10 @@
 #include "Engine/DebugSystem/Console.hpp"
 
-#include "Engine/InputSystem/Input.hpp"
 #include "Engine/Core/Time.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/DebugSystem/Logger.hpp"
-#include "Engine/Utils/MathUtils.hpp"
+#include "Engine/InputSystem/BMouseKeyboard.hpp"
 #include "Engine/Math/AABB2f.hpp"
 #include "Engine/NetworkSystem/RCS/RemoteCommandServer.hpp"
 #include "Engine/RenderSystem/BRenderSystem.hpp"
@@ -15,6 +14,7 @@
 #include "Engine/RenderSystem/MeshRenderer.hpp"
 #include "Engine/RenderSystem/TextRenderer.hpp"
 #include "Engine/Utils/FileUtils.hpp"
+#include "Engine/Utils/MathUtils.hpp"
 #include "Engine/Utils/StringUtils.hpp"
 
 
@@ -144,7 +144,9 @@ STATIC void Console::Startup()
 		g_ConsoleSystem->AddLog("Author: Clay Howell", Console::INFO);
 
 		//Register Events
-		EventSystem::RegisterEvent(Input::CHAR_TYPED_EVENT, g_ConsoleSystem, &Console::OnAddChar);
+		EventSystem::RegisterEvent(BMouseKeyboard::EVENT_TYPED_CHAR, g_ConsoleSystem, &Console::OnTypedChar);
+		EventSystem::RegisterEvent(BMouseKeyboard::EVENT_KEY_DOWN, g_ConsoleSystem, &Console::OnKeyDown);
+		EventSystem::RegisterEvent(BMouseKeyboard::EVENT_MOUSE_WHEEL, g_ConsoleSystem, &Console::OnMouseWheel);
 	}
 }
 
@@ -247,12 +249,6 @@ Console::~Console()
 //-------------------------------------------------------------------------------------------------
 void Console::Update()
 {
-	//Open/Close Console
-	if(g_InputSystem->WasKeyJustPressed(Input::KEY_TILDE))
-	{
-		ToggleOpen();
-	}
-
 	//Opening Effect Timer
 	if(m_open)
 	{
@@ -501,81 +497,6 @@ void Console::ShowHelp()
 
 
 //-------------------------------------------------------------------------------------------------
-void Console::PressKey(unsigned char asKey)
-{
-	if(asKey == Input::KEY_TILDE)
-	{
-		ToggleOpen();
-	}
-	else if(asKey == Input::KEY_BACKSPACE)
-	{
-		RemoveLastChar();
-	}
-	else if(asKey == Input::KEY_ESCAPE)
-	{
-		if(m_consoleLine.length() > 0)
-		{
-			ClearConsoleLine();
-		}
-		else
-		{
-			ToggleOpen();
-		}
-	}
-	else if(asKey == Input::KEY_ENTER)
-	{
-		if(m_consoleLine.length() > 0)
-		{
-			RunCommand(m_consoleLine);
-			ClearConsoleLine();
-		}
-		else
-		{
-			ToggleOpen();
-		}
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
-void Console::ReleaseKey(unsigned char)
-{
-	//Nothing
-}
-
-
-//-------------------------------------------------------------------------------------------------
-void Console::MoveMouseWheel(int wheelDelta)
-{
-	if(wheelDelta > 0)
-	{
-		//Moving up
-		m_currentLog--;
-	}
-	else
-	{
-		//Moving down
-		m_currentLog++;
-	}
-	m_currentLog = Clamp(m_currentLog, 0, m_logCount - 1);
-}
-
-
-//-------------------------------------------------------------------------------------------------
-void Console::OnAddChar(NamedProperties & charTypedEvent)
-{
-	if(m_open)
-	{
-		//Get character
-		unsigned char asKey;
-		charTypedEvent.Get("asKey", asKey);
-
-		AddChar(asKey);
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
 void Console::SetShadow(unsigned char shadowAmount)
 {
 	m_shadowAmount = shadowAmount;
@@ -600,7 +521,40 @@ void Console::ToggleOpen()
 //-------------------------------------------------------------------------------------------------
 void Console::AddChar(unsigned char newChar)
 {
-	m_consoleLine.push_back(newChar);
+	bool success = false;
+	if(newChar >= 'a' && newChar <= 'z')
+	{
+		success = true;
+	}
+
+	else if(newChar >= 'A' && newChar <= 'Z')
+	{
+		success = true;
+	}
+
+	else if(newChar >= '0' && newChar <= '9')
+	{
+		success = true;
+	}
+
+	else if(newChar == '-'
+		|| newChar == '_'
+		|| newChar == '+'
+		|| newChar == '='
+		|| newChar == '|'
+		|| newChar == '/'
+		|| newChar == '.'
+		|| newChar == ':'
+		|| newChar == ';'
+		|| newChar == ' ')
+	{
+		success = true;
+	}
+
+	if(success)
+	{
+		m_consoleLine.push_back(newChar);
+	}
 }
 
 
@@ -618,4 +572,77 @@ void Console::RemoveLastChar()
 void Console::ClearConsoleLine()
 {
 	m_consoleLine = "";
+}
+
+
+//-------------------------------------------------------------------------------------------------
+void Console::OnTypedChar(NamedProperties & params)
+{
+	if(m_open)
+	{
+		KeyCode button;
+		params.Get(BMouseKeyboard::PARAM_KEY, button);
+		AddChar((unsigned char)button);
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+void Console::OnKeyDown(NamedProperties & params)
+{
+	KeyCode button;
+	params.Get(BMouseKeyboard::PARAM_KEY, button);
+
+	//Open/Close Console
+	if(button == eKeyboardButton_TILDE)
+	{
+		ToggleOpen();
+	}
+	else if(button == eKeyboardButton_BACKSPACE)
+	{
+		RemoveLastChar();
+	}
+	else if(button == eKeyboardButton_ESCAPE)
+	{
+		if(m_consoleLine.length() > 0)
+		{
+			ClearConsoleLine();
+		}
+		else
+		{
+			ToggleOpen();
+		}
+	}
+	else if(button == eKeyboardButton_ENTER)
+	{
+		if(m_consoleLine.length() > 0)
+		{
+			RunCommand(m_consoleLine);
+			ClearConsoleLine();
+		}
+		else
+		{
+			ToggleOpen();
+		}
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+void Console::OnMouseWheel(NamedProperties & params)
+{
+	int wheelValue;
+	params.Get(BMouseKeyboard::PARAM_MOUSE_WHEEL, wheelValue);
+
+	if(wheelValue > 0)
+	{
+		//Moving up
+		m_currentLog--;
+	}
+	else
+	{
+		//Moving down
+		m_currentLog++;
+	}
+	m_currentLog = Clamp(m_currentLog, 0, m_logCount - 1);
 }
