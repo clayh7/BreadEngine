@@ -44,7 +44,6 @@ Engine::Engine(HINSTANCE applicationInstanceHandle)
 	, m_timeLastFrameBegan(0.0)
 	, m_targetFPS(60.0)
 	, m_isFullscreen(false)
-	, m_currentDrawCalls(0)
 {
 	//Randomize Seed
 	srand((unsigned int)time(NULL));
@@ -67,7 +66,7 @@ Engine::Engine(HINSTANCE applicationInstanceHandle)
 	BConsoleSystem::Startup();
 	g_SpriteRenderSystem = new SpriteGameRenderer();
 	UISystem::Startup();
-	g_DebugSystem = new BDebugSystem();
+	BDebugSystem::Startup();
 
 	//Add a sleep(10) to the job threads
 	//g_JobSystem = new JobSystem( );
@@ -86,9 +85,7 @@ Engine::~Engine()
 	//delete g_JobSystem;
 	//g_JobSystem = nullptr;
 
-	delete g_DebugSystem;
-	g_DebugSystem = nullptr;
-	
+	BDebugSystem::Shutdown();
 	BConsoleSystem::Shutdown();
 	UISystem::Shutdown();
 
@@ -112,19 +109,16 @@ void Engine::Update()
 
 	BProfiler::StartSample("UPDATE ENGINE");
 
-	//#TODO: Put these two and the Message Pump in InputSystem
-
 	BInputSystem::Update();
 	BRenderSystem::Update();
 	BMemorySystem::Update();
 	BAudioSystem::Update();
-	g_DebugSystem->Update();
+	BDebugSystem::Update();
 	BConsoleSystem::Update();
 
-	BEventSystem::TriggerEvent(ENGINE_UPDATE_EVENT);
+	BEventSystem::TriggerEvent(EVENT_ENGINE_UPDATE);
 
 	//Reset Variables
-	m_currentDrawCalls = 0;
 	BProfiler::StopSample();
 }
 
@@ -132,7 +126,11 @@ void Engine::Update()
 //-------------------------------------------------------------------------------------------------
 void Engine::LateUpdate()
 {
+	BProfiler::StartSample("UPDATE ENGINE LATE");
+
 	UISystem::Update();
+
+	BProfiler::StopSample();
 }
 
 
@@ -172,9 +170,9 @@ void Engine::Render() const
 {
 	BProfiler::StartSample("RENDER ENGINE");
 
-	BEventSystem::TriggerEvent(ENGINE_RENDER_EVENT);
+	BEventSystem::TriggerEvent(EVENT_ENGINE_RENDER);
 	UISystem::Render();
-	g_DebugSystem->Render();
+	BDebugSystem::Render();
 	BConsoleSystem::Render();
 
 	//Double Buffer | Also known as FlipAndPresent
@@ -323,20 +321,6 @@ void Engine::SetFullscreen(bool isFullscreen)
 	{
 		m_isFullscreen = isFullscreen;
 	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
-void Engine::IncrementDrawCalls()
-{
-	m_currentDrawCalls++;
-}
-
-
-//-------------------------------------------------------------------------------------------------
-int Engine::GetCurrentDrawCalls() const
-{
-	return m_currentDrawCalls;
 }
 
 

@@ -6,23 +6,25 @@
 
 //-------------------------------------------------------------------------------------------------
 STATIC size_t NetworkSystem::GAME_PORT = 4334;
-STATIC char const * NetworkSystem::NETWORK_STARTUP = " NetworkStartup";
-STATIC char const * NetworkSystem::NETWORK_SHUTDOWN = "NetworkShutdown";
-STATIC char const * NetworkSystem::NETWORK_UPDATE_EVENT = "NetworkUpdateEvent";
+STATIC char const * NetworkSystem::EVENT_NETWORK_STARTUP = " NetworkStartup";
+STATIC char const * NetworkSystem::EVENT_NETWORK_SHUTDOWN = "NetworkShutdown";
+STATIC char const * NetworkSystem::EVENT_NETWORK_UPDATE = "NetworkUpdateEvent";
 
 
 //-------------------------------------------------------------------------------------------------
 STATIC bool NetworkSystem::Startup()
 {
 	WSADATA wsa_data;
-	int error = WSAStartup(MAKEWORD(2, 2), &wsa_data); //version 2.2
+	//version 2.2
+	WORD version = MAKEWORD(2, 2);
+	int error = WSAStartup(version, &wsa_data);
 	if(error == SOCKET_ERROR)
 	{
 		NetworkUtils::ReportError();
 	}
 
-	BEventSystem::RegisterEvent(ENGINE_UPDATE_EVENT, &NetworkSystem::OnUpdate);
-	BEventSystem::TriggerEvent(NETWORK_STARTUP);
+	BEventSystem::RegisterEvent(EVENT_ENGINE_UPDATE, &NetworkSystem::OnUpdate);
+	BEventSystem::TriggerEvent(EVENT_NETWORK_STARTUP);
 
 	return true;
 }
@@ -31,7 +33,7 @@ STATIC bool NetworkSystem::Startup()
 //-------------------------------------------------------------------------------------------------
 STATIC void NetworkSystem::Shutdown()
 {
-	BEventSystem::TriggerEvent(NETWORK_SHUTDOWN);
+	BEventSystem::TriggerEvent(EVENT_NETWORK_SHUTDOWN);
 
 	int error = WSACleanup();
 	if(error == SOCKET_ERROR)
@@ -44,5 +46,5 @@ STATIC void NetworkSystem::Shutdown()
 //-------------------------------------------------------------------------------------------------
 STATIC void NetworkSystem::OnUpdate(NamedProperties &)
 {
-	BEventSystem::TriggerEvent(NetworkSystem::NETWORK_UPDATE_EVENT);
+	BEventSystem::TriggerEvent(NetworkSystem::EVENT_NETWORK_UPDATE);
 }

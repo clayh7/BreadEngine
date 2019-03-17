@@ -44,7 +44,6 @@ private:
 	double m_timeLastFrameBegan;
 	double m_targetFPS;
 	bool m_isFullscreen;
-	int m_currentDrawCalls; //#TODO: Put this in RenderSystem
 
 	int m_offsetXFromWindowsDesktop = START_WINDOW_OFFSET;
 	int m_offsetYFromWindowsDesktop = START_WINDOW_OFFSET;
@@ -78,8 +77,6 @@ public:
 	void SetWindowHandle(HWND & handle);
 	void SetFullscreen(bool isFullscreen);
 
-	void IncrementDrawCalls();
-	int GetCurrentDrawCalls() const;
 	HWND GetWindowHandle() const;
 	double GetTargetFPS() const;
 

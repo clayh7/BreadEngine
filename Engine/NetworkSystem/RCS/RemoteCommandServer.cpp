@@ -232,7 +232,7 @@ STATIC bool RemoteCommandServer::Leave()
 RemoteCommandServer::RemoteCommandServer()
 	: m_state(eRCSState_DISCONNECTED)
 {
-	BEventSystem::RegisterEvent(NetworkSystem::NETWORK_UPDATE_EVENT, this, &RemoteCommandServer::OnUpdate);
+	BEventSystem::RegisterEvent(NetworkSystem::EVENT_NETWORK_UPDATE, this, &RemoteCommandServer::OnUpdate);
 	BEventSystem::RegisterEvent(RCS_MESSAGE_EVENT, this, &RemoteCommandServer::OnMessage);
 
 	BConsoleSystem::Register("rcs_host", RCSHost, ": Host a local server.");

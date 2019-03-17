@@ -39,11 +39,14 @@ class BRenderSystem
 	//-------------------------------------------------------------------------------------------------
 public:
 	static char const * DEFAULT_FONT;
-	static BRenderSystem * s_RenderSystem;
+	static BRenderSystem * s_System;
 
 	//-------------------------------------------------------------------------------------------------
 	// Members
 	//-------------------------------------------------------------------------------------------------
+public:
+	int m_currentDrawCalls;
+
 private:
 	Framebuffer * m_activeFBO;
 	Camera3D * m_activeCamera;

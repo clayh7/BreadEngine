@@ -1,7 +1,7 @@
 #include "Engine/DebugSystem/BDebugSystem.hpp"
 
 #include "Engine/Core/EngineCommon.hpp"
-#include "Engine/Core/Engine.hpp"
+#include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/Core/Time.hpp"
 #include "Engine/DebugSystem/BProfiler.hpp"
 #include "Engine/DebugSystem/BConsoleSystem.hpp"
@@ -14,18 +14,21 @@
 
 
 //-------------------------------------------------------------------------------------------------
-BDebugSystem * g_DebugSystem = nullptr;
+STATIC float const BDebugSystem::DEBUG_LINE_SPACING = 25.f;
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC float const BDebugSystem::DEBUG_LINE_SPACING = 25.f;
+STATIC BDebugSystem * BDebugSystem::s_System = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
 void DebugFPSCommand(Command const &)
 {
 	BConsoleSystem::AddLog("Toggling FPS debug.", BConsoleSystem::GOOD);
-	g_DebugSystem->ToggleDebugFPS();
+	if(BDebugSystem::s_System)
+	{
+		BDebugSystem::s_System->ToggleDebugFPS();
+	}
 }
 
 
@@ -33,7 +36,10 @@ void DebugFPSCommand(Command const &)
 void DebugUnitCommand(Command const &)
 {
 	BConsoleSystem::AddLog("Toggling unit debug.", BConsoleSystem::GOOD);
-	g_DebugSystem->ToggleDebugUnit();
+	if(BDebugSystem::s_System)
+	{
+		BDebugSystem::s_System->ToggleDebugUnit();
+	}
 }
 
 
@@ -41,7 +47,10 @@ void DebugUnitCommand(Command const &)
 void DebugMemoryCommand(Command const &)
 {
 	BConsoleSystem::AddLog("Toggling memory debug.", BConsoleSystem::GOOD);
-	g_DebugSystem->ToggleDebugMemory();
+	if(BDebugSystem::s_System)
+	{
+		BDebugSystem::s_System->ToggleDebugMemory();
+	}
 }
 
 
@@ -49,7 +58,63 @@ void DebugMemoryCommand(Command const &)
 void DebugFlushCommand(Command const &)
 {
 	BConsoleSystem::AddLog("Flushing memory callstack.", BConsoleSystem::GOOD);
-	g_DebugSystem->DebugFlushMemory();
+	if(BDebugSystem::s_System)
+	{
+		BDebugSystem::s_System->DebugFlushMemory();
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+void BDebugSystem::Startup()
+{
+	if(!s_System)
+	{
+		s_System = new BDebugSystem();
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+void BDebugSystem::Shutdown()
+{
+	if(s_System)
+	{
+		delete s_System;
+		s_System = nullptr;
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+void BDebugSystem::Update()
+{
+	if(s_System)
+	{
+		s_System->SystemUpdate();
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+void BDebugSystem::Render()
+{
+	if(s_System)
+	{
+		s_System->SystemRender();
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+BDebugSystem * BDebugSystem::CreateOrGetSystem()
+{
+	if(!s_System)
+	{
+		Startup();
+	}
+
+	return s_System;
 }
 
 
@@ -103,7 +168,7 @@ BDebugSystem::~BDebugSystem()
 
 
 //-------------------------------------------------------------------------------------------------
-void BDebugSystem::Update()
+void BDebugSystem::SystemUpdate()
 {
 	int currentLine = 0;
 
@@ -141,7 +206,6 @@ void BDebugSystem::UpdateTextFPS(int & currentLine)
 {
 	float fps = 1.f / Time::DELTA_SECONDS;
 	std::string debugText = Stringf("FPS: %.1f", fps);
-	//debugText = Stringf( "DRAW: %d", g_EngineSystem->GetCurrentDrawCalls( ) );
 	Color fpsColor = Color::WHITE;
 	if(fps < 30.0f)
 	{
@@ -197,7 +261,8 @@ void BDebugSystem::UpdateTextUnit(int & currentLine)
 	m_debugTexts[currentLine]->Update();
 	currentLine += 1;
 
-	debugText = Stringf("Draw: %d", g_EngineSystem->GetCurrentDrawCalls());
+	BRenderSystem * RSystem = BRenderSystem::s_System;
+	debugText = Stringf("Draw: %d", RSystem ? RSystem->m_currentDrawCalls : 0);
 	m_debugTexts[currentLine]->SetText(debugText);
 	m_debugTexts[currentLine]->SetColor(Color::WHITE);
 	m_debugTexts[currentLine]->Update();
@@ -274,7 +339,7 @@ void BDebugSystem::ClearTextRemaining(int & currentLine)
 
 //-------------------------------------------------------------------------------------------------
 //#TODO: Make the Debug renders a single draw call each
-void BDebugSystem::Render() const
+void BDebugSystem::SystemRender() const
 {
 	if(m_showFPSDebug || m_showUnitDebug || m_showMemoryDebug)
 	{

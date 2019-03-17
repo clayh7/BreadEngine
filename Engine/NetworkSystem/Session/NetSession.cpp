@@ -279,7 +279,7 @@ NetSession::NetSession(uint16_t gameVersion /*= 0U*/)
 		m_messageDefinitions[defIndex] = nullptr;
 	}
 
-	BEventSystem::RegisterEvent(ENGINE_UPDATE_EVENT, this, &NetSession::OnUpdate);
+	BEventSystem::RegisterEvent(EVENT_ENGINE_UPDATE, this, &NetSession::OnUpdate);
 
 	//Registering Core Message Types
 	byte_t controlFlags, optionFlags;

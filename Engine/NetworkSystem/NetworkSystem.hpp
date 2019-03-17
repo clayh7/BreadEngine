@@ -13,9 +13,9 @@ class NetworkSystem
 	//-------------------------------------------------------------------------------------------------
 public:
 	static size_t GAME_PORT;
-	static char const * NETWORK_STARTUP;
-	static char const * NETWORK_SHUTDOWN;
-	static char const * NETWORK_UPDATE_EVENT;
+	static char const * EVENT_NETWORK_STARTUP;
+	static char const * EVENT_NETWORK_SHUTDOWN;
+	static char const * EVENT_NETWORK_UPDATE;
 
 	//-------------------------------------------------------------------------------------------------
 	// Static Functions

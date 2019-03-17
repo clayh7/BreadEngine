@@ -10,10 +10,6 @@ class Command;
 
 
 //-------------------------------------------------------------------------------------------------
-extern BDebugSystem * g_DebugSystem;
-
-
-//-------------------------------------------------------------------------------------------------
 void DebugFPSCommand(Command const &);
 void DebugUnitCommand(Command const &);
 void DebugMemoryCommand(Command const &);
@@ -26,6 +22,9 @@ class BDebugSystem
 	//-------------------------------------------------------------------------------------------------
 	// Static Members
 	//-------------------------------------------------------------------------------------------------
+public:
+	static BDebugSystem * s_System;
+
 private:
 	static float const DEBUG_LINE_SPACING;
 
@@ -40,18 +39,28 @@ private:
 	std::vector<TextRenderer*> m_debugTexts;
 
 	//-------------------------------------------------------------------------------------------------
+	// Static Functions
+	//-------------------------------------------------------------------------------------------------
+public:
+	static void Startup();
+	static void Shutdown();
+	static void Update();
+	static void Render();
+	static BDebugSystem * CreateOrGetSystem();
+
+	//-------------------------------------------------------------------------------------------------
 	// Functions
 	//-------------------------------------------------------------------------------------------------
 public:
 	BDebugSystem();
 	~BDebugSystem();
-	void Update();
+	void SystemUpdate();
 	void UpdateTextFPS(int & currentLine);
 	void UpdateTextUnit(int & currentLine);
 	void UpdateTextMemory(int & currentLine);
 	void UpdateTextMemoryVerbose(int & currentLine);
 	void ClearTextRemaining(int & currentLine);
-	void Render() const;
+	void SystemRender() const;
 
 	void ToggleDebugFPS();
 	void ToggleDebugUnit();

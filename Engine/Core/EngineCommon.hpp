@@ -16,8 +16,8 @@ typedef double double64_t;
 //-------------------------------------------------------------------------------------------------
 extern bool g_isQuitting;
 extern bool g_limitFPS;
-extern char const * const ENGINE_UPDATE_EVENT;
-extern char const * const ENGINE_RENDER_EVENT;
+extern char const * const EVENT_ENGINE_UPDATE;
+extern char const * const EVENT_ENGINE_RENDER;
 
 
 //-------------------------------------------------------------------------------------------------

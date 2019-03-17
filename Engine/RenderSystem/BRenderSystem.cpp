@@ -36,7 +36,7 @@
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC BRenderSystem * BRenderSystem::s_RenderSystem = nullptr;
+STATIC BRenderSystem * BRenderSystem::s_System = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -54,10 +54,10 @@ STATIC char const * BRenderSystem::DEFAULT_FONT = "Data/Fonts/MainFrame.fnt";
 //-------------------------------------------------------------------------------------------------
 STATIC void BRenderSystem::Startup()
 {
-	if(!s_RenderSystem)
+	if(!s_System)
 	{
-		s_RenderSystem = new BRenderSystem();
-		s_RenderSystem->InitializeOpenGL();
+		s_System = new BRenderSystem();
+		s_System->InitializeOpenGL();
 
 		Mesh::InitializeDefaultMeshes();
 		Material::InitializeDefaultMaterials();
@@ -69,10 +69,10 @@ STATIC void BRenderSystem::Startup()
 //-------------------------------------------------------------------------------------------------
 STATIC void BRenderSystem::Shutdown()
 {
-	if(s_RenderSystem)
+	if(s_System)
 	{
-		delete s_RenderSystem;
-		s_RenderSystem = nullptr;
+		delete s_System;
+		s_System = nullptr;
 
 		BitmapFont::DestroyRegistry();
 		ShaderProgram::DestroyRegistry();
@@ -86,9 +86,10 @@ STATIC void BRenderSystem::Shutdown()
 //-------------------------------------------------------------------------------------------------
 STATIC void BRenderSystem::Update()
 {
-	if(s_RenderSystem && s_RenderSystem->m_activeCamera)
+	if(s_System && s_System->m_activeCamera)
 	{
-		s_RenderSystem->m_activeCamera->Update();
+		s_System->m_currentDrawCalls = 0;
+		s_System->m_activeCamera->Update();
 	}
 }
 
@@ -96,7 +97,7 @@ STATIC void BRenderSystem::Update()
 //-------------------------------------------------------------------------------------------------
 STATIC BRenderSystem * BRenderSystem::GetSystem()
 {
-	return s_RenderSystem;
+	return s_System;
 }
 
 
@@ -627,7 +628,7 @@ void BRenderSystem::MeshRender(MeshRenderer const * meshRenderer)
 		{
 			glDrawElements(instruction.GetPrimitiveType(), instruction.m_count, GL_UNSIGNED_INT, (GLvoid*)(instruction.m_startIndex * sizeof(unsigned int)));
 		}
-		g_EngineSystem->IncrementDrawCalls();
+		m_currentDrawCalls += 1;
 	}
 
 	//Remove and Clear
