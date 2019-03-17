@@ -4,7 +4,7 @@
 #include "Engine/Math/AABB2f.hpp"
 #include "Engine/RenderSystem/MeshRenderer.hpp"
 #include "Engine/RenderSystem/MeshBuilder.hpp"
-#include "Engine/RenderSystem/SpriteRenderSystem/SpriteGameRenderer.hpp"
+#include "Engine/RenderSystem/SpriteRenderSystem/BSpriteGameRenderer.hpp"
 #include "Engine/RenderSystem/SpriteRenderSystem/SpriteResource.hpp"
 #include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/RenderSystem/TextRenderer.hpp"
@@ -129,19 +129,25 @@ Vector2f UIItem::GetSize() const
 //-------------------------------------------------------------------------------------------------
 void UIItem::SetupRenderers()
 {
-	m_spriteData = g_SpriteRenderSystem->GetSpriteResource(DEFAULT_SPRIE_ID);
+	if(BSpriteGameRenderer::s_System)
+	{
+		m_spriteData = BSpriteGameRenderer::s_System->GetSpriteResource(DEFAULT_SPRIE_ID);
+	}
 
 	//Dummy values to get them set up
 	MeshBuilder quadBuilder;
 	quadBuilder.AddTriangle(Vector3f(-0.5f, 5.f, 0.f), Vector3f(-0.5f, -0.5f, 0.f), Vector3f(0.5f, -0.5f, 0.f));
 	quadBuilder.AddTriangle(Vector3f(-0.5f, 5.f, 0.f), Vector3f(0.5f, -0.5f, 0.f), Vector3f(0.5f, 0.5f, 0.f));
 
-	Material * spriteMaterial = m_spriteData->GetMaterial();
-	m_quadMesh = new Mesh(&quadBuilder, eVertexType_PCU);
-	m_quad = new MeshRenderer(eMeshShape_QUAD, Transform(), RenderState::BASIC_2D);
-	CreateSpriteMesh(m_quadMesh);
-	m_quad->SetMeshAndMaterial(m_quadMesh, spriteMaterial);
-	m_quad->SetUniform("uTexDiffuse", m_spriteData->GetTexture());
+	if(m_spriteData)
+	{
+		Material * spriteMaterial = m_spriteData->GetMaterial();
+		m_quadMesh = new Mesh(&quadBuilder, eVertexType_PCU);
+		m_quad = new MeshRenderer(eMeshShape_QUAD, Transform(), RenderState::BASIC_2D);
+		CreateSpriteMesh(m_quadMesh);
+		m_quad->SetMeshAndMaterial(m_quadMesh, spriteMaterial);
+		m_quad->SetUniform("uTexDiffuse", m_spriteData->GetTexture());
+	}
 }
 
 
@@ -151,9 +157,9 @@ void UIItem::UpdateRenderers()
 	//Update Sprite ID
 	std::string currentSpriteID;
 	GetProperty(PROPERTY_SPRITE_ID, currentSpriteID);
-	if(currentSpriteID != m_spriteData->m_id)
+	if(currentSpriteID != m_spriteData->m_id && BSpriteGameRenderer::s_System)
 	{
-		m_spriteData = g_SpriteRenderSystem->GetSpriteResource(currentSpriteID);
+		m_spriteData = BSpriteGameRenderer::s_System->GetSpriteResource(currentSpriteID);
 		m_quad->SetUniform("uTexDiffuse", m_spriteData->GetTexture());
 	}
 

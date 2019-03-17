@@ -14,6 +14,8 @@ bool AllUnique(std::string const & rawString);
 void Reverse(char * str);
 char * CreateNewCString(std::string const & string);
 void SortString(std::string & str);
+void SortStrings(std::vector<char*> & strArray);
+void SortStrings(std::vector<std::string> & strArray);
 bool IsPermutation(std::string const & str1, std::string const & str2);
 std::string CompressString(std::string const & str);
 int ParseInt(std::string const & string);

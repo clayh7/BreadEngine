@@ -23,7 +23,7 @@
 #include "Engine/RenderSystem/Camera3D.hpp"
 #include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/RenderSystem/SpriteRenderSystem/ParticleEngine.hpp"
-#include "Engine/RenderSystem/SpriteRenderSystem/SpriteGameRenderer.hpp"
+#include "Engine/RenderSystem/SpriteRenderSystem/BSpriteGameRenderer.hpp"
 #include "Engine/Threads/JobSystem.hpp"
 #include "Engine/UISystem/UISystem.hpp"
 
@@ -64,7 +64,7 @@ Engine::Engine(HINSTANCE applicationInstanceHandle)
 	BInputSystem::Startup();
 	BRenderSystem::Startup();
 	BConsoleSystem::Startup();
-	g_SpriteRenderSystem = new SpriteGameRenderer();
+	BSpriteGameRenderer::Startup();
 	UISystem::Startup();
 	BDebugSystem::Startup();
 
@@ -88,10 +88,7 @@ Engine::~Engine()
 	BDebugSystem::Shutdown();
 	BConsoleSystem::Shutdown();
 	UISystem::Shutdown();
-
-	delete g_SpriteRenderSystem;
-	g_SpriteRenderSystem = nullptr;
-
+	BSpriteGameRenderer::Shutdown();
 	BRenderSystem::Shutdown();
 	BInputSystem::Shutdown();
 	BAudioSystem::Shutdown();

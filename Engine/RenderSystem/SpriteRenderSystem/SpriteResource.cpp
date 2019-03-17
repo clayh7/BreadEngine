@@ -2,7 +2,7 @@
 
 #include "Engine/Math/AABB2f.hpp"
 #include "Engine/RenderSystem/Material.hpp"
-#include "Engine/RenderSystem/SpriteRenderSystem/SpriteGameRenderer.hpp"
+#include "Engine/RenderSystem/SpriteRenderSystem/BSpriteGameRenderer.hpp"
 #include "Engine/RenderSystem/SpriteRenderSystem/SpriteSheetResource.hpp"
 #include "Engine/RenderSystem/Texture.hpp"
 #include "Engine/Utils/StringUtils.hpp"

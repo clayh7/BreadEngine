@@ -6,7 +6,7 @@
 //-------------------------------------------------------------------------------------------------
 class MeshBuilder;
 class NamedProperties;
-class SpriteGameRenderer;
+class BSpriteGameRenderer;
 class UIItem;
 class UISystem;
 class UIWidget;

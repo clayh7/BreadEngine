@@ -2,7 +2,7 @@
 
 #include "Engine/DebugSystem/BProfiler.hpp"
 #include "Engine/Math/AABB2f.hpp"
-#include "Engine/RenderSystem/SpriteRenderSystem/SpriteGameRenderer.hpp"
+#include "Engine/RenderSystem/SpriteRenderSystem/BSpriteGameRenderer.hpp"
 #include "Engine/RenderSystem/SpriteRenderSystem/SpriteLayer.hpp"
 #include "Engine/RenderSystem/SpriteRenderSystem/Sprite.hpp"
 #include "Engine/RenderSystem/SpriteRenderSystem/SpriteResource.hpp"
@@ -17,7 +17,7 @@ Sprite::Sprite(std::string const & spriteID, int layer /*= 0*/, bool ignoreView 
 	: m_enabled(true)
 	, m_layerID(layer)
 	, m_spriteResource(nullptr)
-	, m_renderer(g_SpriteRenderSystem)
+	, m_renderer(BSpriteGameRenderer::s_System)
 	, m_spriteID(spriteID)
 	, m_position(Vector2f::ZERO)
 	, m_pivot(Vector2f(0.5f, 0.5f))
@@ -28,7 +28,10 @@ Sprite::Sprite(std::string const & spriteID, int layer /*= 0*/, bool ignoreView 
 	, m_nextSprite(nullptr)
 	, m_prevSprite(nullptr)
 {
-	m_spriteResource = g_SpriteRenderSystem->GetSpriteResource(spriteID);
+	if(BSpriteGameRenderer::s_System)
+	{
+		m_spriteResource = BSpriteGameRenderer::s_System->GetSpriteResource(spriteID);
+	}
 }
 
 
@@ -209,7 +212,7 @@ void Sprite::SetRotation(float degrees)
 
 
 //-------------------------------------------------------------------------------------------------
-void Sprite::SetRenderer(SpriteGameRenderer const * renderer)
+void Sprite::SetRenderer(BSpriteGameRenderer const * renderer)
 {
 	m_renderer = renderer;
 }
@@ -218,9 +221,9 @@ void Sprite::SetRenderer(SpriteGameRenderer const * renderer)
 //-------------------------------------------------------------------------------------------------
 void Sprite::SetID(std::string const & spriteID)
 {
-	if(m_spriteID != spriteID)
+	if(m_spriteID != spriteID && BSpriteGameRenderer::s_System)
 	{
-		m_spriteResource = g_SpriteRenderSystem->GetSpriteResource(spriteID);
+		m_spriteResource = BSpriteGameRenderer::s_System->GetSpriteResource(spriteID);
 		m_spriteID = spriteID;
 	}
 }
@@ -229,18 +232,20 @@ void Sprite::SetID(std::string const & spriteID)
 //-------------------------------------------------------------------------------------------------
 void Sprite::SetLayer(int layerID)
 {
+	BSpriteGameRenderer * SGRSystem = BSpriteGameRenderer::s_System;
+
 	//Don't need to set the layer if it's already that layer
-	if(layerID == m_layerID)
+	if(layerID == m_layerID || !SGRSystem)
 	{
 		return;
 	}
 
 	//Remove from previous layer
-	SpriteLayer * currentLayer = g_SpriteRenderSystem->CreateOrGetLayer(m_layerID);
+	SpriteLayer * currentLayer = SGRSystem->CreateOrGetLayer(m_layerID);
 	currentLayer->RemoveSprite(this);
 
 	//Add to next layer
-	SpriteLayer * newLayer = g_SpriteRenderSystem->CreateOrGetLayer(layerID);
+	SpriteLayer * newLayer = SGRSystem->CreateOrGetLayer(layerID);
 	newLayer->AddSprite(this);
 
 	m_layerID = layerID;

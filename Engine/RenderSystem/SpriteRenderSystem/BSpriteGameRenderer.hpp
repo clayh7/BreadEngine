@@ -13,7 +13,7 @@ class Framebuffer;
 class Material;
 class Mesh;
 class MeshRenderer;
-class SpriteGameRenderer;
+class BSpriteGameRenderer;
 class SpriteResource;
 class SpriteSheetResource;
 class SpriteLayer;
@@ -37,11 +37,7 @@ enum eMaterialEffect
 
 
 //-------------------------------------------------------------------------------------------------
-extern SpriteGameRenderer * g_SpriteRenderSystem;
-
-
-//-------------------------------------------------------------------------------------------------
-class SpriteGameRenderer
+class BSpriteGameRenderer
 {
 	//-------------------------------------------------------------------------------------------------
 	// Static Members
@@ -49,12 +45,7 @@ class SpriteGameRenderer
 public:
 	static char const * SPRITE_RESOURCE_NAME;
 	static char const * SPRITE_SHEET_RESOURCE_NAME;
-
-	//-------------------------------------------------------------------------------------------------
-	// Static Functions
-	//-------------------------------------------------------------------------------------------------
-public:
-	static Sprite * Create(std::string const & spriteID, int layer = 0, bool ignoreView = false);
+	static BSpriteGameRenderer * s_System;
 
 	//-------------------------------------------------------------------------------------------------
 	// Members
@@ -81,15 +72,27 @@ private:
 	MeshRenderer * m_screenEffect;
 	mutable MeshBuilder m_tempBuilder; //Because it's used in ConstructMesh()
 
+	//-------------------------------------------------------------------------------------------------
+	// Static Functions
+	//-------------------------------------------------------------------------------------------------
+public:
+	static void Startup();
+	static void Shutdown();
+	static void Update();
+	static void Render();
+	static BSpriteGameRenderer * CreateOrGetSystem();
+	static Sprite * Create(std::string const & spriteID, int layer = 0, bool ignoreView = false);
+
 //-------------------------------------------------------------------------------------------------
 // Functions
 //-------------------------------------------------------------------------------------------------
 public:
-	SpriteGameRenderer();
-	~SpriteGameRenderer();
+	BSpriteGameRenderer();
+	~BSpriteGameRenderer();
 
 	void UpdateMaterialEffects();
-	void Render(); //Not const because you have to swap FBOs (may make them mutable later)
+	//Not const because you have to swap FBOs (#TODO: may make them mutable later?)
+	void SystemRender();
 	void RenderLayer(SpriteLayer const * layer) const;
 	void RenderSprite(Sprite const * sprite) const;
 	void SwapFBO(Framebuffer ** first, Framebuffer ** second);

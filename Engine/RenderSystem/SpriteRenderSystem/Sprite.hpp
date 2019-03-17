@@ -8,7 +8,7 @@
 class Material;
 class Mesh;
 class MeshBuilder;
-class SpriteGameRenderer;
+class BSpriteGameRenderer;
 class SpriteResource;
 class Texture;
 
@@ -23,7 +23,7 @@ private:
 	bool m_enabled;
 	int m_layerID;
 	SpriteResource const * m_spriteResource;
-	SpriteGameRenderer const * m_renderer; //I wanted this to be const, but I can't because of the deconstructor
+	BSpriteGameRenderer const * m_renderer; //I wanted this to be const, but I can't because of the deconstructor
 	std::string m_spriteID;
 
 public:
@@ -62,7 +62,7 @@ public:
 	void SetPivot(Vector2f const & pivot);
 	void SetPosition(Vector2f const & position);
 	void SetRotation(float degrees);
-	void SetRenderer(SpriteGameRenderer const * renderer);
+	void SetRenderer(BSpriteGameRenderer const * renderer);
 	void SetID(std::string const & spriteID);
 	void SetLayer(int layerID);
 };

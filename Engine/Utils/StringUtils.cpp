@@ -174,6 +174,34 @@ void SortString(std::string & str)
 
 
 //-------------------------------------------------------------------------------------------------
+bool CompareFuncNoCase(const std::string& first, const std::string& second)
+{
+	unsigned int i = 0;
+	while((i < first.length()) && (i < second.length()))
+	{
+		if(tolower(first[i]) < tolower(second[i])) return true;
+		else if(tolower(first[i]) > tolower(second[i])) return false;
+		++i;
+	}
+	return (first.length() < second.length());
+}
+
+
+//-------------------------------------------------------------------------------------------------
+void SortStrings(std::vector<char*> & strArray)
+{
+	std::sort(strArray.begin(), strArray.end(), CompareFuncNoCase);
+}
+
+
+//-------------------------------------------------------------------------------------------------
+void SortStrings(std::vector<std::string> & strArray)
+{
+	std::sort(strArray.begin(), strArray.end(), CompareFuncNoCase);
+}
+
+
+//-------------------------------------------------------------------------------------------------
 bool IsPermutation(std::string const & str1, std::string const & str2)
 {
 	//Make sure they're the same length

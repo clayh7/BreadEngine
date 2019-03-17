@@ -201,9 +201,6 @@
     <ClCompile Include="Threads\CriticalSection.cpp">
       <Filter>Threads</Filter>
     </ClCompile>
-    <ClCompile Include="RenderSystem\SpriteRenderSystem\SpriteGameRenderer.cpp">
-      <Filter>RenderSystem\SpriteRenderSystem</Filter>
-    </ClCompile>
     <ClCompile Include="RenderSystem\SpriteRenderSystem\Sprite.cpp">
       <Filter>RenderSystem\SpriteRenderSystem</Filter>
     </ClCompile>
@@ -391,6 +388,9 @@
     <ClCompile Include="EventSystem\BEventSystem.cpp">
       <Filter>EventSystem</Filter>
     </ClCompile>
+    <ClCompile Include="RenderSystem\SpriteRenderSystem\BSpriteGameRenderer.cpp">
+      <Filter>RenderSystem\SpriteRenderSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Time.hpp">
@@ -551,9 +551,6 @@
     </ClInclude>
     <ClInclude Include="Threads\CriticalSection.hpp">
       <Filter>Threads</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderSystem\SpriteRenderSystem\SpriteGameRenderer.hpp">
-      <Filter>RenderSystem\SpriteRenderSystem</Filter>
     </ClInclude>
     <ClInclude Include="RenderSystem\SpriteRenderSystem\Sprite.hpp">
       <Filter>RenderSystem\SpriteRenderSystem</Filter>
@@ -747,6 +744,9 @@
     </ClInclude>
     <ClInclude Include="EventSystem\BEventSystem.hpp">
       <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderSystem\SpriteRenderSystem\BSpriteGameRenderer.hpp">
+      <Filter>RenderSystem\SpriteRenderSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

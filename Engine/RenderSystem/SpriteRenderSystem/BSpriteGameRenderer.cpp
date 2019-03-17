@@ -1,4 +1,4 @@
-#include "Engine/RenderSystem/SpriteRenderSystem/SpriteGameRenderer.hpp"
+#include "Engine/RenderSystem/SpriteRenderSystem/BSpriteGameRenderer.hpp"
 
 #include "Engine/DebugSystem/BProfiler.hpp"
 #include "Engine/DebugSystem/BConsoleSystem.hpp"
@@ -22,7 +22,8 @@
 void EnableLayerCommand(Command const & command)
 {
 	int layer = command.GetArg(0, 0);
-	if(g_SpriteRenderSystem->SetLayerEnabled(layer, true))
+	BSpriteGameRenderer * SGRSystem = BSpriteGameRenderer::s_System;
+	if(SGRSystem && SGRSystem->SetLayerEnabled(layer, true))
 	{
 		BConsoleSystem::AddLog(Stringf("Layer %d enabled", layer), BConsoleSystem::GOOD);
 	}
@@ -37,7 +38,8 @@ void EnableLayerCommand(Command const & command)
 void DisableLayerCommand(Command const & command)
 {
 	int layer = command.GetArg(0, 0);
-	if(g_SpriteRenderSystem->SetLayerEnabled(layer, false))
+	BSpriteGameRenderer * SGRSystem = BSpriteGameRenderer::s_System;
+	if(SGRSystem && SGRSystem->SetLayerEnabled(layer, false))
 	{
 		BConsoleSystem::AddLog(Stringf("Layer %d disabled", layer), BConsoleSystem::GOOD);
 	}
@@ -51,31 +53,87 @@ void DisableLayerCommand(Command const & command)
 //-------------------------------------------------------------------------------------------------
 void ExportSpritesCommand(Command const & command)
 {
-	std::string filename = command.GetArg(0, "SpriteDatabase");
-	g_SpriteRenderSystem->ExportSpriteDatabase(filename);
-	BConsoleSystem::AddLog(Stringf("Exported sprite resource database to %s.Sprite.xml", filename.c_str()), BConsoleSystem::GOOD);
+	if(BSpriteGameRenderer::s_System)
+	{
+		std::string filename = command.GetArg(0, "SpriteDatabase");
+		BSpriteGameRenderer::s_System->ExportSpriteDatabase(filename);
+		BConsoleSystem::AddLog(Stringf("Exported sprite resource database to %s.Sprite.xml", filename.c_str()), BConsoleSystem::GOOD);
+	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC SpriteGameRenderer * g_SpriteRenderSystem = nullptr;
-STATIC char const * SpriteGameRenderer::SPRITE_RESOURCE_NAME = "SpriteResource";
-STATIC char const * SpriteGameRenderer::SPRITE_SHEET_RESOURCE_NAME = "SpriteSheetResource";
+STATIC char const * BSpriteGameRenderer::SPRITE_RESOURCE_NAME = "SpriteResource";
+STATIC char const * BSpriteGameRenderer::SPRITE_SHEET_RESOURCE_NAME = "SpriteSheetResource";
+STATIC BSpriteGameRenderer * BSpriteGameRenderer::s_System = nullptr;
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC void BSpriteGameRenderer::Startup()
+{
+	if(!s_System)
+	{
+		s_System = new BSpriteGameRenderer();
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC void BSpriteGameRenderer::Shutdown()
+{
+	if(s_System)
+	{
+		delete s_System;
+		s_System = nullptr;
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC void BSpriteGameRenderer::Update()
+{
+	if(s_System)
+	{
+		s_System->UpdateMaterialEffects();
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC void BSpriteGameRenderer::Render()
+{
+	if(s_System)
+	{
+		s_System->SystemRender();
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC BSpriteGameRenderer * BSpriteGameRenderer::CreateOrGetSystem()
+{
+	if(!s_System)
+	{
+		Startup();
+	}
+
+	return s_System;
+}
 
 
 //-------------------------------------------------------------------------------------------------
 //Higher layer on top
-Sprite * SpriteGameRenderer::Create(std::string const & spriteID, int layer /*= 0*/, bool ignoreView /*= false*/)
+STATIC Sprite * BSpriteGameRenderer::Create(std::string const & spriteID, int layer /*= 0*/, bool ignoreView /*= false*/)
 {
 	Sprite * newSprite = new Sprite(spriteID, layer, ignoreView);
-	SpriteLayer * spriteLayer = g_SpriteRenderSystem->CreateOrGetLayer(layer);
+	SpriteLayer * spriteLayer = s_System->CreateOrGetLayer(layer);
 	spriteLayer->AddSprite(newSprite);
 	return newSprite;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-SpriteGameRenderer::SpriteGameRenderer()
+BSpriteGameRenderer::BSpriteGameRenderer()
 	: m_fboCurrent(nullptr)
 	, m_fboEffect(nullptr)
 	, m_screenMesh(nullptr)
@@ -109,7 +167,7 @@ SpriteGameRenderer::SpriteGameRenderer()
 
 
 //-------------------------------------------------------------------------------------------------
-SpriteGameRenderer::~SpriteGameRenderer()
+BSpriteGameRenderer::~BSpriteGameRenderer()
 {
 	delete m_spriteMesh;
 	m_spriteMesh = nullptr;
@@ -157,14 +215,14 @@ SpriteGameRenderer::~SpriteGameRenderer()
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::UpdateMaterialEffects()
+void BSpriteGameRenderer::UpdateMaterialEffects()
 {
 	m_screenMaterials[eMaterialEffect_WAVES]->SetUniform("uTime", Time::TOTAL_SECONDS);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::Render()
+void BSpriteGameRenderer::SystemRender()
 {
 	BRenderSystem * RSystem = BRenderSystem::GetSystem();
 	if(!RSystem)
@@ -206,7 +264,7 @@ void SpriteGameRenderer::Render()
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::RenderLayer(SpriteLayer const * layer) const
+void BSpriteGameRenderer::RenderLayer(SpriteLayer const * layer) const
 {
 	//Only draw enabled layers
 	if(!layer->IsEnabled())
@@ -225,7 +283,7 @@ void SpriteGameRenderer::RenderLayer(SpriteLayer const * layer) const
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::RenderSprite(Sprite const * sprite) const
+void BSpriteGameRenderer::RenderSprite(Sprite const * sprite) const
 {
 	if(!sprite->IsEnabled())
 	{
@@ -263,7 +321,7 @@ void SpriteGameRenderer::RenderSprite(Sprite const * sprite) const
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::SwapFBO(Framebuffer ** out_first, Framebuffer ** out_second)
+void BSpriteGameRenderer::SwapFBO(Framebuffer ** out_first, Framebuffer ** out_second)
 {
 	Framebuffer * temp = *out_first;
 	*out_first = *out_second;
@@ -272,7 +330,7 @@ void SpriteGameRenderer::SwapFBO(Framebuffer ** out_first, Framebuffer ** out_se
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::SetupMaterialEffects()
+void BSpriteGameRenderer::SetupMaterialEffects()
 {
 	m_screenMaterials.resize(eMaterialEffect_COUNT);
 	m_screenMaterials[eMaterialEffect_NOTHING] = new Material("Data/Shaders/post.vert", "Data/Shaders/postNothing.frag");
@@ -283,7 +341,7 @@ void SpriteGameRenderer::SetupMaterialEffects()
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::LoadAllSpriteResources()
+void BSpriteGameRenderer::LoadAllSpriteResources()
 {
 	std::vector<std::string> spriteFiles = EnumerateFilesInFolder("Data/Sprites/", "*.Sprite.xml");
 	for(std::string const & spriteFile : spriteFiles)
@@ -331,7 +389,7 @@ void SpriteGameRenderer::LoadAllSpriteResources()
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::AddSpriteResource(std::string const & id, std::string const & filename)
+void BSpriteGameRenderer::AddSpriteResource(std::string const & id, std::string const & filename)
 {
 	size_t idHash = std::hash<std::string>{}(id);
 	auto foundResource = m_spriteResourceDatabase.find(idHash);
@@ -346,7 +404,7 @@ void SpriteGameRenderer::AddSpriteResource(std::string const & id, std::string c
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::AddSpriteResource(std::string const & id, std::string const & spriteSheetID, int spriteSheetIndex)
+void BSpriteGameRenderer::AddSpriteResource(std::string const & id, std::string const & spriteSheetID, int spriteSheetIndex)
 {
 	size_t idHash = std::hash<std::string>{}(id);
 	auto foundResource = m_spriteResourceDatabase.find(idHash);
@@ -362,7 +420,7 @@ void SpriteGameRenderer::AddSpriteResource(std::string const & id, std::string c
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::AddSpriteSheetResource(std::string const & spriteSheetID, std::string const & spriteSheetFilename, Vector2i const & spriteSheetSize)
+void BSpriteGameRenderer::AddSpriteSheetResource(std::string const & spriteSheetID, std::string const & spriteSheetFilename, Vector2i const & spriteSheetSize)
 {
 	size_t idHash = std::hash<std::string>{}(spriteSheetID);
 	auto foundResource = m_spriteSheetResourceDatabase.find(idHash);
@@ -377,7 +435,7 @@ void SpriteGameRenderer::AddSpriteSheetResource(std::string const & spriteSheetI
 
 
 //-------------------------------------------------------------------------------------------------
-bool SpriteGameRenderer::AddLayerEffect(int layer, eMaterialEffect const & effect)
+bool BSpriteGameRenderer::AddLayerEffect(int layer, eMaterialEffect const & effect)
 {
 	//Return true if setting the layer effect was successful
 	auto foundLayer = m_spriteLayers.find(layer);
@@ -394,7 +452,7 @@ bool SpriteGameRenderer::AddLayerEffect(int layer, eMaterialEffect const & effec
 
 
 //-------------------------------------------------------------------------------------------------
-bool SpriteGameRenderer::ClearLayerEffects(int layer)
+bool BSpriteGameRenderer::ClearLayerEffects(int layer)
 {
 	//Return true if clearing the layer effects was successful
 	auto foundLayer = m_spriteLayers.find(layer);
@@ -411,7 +469,7 @@ bool SpriteGameRenderer::ClearLayerEffects(int layer)
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::ExportSpriteDatabase(std::string const & filename)
+void BSpriteGameRenderer::ExportSpriteDatabase(std::string const & filename)
 {
 	XMLNode databaseRoot = XMLNode::createXMLTopNode("SpriteResources");
 	std::string outFile = Stringf("Data/Sprites/%s.Sprite.xml", filename.c_str());
@@ -427,7 +485,7 @@ void SpriteGameRenderer::ExportSpriteDatabase(std::string const & filename)
 
 
 //-------------------------------------------------------------------------------------------------
-SpriteLayer * SpriteGameRenderer::CreateOrGetLayer(int layer) const
+SpriteLayer * BSpriteGameRenderer::CreateOrGetLayer(int layer) const
 {
 	auto layerFound = m_spriteLayers.find(layer);
 	if(layerFound != m_spriteLayers.end())
@@ -444,7 +502,7 @@ SpriteLayer * SpriteGameRenderer::CreateOrGetLayer(int layer) const
 
 
 //-------------------------------------------------------------------------------------------------
-SpriteResource const * SpriteGameRenderer::GetSpriteResource(std::string const & spriteID) const
+SpriteResource const * BSpriteGameRenderer::GetSpriteResource(std::string const & spriteID) const
 {
 	size_t spriteIDHash = std::hash<std::string>{}(spriteID);
 	auto spriteResourceFound = m_spriteResourceDatabase.find(spriteIDHash);
@@ -457,7 +515,7 @@ SpriteResource const * SpriteGameRenderer::GetSpriteResource(std::string const &
 
 
 //-------------------------------------------------------------------------------------------------
-SpriteSheetResource const * SpriteGameRenderer::GetSpriteSheetResource(std::string const & spriteSheetID) const
+SpriteSheetResource const * BSpriteGameRenderer::GetSpriteSheetResource(std::string const & spriteSheetID) const
 {
 	size_t spriteSheetIDHash = std::hash<std::string>{}(spriteSheetID);
 	auto spriteSheetResourceFound = m_spriteSheetResourceDatabase.find(spriteSheetIDHash);
@@ -470,42 +528,42 @@ SpriteSheetResource const * SpriteGameRenderer::GetSpriteSheetResource(std::stri
 
 
 //-------------------------------------------------------------------------------------------------
-float SpriteGameRenderer::GetVirtualSize() const
+float BSpriteGameRenderer::GetVirtualSize() const
 {
 	return m_virtualSize;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-float SpriteGameRenderer::GetImportSize() const
+float BSpriteGameRenderer::GetImportSize() const
 {
 	return m_importSize;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-float SpriteGameRenderer::GetAspectRatio() const
+float BSpriteGameRenderer::GetAspectRatio() const
 {
 	return m_aspectRatio;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Vector2f SpriteGameRenderer::GetVirtualScreen() const
+Vector2f BSpriteGameRenderer::GetVirtualScreen() const
 {
 	return m_virtualScreen;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-Matrix4f SpriteGameRenderer::GetView() const
+Matrix4f BSpriteGameRenderer::GetView() const
 {
 	return m_viewMatrix;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool SpriteGameRenderer::IsSpriteOnScreen(Sprite const * sprite) const
+bool BSpriteGameRenderer::IsSpriteOnScreen(Sprite const * sprite) const
 {
 	//If you ignore the view matrix, never cull!
 	if(sprite->m_ignoreView)
@@ -522,7 +580,7 @@ bool SpriteGameRenderer::IsSpriteOnScreen(Sprite const * sprite) const
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::ResetVirtualScreen()
+void BSpriteGameRenderer::ResetVirtualScreen()
 {
 	if(m_aspectRatio > 1.f)
 	{
@@ -539,7 +597,7 @@ void SpriteGameRenderer::ResetVirtualScreen()
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::SetVirtualSize(float size)
+void BSpriteGameRenderer::SetVirtualSize(float size)
 {
 	m_virtualSize = size;
 	ResetVirtualScreen();
@@ -547,14 +605,14 @@ void SpriteGameRenderer::SetVirtualSize(float size)
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::SetImportSize(float size)
+void BSpriteGameRenderer::SetImportSize(float size)
 {
 	m_importSize = size;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::SetAspectRatio(float width, float height)
+void BSpriteGameRenderer::SetAspectRatio(float width, float height)
 {
 	m_aspectRatio = width / height;
 	ResetVirtualScreen();
@@ -562,14 +620,14 @@ void SpriteGameRenderer::SetAspectRatio(float width, float height)
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::SetClearColor(Color const & color)
+void BSpriteGameRenderer::SetClearColor(Color const & color)
 {
 	m_clearColor = color;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool SpriteGameRenderer::SetLayerEnabled(int layer, bool isEnabled)
+bool BSpriteGameRenderer::SetLayerEnabled(int layer, bool isEnabled)
 {
 	//Return true if setting layer was successful
 	auto foundLayer = m_spriteLayers.find(layer);
@@ -586,7 +644,7 @@ bool SpriteGameRenderer::SetLayerEnabled(int layer, bool isEnabled)
 
 
 //-------------------------------------------------------------------------------------------------
-void SpriteGameRenderer::SetView(Matrix4f const & view)
+void BSpriteGameRenderer::SetView(Matrix4f const & view)
 {
 	m_viewMatrix = view;
 }

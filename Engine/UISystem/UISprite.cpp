@@ -3,7 +3,7 @@
 #include "Engine/Math/AABB2f.hpp"
 #include "Engine/RenderSystem/MeshRenderer.hpp"
 #include "Engine/RenderSystem/MeshBuilder.hpp"
-#include "Engine/RenderSystem/SpriteRenderSystem/SpriteGameRenderer.hpp"
+#include "Engine/RenderSystem/SpriteRenderSystem/BSpriteGameRenderer.hpp"
 #include "Engine/RenderSystem/SpriteRenderSystem/SpriteResource.hpp"
 #include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/RenderSystem/TextRenderer.hpp"
@@ -50,11 +50,7 @@ UISprite::UISprite(XMLNode const & node)
 //-------------------------------------------------------------------------------------------------
 UISprite::~UISprite()
 {
-	delete m_quad;
-	m_quad = nullptr;
-
-	delete m_quadMesh;
-	m_quadMesh = nullptr;
+	// Nothing
 }
 
 
@@ -84,7 +80,7 @@ void UISprite::Render() const
 		return;
 	}
 
-	m_quad->Render();
+	m_quad.Render();
 	UIWidget::Render();
 }
 
@@ -92,7 +88,8 @@ void UISprite::Render() const
 //-------------------------------------------------------------------------------------------------
 void UISprite::SetupRenderers()
 {
-	m_spriteData = g_SpriteRenderSystem->GetSpriteResource(DEFAULT_SPRITE_ID);
+	BSpriteGameRenderer * SGRSystem = BSpriteGameRenderer::CreateOrGetSystem();
+	m_spriteData = SGRSystem->GetSpriteResource(DEFAULT_SPRITE_ID);
 
 	//Dummy values to get them set up
 	MeshBuilder quadBuilder;
@@ -100,11 +97,11 @@ void UISprite::SetupRenderers()
 	quadBuilder.AddTriangle(Vector3f(-0.5f, 5.f, 0.f), Vector3f(0.5f, -0.5f, 0.f), Vector3f(0.5f, 0.5f, 0.f));
 
 	Material * spriteMaterial = m_spriteData->GetMaterial();
-	m_quadMesh = new Mesh(&quadBuilder, eVertexType_PCU);
-	m_quad = new MeshRenderer(eMeshShape_QUAD, Transform(), RenderState::BASIC_2D);
-	CreateSpriteMesh(m_quadMesh);
-	m_quad->SetMeshAndMaterial(m_quadMesh, spriteMaterial);
-	m_quad->SetUniform("uTexDiffuse", m_spriteData->GetTexture());
+	m_quadMesh = Mesh(&quadBuilder, eVertexType_PCU);
+	m_quad = MeshRenderer(eMeshShape_QUAD, Transform(), RenderState::BASIC_2D);
+	CreateSpriteMesh(&m_quadMesh);
+	m_quad.SetMeshAndMaterial(&m_quadMesh, spriteMaterial);
+	m_quad.SetUniform("uTexDiffuse", m_spriteData->GetTexture());
 }
 
 
@@ -114,21 +111,21 @@ void UISprite::UpdateRenderers()
 	//Update Sprite Quad
 	std::string currentSpriteID;
 	GetProperty(PROPERTY_SPRITE_ID, currentSpriteID);
-	if(currentSpriteID != m_spriteData->m_id)
+	if(currentSpriteID != m_spriteData->m_id && BSpriteGameRenderer::s_System)
 	{
-		m_spriteData = g_SpriteRenderSystem->GetSpriteResource(currentSpriteID);
-		m_quad->SetUniform("uTexDiffuse", m_spriteData->GetTexture());
+		m_spriteData = BSpriteGameRenderer::s_System->GetSpriteResource(currentSpriteID);
+		m_quad.SetUniform("uTexDiffuse", m_spriteData->GetTexture());
 	}
 
 	//Update Mesh & Material
-	CreateSpriteMesh(m_quadMesh);
+	CreateSpriteMesh(&m_quadMesh);
 	Material * spriteMaterial = m_spriteData->GetMaterial();
-	m_quad->SetMeshAndMaterial(m_quadMesh, spriteMaterial);
+	m_quad.SetMeshAndMaterial(&m_quadMesh, spriteMaterial);
 
 	//Update Quad Transform
 	Transform quadTransform = CalcQuadTransform();
-	m_quad->SetTransform(quadTransform);
-	m_quad->Update();
+	m_quad.SetTransform(quadTransform);
+	m_quad.Update();
 }
 
 

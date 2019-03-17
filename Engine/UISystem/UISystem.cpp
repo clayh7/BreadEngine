@@ -12,7 +12,7 @@
 #include "Engine/Utils/MathUtils.hpp"
 #include "Engine/Utils/XMLUtils.hpp"
 #include "Engine/Utils/FileUtils.hpp"
-#include "Engine/RenderSystem/SpriteRenderSystem/SpriteGameRenderer.hpp"
+#include "Engine/RenderSystem/SpriteRenderSystem/BSpriteGameRenderer.hpp"
 #include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/RenderSystem/Camera3D.hpp"
 

@@ -19,7 +19,7 @@
 // Console Commands: debug_memory
 // (Default = 1)
 
-#define MEMORY_TRACKING 2
+#define MEMORY_TRACKING 1
 
 // Level 0 - Use this to turn off tracking
 // Level 1 - Counts allocations and deallocations

@@ -2,7 +2,7 @@
 
 #include "Engine/Utils/MathUtils.hpp"
 #include "Engine/RenderSystem/SpriteRenderSystem/Particle.hpp"
-#include "Engine/RenderSystem/SpriteRenderSystem/SpriteGameRenderer.hpp"
+#include "Engine/RenderSystem/SpriteRenderSystem/BSpriteGameRenderer.hpp"
 
 
 //-------------------------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ ParticleEmitter::~ParticleEmitter()
 Particle * ParticleEmitter::SpawnParticle(Vector2f const & position) const
 {
 	Particle * spawn = new Particle();
-	spawn->sprite = SpriteGameRenderer::Create(m_particleEmitterResource->spriteID, layerID);
+	spawn->sprite = BSpriteGameRenderer::Create(m_particleEmitterResource->spriteID, layerID);
 	spawn->startScale = m_particleEmitterResource->startScale.GetRandom();
 	if(m_particleEmitterResource->constantScale)
 	{

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Engine/UISystem/UIWidget.hpp"
+#include "Engine/RenderSystem/Mesh.hpp"
+#include "Engine/RenderSystem/MeshRenderer.hpp"
 
 
 //-------------------------------------------------------------------------------------------------
-class Mesh;
 class Material;
-class MeshRenderer;
 class Transform;
 class SpriteResource;
 class UIWidgetRegistration;
@@ -38,8 +38,8 @@ public:
 	//-------------------------------------------------------------------------------------------------
 public:
 	SpriteResource const * m_spriteData;
-	Mesh * m_quadMesh;
-	MeshRenderer * m_quad;
+	Mesh m_quadMesh;
+	MeshRenderer m_quad;
 
 	//-------------------------------------------------------------------------------------------------
 	// Functions

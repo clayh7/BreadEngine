@@ -544,14 +544,24 @@ std::string const BConsoleSystem::BuildLogFile()
 void BConsoleSystem::ShowHelp()
 {
 	AddLog("Showing Registered Commands", Color::GREEN);
-	auto commandIter = m_commands.begin();
-	while(commandIter != m_commands.end())
+
+	// Get list of command descriptions
+	std::vector<char*> descriptionList;
+	for(auto commandIter = m_commands.begin(); commandIter != m_commands.end(); ++commandIter)
 	{
 		if(commandIter->second)
 		{
-			AddLog(commandIter->second->m_description, Color::WHITE);
+			descriptionList.push_back(commandIter->second->m_description);
 		}
-		++commandIter;
+	}
+
+	// Sort them
+	SortStrings(descriptionList);
+
+	// Print them
+	for(size_t index = 0; index < descriptionList.size(); ++index)
+	{
+		AddLog(descriptionList[index]);
 	}
 }
 

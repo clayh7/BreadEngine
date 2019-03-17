@@ -104,7 +104,7 @@
     <ClCompile Include="RenderSystem\SpriteRenderSystem\ParticleEngine.cpp" />
     <ClCompile Include="RenderSystem\SpriteRenderSystem\ParticleSystem.cpp" />
     <ClCompile Include="RenderSystem\SpriteRenderSystem\Sprite.cpp" />
-    <ClCompile Include="RenderSystem\SpriteRenderSystem\SpriteGameRenderer.cpp" />
+    <ClCompile Include="RenderSystem\SpriteRenderSystem\BSpriteGameRenderer.cpp" />
     <ClCompile Include="RenderSystem\SpriteRenderSystem\SpriteLayer.cpp" />
     <ClCompile Include="RenderSystem\SpriteRenderSystem\SpriteResource.cpp" />
     <ClCompile Include="RenderSystem\SpriteRenderSystem\SpriteSheetResource.cpp" />
@@ -238,7 +238,7 @@
     <ClInclude Include="RenderSystem\SpriteRenderSystem\ParticleEngine.hpp" />
     <ClInclude Include="RenderSystem\SpriteRenderSystem\ParticleSystem.hpp" />
     <ClInclude Include="RenderSystem\SpriteRenderSystem\Sprite.hpp" />
-    <ClInclude Include="RenderSystem\SpriteRenderSystem\SpriteGameRenderer.hpp" />
+    <ClInclude Include="RenderSystem\SpriteRenderSystem\BSpriteGameRenderer.hpp" />
     <ClInclude Include="RenderSystem\SpriteRenderSystem\SpriteLayer.hpp" />
     <ClInclude Include="RenderSystem\SpriteRenderSystem\SpriteResource.hpp" />
     <ClInclude Include="RenderSystem\SpriteRenderSystem\SpriteSheetResource.hpp" />
