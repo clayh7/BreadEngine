@@ -1,6 +1,6 @@
 #include "Engine/UISystem/UIContainer.hpp"
 
-#include "Engine/EventSystem/EventSystem.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 #include "Engine/Math/Vector2i.hpp"
 #include "Engine/RenderSystem/MeshRenderer.hpp"
 #include "Engine/RenderSystem/MeshBuilder.hpp"
@@ -165,7 +165,7 @@ void UIContainer::AddItem(UIItem * item)
 	NamedProperties eventParams;
 	eventParams.Set("item", item);
 	AddChild((UIWidget*)item);
-	EventSystem::TriggerEvent(onAddItemEvent, eventParams);
+	BEventSystem::TriggerEvent(onAddItemEvent, eventParams);
 }
 
 

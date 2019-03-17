@@ -126,9 +126,6 @@
     <ClCompile Include="DebugSystem\Command.cpp">
       <Filter>DebugSystem</Filter>
     </ClCompile>
-    <ClCompile Include="DebugSystem\Debugger.cpp">
-      <Filter>DebugSystem</Filter>
-    </ClCompile>
     <ClCompile Include="DebugSystem\DebugRenderCommand.cpp">
       <Filter>DebugSystem</Filter>
     </ClCompile>
@@ -294,9 +291,6 @@
     <ClCompile Include="RenderSystem\RenderState.cpp">
       <Filter>RenderSystem\Materials</Filter>
     </ClCompile>
-    <ClCompile Include="EventSystem\EventSystem.cpp">
-      <Filter>EventSystem</Filter>
-    </ClCompile>
     <ClCompile Include="Core\NamedProperty.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -391,6 +385,12 @@
     <ClCompile Include="DebugSystem\BConsoleSystem.cpp">
       <Filter>DebugSystem</Filter>
     </ClCompile>
+    <ClCompile Include="DebugSystem\BDebugSystem.cpp">
+      <Filter>DebugSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="EventSystem\BEventSystem.cpp">
+      <Filter>EventSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Time.hpp">
@@ -472,9 +472,6 @@
       <Filter>RenderSystem</Filter>
     </ClInclude>
     <ClInclude Include="DebugSystem\Command.hpp">
-      <Filter>DebugSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugSystem\Debugger.hpp">
       <Filter>DebugSystem</Filter>
     </ClInclude>
     <ClInclude Include="DebugSystem\DebugRenderCommand.hpp">
@@ -648,9 +645,6 @@
     <ClInclude Include="RenderSystem\RenderState.hpp">
       <Filter>RenderSystem\Materials</Filter>
     </ClInclude>
-    <ClInclude Include="EventSystem\EventSystem.hpp">
-      <Filter>EventSystem</Filter>
-    </ClInclude>
     <ClInclude Include="Core\NamedProperty.hpp">
       <Filter>Core</Filter>
     </ClInclude>
@@ -747,6 +741,12 @@
     <ClInclude Include="InputSystem\BMouseKeyboard.hpp" />
     <ClInclude Include="DebugSystem\BConsoleSystem.hpp">
       <Filter>DebugSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugSystem\BDebugSystem.hpp">
+      <Filter>DebugSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\BEventSystem.hpp">
+      <Filter>EventSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

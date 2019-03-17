@@ -4,13 +4,13 @@
 
 
 //-------------------------------------------------------------------------------------------------
-class Debugger;
+class BDebugSystem;
 class TextRenderer;
 class Command;
 
 
 //-------------------------------------------------------------------------------------------------
-extern Debugger * g_DebugSystem;
+extern BDebugSystem * g_DebugSystem;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -21,7 +21,7 @@ void DebugFlushCommand(Command const &);
 
 
 //-------------------------------------------------------------------------------------------------
-class Debugger
+class BDebugSystem
 {
 	//-------------------------------------------------------------------------------------------------
 	// Static Members
@@ -43,8 +43,8 @@ private:
 	// Functions
 	//-------------------------------------------------------------------------------------------------
 public:
-	Debugger();
-	~Debugger();
+	BDebugSystem();
+	~BDebugSystem();
 	void Update();
 	void UpdateTextFPS(int & currentLine);
 	void UpdateTextUnit(int & currentLine);

@@ -5,7 +5,7 @@
 #include <vector>
 #include "Engine/Core/NamedProperties.hpp"
 #include "Engine/DebugSystem/Command.hpp"
-#include "Engine/EventSystem/EventSystem.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 #include "Engine/Math/Vector2f.hpp"
 #include "Engine/MemorySystem/UntrackedAllocator.hpp"
 #include "Engine/RenderSystem/Color.hpp"

@@ -1,6 +1,6 @@
 #include "Engine/NetworkSystem/RCS/RemoteCommandServer.hpp"
 
-#include "Engine/EventSystem/EventSystem.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 #include "Engine/NetworkSystem/NetworkSystem.hpp"
 #include "Engine/NetworkSystem/RCS/RCSConnection.hpp"
 #include "Engine/NetworkSystem/Sockets/TCPSocket.hpp"
@@ -232,8 +232,8 @@ STATIC bool RemoteCommandServer::Leave()
 RemoteCommandServer::RemoteCommandServer()
 	: m_state(eRCSState_DISCONNECTED)
 {
-	EventSystem::RegisterEvent(NetworkSystem::NETWORK_UPDATE_EVENT, this, &RemoteCommandServer::OnUpdate);
-	EventSystem::RegisterEvent(RCS_MESSAGE_EVENT, this, &RemoteCommandServer::OnMessage);
+	BEventSystem::RegisterEvent(NetworkSystem::NETWORK_UPDATE_EVENT, this, &RemoteCommandServer::OnUpdate);
+	BEventSystem::RegisterEvent(RCS_MESSAGE_EVENT, this, &RemoteCommandServer::OnMessage);
 
 	BConsoleSystem::Register("rcs_host", RCSHost, ": Host a local server.");
 	BConsoleSystem::Register("rcs_join", RCSJoin, " [host address] : Join server.");

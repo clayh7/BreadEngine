@@ -1,6 +1,6 @@
 #include "Engine/NetworkSystem/NetworkSystem.hpp"
 
-#include "Engine/EventSystem/EventSystem.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 #include "Engine/Utils/NetworkUtils.hpp"
 
 
@@ -21,8 +21,8 @@ STATIC bool NetworkSystem::Startup()
 		NetworkUtils::ReportError();
 	}
 
-	EventSystem::RegisterEvent(ENGINE_UPDATE_EVENT, &NetworkSystem::OnUpdate);
-	EventSystem::TriggerEvent(NETWORK_STARTUP);
+	BEventSystem::RegisterEvent(ENGINE_UPDATE_EVENT, &NetworkSystem::OnUpdate);
+	BEventSystem::TriggerEvent(NETWORK_STARTUP);
 
 	return true;
 }
@@ -31,7 +31,7 @@ STATIC bool NetworkSystem::Startup()
 //-------------------------------------------------------------------------------------------------
 STATIC void NetworkSystem::Shutdown()
 {
-	EventSystem::TriggerEvent(NETWORK_SHUTDOWN);
+	BEventSystem::TriggerEvent(NETWORK_SHUTDOWN);
 
 	int error = WSACleanup();
 	if(error == SOCKET_ERROR)
@@ -44,5 +44,5 @@ STATIC void NetworkSystem::Shutdown()
 //-------------------------------------------------------------------------------------------------
 STATIC void NetworkSystem::OnUpdate(NamedProperties &)
 {
-	EventSystem::TriggerEvent(NetworkSystem::NETWORK_UPDATE_EVENT);
+	BEventSystem::TriggerEvent(NetworkSystem::NETWORK_UPDATE_EVENT);
 }

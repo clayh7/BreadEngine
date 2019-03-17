@@ -10,14 +10,17 @@
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC BMemorySystem * BMemorySystem::s_MemorySystem = nullptr;
+STATIC BMemorySystem * BMemorySystem::s_System = nullptr;
 bool g_SkipTracking = false;
 
 
 //-------------------------------------------------------------------------------------------------
 size_t * CreateMemoryBlock(size_t numBytes, eMemoryTag tag)
 {
-	BProfiler::IncrementNews();
+	if(BProfiler::s_Instance)
+	{
+		BProfiler::s_Instance->IncrementNews();
+	}
 
 	// This is the memory layout, we need to leave 8 bytes beforehand free
 	// [(4)NumBytes][(4)MemoryTag][(NumBytes)MemoryBlock]
@@ -34,7 +37,10 @@ size_t * CreateMemoryBlock(size_t numBytes, eMemoryTag tag)
 //-------------------------------------------------------------------------------------------------
 void DestroyMemoryBlock(void * ptr, size_t & numBytes, eMemoryTag & tag)
 {
-	BProfiler::IncrementDeletes();
+	if(BProfiler::s_Instance)
+	{
+		BProfiler::s_Instance->IncrementDeletes();
+	}
 
 	size_t * ptrStart = (size_t *)ptr; //Memory Block
 	ptrStart -= 1; // Memory Tag
@@ -159,11 +165,11 @@ void operator delete [](void * ptr, eMemoryTag tag)
 //-------------------------------------------------------------------------------------------------
 STATIC void BMemorySystem::Startup()
 {
-	if(!s_MemorySystem)
+	if(!s_System)
 	{
 		CallstackSystem::Startup();
 		g_SkipTracking = true;
-		s_MemorySystem = new BMemorySystem();
+		s_System = new BMemorySystem();
 		g_SkipTracking = false;
 	}
 }
@@ -172,10 +178,10 @@ STATIC void BMemorySystem::Startup()
 //-------------------------------------------------------------------------------------------------
 STATIC void BMemorySystem::Shutdown()
 {
-	if(s_MemorySystem)
+	if(s_System)
 	{
-		delete s_MemorySystem;
-		s_MemorySystem = nullptr;
+		delete s_System;
+		s_System = nullptr;
 	}
 }
 
@@ -183,9 +189,9 @@ STATIC void BMemorySystem::Shutdown()
 //-------------------------------------------------------------------------------------------------
 STATIC void BMemorySystem::Update()
 {
-	if(s_MemorySystem)
+	if(s_System)
 	{
-		s_MemorySystem->SystemUpdate();
+		s_System->SystemUpdate();
 	}
 }
 
@@ -193,9 +199,9 @@ STATIC void BMemorySystem::Update()
 //-------------------------------------------------------------------------------------------------
 STATIC void BMemorySystem::Flush()
 {
-	if(s_MemorySystem)
+	if(s_System)
 	{
-		s_MemorySystem->SystemFlush();
+		s_System->SystemFlush();
 	}
 }
 
@@ -203,20 +209,20 @@ STATIC void BMemorySystem::Flush()
 //-------------------------------------------------------------------------------------------------
 STATIC BMemorySystem * BMemorySystem::GetOrCreateSystem()
 {
-	if(!s_MemorySystem)
+	if(!s_System)
 	{
 		Startup();
 	}
-	return s_MemorySystem;
+	return s_System;
 }
 
 
 //-------------------------------------------------------------------------------------------------
 STATIC void BMemorySystem::GetMemoryAllocationsString(std::string & allocationString)
 {
-	if(s_MemorySystem)
+	if(s_System)
 	{
-		s_MemorySystem->SystemGetMemoryAllocationString(allocationString);
+		s_System->SystemGetMemoryAllocationString(allocationString);
 	}
 }
 
@@ -224,9 +230,9 @@ STATIC void BMemorySystem::GetMemoryAllocationsString(std::string & allocationSt
 //-------------------------------------------------------------------------------------------------
 STATIC void BMemorySystem::GetMemoryAveragesString(std::string & averageString)
 {
-	if(s_MemorySystem)
+	if(s_System)
 	{
-		s_MemorySystem->SystemGetMemoryAveragesString(averageString);
+		s_System->SystemGetMemoryAveragesString(averageString);
 	}
 }
 
@@ -422,12 +428,12 @@ void BMemorySystem::PopulateCallstackStats()
 
 	for(auto callstackItem : m_callstackMap)
 	{
-		s_MemorySystem->LockCallstackMap();
+		s_System->LockCallstackMap();
 		size_t * leakedPtr = (size_t*)(callstackItem.first);
 		--leakedPtr;
 		size_t leakedBytes = *leakedPtr;
 		Callstack * currentCallstack = callstackItem.second;
-		s_MemorySystem->UnlockCallstackMap();
+		s_System->UnlockCallstackMap();
 
 		//Hash allocation location
 		uint32_t callstackHash = HashMemory(currentCallstack->frameDataPtr, currentCallstack->frame_count * sizeof(void *));

@@ -47,7 +47,7 @@ class BMemorySystem
 	// Static Members
 	//-------------------------------------------------------------------------------------------------
 private:
-	static BMemorySystem * s_MemorySystem;
+	static BMemorySystem * s_System;
 
 	//-------------------------------------------------------------------------------------------------
 	// Members

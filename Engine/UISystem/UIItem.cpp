@@ -1,6 +1,6 @@
 #include "Engine/UISystem/UIItem.hpp"
 
-#include "Engine/EventSystem/EventSystem.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 #include "Engine/Math/AABB2f.hpp"
 #include "Engine/RenderSystem/MeshRenderer.hpp"
 #include "Engine/RenderSystem/MeshBuilder.hpp"
@@ -42,8 +42,8 @@ UIItem::UIItem(std::string const & name /*= ""*/)
 
 	SetupRenderers();
 
-	EventSystem::RegisterEvent(EVENT_PICK_UP_ITEM, this, &UIItem::OnItemPickup);
-	EventSystem::RegisterEvent(EVENT_DROP_ITEM, this, &UIItem::OnItemDrop);
+	BEventSystem::RegisterEvent(EVENT_PICK_UP_ITEM, this, &UIItem::OnItemPickup);
+	BEventSystem::RegisterEvent(EVENT_DROP_ITEM, this, &UIItem::OnItemDrop);
 }
 
 
@@ -59,7 +59,7 @@ UIItem::UIItem(XMLNode const & node)
 //-------------------------------------------------------------------------------------------------
 UIItem::~UIItem()
 {
-	EventSystem::Unregister(this);
+	BEventSystem::Unregister(this);
 
 	delete m_quad;
 	m_quad = nullptr;

@@ -3,7 +3,7 @@
 #include "Engine/NetworkSystem/Sockets/TCPSocket.hpp"
 #include "Engine/Core/NamedProperties.hpp"
 #include "Engine/NetworkSystem/RCS/RemoteCommandServer.hpp"
-#include "Engine/EventSystem/EventSystem.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 
 
 //-------------------------------------------------------------------------------------------------
@@ -91,5 +91,5 @@ void RCSConnection::CreateMessageEvent()
 	NamedProperties data;
 	data.Set("MessageType", (eRCSMessageType)m_messageBuffer[0]);
 	data.Set("Message", &m_messageBuffer[1]);
-	EventSystem::TriggerEvent(RemoteCommandServer::RCS_MESSAGE_EVENT, data);
+	BEventSystem::TriggerEvent(RemoteCommandServer::RCS_MESSAGE_EVENT, data);
 }

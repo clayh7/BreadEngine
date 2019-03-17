@@ -156,9 +156,9 @@ STATIC void BConsoleSystem::Startup()
 		s_System->AddLog("Author: Clay Howell", BConsoleSystem::INFO);
 
 		//Register Events
-		EventSystem::RegisterEvent(BMouseKeyboard::EVENT_TYPED_CHAR, s_System, &BConsoleSystem::OnTypedChar);
-		EventSystem::RegisterEvent(BMouseKeyboard::EVENT_KEY_DOWN, s_System, &BConsoleSystem::OnKeyDown);
-		EventSystem::RegisterEvent(BMouseKeyboard::EVENT_MOUSE_WHEEL, s_System, &BConsoleSystem::OnMouseWheel);
+		BEventSystem::RegisterEvent(BMouseKeyboard::EVENT_TYPED_CHAR, s_System, &BConsoleSystem::OnTypedChar);
+		BEventSystem::RegisterEvent(BMouseKeyboard::EVENT_KEY_DOWN, s_System, &BConsoleSystem::OnKeyDown);
+		BEventSystem::RegisterEvent(BMouseKeyboard::EVENT_MOUSE_WHEEL, s_System, &BConsoleSystem::OnMouseWheel);
 	}
 }
 
@@ -261,7 +261,7 @@ BConsoleSystem::BConsoleSystem()
 //-------------------------------------------------------------------------------------------------
 BConsoleSystem::~BConsoleSystem()
 {
-	EventSystem::Unregister(this);
+	BEventSystem::Unregister(this);
 
 	delete m_consoleBoxBottom;
 	m_consoleBoxBottom = nullptr;

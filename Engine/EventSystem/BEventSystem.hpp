@@ -18,6 +18,7 @@ public:
 	virtual void Execute(NamedProperties &) const = 0;
 	virtual void * GetObject() const = 0;
 };
+typedef std::map<size_t, std::vector<SubscriberBase*>> SubscriberMap;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -63,13 +64,19 @@ private:
 
 
 //-----------------------------------------------------------------------------------------------
-class EventSystem
+class BEventSystem
 {
 	//-------------------------------------------------------------------------------------------------
 	// Static Members
 	//-------------------------------------------------------------------------------------------------
+public:
+	static BEventSystem * s_System;
+
+	//-------------------------------------------------------------------------------------------------
+	// Members
+	//-------------------------------------------------------------------------------------------------
 private:
-	static std::map< size_t, std::vector<SubscriberBase*> > * s_registeredSubscribers;
+	SubscriberMap m_registeredSubscribers;
 
 	//-------------------------------------------------------------------------------------------------
 	// Static Functions
@@ -77,11 +84,19 @@ private:
 public:
 	static void Startup();
 	static void Shutdown();
+	static BEventSystem * CreateOrGetSystem();
 	static void RegisterEventAndCommand(std::string const & eventName, std::string const & usage, EventCallback * callback);
 	static void RegisterEvent(std::string const & eventName, EventCallback * callback);
 	static void TriggerEvent(std::string const & eventName);
 	static void TriggerEvent(std::string const & eventName, NamedProperties & eventData);
 	static void TriggerEventForFilesFound(std::string const & eventName, std::string const & baseFolder, std::string const & filePattern);
+
+	//-------------------------------------------------------------------------------------------------
+	// Functions
+	//-------------------------------------------------------------------------------------------------
+public:
+	BEventSystem();
+	~BEventSystem();
 
 	//-------------------------------------------------------------------------------------------------
 	// Static Function Templates
@@ -97,14 +112,12 @@ public:
 	template <typename T_ObjectType, typename T_FunctionType>
 	static void RegisterEvent(std::string const & eventName, T_ObjectType * object, T_FunctionType function)
 	{
-		if(s_registeredSubscribers == nullptr)
-		{
-			EventSystem::Startup();
-		}
+		BEventSystem * system = BEventSystem::CreateOrGetSystem();
+		SubscriberMap & subscribers = system->m_registeredSubscribers;
 
 		//Find the list of subscriptions under this name
 		size_t eventNameHash = std::hash<std::string>{}(eventName);
-		auto foundEventSubscription = s_registeredSubscribers->find(eventNameHash);
+		auto foundEventSubscription = subscribers.find(eventNameHash);
 
 		//Create subscriber
 		SubscriberObjectFunction<T_ObjectType, T_FunctionType> * subscriber = new SubscriberObjectFunction<T_ObjectType, T_FunctionType>();
@@ -112,7 +125,7 @@ public:
 		subscriber->m_function = function;
 
 		//If subscription exists, add to it
-		if(foundEventSubscription != s_registeredSubscribers->end())
+		if(foundEventSubscription != subscribers.end())
 		{
 			std::vector<SubscriberBase*> & eventSubscription = foundEventSubscription->second;
 			eventSubscription.push_back(subscriber);
@@ -123,16 +136,18 @@ public:
 		{
 			std::vector<SubscriberBase*> eventSubscription;
 			eventSubscription.push_back(subscriber);
-			s_registeredSubscribers->insert(std::pair<size_t, std::vector<SubscriberBase*>>(eventNameHash, eventSubscription));
+			subscribers.insert(std::pair<size_t, std::vector<SubscriberBase*>>(eventNameHash, eventSubscription));
 		}
 	}
 
 	//Remove the subscriber from all of their Registered Events
 	template <typename T_ObjectType>
-	static void EventSystem::Unregister(T_ObjectType * subscriber)
+	static void BEventSystem::Unregister(T_ObjectType * subscriber)
 	{
-		//std::pair<size_t,std::vector<SubscriberBase*>> const 
-		for(auto & eventSubscriptionPair : *s_registeredSubscribers)
+		BEventSystem * system = BEventSystem::CreateOrGetSystem();
+		SubscriberMap & subscribers = system->m_registeredSubscribers;
+
+		for(auto & eventSubscriptionPair : subscribers)
 		{
 			std::vector<SubscriberBase*> & eventSubscription = eventSubscriptionPair.second;
 			for(auto subscriberIter = eventSubscription.begin(); subscriberIter != eventSubscription.end(); /*Nothing*/)

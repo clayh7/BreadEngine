@@ -1,7 +1,7 @@
 #include "Engine/UISystem/UITextField.hpp"
 
 #include "Engine/Core/Time.hpp"
-#include "Engine/EventSystem/EventSystem.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 #include "Engine/InputSystem/BMouseKeyboard.hpp"
 #include "Engine/RenderSystem/MeshRenderer.hpp"
 #include "Engine/RenderSystem/MeshBuilder.hpp"
@@ -67,8 +67,8 @@ UITextField::UITextField(std::string const & name /*= ""*/)
 
 	SetupRenderers();
 
-	EventSystem::RegisterEvent(BMouseKeyboard::EVENT_TYPED_CHAR, this, &UITextField::OnAddChar);
-	EventSystem::RegisterEvent(BMouseKeyboard::EVENT_KEY_DOWN, this, &UITextField::OnRemoveChar);
+	BEventSystem::RegisterEvent(BMouseKeyboard::EVENT_TYPED_CHAR, this, &UITextField::OnAddChar);
+	BEventSystem::RegisterEvent(BMouseKeyboard::EVENT_KEY_DOWN, this, &UITextField::OnRemoveChar);
 }
 
 
@@ -84,7 +84,7 @@ UITextField::UITextField(XMLNode const & node)
 //-------------------------------------------------------------------------------------------------
 UITextField::~UITextField()
 {
-	EventSystem::Unregister(this);
+	BEventSystem::Unregister(this);
 
 	delete m_borderMesh;
 	m_borderMesh = nullptr;

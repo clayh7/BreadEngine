@@ -4,7 +4,7 @@
 #include "Engine/Core/NamedProperties.hpp"
 #include "Engine/Core/Time.hpp"
 #include "Engine/DebugSystem/BConsoleSystem.hpp"
-#include "Engine/EventSystem/EventSystem.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 #include "Engine/NetworkSystem/NetworkSystem.hpp"
 #include "Engine/NetworkSystem/Session/NetMessage.hpp"
 #include "Engine/NetworkSystem/Session/NetPacket.hpp"
@@ -105,7 +105,7 @@ void OnJoinRequest(NetSender const & sender, NetMessage const & message)
 		joinEvent.Set("request", &request);
 		joinEvent.Set("error", eNetSessionError_NONE);
 		joinEvent.Set("canJoin", true);
-		EventSystem::TriggerEvent(NetSession::ON_GAME_JOIN_VALIDATION_EVENT, joinEvent);
+		BEventSystem::TriggerEvent(NetSession::ON_GAME_JOIN_VALIDATION_EVENT, joinEvent);
 
 		//Find out if join was successful
 		bool success = false;
@@ -147,7 +147,7 @@ public:
 //-------------------------------------------------------------------------------------------------
 void OnJoinDeny(NetSender const & sender, NetMessage const & message)
 {
-	EventSystem::TriggerEvent(NetSession::ON_JOIN_DENY_EVENT);
+	BEventSystem::TriggerEvent(NetSession::ON_JOIN_DENY_EVENT);
 	BConsoleSystem::AddLog(Stringf("Join Deny Received: %s", StringFromSockAddr(&sender.fromAddress)), BConsoleSystem::REMOTE);
 	uint32_t nuonce;
 	message.Read<uint32_t>(&nuonce);
@@ -279,7 +279,7 @@ NetSession::NetSession(uint16_t gameVersion /*= 0U*/)
 		m_messageDefinitions[defIndex] = nullptr;
 	}
 
-	EventSystem::RegisterEvent(ENGINE_UPDATE_EVENT, this, &NetSession::OnUpdate);
+	BEventSystem::RegisterEvent(ENGINE_UPDATE_EVENT, this, &NetSession::OnUpdate);
 
 	//Registering Core Message Types
 	byte_t controlFlags, optionFlags;
@@ -311,7 +311,7 @@ NetSession::NetSession(uint16_t gameVersion /*= 0U*/)
 //-------------------------------------------------------------------------------------------------
 NetSession::~NetSession()
 {
-	EventSystem::Unregister(this);
+	BEventSystem::Unregister(this);
 
 
 	//Delete all registered messages
@@ -360,7 +360,7 @@ void NetSession::ProcessOutgoingPackets()
 			}
 			NamedProperties netEvent;
 			netEvent.Set("connection", m_connections[index]);
-			EventSystem::TriggerEvent(PREPARE_PACKET_EVENT, netEvent);
+			BEventSystem::TriggerEvent(PREPARE_PACKET_EVENT, netEvent);
 			m_connections[index]->SendPacket();
 		}
 
@@ -638,7 +638,7 @@ void NetSession::Connect(NetConnection * connection)
 	//Trigger Join Event
 	NamedProperties netEvent;
 	netEvent.Set("connection", connection);
-	EventSystem::TriggerEvent(ON_CONNECTION_JOIN_EVENT, netEvent);
+	BEventSystem::TriggerEvent(ON_CONNECTION_JOIN_EVENT, netEvent);
 
 	BConsoleSystem::AddLog(Stringf("Connection %u established", connection->GetIndex()), BConsoleSystem::GOOD);
 }
@@ -659,7 +659,7 @@ void NetSession::Disconnect(NetConnection ** connection)
 		//Trigger Leave Event
 		NamedProperties netEvent;
 		netEvent.Set("connection", *connection);
-		EventSystem::TriggerEvent(ON_CONNECTION_LEAVE_EVENT, netEvent);
+		BEventSystem::TriggerEvent(ON_CONNECTION_LEAVE_EVENT, netEvent);
 		m_host = nullptr;
 	}
 
@@ -684,7 +684,7 @@ void NetSession::Disconnect(NetConnection ** connection)
 	//Trigger Leave Event
 	NamedProperties netEvent;
 	netEvent.Set("connection", *connection);
-	EventSystem::TriggerEvent(ON_CONNECTION_LEAVE_EVENT, netEvent);
+	BEventSystem::TriggerEvent(ON_CONNECTION_LEAVE_EVENT, netEvent);
 
 	//Clear connection
 	delete m_connections[index];

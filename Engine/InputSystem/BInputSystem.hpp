@@ -12,7 +12,7 @@ class BInputSystem
 	// Static Members
 	//-------------------------------------------------------------------------------------------------
 public:
-	static BInputSystem * s_InputSystem;
+	static BInputSystem * s_System;
 
 	//-------------------------------------------------------------------------------------------------
 	// Members

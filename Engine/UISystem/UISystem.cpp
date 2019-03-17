@@ -2,7 +2,7 @@
 
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/DebugSystem/BProfiler.hpp"
-#include "Engine/EventSystem/EventSystem.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 #include "Engine/InputSystem/BMouseKeyboard.hpp"
 #include "Engine/Math/Matrix4f.hpp"
 #include "Engine/Math/Vector2f.hpp"
@@ -184,8 +184,8 @@ UISystem::UISystem()
 	Vector2i windowDimensions = GetWindowDimensions();
 	m_root->SetProperty(UIWidget::PROPERTY_WIDTH, (float)VIRTUAL_WIDTH);
 	m_root->SetProperty(UIWidget::PROPERTY_HEIGHT, (float)VIRTUAL_HEIGHT);
-	EventSystem::RegisterEvent(BMouseKeyboard::EVENT_MOUSE_DOWN, this, &UISystem::OnMouseDown);
-	EventSystem::RegisterEvent(BMouseKeyboard::EVENT_MOUSE_UP, this, &UISystem::OnMouseUp);
+	BEventSystem::RegisterEvent(BMouseKeyboard::EVENT_MOUSE_DOWN, this, &UISystem::OnMouseDown);
+	BEventSystem::RegisterEvent(BMouseKeyboard::EVENT_MOUSE_UP, this, &UISystem::OnMouseUp);
 }
 
 

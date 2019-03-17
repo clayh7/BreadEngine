@@ -6,15 +6,15 @@
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC BInputSystem * BInputSystem::s_InputSystem = nullptr;
+STATIC BInputSystem * BInputSystem::s_System = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
 STATIC void BInputSystem::Startup()
 {
-	if(!s_InputSystem)
+	if(!s_System)
 	{
-		s_InputSystem = new BInputSystem();
+		s_System = new BInputSystem();
 	}
 }
 
@@ -22,10 +22,10 @@ STATIC void BInputSystem::Startup()
 //-------------------------------------------------------------------------------------------------
 STATIC void BInputSystem::Shutdown()
 {
-	if(s_InputSystem)
+	if(s_System)
 	{
-		delete s_InputSystem;
-		s_InputSystem = nullptr;
+		delete s_System;
+		s_System = nullptr;
 	}
 }
 
@@ -33,9 +33,9 @@ STATIC void BInputSystem::Shutdown()
 //-------------------------------------------------------------------------------------------------
 STATIC void BInputSystem::Update()
 {
-	if(s_InputSystem)
+	if(s_System)
 	{
-		s_InputSystem->SystemUpdate();
+		s_System->SystemUpdate();
 	}
 }
 
@@ -43,7 +43,7 @@ STATIC void BInputSystem::Update()
 //-------------------------------------------------------------------------------------------------
 STATIC BInputSystem * BInputSystem::GetSystem()
 {
-	return s_InputSystem;
+	return s_System;
 }
 
 //-------------------------------------------------------------------------------------------------

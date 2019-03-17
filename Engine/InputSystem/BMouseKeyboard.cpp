@@ -281,7 +281,7 @@ STATIC void BMouseKeyboard::SetMouseButtonPressed(eMouseButton button)
 
 	NamedProperties mouseEvent;
 	mouseEvent.Set(PARAM_MOUSE_BUTTON, button);
-	EventSystem::TriggerEvent(EVENT_MOUSE_DOWN, mouseEvent);
+	BEventSystem::TriggerEvent(EVENT_MOUSE_DOWN, mouseEvent);
 }
 
 
@@ -299,7 +299,7 @@ STATIC void BMouseKeyboard::SetMouseButtonReleased(eMouseButton button)
 
 	NamedProperties mouseEvent;
 	mouseEvent.Set(PARAM_MOUSE_BUTTON, button);
-	EventSystem::TriggerEvent(EVENT_MOUSE_UP, mouseEvent);
+	BEventSystem::TriggerEvent(EVENT_MOUSE_UP, mouseEvent);
 }
 
 
@@ -317,7 +317,7 @@ STATIC void BMouseKeyboard::SetMouseWheelChanged(int value)
 
 	NamedProperties mouseEvent;
 	mouseEvent.Set(PARAM_MOUSE_WHEEL, value);
-	EventSystem::TriggerEvent(EVENT_MOUSE_WHEEL, mouseEvent);
+	BEventSystem::TriggerEvent(EVENT_MOUSE_WHEEL, mouseEvent);
 }
 
 
@@ -337,7 +337,7 @@ STATIC void BMouseKeyboard::SetKeyPressed(KeyCode asKey)
 
 		NamedProperties keyEvent;
 		keyEvent.Set(PARAM_KEY, asKey);
-		EventSystem::TriggerEvent(EVENT_KEY_DOWN, keyEvent);
+		BEventSystem::TriggerEvent(EVENT_KEY_DOWN, keyEvent);
 	}
 }
 
@@ -358,7 +358,7 @@ STATIC void BMouseKeyboard::SetKeyReleased(KeyCode asKey)
 
 		NamedProperties keyEvent;
 		keyEvent.Set(PARAM_KEY, asKey);
-		EventSystem::TriggerEvent(EVENT_KEY_UP, keyEvent);
+		BEventSystem::TriggerEvent(EVENT_KEY_UP, keyEvent);
 	}
 }
 
@@ -375,7 +375,7 @@ STATIC void BMouseKeyboard::SetFocusGained()
 	state.m_frameChanged = s_Instance->m_currentFrameNumber;
 	state.m_isFocused = false;
 
-	EventSystem::TriggerEvent(EVENT_FOCUS_GAINED);
+	BEventSystem::TriggerEvent(EVENT_FOCUS_GAINED);
 }
 
 
@@ -391,7 +391,7 @@ STATIC void BMouseKeyboard::SetFocusLost()
 	state.m_frameChanged = s_Instance->m_currentFrameNumber;
 	state.m_isFocused = false;
 
-	EventSystem::TriggerEvent(EVENT_FOCUS_LOST);
+	BEventSystem::TriggerEvent(EVENT_FOCUS_LOST);
 }
 
 
@@ -405,7 +405,7 @@ STATIC void BMouseKeyboard::TypedCharacter(KeyCode asKey)
 
 	NamedProperties keyEvent;
 	keyEvent.Set(PARAM_KEY, asKey);
-	EventSystem::TriggerEvent(EVENT_TYPED_CHAR, keyEvent);
+	BEventSystem::TriggerEvent(EVENT_TYPED_CHAR, keyEvent);
 }
 
 

@@ -14,8 +14,8 @@
 #include "Engine/Core/Time.hpp"
 #include "Engine/DebugSystem/BProfiler.hpp"
 #include "Engine/DebugSystem/BConsoleSystem.hpp"
-#include "Engine/DebugSystem/Debugger.hpp"
-#include "Engine/EventSystem/EventSystem.hpp"
+#include "Engine/DebugSystem/BDebugSystem.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 #include "Engine/InputSystem/BInputSystem.hpp"
 #include "Engine/Math/Vector2i.hpp"
 #include "Engine/NetworkSystem/NetworkSystem.hpp"
@@ -60,14 +60,14 @@ Engine::Engine(HINSTANCE applicationInstanceHandle)
 
 	//Create All Engine Systems
 	BMemorySystem::Startup();
-	EventSystem::Startup();
+	BEventSystem::Startup();
 	BAudioSystem::Startup();
 	BInputSystem::Startup();
 	BRenderSystem::Startup();
 	BConsoleSystem::Startup();
 	g_SpriteRenderSystem = new SpriteGameRenderer();
 	UISystem::Startup();
-	g_DebugSystem = new Debugger();
+	g_DebugSystem = new BDebugSystem();
 
 	//Add a sleep(10) to the job threads
 	//g_JobSystem = new JobSystem( );
@@ -98,7 +98,7 @@ Engine::~Engine()
 	BRenderSystem::Shutdown();
 	BInputSystem::Shutdown();
 	BAudioSystem::Shutdown();
-	EventSystem::Shutdown();
+	BEventSystem::Shutdown();
 	Clock::DestroyClocks();
 	BMemorySystem::Shutdown();
 }
@@ -121,7 +121,7 @@ void Engine::Update()
 	g_DebugSystem->Update();
 	BConsoleSystem::Update();
 
-	EventSystem::TriggerEvent(ENGINE_UPDATE_EVENT);
+	BEventSystem::TriggerEvent(ENGINE_UPDATE_EVENT);
 
 	//Reset Variables
 	m_currentDrawCalls = 0;
@@ -172,7 +172,7 @@ void Engine::Render() const
 {
 	BProfiler::StartSample("RENDER ENGINE");
 
-	EventSystem::TriggerEvent(ENGINE_RENDER_EVENT);
+	BEventSystem::TriggerEvent(ENGINE_RENDER_EVENT);
 	UISystem::Render();
 	g_DebugSystem->Render();
 	BConsoleSystem::Render();

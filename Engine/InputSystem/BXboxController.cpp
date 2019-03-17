@@ -7,7 +7,7 @@
 #include "Engine/Utils/MathUtils.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/NamedProperties.hpp"
-#include "Engine/EventSystem/EventSystem.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 
 
 //-------------------------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ STATIC void BXboxController::Update()
 						xboxEvent.Set(PARAM_PLAYER, playerIndex);
 						xboxEvent.Set(PARAM_XBOX_BUTTON, buttonIndex);
 						xboxEvent.Set(PARAM_XBOX_BUTTON_VALUE, currentButtonPressed);
-						EventSystem::TriggerEvent(EVENT_XBOX_BUTTON, xboxEvent);
+						BEventSystem::TriggerEvent(EVENT_XBOX_BUTTON, xboxEvent);
 					}
 					//Released
 					else
@@ -117,7 +117,7 @@ STATIC void BXboxController::Update()
 						xboxEvent.Set(PARAM_PLAYER, playerIndex);
 						xboxEvent.Set(PARAM_XBOX_BUTTON, buttonIndex);
 						xboxEvent.Set(PARAM_XBOX_BUTTON_VALUE, currentButtonPressed);
-						EventSystem::TriggerEvent(EVENT_XBOX_BUTTON, xboxEvent);
+						BEventSystem::TriggerEvent(EVENT_XBOX_BUTTON, xboxEvent);
 					}
 				}
 			}
@@ -130,12 +130,12 @@ STATIC void BXboxController::Update()
 			xboxTriggerEvent.Set(PARAM_PLAYER, playerIndex);
 			xboxTriggerEvent.Set(PARAM_XBOX_TRIGGER, eXboxTrigger_Left);
 			xboxTriggerEvent.Set(PARAM_XBOX_TRIGGER_VALUE, leftTrigger);
-			EventSystem::TriggerEvent(EVENT_XBOX_TRIGGER, xboxTriggerEvent);
+			BEventSystem::TriggerEvent(EVENT_XBOX_TRIGGER, xboxTriggerEvent);
 
 			xboxTriggerEvent.Set(PARAM_PLAYER, playerIndex);
 			xboxTriggerEvent.Set(PARAM_XBOX_TRIGGER, eXboxTrigger_Right);
 			xboxTriggerEvent.Set(PARAM_XBOX_TRIGGER_VALUE, rightTrigger);
-			EventSystem::TriggerEvent(EVENT_XBOX_TRIGGER, xboxTriggerEvent);
+			BEventSystem::TriggerEvent(EVENT_XBOX_TRIGGER, xboxTriggerEvent);
 
 			// Trigger Stick Events
 			Vector2f leftStick = ParseStickInput(currentXboxControllerState.Gamepad.sThumbLX, currentXboxControllerState.Gamepad.sThumbLY);
@@ -145,12 +145,12 @@ STATIC void BXboxController::Update()
 			xboxStickEvent.Set(PARAM_PLAYER, playerIndex);
 			xboxStickEvent.Set(PARAM_XBOX_STICK, eXboxStick_Left);
 			xboxStickEvent.Set(PARAM_XBOX_STICK_VALUE, leftStick);
-			EventSystem::TriggerEvent(EVENT_XBOX_STICK, xboxStickEvent);
+			BEventSystem::TriggerEvent(EVENT_XBOX_STICK, xboxStickEvent);
 
 			xboxStickEvent.Set(PARAM_PLAYER, playerIndex);
 			xboxStickEvent.Set(PARAM_XBOX_STICK, eXboxStick_Right);
 			xboxStickEvent.Set(PARAM_XBOX_STICK_VALUE, rightStick);
-			EventSystem::TriggerEvent(EVENT_XBOX_STICK, xboxStickEvent);
+			BEventSystem::TriggerEvent(EVENT_XBOX_STICK, xboxStickEvent);
 		}
 	}
 }

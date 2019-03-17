@@ -1,6 +1,6 @@
 #include "Engine/UISystem/UIProgressBar.hpp"
 
-#include "Engine/EventSystem/EventSystem.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 #include "Engine/RenderSystem/MeshRenderer.hpp"
 #include "Engine/RenderSystem/MeshBuilder.hpp"
 #include "Engine/RenderSystem/TextRenderer.hpp"
@@ -79,7 +79,7 @@ UIProgressBar::~UIProgressBar()
 	delete m_text;
 	m_text = nullptr;
 
-	EventSystem::Unregister(this);
+	BEventSystem::Unregister(this);
 }
 
 
@@ -348,7 +348,7 @@ void UIProgressBar::PopulateFromXML(XMLNode const & node)
 		else if(strcmp(childProperty.getName(), PROPERTY_AMOUNT_BIND_EVENT) == 0)
 		{
 			std::string amountBindEvent = ReadXMLAttribute(childProperty, STRING_VALUE, "");
-			EventSystem::RegisterEvent(amountBindEvent, this, &UIProgressBar::OnSetAmount);
+			BEventSystem::RegisterEvent(amountBindEvent, this, &UIProgressBar::OnSetAmount);
 			m_amountBindName = ReadXMLAttribute(childProperty, STRING_BIND_NAME, "amount");
 		}
 	}

@@ -2,7 +2,7 @@
 
 #include "Engine/AudioSystem/BAudioSystem.hpp"
 #include "Engine/Core/EngineCommon.hpp"
-#include "Engine/EventSystem/EventSystem.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 #include "Engine/InputSystem/BInputSystem.hpp"
 #include "Engine/RenderSystem/MeshBuilder.hpp"
 #include "Engine/RenderSystem/MeshRenderer.hpp"
@@ -159,7 +159,7 @@ void UIWidget::Highlight()
 	{
 		std::string highlightEventName = "";
 		GetProperty(PROPERTY_ON_HIGHLIGHT, highlightEventName);
-		EventSystem::TriggerEvent(highlightEventName);
+		BEventSystem::TriggerEvent(highlightEventName);
 
 		ChangeState(eWidgetState_HIGHLIGHTED);
 	}
@@ -183,7 +183,7 @@ void UIWidget::Press()
 	{
 		std::string pressedEventName = "";
 		GetProperty(PROPERTY_ON_PRESSED, pressedEventName);
-		EventSystem::TriggerEvent(pressedEventName);
+		BEventSystem::TriggerEvent(pressedEventName);
 
 		ChangeState(eWidgetState_PRESSED);
 	}
@@ -197,7 +197,7 @@ void UIWidget::Release()
 	{
 		std::string releasedEventName = "";
 		GetProperty(PROPERTY_ON_RELEASED, releasedEventName);
-		EventSystem::TriggerEvent(releasedEventName);
+		BEventSystem::TriggerEvent(releasedEventName);
 
 		ChangeState(eWidgetState_HIGHLIGHTED);
 	}

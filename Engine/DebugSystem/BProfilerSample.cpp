@@ -25,7 +25,10 @@ BProfilerSample::~BProfilerSample()
 	{
 		BProfilerSample * deleteSample = children;
 		children = children->next;
-		BProfiler::Delete(deleteSample);
+		if(BProfiler::s_Instance)
+		{
+			BProfiler::s_Instance->Delete(deleteSample);
+		}
 	}
 }
 

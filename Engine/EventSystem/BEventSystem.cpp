@@ -1,4 +1,4 @@
-#include "Engine/EventSystem/EventSystem.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Core/NamedProperties.hpp"
@@ -7,39 +7,44 @@
 
 
 //-------------------------------------------------------------------------------------------------
-std::map< size_t, std::vector<SubscriberBase*> > * EventSystem::s_registeredSubscribers = nullptr;
+BEventSystem * BEventSystem::s_System = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void EventSystem::Startup()
+STATIC void BEventSystem::Startup()
 {
-	if(s_registeredSubscribers == nullptr)
+	if(!s_System)
 	{
-		s_registeredSubscribers = new std::map< size_t, std::vector<SubscriberBase*> >();
+		s_System = new BEventSystem();
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void EventSystem::Shutdown()
+STATIC void BEventSystem::Shutdown()
 {
-	for(auto & subscriptions : *s_registeredSubscribers)
+	if(s_System)
 	{
-		for(auto deleteMe : subscriptions.second)
-		{
-			delete deleteMe;
-			deleteMe = nullptr;
-		}
+		delete s_System;
+		s_System = nullptr;
 	}
-	s_registeredSubscribers->clear();
-
-	delete s_registeredSubscribers;
-	s_registeredSubscribers = nullptr;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void EventSystem::RegisterEventAndCommand(std::string const & eventName, std::string const & usage, EventCallback * callback)
+STATIC BEventSystem * BEventSystem::CreateOrGetSystem()
+{
+	if(!s_System)
+	{
+		Startup();
+	}
+
+	return s_System;
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC void BEventSystem::RegisterEventAndCommand(std::string const & eventName, std::string const & usage, EventCallback * callback)
 {
 	BConsoleSystem::Register(eventName, callback, usage);
 	RegisterEvent(eventName, callback);
@@ -47,18 +52,25 @@ STATIC void EventSystem::RegisterEventAndCommand(std::string const & eventName, 
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void EventSystem::RegisterEvent(std::string const & eventName, EventCallback * callback)
+STATIC void BEventSystem::RegisterEvent(std::string const & eventName, EventCallback * callback)
 {
+	if(!s_System)
+	{
+		return;
+	}
+
+	SubscriberMap & subscribers = s_System->m_registeredSubscribers;
+
 	//Find the list of subscriptions under this name
 	size_t eventNameHash = std::hash<std::string>{}(eventName);
-	auto foundEventSubscription = s_registeredSubscribers->find(eventNameHash);
+	auto foundEventSubscription = subscribers.find(eventNameHash);
 
 	//Create subscriber
 	SubscriberStaticFunction * subscriber = new SubscriberStaticFunction();
 	subscriber->m_function = callback;
 
 	//If subscription exists, add to it
-	if(foundEventSubscription != s_registeredSubscribers->end())
+	if(foundEventSubscription != subscribers.end())
 	{
 		std::vector<SubscriberBase*> & eventSubscription = foundEventSubscription->second;
 		eventSubscription.push_back(subscriber);
@@ -69,13 +81,13 @@ STATIC void EventSystem::RegisterEvent(std::string const & eventName, EventCallb
 	{
 		std::vector<SubscriberBase*> eventSubscription;
 		eventSubscription.push_back(subscriber);
-		s_registeredSubscribers->insert(std::pair<size_t, std::vector<SubscriberBase*>>(eventNameHash, eventSubscription));
+		subscribers.insert(std::pair<size_t, std::vector<SubscriberBase*>>(eventNameHash, eventSubscription));
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void EventSystem::TriggerEvent(std::string const & eventName)
+STATIC void BEventSystem::TriggerEvent(std::string const & eventName)
 {
 	NamedProperties empty = NamedProperties();
 	TriggerEvent(eventName, empty);
@@ -83,13 +95,14 @@ STATIC void EventSystem::TriggerEvent(std::string const & eventName)
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void EventSystem::TriggerEvent(std::string const & eventName, NamedProperties & eventData)
+STATIC void BEventSystem::TriggerEvent(std::string const & eventName, NamedProperties & eventData)
 {
 	size_t eventNameHash = std::hash<std::string>{}(eventName);
-	auto foundEventSubscription = s_registeredSubscribers->find(eventNameHash);
+	SubscriberMap & subscribers = s_System->m_registeredSubscribers;
 
 	//Event exists
-	if(foundEventSubscription != s_registeredSubscribers->end())
+	auto foundEventSubscription = subscribers.find(eventNameHash);
+	if(foundEventSubscription != subscribers.end())
 	{
 		std::vector<SubscriberBase*> & eventSubscription = foundEventSubscription->second;
 		for(SubscriberBase const * subscriber : eventSubscription)
@@ -107,7 +120,7 @@ STATIC void EventSystem::TriggerEvent(std::string const & eventName, NamedProper
 
 
 //-------------------------------------------------------------------------------------------------
-void EventSystem::TriggerEventForFilesFound(std::string const & eventName, std::string const & baseFolder, std::string const & filePattern)
+STATIC void BEventSystem::TriggerEventForFilesFound(std::string const & eventName, std::string const & baseFolder, std::string const & filePattern)
 {
 	std::vector < std::string > filesFound = EnumerateFilesInFolder(baseFolder, filePattern);
 	for(std::string & relativePath : filesFound)
@@ -137,4 +150,27 @@ void EventSystem::TriggerEventForFilesFound(std::string const & eventName, std::
 
 		TriggerEvent(eventName, fileFoundEvent);
 	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+BEventSystem::BEventSystem()
+	: m_registeredSubscribers()
+{
+	// Nothing
+}
+
+
+//-------------------------------------------------------------------------------------------------
+BEventSystem::~BEventSystem()
+{
+	for(auto & subscriptions : m_registeredSubscribers)
+	{
+		for(auto deleteMe : subscriptions.second)
+		{
+			delete deleteMe;
+			deleteMe = nullptr;
+		}
+	}
+	m_registeredSubscribers.clear();
 }

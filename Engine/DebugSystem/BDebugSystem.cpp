@@ -1,4 +1,4 @@
-#include "Engine/DebugSystem/Debugger.hpp"
+#include "Engine/DebugSystem/BDebugSystem.hpp"
 
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Core/Engine.hpp"
@@ -14,11 +14,11 @@
 
 
 //-------------------------------------------------------------------------------------------------
-Debugger * g_DebugSystem = nullptr;
+BDebugSystem * g_DebugSystem = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC float const Debugger::DEBUG_LINE_SPACING = 25.f;
+STATIC float const BDebugSystem::DEBUG_LINE_SPACING = 25.f;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ void DebugFlushCommand(Command const &)
 
 
 //-------------------------------------------------------------------------------------------------
-Debugger::Debugger()
+BDebugSystem::BDebugSystem()
 	: m_showFPSDebug(false)
 	, m_showUnitDebug(false)
 	, m_showMemoryDebug(false)
@@ -86,7 +86,7 @@ Debugger::Debugger()
 
 
 //-------------------------------------------------------------------------------------------------
-Debugger::~Debugger()
+BDebugSystem::~BDebugSystem()
 {
 	for(TextRenderer * textRenderer : m_debugTexts)
 	{
@@ -103,7 +103,7 @@ Debugger::~Debugger()
 
 
 //-------------------------------------------------------------------------------------------------
-void Debugger::Update()
+void BDebugSystem::Update()
 {
 	int currentLine = 0;
 
@@ -137,7 +137,7 @@ void Debugger::Update()
 
 
 //-------------------------------------------------------------------------------------------------
-void Debugger::UpdateTextFPS(int & currentLine)
+void BDebugSystem::UpdateTextFPS(int & currentLine)
 {
 	float fps = 1.f / Time::DELTA_SECONDS;
 	std::string debugText = Stringf("FPS: %.1f", fps);
@@ -163,7 +163,7 @@ void Debugger::UpdateTextFPS(int & currentLine)
 
 
 //-------------------------------------------------------------------------------------------------
-void Debugger::UpdateTextUnit(int & currentLine)
+void BDebugSystem::UpdateTextUnit(int & currentLine)
 {
 	float gameTime = 2.0f;
 	std::string debugText = Stringf("Game: %.1fms", gameTime);
@@ -206,7 +206,7 @@ void Debugger::UpdateTextUnit(int & currentLine)
 
 
 //-------------------------------------------------------------------------------------------------
-void Debugger::UpdateTextMemory(int & currentLine)
+void BDebugSystem::UpdateTextMemory(int & currentLine)
 {
 	std::string debugText;
 	BMemorySystem::GetMemoryAllocationsString(debugText);
@@ -224,7 +224,7 @@ void Debugger::UpdateTextMemory(int & currentLine)
 
 
 //-------------------------------------------------------------------------------------------------
-void Debugger::UpdateTextMemoryVerbose(int & currentLine)
+void BDebugSystem::UpdateTextMemoryVerbose(int & currentLine)
 {
 	//Get the stats
 	BMemorySystem * MSystem = BMemorySystem::GetOrCreateSystem();
@@ -260,7 +260,7 @@ void Debugger::UpdateTextMemoryVerbose(int & currentLine)
 
 
 //-------------------------------------------------------------------------------------------------
-void Debugger::ClearTextRemaining(int & currentLine)
+void BDebugSystem::ClearTextRemaining(int & currentLine)
 {
 	//Clear the rest
 	while(currentLine < m_lineCount)
@@ -274,7 +274,7 @@ void Debugger::ClearTextRemaining(int & currentLine)
 
 //-------------------------------------------------------------------------------------------------
 //#TODO: Make the Debug renders a single draw call each
-void Debugger::Render() const
+void BDebugSystem::Render() const
 {
 	if(m_showFPSDebug || m_showUnitDebug || m_showMemoryDebug)
 	{
@@ -289,28 +289,28 @@ void Debugger::Render() const
 
 
 //-------------------------------------------------------------------------------------------------
-void Debugger::ToggleDebugFPS()
+void BDebugSystem::ToggleDebugFPS()
 {
 	m_showFPSDebug = !m_showFPSDebug;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Debugger::ToggleDebugUnit()
+void BDebugSystem::ToggleDebugUnit()
 {
 	m_showUnitDebug = !m_showUnitDebug;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Debugger::ToggleDebugMemory()
+void BDebugSystem::ToggleDebugMemory()
 {
 	m_showMemoryDebug = !m_showMemoryDebug;
 }
 
 
 //-------------------------------------------------------------------------------------------------
-void Debugger::DebugFlushMemory()
+void BDebugSystem::DebugFlushMemory()
 {
 	BMemorySystem::GetOrCreateSystem()->Flush();
 }
