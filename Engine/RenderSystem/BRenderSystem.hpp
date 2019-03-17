@@ -63,7 +63,7 @@ public:
 	static void Startup();
 	static void Shutdown();
 	static void Update();
-	static BRenderSystem * GetSystem();
+	static BRenderSystem * CreateOrGetSystem();
 	static void ClearScreen(const Color& clearColor);
 
 	//-------------------------------------------------------------------------------------------------

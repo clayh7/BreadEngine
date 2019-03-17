@@ -385,7 +385,7 @@ static Matrix4f GetGeometricTransform(FbxNode *node)
 {
 	Matrix4f ret = Matrix4f::IDENTITY;
 
-	if((node != nullptr) && (node->GetNodeAttribute() != nullptr))
+	if(node && node->GetNodeAttribute())
 	{
 		FbxVector4 const geo_trans = node->GetGeometricTranslation(FbxNode::eSourcePivot);
 		FbxVector4 const geo_rot = node->GetGeometricRotation(FbxNode::eSourcePivot);
@@ -578,7 +578,7 @@ static void ImportMesh(SceneImport * import, FbxMesh * mesh, Matrix4fStack * mat
 	{
 		FbxNode * node = mesh->GetNode();
 		FbxNode * parent = node->GetParent();
-		while(parent != nullptr)
+		while(parent)
 		{
 			int jointIndex = GetJointIndexForNode(jointIndexToNode, parent);
 			if(jointIndex != -1)
@@ -705,7 +705,7 @@ static Skeleton * ImportSkeleton(SceneImport * import, Matrix4fStack * matStack,
 	{
 		returnSkeleton = skeleton;
 		//No orphans
-		ASSERT_RECOVERABLE(returnSkeleton != nullptr, "Trying to add a child with no parent");
+		ASSERT_RECOVERABLE(returnSkeleton, "Trying to add a child with no parent");
 	}
 
 	Matrix4f geoTransform = GetGeometricTransform(fbxSkeleton->GetNode());
@@ -735,7 +735,7 @@ static void ImportSkeletons(SceneImport * import, FbxNode * node, Matrix4fStack 
 	for(int attribIndex = 0; attribIndex < attributeCount; ++attribIndex)
 	{
 		FbxNodeAttribute *attrib = node->GetNodeAttributeByIndex(attribIndex);
-		if(attrib != nullptr && (attrib->GetAttributeType() == FbxNodeAttribute::eSkeleton)) //Also make it only meshs in the other function
+		if(attrib && (attrib->GetAttributeType() == FbxNodeAttribute::eSkeleton)) //Also make it only meshs in the other function
 		{
 			//So we have skeleton
 			FbxSkeleton * fbxSkeleton = (FbxSkeleton*)attrib;
@@ -745,7 +745,7 @@ static void ImportSkeletons(SceneImport * import, FbxNode * node, Matrix4fStack 
 			//or a new skeleton, or no skeleton if it was a bad node.
 			//If we got something back - it is what we pass on to the
 			//next generation.
-			if(newSkeleton != nullptr)
+			if(newSkeleton)
 			{
 				skeleton = newSkeleton;
 				parentJointIndex = skeleton->GetLastAddJointIndex();

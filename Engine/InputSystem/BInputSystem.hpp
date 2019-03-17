@@ -28,7 +28,7 @@ public:
 	static void Startup();
 	static void Shutdown();
 	static void Update();
-	static BInputSystem * GetSystem();
+	static BInputSystem * CreateOrGetSystem();
 
 	//-------------------------------------------------------------------------------------------------
 	// Functions

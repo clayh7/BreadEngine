@@ -34,12 +34,12 @@ class RemoteCommandServer
 	// Static Members
 	//-------------------------------------------------------------------------------------------------
 private:
-	static RemoteCommandServer * s_remoteCommandServer;
 	static int const DEFAULT_WAIT;
 	static size_t RCS_PORT;
 
 public:
-	static char const * RCS_MESSAGE_EVENT;
+	static char const * EVENT_RCS_MESSAGE;
+	static RemoteCommandServer * s_Instance;
 
 	//-------------------------------------------------------------------------------------------------
 	// Members
@@ -55,11 +55,11 @@ private:
 public:
 	static void Startup();
 	static void Shutdown();
+	static RemoteCommandServer * CreateOrGetInstance();
 	static bool Host(uint32_t port = RCS_PORT);
 	static bool Join(char const * host, uint32_t port = RCS_PORT);
 	static bool Send(eRCSMessageType const & type, std::string const & message);
 	static bool Leave();
-	static RemoteCommandServer const * Get() { return s_remoteCommandServer; }
 
 	//-------------------------------------------------------------------------------------------------
 	// Functions
@@ -80,7 +80,7 @@ private:
 	void UpdateConnections();
 	void FDArrayFill(std::vector<WSAPOLLFD> & fdArray);
 	void FDArrayProcess(std::vector<WSAPOLLFD> & fdArray);
-	void HandleDisconnect(RCSConnection * conn);
+	void HandleDisconnect(RCSConnection *& conn);
 
 public:
 	bool IsConnected() const;

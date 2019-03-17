@@ -25,16 +25,24 @@ RCSConnection::~RCSConnection()
 //-------------------------------------------------------------------------------------------------
 void RCSConnection::Send(eRCSMessageType messageType, char const * message) const
 {
-	m_tcpSocket->Send((void*)&messageType, 1);
-	m_tcpSocket->Send((void*)message, strlen(message));
-	char end = eRCSMessageType_END;
-	m_tcpSocket->Send((void*)&end, 1);
+	if(m_tcpSocket)
+	{
+		m_tcpSocket->Send((void*)&messageType, 1);
+		m_tcpSocket->Send((void*)message, strlen(message));
+		char end = eRCSMessageType_END;
+		m_tcpSocket->Send((void*)&end, 1);
+	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
 void RCSConnection::Receive()
 {
+	if(!m_tcpSocket)
+	{
+		return;
+	}
+
 	char buffer[BUFFER_SIZE];
 	int readLength = m_tcpSocket->Receive(buffer, BUFFER_SIZE);
 
@@ -91,5 +99,5 @@ void RCSConnection::CreateMessageEvent()
 	NamedProperties data;
 	data.Set("MessageType", (eRCSMessageType)m_messageBuffer[0]);
 	data.Set("Message", &m_messageBuffer[1]);
-	BEventSystem::TriggerEvent(RemoteCommandServer::RCS_MESSAGE_EVENT, data);
+	BEventSystem::TriggerEvent(RemoteCommandServer::EVENT_RCS_MESSAGE, data);
 }

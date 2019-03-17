@@ -52,7 +52,7 @@ public:
 	Type * Alloc()
 	{
 		Type * objectBlock = (Type*)m_nextFreePtr;
-		ASSERT_RECOVERABLE(objectBlock != nullptr, "Out of memory in ObjectPool");
+		ASSERT_RECOVERABLE(objectBlock, "Out of memory in ObjectPool");
 		m_nextFreePtr = (Type*)(((BlockNode*)m_nextFreePtr)->next);
 		new (objectBlock) Type();
 		return objectBlock;

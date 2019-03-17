@@ -95,7 +95,7 @@ STATIC void BRenderSystem::Update()
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC BRenderSystem * BRenderSystem::GetSystem()
+STATIC BRenderSystem * BRenderSystem::CreateOrGetSystem()
 {
 	return s_System;
 }
@@ -104,7 +104,7 @@ STATIC BRenderSystem * BRenderSystem::GetSystem()
 //-------------------------------------------------------------------------------------------------
 void BRenderSystem::ClearScreen(const Color & clearColor)
 {
-	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	BRenderSystem * RSystem = BRenderSystem::s_System;
 	if(!RSystem)
 	{
 		return;
@@ -659,7 +659,7 @@ void BRenderSystem::BindFramebuffer(Framebuffer *fbo)
 	}
 
 	m_activeFBO = fbo;
-	if(fbo == nullptr)
+	if(!m_activeFBO)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
 		Vector2i windowDimensions = GetWindowDimensions();
@@ -685,7 +685,7 @@ void BRenderSystem::BindFramebuffer(Framebuffer *fbo)
 //Only use for debug purposes
 void BRenderSystem::FramebufferCopyToBack(Framebuffer *fbo)
 {
-	if(fbo == nullptr)
+	if(!fbo)
 	{
 		return;
 	}

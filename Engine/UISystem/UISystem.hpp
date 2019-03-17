@@ -34,11 +34,11 @@ class UISystem
 	// Static Members
 	//-------------------------------------------------------------------------------------------------
 public:
-	static char const * DEFAULT_NAME;
-	static char const * UI_SKIN;
-	static UISystem * s_UISystem;
 	static int const VIRTUAL_WIDTH = 1600;
 	static int const VIRTUAL_HEIGHT = 900;
+	static char const * DEFAULT_NAME;
+	static char const * UI_SKIN;
+	static UISystem * s_System;
 
 	//-------------------------------------------------------------------------------------------------
 	// Members
@@ -59,7 +59,7 @@ public:
 	static void Shutdown();
 	static void Update();
 	static void Render();
-	static UISystem * GetSystem();
+	static UISystem * CreateOrGetSystem();
 	static Vector2f ClipToUISystemPosition(Vector3f const & screenVector);
 	static void RegisterWidget(std::string const & widgetName, WidgetCreationFunc * creationFunc);
 	static UIWidget * CreateWidgetFromName(std::string const & name, XMLNode const & data);

@@ -28,21 +28,14 @@ public:
 
 
 //-------------------------------------------------------------------------------------------------
-class JobSystem;
-
-
-//-------------------------------------------------------------------------------------------------
-extern JobSystem * g_JobSystem;
-
-
-//-------------------------------------------------------------------------------------------------
-class JobSystem
+class BJobSystem
 {
 	//-------------------------------------------------------------------------------------------------
 	// Static Members
 	//-------------------------------------------------------------------------------------------------
 public:
 	static const int MAX_JOBS = 1024;
+	static BJobSystem * s_System;
 
 	//-------------------------------------------------------------------------------------------------
 	// Members
@@ -50,25 +43,34 @@ public:
 private:
 	std::vector<BQueue<Job*>*> m_jobQueue;
 	std::vector<Thread> m_threads;
-	ObjectPool<Job> m_jobMemoryPool; //Figure out how big to initialize it
+	//#TODO: Figure out how big to initialize it
+	ObjectPool<Job> m_jobMemoryPool;
 	bool m_isRunning;
 	CriticalSection m_criticalSection;
+
+	//-------------------------------------------------------------------------------------------------
+	// Static Functions
+	//-------------------------------------------------------------------------------------------------
+public:
+	static void Startup(int numOfThreads);
+	static void Shutdown();
+	static BJobSystem * CreateOrGetSystem();
+	static size_t GetCoreCount();
+
 
 	//-------------------------------------------------------------------------------------------------
 	// Functions
 	//-------------------------------------------------------------------------------------------------
 public:
-	JobSystem();
-	~JobSystem();
+	BJobSystem();
+	~BJobSystem();
 
-	void Startup(int numOfThreads);
 	Job * JobCreate(eJobCategory const & category, JobCallback * jobFunc);
 	void JobDispatch(Job * job);
 	void JobDetach(Job * job);
 	void JobJoin(Job * job);
 	void Finish(Job * job);
 
-	size_t GetCoreCount() const;
 	BQueue<Job*> * GetJobQueue(eJobCategory const & category) const;
 	bool IsRunning() const;
 };

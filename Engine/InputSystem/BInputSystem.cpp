@@ -41,8 +41,13 @@ STATIC void BInputSystem::Update()
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC BInputSystem * BInputSystem::GetSystem()
+STATIC BInputSystem * BInputSystem::CreateOrGetSystem()
 {
+	if(!s_System)
+	{
+		Startup();
+	}
+
 	return s_System;
 }
 

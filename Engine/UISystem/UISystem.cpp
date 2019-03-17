@@ -29,7 +29,7 @@
 //-------------------------------------------------------------------------------------------------
 STATIC char const * UISystem::DEFAULT_NAME = "";
 STATIC char const * UISystem::UI_SKIN = "UISkin";
-STATIC UISystem * UISystem::s_UISystem = nullptr;
+STATIC UISystem * UISystem::s_System = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -64,11 +64,11 @@ UIWidgetRegistration::UIWidgetRegistration(std::string const & widgetName, Widge
 //-------------------------------------------------------------------------------------------------
 STATIC void UISystem::Startup()
 {
-	if(!s_UISystem)
+	if(!s_System)
 	{
-		s_UISystem = new UISystem();
+		s_System = new UISystem();
 		//s_UISystem->UpdateUISpriteRenderer();
-		s_UISystem->LoadUIFromXML();
+		s_System->LoadUIFromXML();
 	}
 }
 
@@ -76,17 +76,17 @@ STATIC void UISystem::Startup()
 //-------------------------------------------------------------------------------------------------
 STATIC void UISystem::Shutdown()
 {
-	delete s_UISystem;
-	s_UISystem = nullptr;
+	delete s_System;
+	s_System = nullptr;
 }
 
 
 //-------------------------------------------------------------------------------------------------
 void UISystem::Update()
 {
-	if(s_UISystem)
+	if(s_System)
 	{
-		s_UISystem->UpdateSystem();
+		s_System->UpdateSystem();
 	}
 }
 
@@ -94,17 +94,22 @@ void UISystem::Update()
 //-------------------------------------------------------------------------------------------------
 void UISystem::Render()
 {
-	if(s_UISystem)
+	if(s_System)
 	{
-		s_UISystem->RenderSystem();
+		s_System->RenderSystem();
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC UISystem * UISystem::GetSystem()
+STATIC UISystem * UISystem::CreateOrGetSystem()
 {
-	return s_UISystem;
+	if(!s_System)
+	{
+		Startup();
+	}
+
+	return s_System;
 }
 
 
@@ -121,20 +126,17 @@ STATIC Vector2f UISystem::ClipToUISystemPosition(Vector3f const & clipVector)
 STATIC void UISystem::RegisterWidget(std::string const & widgetName, WidgetCreationFunc * creationFunc)
 {
 	//Create it if it does not exist
-	if(!s_UISystem)
+	CreateOrGetSystem();
+
+	if(s_System && !s_System->m_registeredWidgets)
 	{
-		Startup();
+		s_System->m_registeredWidgets = new std::map<size_t, WidgetCreationFunc *>();
 	}
 
-	if(s_UISystem && !s_UISystem->m_registeredWidgets)
-	{
-		s_UISystem->m_registeredWidgets = new std::map<size_t, WidgetCreationFunc *>();
-	}
-
-	if(s_UISystem && s_UISystem->m_registeredWidgets)
+	if(s_System && s_System->m_registeredWidgets)
 	{
 		size_t widgetNameHash = std::hash<std::string>{}(widgetName);
-		s_UISystem->m_registeredWidgets->insert(std::pair<size_t, WidgetCreationFunc*>(widgetNameHash, creationFunc));
+		s_System->m_registeredWidgets->insert(std::pair<size_t, WidgetCreationFunc*>(widgetNameHash, creationFunc));
 	}
 }
 
@@ -142,11 +144,11 @@ STATIC void UISystem::RegisterWidget(std::string const & widgetName, WidgetCreat
 //-------------------------------------------------------------------------------------------------
 STATIC UIWidget * UISystem::CreateWidgetFromName(std::string const & name, XMLNode const & data)
 {
-	if(s_UISystem && s_UISystem->m_registeredWidgets)
+	if(s_System && s_System->m_registeredWidgets)
 	{
 		size_t widgetNameHash = std::hash<std::string>{}(name);
-		auto foundRegisteredWidget = s_UISystem->m_registeredWidgets->find(widgetNameHash);
-		if(foundRegisteredWidget != s_UISystem->m_registeredWidgets->end())
+		auto foundRegisteredWidget = s_System->m_registeredWidgets->find(widgetNameHash);
+		if(foundRegisteredWidget != s_System->m_registeredWidgets->end())
 		{
 			return (foundRegisteredWidget->second)(data);
 		}
@@ -164,9 +166,7 @@ STATIC Vector2f UISystem::GetCursorUIPosition()
 	float x = RangeMap(0.f, (float)windowDimensions.x, cursorPosition.x, -1.f, 1.f);
 	float y = RangeMap(0.f, (float)windowDimensions.y, cursorPosition.y, -1.f, 1.f);
 	cursorClipPosition = Vector3f(x, y, 0.f);
-	//Matrix4f projectionMatrix = g_RenderSystem->GetActiveCamera( )->GetProjectionMatrix( );
-	//invert projMat
-	//multiply
+
 	return ClipToUISystemPosition(cursorClipPosition);
 }
 

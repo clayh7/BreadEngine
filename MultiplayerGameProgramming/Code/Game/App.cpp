@@ -50,7 +50,18 @@ void App::UpdateInputs()
 	//Quitting App
 	if(BMouseKeyboard::GetKeyDown(eKeyboardButton_ESCAPE))
 	{
-		g_isQuitting = true;
+		BConsoleSystem * CSystem = BConsoleSystem::s_System;
+		if(CSystem)
+		{
+			if(!CSystem->IsVisible())
+			{
+				g_isQuitting = true;
+			}
+		}
+		else
+		{
+			g_isQuitting = true;
+		}
 	}
 }
 

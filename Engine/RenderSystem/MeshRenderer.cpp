@@ -34,7 +34,7 @@ MeshRenderer::MeshRenderer(eMeshShape const & meshShape, Transform const &transf
 {
 	CreateVAO();
 
-	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	BRenderSystem * RSystem = BRenderSystem::s_System;
 	if(!RSystem)
 	{
 		ERROR_AND_DIE("No Render System.");
@@ -58,7 +58,7 @@ MeshRenderer::MeshRenderer(Mesh const * mesh, Transform const & transform /*= Tr
 {
 	CreateVAO();
 
-	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	BRenderSystem * RSystem = BRenderSystem::CreateOrGetSystem();
 	if(!RSystem)
 	{
 		ERROR_AND_DIE("No Render System.");
@@ -82,7 +82,7 @@ MeshRenderer::MeshRenderer(Mesh const * mesh, Material const * material, Transfo
 {
 	CreateVAO();
 
-	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	BRenderSystem * RSystem = BRenderSystem::CreateOrGetSystem();
 	if(!RSystem)
 	{
 		ERROR_AND_DIE("No Render System.");
@@ -116,7 +116,7 @@ void MeshRenderer::Update(bool onScreen /*= false*/)
 	SetUniform("uModel", GetModelMatrix());
 	if(!onScreen)
 	{
-		BRenderSystem * RSystem = BRenderSystem::GetSystem();
+		BRenderSystem * RSystem = BRenderSystem::CreateOrGetSystem();
 		if(RSystem)
 		{
 			RSystem->SetMatrixUniforms(this);
@@ -133,7 +133,7 @@ void MeshRenderer::Update(bool onScreen /*= false*/)
 //-------------------------------------------------------------------------------------------------
 void MeshRenderer::Render() const
 {
-	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	BRenderSystem * RSystem = BRenderSystem::CreateOrGetSystem();
 	if(RSystem)
 	{
 		RSystem->MeshRender(this);
@@ -275,7 +275,7 @@ void MeshRenderer::RebindMeshAndMaterialToVAO()
 {
 	if(m_mesh && m_material)
 	{
-		BRenderSystem * RSystem = BRenderSystem::GetSystem();
+		BRenderSystem * RSystem = BRenderSystem::CreateOrGetSystem();
 		if(RSystem)
 		{
 			RSystem->BindMeshToVAO(m_vaoID, m_mesh, m_material);
@@ -673,7 +673,7 @@ void MeshRenderer::SetUniform(std::string const & uniformName, int * uniformValu
 	std::map<std::string, Uniform*> uniformList = m_material->GetUniformList();
 
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if(uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
+	if(uniformList[uniformName] && m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(int) * uniformSize;
@@ -692,7 +692,7 @@ void MeshRenderer::SetUniform(std::string const & uniformName, int * uniformValu
 	}
 
 	//update the data
-	else if(m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName])
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(int) * uniformSize;
@@ -713,7 +713,7 @@ void MeshRenderer::SetUniform(std::string const &uniformName, float *uniformValu
 	std::map<std::string, Uniform*> uniformList = m_material->GetUniformList();
 
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if(uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
+	if(uniformList[uniformName] && m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(float) * uniformSize;
@@ -732,7 +732,7 @@ void MeshRenderer::SetUniform(std::string const &uniformName, float *uniformValu
 	}
 
 	//update the data
-	else if(m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName])
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(float) * uniformSize;
@@ -753,7 +753,7 @@ void MeshRenderer::SetUniform(std::string const &uniformName, Vector2f *uniformV
 	std::map<std::string, Uniform*> uniformList = m_material->GetUniformList();
 
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if(uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
+	if(uniformList[uniformName] && m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector2f) * uniformSize;
@@ -772,7 +772,7 @@ void MeshRenderer::SetUniform(std::string const &uniformName, Vector2f *uniformV
 	}
 
 	//update the data
-	else if(m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName])
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector2f) * uniformSize;
@@ -793,7 +793,7 @@ void MeshRenderer::SetUniform(std::string const &uniformName, Vector3f *uniformV
 	std::map<std::string, Uniform*> uniformList = m_material->GetUniformList();
 
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if(uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
+	if(uniformList[uniformName] && m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector3f) * uniformSize;
@@ -812,7 +812,7 @@ void MeshRenderer::SetUniform(std::string const &uniformName, Vector3f *uniformV
 	}
 
 	//update the data
-	else if(m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName])
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector3f) * uniformSize;
@@ -833,7 +833,7 @@ void MeshRenderer::SetUniform(std::string const & uniformName, Vector4f * unifor
 	std::map<std::string, Uniform*> uniformList = m_material->GetUniformList();
 
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if(uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
+	if(uniformList[uniformName] && m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector4f) * uniformSize;
@@ -852,7 +852,7 @@ void MeshRenderer::SetUniform(std::string const & uniformName, Vector4f * unifor
 	}
 
 	//update the data
-	else if(m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName])
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector4f) * uniformSize;
@@ -874,7 +874,7 @@ void MeshRenderer::SetUniform(std::string const &uniformName, Matrix4f * uniform
 	std::map<std::string, Uniform*> uniformList = m_material->GetUniformList();
 
 	//Doesn't exist yet, lets make space for it and assign it to the data
-	if(uniformList[uniformName] != nullptr && m_uniforms[uniformName] == nullptr)
+	if(uniformList[uniformName] && m_uniforms[uniformName] == nullptr)
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(Matrix4f) * uniformSize;
@@ -893,7 +893,7 @@ void MeshRenderer::SetUniform(std::string const &uniformName, Matrix4f * uniform
 	}
 
 	//update the data
-	else if(m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName])
 	{
 		int uniformSize = ((Uniform*)uniformList[uniformName])->m_size;
 		size_t dataSize = sizeof(Matrix4f) * uniformSize;

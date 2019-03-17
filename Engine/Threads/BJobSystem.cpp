@@ -1,6 +1,10 @@
-#include "Engine/Threads/JobSystem.hpp"
+#include "Engine/Threads/BJobSystem.hpp"
 
 #include <thread>
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC BJobSystem * BJobSystem::s_System = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -9,11 +13,13 @@ void JobSystemThreadEntry(void *)
 	JobConsumer consumer;
 	consumer.AddCategory(eJobCategory_GENERIC_SLOW);
 	consumer.AddCategory(eJobCategory_GENERIC);
-	while(g_JobSystem->IsRunning())
+	while(BJobSystem::s_System && BJobSystem::s_System->IsRunning())
 	{
 		consumer.ConsumeAll();
 		std::this_thread::yield();
 	}
+
+	// Make sure there is nothing left
 	consumer.ConsumeAll();
 }
 
@@ -21,7 +27,7 @@ void JobSystemThreadEntry(void *)
 //-------------------------------------------------------------------------------------------------
 JobConsumer::JobConsumer()
 {
-	//Nothing
+	// Nothing
 }
 
 
@@ -45,11 +51,11 @@ bool JobConsumer::Consume()
 	for(eJobCategory const & category : m_categories)
 	{
 		Job * job;
-		BQueue<Job*> * queue = g_JobSystem->GetJobQueue(category);
+		BQueue<Job*> * queue = BJobSystem::s_System->GetJobQueue(category);
 		if(queue->PopFront(&job))
 		{
 			job->Work();
-			g_JobSystem->Finish(job);
+			BJobSystem::s_System->Finish(job);
 			return true;
 		}
 	}
@@ -58,11 +64,69 @@ bool JobConsumer::Consume()
 
 
 //-------------------------------------------------------------------------------------------------
-JobSystem * g_JobSystem = nullptr;
+STATIC void BJobSystem::Startup(int numOfThreads)
+{
+	if(s_System)
+	{
+		return;
+	}
+
+	//#TODO: Add a sleep(10) to the job threads?
+	s_System = new BJobSystem();
+
+	// Create number of threads = numOfThreads
+	// Unless numOfThreads is negative, then assume it means (Max - number)
+	if(numOfThreads < 0)
+	{
+		numOfThreads += GetCoreCount();
+	}
+
+	// But always make at least 1
+	if(numOfThreads < 0)
+	{
+		numOfThreads = 1;
+	}
+
+	for(int threadIndex = 0; threadIndex < numOfThreads; ++threadIndex)
+	{
+		s_System->m_threads.push_back(Thread(JobSystemThreadEntry));
+	}
+}
 
 
 //-------------------------------------------------------------------------------------------------
-JobSystem::JobSystem()
+STATIC void BJobSystem::Shutdown()
+{
+	if(s_System)
+	{
+		delete s_System;
+		s_System = nullptr;
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC BJobSystem * BJobSystem::CreateOrGetSystem()
+{
+	if(!s_System)
+	{
+		// Going to assume (-2) is the default for now
+		Startup(-2);
+	}
+
+	return s_System;
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC size_t BJobSystem::GetCoreCount()
+{
+	return (size_t)std::thread::hardware_concurrency();
+}
+
+
+//-------------------------------------------------------------------------------------------------
+BJobSystem::BJobSystem()
 	: m_jobMemoryPool(MAX_JOBS)
 	, m_isRunning(true)
 {
@@ -74,7 +138,7 @@ JobSystem::JobSystem()
 
 
 //-------------------------------------------------------------------------------------------------
-JobSystem::~JobSystem()
+BJobSystem::~BJobSystem()
 {
 	m_isRunning = false;
 
@@ -97,27 +161,7 @@ JobSystem::~JobSystem()
 
 
 //-------------------------------------------------------------------------------------------------
-void JobSystem::Startup(int numOfThreads)
-{
-	if(numOfThreads < 0)
-	{
-		numOfThreads += GetCoreCount();
-	}
-
-	if(numOfThreads < 0)
-	{
-		numOfThreads = 1;
-	}
-
-	for(int threadIndex = 0; threadIndex < numOfThreads; ++threadIndex)
-	{
-		m_threads.push_back(Thread(JobSystemThreadEntry));
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
-Job * JobSystem::JobCreate(eJobCategory const & category, JobCallback * jobFunc)
+Job * BJobSystem::JobCreate(eJobCategory const & category, JobCallback * jobFunc)
 {
 	m_criticalSection.Lock();
 	Job * newJob = m_jobMemoryPool.Alloc();
@@ -131,7 +175,7 @@ Job * JobSystem::JobCreate(eJobCategory const & category, JobCallback * jobFunc)
 
 
 //-------------------------------------------------------------------------------------------------
-void JobSystem::JobDispatch(Job * job)
+void BJobSystem::JobDispatch(Job * job)
 {
 	++job->m_refCount;
 	m_jobQueue[job->m_category]->PushBack(job);
@@ -139,7 +183,7 @@ void JobSystem::JobDispatch(Job * job)
 
 
 //-------------------------------------------------------------------------------------------------
-void JobSystem::JobDetach(Job * job)
+void BJobSystem::JobDetach(Job * job)
 {
 	--job->m_refCount;
 	if(job->m_refCount == 0)
@@ -152,7 +196,7 @@ void JobSystem::JobDetach(Job * job)
 
 
 //-------------------------------------------------------------------------------------------------
-void JobSystem::JobJoin(Job * job)
+void BJobSystem::JobJoin(Job * job)
 {
 	while(job->m_refCount == 2);
 	--job->m_refCount;
@@ -170,7 +214,7 @@ void JobSystem::JobJoin(Job * job)
 
 
 //-------------------------------------------------------------------------------------------------
-void JobSystem::Finish(Job * job)
+void BJobSystem::Finish(Job * job)
 {
 	--job->m_refCount;
 	if(job->m_refCount == 0)
@@ -183,21 +227,14 @@ void JobSystem::Finish(Job * job)
 
 
 //-------------------------------------------------------------------------------------------------
-size_t JobSystem::GetCoreCount() const
-{
-	return (size_t)std::thread::hardware_concurrency();
-}
-
-
-//-------------------------------------------------------------------------------------------------
-BQueue<Job*> * JobSystem::GetJobQueue(eJobCategory const & category) const
+BQueue<Job*> * BJobSystem::GetJobQueue(eJobCategory const & category) const
 {
 	return m_jobQueue[(size_t)category];
 }
 
 
 //-------------------------------------------------------------------------------------------------
-bool JobSystem::IsRunning() const
+bool BJobSystem::IsRunning() const
 {
 	return m_isRunning;
 }

@@ -55,7 +55,7 @@ STATIC SocketAddressPtr NetworkUtils::CreateIPv4FromString(std::string const & h
 	addrinfo * result;
 	int error = getaddrinfo(host.c_str(), service.c_str(), &hint, &result);
 	addrinfo * start = result;
-	if(error == SOCKET_ERROR && result != nullptr)
+	if(error == SOCKET_ERROR && result)
 	{
 		freeaddrinfo(start);
 		return nullptr;
@@ -67,7 +67,7 @@ STATIC SocketAddressPtr NetworkUtils::CreateIPv4FromString(std::string const & h
 	}
 
 	//Keep searching for a non-nullptr entry
-	while(result->ai_addr == nullptr && result->ai_next != nullptr)
+	while(result->ai_addr == nullptr && result->ai_next)
 	{
 		result = result->ai_next;
 	}

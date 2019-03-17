@@ -1,7 +1,7 @@
 #include "Engine/NetworkSystem/Sockets/UDPSocket.hpp"
 
 #include "Engine/NetworkSystem/Sockets/SocketAddress.hpp"
-#include "Engine/NetworkSystem/NetworkSystem.hpp"
+#include "Engine/NetworkSystem/BNetworkSystem.hpp"
 
 
 //-------------------------------------------------------------------------------------------------

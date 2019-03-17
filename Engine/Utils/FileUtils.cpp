@@ -31,7 +31,7 @@ bool FileBinaryReader::Open(std::string const &filename)
 //-------------------------------------------------------------------------------------------------
 void FileBinaryReader::Close()
 {
-	if(fileHandle != nullptr)
+	if(fileHandle)
 	{
 		fclose(fileHandle);
 		fileHandle = nullptr;
@@ -110,7 +110,7 @@ bool FileBinaryWriter::Open(std::string const &filename, bool append /*= false *
 //-------------------------------------------------------------------------------------------------
 void FileBinaryWriter::Close()
 {
-	if(fileHandle != nullptr)
+	if(fileHandle)
 	{
 		fclose(fileHandle);
 		fileHandle = nullptr;

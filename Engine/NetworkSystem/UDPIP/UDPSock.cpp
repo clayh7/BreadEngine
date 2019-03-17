@@ -15,6 +15,7 @@ UDPSock::UDPSock()
 
 //-------------------------------------------------------------------------------------------------
 // To be used as a reference
+/*
 SOCKET CreateUDPSocektExample(char const * addr,
 	char const * service, // who we're trying to connect to
 	sockaddr_in * out_addr) // address we actually connected to.
@@ -27,7 +28,7 @@ SOCKET CreateUDPSocektExample(char const * addr,
 		SOCK_DGRAM, // UDP for now
 		AI_PASSIVE);  // And something we can bind (and therefore listen on)
 
-	if(info_list == nullptr)
+	if(!info_list)
 	{
 		// no addresses match - FAIL
 		return false;
@@ -77,6 +78,7 @@ SOCKET CreateUDPSocektExample(char const * addr,
 	// Return the socket we created.
 	return my_socket;
 }
+*/
 
 
 //-------------------------------------------------------------------------------------------------
@@ -86,8 +88,9 @@ SOCKET CreateUDPSocekt(char const * addr, size_t port, sockaddr_in * out_addr, s
 	//stick first port in as a string
 	addrinfo * info_list = AllocAddressesForHost(addr, Stringf("%u", port).c_str(), AF_INET, SOCK_DGRAM, AI_PASSIVE);
 
-	if(info_list == nullptr)
+	if(!info_list)
 	{
+		// no addresses match - FAIL
 		return false;
 	}
 

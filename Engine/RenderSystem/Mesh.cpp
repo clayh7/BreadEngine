@@ -84,7 +84,7 @@ Mesh::Mesh(eMeshShape const & shape)
 	, m_iboID(NULL)
 	//, m_vertexType( vertexType )
 {
-	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	BRenderSystem * RSystem = BRenderSystem::s_System;
 	if(!RSystem)
 	{
 		ERROR_AND_DIE("No Render System.");
@@ -356,7 +356,7 @@ Mesh::Mesh(std::string const & textString, float scale /*= 12.f */, BitmapFont c
 	: m_vboID(NULL)
 	, m_iboID(NULL)
 {
-	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	BRenderSystem * RSystem = BRenderSystem::CreateOrGetSystem();
 	if(!RSystem)
 	{
 		ERROR_AND_DIE("No Render System.");
@@ -460,7 +460,7 @@ Mesh::Mesh(MeshBuilder const * meshBuilder, eVertexType const & vertexType)
 	, m_iboID(NULL)
 	, m_vertexType(vertexType)
 {
-	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	BRenderSystem * RSystem = BRenderSystem::CreateOrGetSystem();
 	if(!RSystem)
 	{
 		ERROR_AND_DIE("No Render System.");
@@ -618,7 +618,7 @@ void Mesh::SetVertexLayout(eVertexType const & vertexType)
 //-------------------------------------------------------------------------------------------------
 Vector3f Mesh::Update(std::string const & newText, float scale /*= 12.f*/, BitmapFont const * font /*= nullptr */)
 {
-	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	BRenderSystem * RSystem = BRenderSystem::CreateOrGetSystem();
 	if(!RSystem)
 	{
 		ERROR_AND_DIE("No Render System.");
@@ -735,7 +735,7 @@ Vector3f Mesh::Update(std::string const & newText, float scale /*= 12.f*/, Bitma
 //-------------------------------------------------------------------------------------------------
 void Mesh::Update(MeshBuilder const * meshBuilder)
 {
-	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	BRenderSystem * RSystem = BRenderSystem::CreateOrGetSystem();
 	if(!RSystem)
 	{
 		ERROR_AND_DIE("No Render System.");

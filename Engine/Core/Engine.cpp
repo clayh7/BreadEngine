@@ -18,13 +18,13 @@
 #include "Engine/EventSystem/BEventSystem.hpp"
 #include "Engine/InputSystem/BInputSystem.hpp"
 #include "Engine/Math/Vector2i.hpp"
-#include "Engine/NetworkSystem/NetworkSystem.hpp"
+#include "Engine/NetworkSystem/BNetworkSystem.hpp"
 #include "Engine/NetworkSystem/RCS/RemoteCommandServer.hpp"
 #include "Engine/RenderSystem/Camera3D.hpp"
 #include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/RenderSystem/SpriteRenderSystem/ParticleEngine.hpp"
 #include "Engine/RenderSystem/SpriteRenderSystem/BSpriteGameRenderer.hpp"
-#include "Engine/Threads/JobSystem.hpp"
+#include "Engine/Threads/BJobSystem.hpp"
 #include "Engine/UISystem/UISystem.hpp"
 
 
@@ -67,11 +67,9 @@ Engine::Engine(HINSTANCE applicationInstanceHandle)
 	BSpriteGameRenderer::Startup();
 	UISystem::Startup();
 	BDebugSystem::Startup();
-
-	//Add a sleep(10) to the job threads
-	//g_JobSystem = new JobSystem( );
-	//g_JobSystem->Startup( -2 );
-	NetworkSystem::Startup();
+	//#TODO: JobSystem incorrectly triggers memory leak warning when there are no leaks
+	//BJobSystem::Startup(-2);
+	BNetworkSystem::Startup();
 	RemoteCommandServer::Startup();
 }
 
@@ -80,11 +78,8 @@ Engine::Engine(HINSTANCE applicationInstanceHandle)
 Engine::~Engine()
 {
 	RemoteCommandServer::Shutdown();
-	NetworkSystem::Shutdown();
-
-	//delete g_JobSystem;
-	//g_JobSystem = nullptr;
-
+	BNetworkSystem::Shutdown();
+	//BJobSystem::Shutdown();
 	BDebugSystem::Shutdown();
 	BConsoleSystem::Shutdown();
 	UISystem::Shutdown();
@@ -112,7 +107,6 @@ void Engine::Update()
 	BAudioSystem::Update();
 	BDebugSystem::Update();
 	BConsoleSystem::Update();
-
 	BEventSystem::TriggerEvent(EVENT_ENGINE_UPDATE);
 
 	//Reset Variables
@@ -143,7 +137,9 @@ void Engine::UpdateTime()
 
 	if(g_limitFPS && elapsedTime < totalFrameTime)
 	{
-		double waitTime = (totalFrameTime - elapsedTime) * 1000.0 - 0.5;
+		// Make the sleep stop juuust before desired fps
+		double const timeOffset = 0.7;
+		double waitTime = (totalFrameTime - elapsedTime) * 1000.0 - timeOffset;
 		std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(waitTime));
 	}
 	BProfiler::StopSample();

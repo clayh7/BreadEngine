@@ -65,7 +65,7 @@
     <ClCompile Include="MemorySystem\BMemorySystem.cpp" />
     <ClCompile Include="MemorySystem\Callstack.cpp" />
     <ClCompile Include="MemorySystem\ObjectPool.cpp" />
-    <ClCompile Include="NetworkSystem\NetworkSystem.cpp" />
+    <ClCompile Include="NetworkSystem\BNetworkSystem.cpp" />
     <ClCompile Include="NetworkSystem\RCS\RCSConnection.cpp" />
     <ClCompile Include="NetworkSystem\RCS\RemoteCommandServer.cpp" />
     <ClCompile Include="NetworkSystem\Session\AckBundle.cpp" />
@@ -116,7 +116,7 @@
     <ClCompile Include="Threads\BQueue.cpp" />
     <ClCompile Include="Threads\CriticalSection.cpp" />
     <ClCompile Include="Threads\Job.cpp" />
-    <ClCompile Include="Threads\JobSystem.cpp" />
+    <ClCompile Include="Threads\BJobSystem.cpp" />
     <ClCompile Include="Threads\Thread.cpp" />
     <ClCompile Include="UISystem\UIBox.cpp" />
     <ClCompile Include="UISystem\UIButton.cpp" />
@@ -250,7 +250,7 @@
     <ClInclude Include="Threads\BQueue.hpp" />
     <ClInclude Include="Threads\CriticalSection.hpp" />
     <ClInclude Include="Threads\Job.hpp" />
-    <ClInclude Include="Threads\JobSystem.hpp" />
+    <ClInclude Include="Threads\BJobSystem.hpp" />
     <ClInclude Include="Threads\Thread.hpp" />
     <ClInclude Include="UISystem\UIBox.hpp" />
     <ClInclude Include="UISystem\UIButton.hpp" />
@@ -280,7 +280,7 @@
     <Library Include="..\ThirdParty\fmod\fmodex_vc.lib" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NetworkSystem\NetworkSystem.hpp" />
+    <None Include="NetworkSystem\BNetworkSystem.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1AC8BD90-6803-41BD-95A0-CE98EA299C47}</ProjectGuid>

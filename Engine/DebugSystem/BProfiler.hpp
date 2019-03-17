@@ -58,7 +58,7 @@ public:
 	static void Shutdown();
 	static void Update();
 	static void Render();
-	static BProfiler * GetOrCreateInstance();
+	static BProfiler * CreateOrGetInstance();
 	static void StartSample(char const * sampleTag);
 	static void StopSample();
 

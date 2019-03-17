@@ -23,7 +23,7 @@ SpriteLayer::~SpriteLayer()
 void SpriteLayer::AddSprite(Sprite * newSprite)
 {
 	newSprite->m_nextSprite = m_listStart;
-	if(m_listStart != nullptr)
+	if(m_listStart)
 	{
 		m_listStart->m_prevSprite = newSprite;
 	}

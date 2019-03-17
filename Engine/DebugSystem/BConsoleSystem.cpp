@@ -368,7 +368,7 @@ void BConsoleSystem::SystemRender() const
 		return;
 	}
 
-	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	BRenderSystem * RSystem = BRenderSystem::s_System;
 	if(!RSystem)
 	{
 		return;
@@ -680,7 +680,10 @@ void BConsoleSystem::OnKeyDown(NamedProperties & params)
 		}
 		else
 		{
-			ToggleOpen();
+			if(IsOpen())
+			{
+				ToggleOpen();
+			}
 		}
 	}
 	else if(button == eKeyboardButton_ENTER)
@@ -689,10 +692,6 @@ void BConsoleSystem::OnKeyDown(NamedProperties & params)
 		{
 			RunCommand(m_consoleLine);
 			ClearConsoleLine();
-		}
-		else
-		{
-			ToggleOpen();
 		}
 	}
 }

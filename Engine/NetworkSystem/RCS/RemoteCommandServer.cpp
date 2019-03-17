@@ -1,24 +1,23 @@
 #include "Engine/NetworkSystem/RCS/RemoteCommandServer.hpp"
 
 #include "Engine/EventSystem/BEventSystem.hpp"
-#include "Engine/NetworkSystem/NetworkSystem.hpp"
+#include "Engine/NetworkSystem/BNetworkSystem.hpp"
 #include "Engine/NetworkSystem/RCS/RCSConnection.hpp"
 #include "Engine/NetworkSystem/Sockets/TCPSocket.hpp"
 #include "Engine/NetworkSystem/Sockets/SocketAddress.hpp"
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC RemoteCommandServer * RemoteCommandServer::s_remoteCommandServer = nullptr;
 STATIC const int RemoteCommandServer::DEFAULT_WAIT = 0;
 STATIC size_t RemoteCommandServer::RCS_PORT = 4325;
-
-STATIC char const * RemoteCommandServer::RCS_MESSAGE_EVENT = "RCSMessageEvent";
+STATIC char const * RemoteCommandServer::EVENT_RCS_MESSAGE = "RCSMessageEvent";
+STATIC RemoteCommandServer * RemoteCommandServer::s_Instance = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
 void RCSHost(Command const &)
 {
-	RemoteCommandServer const * rcs = RemoteCommandServer::Get();
+	RemoteCommandServer const * rcs = RemoteCommandServer::CreateOrGetInstance();
 	if(rcs->IsHost())
 	{
 		BConsoleSystem::AddLog("Already hosting.", BConsoleSystem::BAD);
@@ -46,7 +45,7 @@ void RCSHost(Command const &)
 //-------------------------------------------------------------------------------------------------
 void RCSJoin(Command const & command)
 {
-	RemoteCommandServer const * rcs = RemoteCommandServer::Get();
+	RemoteCommandServer const * rcs = RemoteCommandServer::CreateOrGetInstance();
 	if(rcs->IsConnected())
 	{
 		BConsoleSystem::AddLog("Already connected to host.", BConsoleSystem::BAD);
@@ -79,7 +78,7 @@ void RCSJoin(Command const & command)
 //-------------------------------------------------------------------------------------------------
 void RCSLeave(Command const &)
 {
-	RemoteCommandServer const * rcs = RemoteCommandServer::Get();
+	RemoteCommandServer const * rcs = RemoteCommandServer::CreateOrGetInstance();
 	if(!rcs->IsConnected())
 	{
 		BConsoleSystem::AddLog("Nothing to leave.", BConsoleSystem::BAD);
@@ -103,7 +102,7 @@ void RCSLeave(Command const &)
 //-------------------------------------------------------------------------------------------------
 void RCSInfo(Command const &)
 {
-	RemoteCommandServer const * rcs = RemoteCommandServer::Get();
+	RemoteCommandServer const * rcs = RemoteCommandServer::CreateOrGetInstance();
 	if(rcs->IsHost())
 	{
 		BConsoleSystem::AddLog("Status: Host", BConsoleSystem::INFO);
@@ -135,7 +134,7 @@ void RCSInfo(Command const &)
 //-------------------------------------------------------------------------------------------------
 void RCSSend(Command const & command)
 {
-	RemoteCommandServer const * rcs = RemoteCommandServer::Get();
+	RemoteCommandServer const * rcs = RemoteCommandServer::CreateOrGetInstance();
 	if(!rcs->IsConnected())
 	{
 		BConsoleSystem::AddLog("Not connected.", BConsoleSystem::BAD);
@@ -149,9 +148,9 @@ void RCSSend(Command const & command)
 //-------------------------------------------------------------------------------------------------
 STATIC void RemoteCommandServer::Startup()
 {
-	if(s_remoteCommandServer == nullptr)
+	if(!s_Instance)
 	{
-		s_remoteCommandServer = new RemoteCommandServer();
+		s_Instance = new RemoteCommandServer();
 	}
 }
 
@@ -159,22 +158,41 @@ STATIC void RemoteCommandServer::Startup()
 //-------------------------------------------------------------------------------------------------
 void RemoteCommandServer::Shutdown()
 {
-	if(s_remoteCommandServer != nullptr)
+	if(s_Instance)
 	{
-		delete s_remoteCommandServer;
+		delete s_Instance;
+		s_Instance = nullptr;
 	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+STATIC RemoteCommandServer * RemoteCommandServer::CreateOrGetInstance()
+{
+	if(!s_Instance)
+	{
+		Startup();
+	}
+
+	return s_Instance;
 }
 
 
 //-------------------------------------------------------------------------------------------------
 STATIC bool RemoteCommandServer::Host(uint32_t port /*= RCS_PORT*/)
 {
-	if(!s_remoteCommandServer->IsConnected())
+	if(!s_Instance)
+	{
+		//Startup required
+		return false;
+	}
+
+	if(!s_Instance->IsConnected())
 	{
 		char const * host = NetworkUtils::GetLocalHostName();
 		SocketAddressPtr address = NetworkUtils::CreateIPv4FromString(host, port);
-		s_remoteCommandServer->StartTCPListener(address);
-		return s_remoteCommandServer->IsHost();
+		s_Instance->StartTCPListener(address);
+		return s_Instance->IsHost();
 	}
 
 	//Already host or client
@@ -185,15 +203,21 @@ STATIC bool RemoteCommandServer::Host(uint32_t port /*= RCS_PORT*/)
 //-------------------------------------------------------------------------------------------------
 STATIC bool RemoteCommandServer::Join(char const * host, uint32_t port /*= RCS_PORT*/)
 {
-	if(!s_remoteCommandServer->IsConnected())
+	if(!s_Instance)
 	{
-		if(s_remoteCommandServer->m_connections.size() > 0)
+		//Startup required
+		return false;
+	}
+
+	if(!s_Instance->IsConnected())
+	{
+		if(s_Instance->m_connections.size() > 0)
 		{
 			return false;
 		}
 		SocketAddressPtr address = NetworkUtils::CreateIPv4FromString(host, port);
-		s_remoteCommandServer->CreateRCSConnection(address);
-		return s_remoteCommandServer->IsClient();
+		s_Instance->CreateRCSConnection(address);
+		return s_Instance->IsClient();
 	}
 
 	//Already host or client
@@ -204,9 +228,15 @@ STATIC bool RemoteCommandServer::Join(char const * host, uint32_t port /*= RCS_P
 //-------------------------------------------------------------------------------------------------
 STATIC bool RemoteCommandServer::Send(eRCSMessageType const & type, std::string const & message)
 {
-	if(s_remoteCommandServer && s_remoteCommandServer->IsConnected())
+	if(!s_Instance)
 	{
-		s_remoteCommandServer->SendRCSMessage(type, message);
+		//Startup required
+		return false;
+	}
+
+	if(s_Instance->IsConnected())
+	{
+		s_Instance->SendRCSMessage(type, message);
 		return true;
 	}
 
@@ -218,9 +248,15 @@ STATIC bool RemoteCommandServer::Send(eRCSMessageType const & type, std::string 
 //-------------------------------------------------------------------------------------------------
 STATIC bool RemoteCommandServer::Leave()
 {
-	if(s_remoteCommandServer->IsConnected())
+	if(!s_Instance)
 	{
-		s_remoteCommandServer->Disconnect();
+		//Startup required
+		return false;
+	}
+
+	if(s_Instance->IsConnected())
+	{
+		s_Instance->Disconnect();
 		return true;
 	}
 
@@ -232,8 +268,8 @@ STATIC bool RemoteCommandServer::Leave()
 RemoteCommandServer::RemoteCommandServer()
 	: m_state(eRCSState_DISCONNECTED)
 {
-	BEventSystem::RegisterEvent(NetworkSystem::EVENT_NETWORK_UPDATE, this, &RemoteCommandServer::OnUpdate);
-	BEventSystem::RegisterEvent(RCS_MESSAGE_EVENT, this, &RemoteCommandServer::OnMessage);
+	BEventSystem::RegisterEvent(BNetworkSystem::EVENT_NETWORK_UPDATE, this, &RemoteCommandServer::OnUpdate);
+	BEventSystem::RegisterEvent(EVENT_RCS_MESSAGE, this, &RemoteCommandServer::OnMessage);
 
 	BConsoleSystem::Register("rcs_host", RCSHost, ": Host a local server.");
 	BConsoleSystem::Register("rcs_join", RCSJoin, " [host address] : Join server.");
@@ -294,7 +330,7 @@ void RemoteCommandServer::OnMessage(NamedProperties & params)
 void RemoteCommandServer::StartTCPListener(SocketAddressPtr address)
 {
 	m_listener = NetworkUtils::CreateTCPSocket(eSocketAddressFamily_IPv4);
-	if(m_listener == nullptr)
+	if(!m_listener)
 	{
 		return;
 	}
@@ -315,7 +351,7 @@ void RemoteCommandServer::StartTCPListener(SocketAddressPtr address)
 void RemoteCommandServer::CreateRCSConnection(SocketAddressPtr address)
 {
 	TCPSocketPtr tcpSocket = NetworkUtils::CreateTCPSocket(eSocketAddressFamily_IPv4);
-	if(tcpSocket != nullptr)
+	if(tcpSocket)
 	{
 		//Must block before connect
 		tcpSocket->SetBlocking(true);
@@ -331,9 +367,12 @@ void RemoteCommandServer::CreateRCSConnection(SocketAddressPtr address)
 //-------------------------------------------------------------------------------------------------
 void RemoteCommandServer::CreateRCSConnection(TCPSocketPtr tcpSocket)
 {
-	tcpSocket->SetBlocking(false);
-	RCSConnection * connection = new RCSConnection(tcpSocket);
-	m_connections.push_back(connection);
+	if(tcpSocket)
+	{
+		tcpSocket->SetBlocking(false);
+		RCSConnection * connection = new RCSConnection(tcpSocket);
+		m_connections.push_back(connection);
+	}
 
 	if(!IsConnected())
 	{
@@ -347,7 +386,10 @@ void RemoteCommandServer::SendRCSMessage(eRCSMessageType const & type, std::stri
 {
 	for(RCSConnection const * conn : m_connections)
 	{
-		conn->Send(type, message.c_str());
+		if(conn)
+		{
+			conn->Send(type, message.c_str());
+		}
 	}
 }
 
@@ -360,8 +402,11 @@ void RemoteCommandServer::Disconnect()
 		m_listener = nullptr;
 		for(RCSConnection * conn : m_connections)
 		{
-			delete conn;
-			conn = nullptr;
+			if(conn)
+			{
+				delete conn;
+				conn = nullptr;
+			}
 		}
 		m_connections.clear();
 		m_state = eRCSState_DISCONNECTED;
@@ -386,11 +431,14 @@ void RemoteCommandServer::AcceptNewConnections()
 		return;
 	}
 
-	TCPSocketPtr tcpSocket = m_listener->Accept();
-	if(tcpSocket != nullptr)
+	if(m_listener)
 	{
-		CreateRCSConnection(tcpSocket);
-		BConsoleSystem::AddLog("Client connected: " + tcpSocket->GetAddressString(), BConsoleSystem::REMOTE);
+		TCPSocketPtr tcpSocket = m_listener->Accept();
+		if(tcpSocket)
+		{
+			CreateRCSConnection(tcpSocket);
+			BConsoleSystem::AddLog("Client connected: " + tcpSocket->GetAddressString(), BConsoleSystem::REMOTE);
+		}
 	}
 }
 
@@ -421,10 +469,13 @@ void RemoteCommandServer::FDArrayFill(std::vector<WSAPOLLFD> & fdArray)
 	for(size_t connIndex = 0; connIndex < m_connections.size(); ++connIndex)
 	{
 		RCSConnection * conn = m_connections[connIndex];
-		WSAPOLLFD poll;
-		poll.fd = conn->GetSocket();
-		poll.events = POLLRDNORM | POLLWRNORM;
-		fdArray.push_back(poll);
+		if(conn)
+		{
+			WSAPOLLFD poll;
+			poll.fd = conn->GetSocket();
+			poll.events = POLLRDNORM | POLLWRNORM;
+			fdArray.push_back(poll);
+		}
 	}
 }
 
@@ -434,6 +485,11 @@ void RemoteCommandServer::FDArrayProcess(std::vector<WSAPOLLFD> & fdArray)
 {
 	for(size_t fdIndex = 0; fdIndex < fdArray.size(); )
 	{
+		if(!m_connections[fdIndex])
+		{
+			continue;
+		}
+
 		//Connection can be read from
 		if(fdArray[fdIndex].revents & POLLRDNORM)
 		{
@@ -468,8 +524,13 @@ void RemoteCommandServer::FDArrayProcess(std::vector<WSAPOLLFD> & fdArray)
 
 
 //-------------------------------------------------------------------------------------------------
-void RemoteCommandServer::HandleDisconnect(RCSConnection * conn)
+void RemoteCommandServer::HandleDisconnect(RCSConnection *& conn)
 {
+	if(!conn)
+	{
+		return;
+	}
+
 	if(IsHost())
 	{
 		BConsoleSystem::AddLog(Stringf("Client left: %s", conn->GetAddress().c_str()), BConsoleSystem::REMOTE);
@@ -482,6 +543,7 @@ void RemoteCommandServer::HandleDisconnect(RCSConnection * conn)
 	}
 
 	delete conn;
+	conn = nullptr;
 }
 
 
@@ -509,7 +571,14 @@ bool RemoteCommandServer::IsClient() const
 //-------------------------------------------------------------------------------------------------
 std::string RemoteCommandServer::GetListenAddress() const
 {
-	return m_listener->GetAddressString();
+	if(m_listener)
+	{
+		return m_listener->GetAddressString();
+	}
+	else
+	{
+		return "error";
+	}
 }
 
 
@@ -520,7 +589,10 @@ std::vector<std::string> RemoteCommandServer::GetConnectionAddresses() const
 
 	for(RCSConnection * conn : m_connections)
 	{
-		connectionAddressList.push_back(conn->GetAddress());
+		if(conn)
+		{
+			connectionAddressList.push_back(conn->GetAddress());
+		}
 	}
 
 	return connectionAddressList;

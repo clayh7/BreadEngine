@@ -210,6 +210,7 @@ public:
 	void SetShadow(unsigned char shadowAmount);
 	int GetLogSize() const;
 	bool IsOpen() const { return m_open; }
+	bool IsVisible() const { return m_openAmount > 0.f; }
 
 private:
 	void ToggleOpen();

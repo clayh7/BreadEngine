@@ -2,7 +2,7 @@
 
 #include <queue>
 #include "Engine/Core/EngineCommon.hpp"
-#include "Engine/NetworkSystem/NetworkSystem.hpp"
+#include "Engine/NetworkSystem/BNetworkSystem.hpp"
 #include "Engine/NetworkSystem/Session/AckBundle.hpp"
 #include "Engine/NetworkSystem/Session/ConnectionInfo.hpp"
 

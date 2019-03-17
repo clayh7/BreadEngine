@@ -479,7 +479,7 @@ void NetConnection::AddMessageToSequenceChannel(NetMessage const & message, byte
 	NetMessage * channelIter = m_sequenceChannels[sequenceChannelID];
 
 	//if empty, make this head
-	if(channelIter == nullptr)
+	if(!channelIter)
 	{
 		m_sequenceChannels[sequenceChannelID] = messageToAdd;
 	}
@@ -508,7 +508,7 @@ void NetConnection::AddMessageToSequenceChannel(NetMessage const & message, byte
 			else
 			{
 				//if reach end, add to back
-				if(channelIter->m_next == nullptr)
+				if(!channelIter->m_next)
 				{
 					channelIter->m_next = messageToAdd;
 					messageToAdd->m_prev = channelIter;

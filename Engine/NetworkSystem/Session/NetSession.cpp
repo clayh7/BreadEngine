@@ -5,7 +5,7 @@
 #include "Engine/Core/Time.hpp"
 #include "Engine/DebugSystem/BConsoleSystem.hpp"
 #include "Engine/EventSystem/BEventSystem.hpp"
-#include "Engine/NetworkSystem/NetworkSystem.hpp"
+#include "Engine/NetworkSystem/BNetworkSystem.hpp"
 #include "Engine/NetworkSystem/Session/NetMessage.hpp"
 #include "Engine/NetworkSystem/Session/NetPacket.hpp"
 #include "Engine/NetworkSystem/Session/NetConnection.hpp"
@@ -40,7 +40,7 @@ void OnPing(NetSender const & sender, NetMessage const & message)
 {
 	char * sent = nullptr;
 	message.ReadString(&(sent));
-	sent = sent == nullptr ? "[null]" : sent;
+	sent = sent ? sent : "[null]";
 	sockaddr_in addr = sender.fromAddress;
 	BConsoleSystem::AddLog(Stringf("Received Ping from %s: %s", StringFromSockAddr(&addr), sent), BConsoleSystem::GOOD);
 
@@ -647,7 +647,7 @@ void NetSession::Connect(NetConnection * connection)
 //-------------------------------------------------------------------------------------------------
 void NetSession::Disconnect(NetConnection ** connection)
 {
-	//We can call this on a nullptr, no big deal
+	//We can call this on a nullptr, just quietly exit
 	if((*connection) == nullptr)
 	{
 		return;
@@ -673,7 +673,7 @@ void NetSession::Disconnect(NetConnection ** connection)
 	}
 	//You don't exist, this is a problem... but we'll still clear you out anyways
 	//Aaand the 'temp' host will call this, this is fine
-	else if(m_connections[index] == nullptr)
+	else if(!m_connections[index])
 	{
 		delete *connection;
 		*connection = nullptr;
@@ -700,7 +700,7 @@ void NetSession::AddMessageToAllClients(NetMessage & message)
 {
 	for(byte_t connIndex = 0; connIndex < MAX_CONNECTIONS; ++connIndex)
 	{
-		if(m_connections[connIndex] == nullptr)
+		if(!m_connections[connIndex])
 		{
 			continue;
 		}
@@ -779,7 +779,7 @@ void NetSession::ProcessPacket(NetPacket & packet)
 	//Still need to make packets with no contents
 	if(header.messageCount == 0)
 	{
-		if(packet.m_senderInfo.connection != nullptr)
+		if(packet.m_senderInfo.connection)
 		{
 			packet.m_senderInfo.connection->MarkPacketReceived(header);
 		}
@@ -795,7 +795,7 @@ void NetSession::ProcessPacket(NetPacket & packet)
 		//message.m_ackID = header.packetAck;
 
 		//Validate and process
-		if(packet.m_senderInfo.connection != nullptr)
+		if(packet.m_senderInfo.connection)
 		{
 			if(IsValidMessage(packet.m_senderInfo, message))
 			{
@@ -823,7 +823,7 @@ void NetSession::ProcessPacket(NetPacket & packet)
 			{
 				packet.m_senderInfo.connection = GetNetConnection(packet.m_senderInfo.fromAddress);
 			}
-			if(packet.m_senderInfo.connection != nullptr)
+			if(packet.m_senderInfo.connection)
 			{
 				packet.m_senderInfo.connection->MarkPacketReceived(header);
 			}
@@ -1165,7 +1165,7 @@ bool NetSession::IsValidMessage(NetSender const & senderInfo, NetMessage const &
 
 	if(!message.m_definition->IsConnectionless())
 	{
-		//Needs connection and connection == nullptr
+		//Needs connection and connection is nullptr
 		if(!senderInfo.connection)
 		{
 			valid = false;
@@ -1191,7 +1191,7 @@ bool NetSession::IsValidConnectionIndex(byte_t index) const
 {
 	if(index < MAX_CONNECTIONS)
 	{
-		return m_connections[index] != nullptr;
+		return (m_connections[index] != nullptr);
 	}
 	return false;
 }
@@ -1220,7 +1220,7 @@ bool NetSession::IsDuplicateGUID(std::string const & check) const
 //-------------------------------------------------------------------------------------------------
 bool NetSession::IsHost() const
 {
-	return m_self == m_host && m_host != nullptr;
+	return (m_self == m_host) && (m_host != nullptr);
 }
 
 

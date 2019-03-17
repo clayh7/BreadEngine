@@ -273,7 +273,7 @@ Glyph const * BitmapFont::GetGlyph(unsigned char glyphToDraw) const
 Kerning const & BitmapFont::GetKerning(Glyph const * previousGlyph, Glyph const * glyph) const
 {
 	//If a glyph doesn't exist, return nothing
-	if(previousGlyph == nullptr || glyph == nullptr)
+	if(!previousGlyph || !glyph)
 	{
 		return DOES_NOT_EXIST;
 	}

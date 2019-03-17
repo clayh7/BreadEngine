@@ -36,7 +36,7 @@ STATIC CallstackLine CallstackSystem::s_callstackBuffer[MAX_DEPTH];
 bool CallstackSystem::Startup()
 {
 	g_DebugHelp = LoadLibraryA("dbghelp.dll");
-	if(g_DebugHelp == nullptr)
+	if(!g_DebugHelp)
 	{
 		ASSERT_RECOVERABLE(false, "DebugHelp didn't load");
 		return false;

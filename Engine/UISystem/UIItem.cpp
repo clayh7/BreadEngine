@@ -246,10 +246,10 @@ Vector2f UIItem::GetWorldPosition(eAnchor const & anchor, UIWidget const * forCh
 //-------------------------------------------------------------------------------------------------
 bool UIItem::IsHeld() const
 {
-	UISystem * UIS = UISystem::GetSystem();
-	if(UIS)
+	UISystem * system = UISystem::s_System;
+	if(system)
 	{
-		UIItem * heldItem = UIS->GetHeldItem();
+		UIItem * heldItem = system->GetHeldItem();
 		return heldItem == this;
 	}
 	return false;
@@ -261,10 +261,10 @@ void UIItem::OnItemPickup(NamedProperties &)
 {
 	if(GetState() == eWidgetState_HIGHLIGHTED)
 	{
-		UISystem * UIS = UISystem::GetSystem();
-		if(UIS)
+		UISystem * system = UISystem::s_System;
+		if(system)
 		{
-			UIS->SetHeldItem(this);
+			system->SetHeldItem(this);
 		}
 	}
 }
@@ -279,15 +279,15 @@ void UIItem::OnItemDrop(NamedProperties &)
 		return;
 	}
 
-	UISystem * UIS = UISystem::GetSystem();
-	if(!UIS)
+	UISystem * system = UISystem::s_System;
+	if(!system)
 	{
 		return;
 	}
 
 	//Important to set holding to null first, else the UISystem will think the cursor is current inside of the held item
-	UIS->SetHeldItem(nullptr);
-	UIWidget * selectedWidget = UIS->GetWidgetUnderCursor();
+	system->SetHeldItem(nullptr);
+	UIWidget * selectedWidget = system->GetWidgetUnderCursor();
 	UIContainer * selectedContainer = dynamic_cast<UIContainer*>(selectedWidget);
 	UIContainer * parentContainer = dynamic_cast<UIContainer*>(m_parent);
 

@@ -224,7 +224,7 @@ void BSpriteGameRenderer::UpdateMaterialEffects()
 //-------------------------------------------------------------------------------------------------
 void BSpriteGameRenderer::SystemRender()
 {
-	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	BRenderSystem * RSystem = BRenderSystem::s_System;
 	if(!RSystem)
 	{
 		ERROR_AND_DIE("No Render System.");
@@ -274,7 +274,7 @@ void BSpriteGameRenderer::RenderLayer(SpriteLayer const * layer) const
 
 	//Traverse sprite list and draw each one to screen
 	Sprite * currentSprite = layer->m_listStart;
-	while(currentSprite != nullptr)
+	while(currentSprite)
 	{
 		RenderSprite(currentSprite);
 		currentSprite = currentSprite->m_nextSprite;

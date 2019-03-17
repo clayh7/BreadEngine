@@ -45,7 +45,7 @@ StreamWriter::StreamWriter(byte_t * buffer, size_t capacity, bool isDynamic /*= 
 //-------------------------------------------------------------------------------------------------
 StreamWriter::~StreamWriter()
 {
-	if(m_buffer != nullptr)
+	if(m_buffer)
 	{
 		free(m_buffer);
 	}
@@ -93,7 +93,7 @@ void StreamWriter::Reallocate(size_t capacity)
 {
 	ASSERT_OR_DIE(m_isDynamic, "StreamWriter: Attempting to reallocate non-dynamic.");
 	byte_t * temp = static_cast<byte_t*>(malloc(capacity));
-	if(m_buffer != nullptr)
+	if(m_buffer)
 	{
 		memcpy(temp, m_buffer, m_capacity);
 		free(m_buffer);

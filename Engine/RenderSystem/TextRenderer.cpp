@@ -20,7 +20,7 @@ TextRenderer::TextRenderer(std::string const & content, Vector2f const & screenP
 	, m_textMesh(nullptr)
 	, m_textMaterial(nullptr)
 {
-	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	BRenderSystem * RSystem = BRenderSystem::s_System;
 	if(!RSystem)
 	{
 		ERROR_AND_DIE("No Render System.");

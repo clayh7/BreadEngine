@@ -1,18 +1,18 @@
-#include "Engine/NetworkSystem/NetworkSystem.hpp"
+#include "Engine/NetworkSystem/BNetworkSystem.hpp"
 
 #include "Engine/EventSystem/BEventSystem.hpp"
 #include "Engine/Utils/NetworkUtils.hpp"
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC size_t NetworkSystem::GAME_PORT = 4334;
-STATIC char const * NetworkSystem::EVENT_NETWORK_STARTUP = " NetworkStartup";
-STATIC char const * NetworkSystem::EVENT_NETWORK_SHUTDOWN = "NetworkShutdown";
-STATIC char const * NetworkSystem::EVENT_NETWORK_UPDATE = "NetworkUpdateEvent";
+STATIC size_t BNetworkSystem::GAME_PORT = 4334;
+STATIC char const * BNetworkSystem::EVENT_NETWORK_STARTUP = " NetworkStartup";
+STATIC char const * BNetworkSystem::EVENT_NETWORK_SHUTDOWN = "NetworkShutdown";
+STATIC char const * BNetworkSystem::EVENT_NETWORK_UPDATE = "NetworkUpdateEvent";
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC bool NetworkSystem::Startup()
+STATIC bool BNetworkSystem::Startup()
 {
 	WSADATA wsa_data;
 	//version 2.2
@@ -23,7 +23,7 @@ STATIC bool NetworkSystem::Startup()
 		NetworkUtils::ReportError();
 	}
 
-	BEventSystem::RegisterEvent(EVENT_ENGINE_UPDATE, &NetworkSystem::OnUpdate);
+	BEventSystem::RegisterEvent(EVENT_ENGINE_UPDATE, &BNetworkSystem::OnUpdate);
 	BEventSystem::TriggerEvent(EVENT_NETWORK_STARTUP);
 
 	return true;
@@ -31,7 +31,7 @@ STATIC bool NetworkSystem::Startup()
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void NetworkSystem::Shutdown()
+STATIC void BNetworkSystem::Shutdown()
 {
 	BEventSystem::TriggerEvent(EVENT_NETWORK_SHUTDOWN);
 
@@ -44,7 +44,7 @@ STATIC void NetworkSystem::Shutdown()
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void NetworkSystem::OnUpdate(NamedProperties &)
+STATIC void BNetworkSystem::OnUpdate(NamedProperties &)
 {
-	BEventSystem::TriggerEvent(NetworkSystem::EVENT_NETWORK_UPDATE);
+	BEventSystem::TriggerEvent(BNetworkSystem::EVENT_NETWORK_UPDATE);
 }

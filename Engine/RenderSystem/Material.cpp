@@ -59,12 +59,7 @@ Material::Material(ShaderProgram const *program)
 	: m_samplerID(0)
 	, m_program(program)
 {
-	BRenderSystem * RSystem = BRenderSystem::GetSystem();
-	if(!RSystem)
-	{
-		BRenderSystem::Startup();
-		RSystem = BRenderSystem::GetSystem();
-	}
+	BRenderSystem * RSystem = BRenderSystem::CreateOrGetSystem();
 	
 	//Create Sampler
 	m_samplerID = RSystem->CreateSampler(GL_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT);
@@ -389,7 +384,7 @@ void Material::SetUniform(std::string const & uniformName, int * uniformValue)
 	}
 
 	//update the data
-	else if(m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName])
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(int) * uniformSize;
@@ -427,7 +422,7 @@ void Material::SetUniform(std::string const & uniformName, float * uniformValue)
 	}
 
 	//update the data
-	else if(m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName])
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(float) * uniformSize;
@@ -465,7 +460,7 @@ void Material::SetUniform(std::string const & uniformName, Vector2f * uniformVal
 	}
 
 	//update the data
-	else if(m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName])
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector2f) * uniformSize;
@@ -503,7 +498,7 @@ void Material::SetUniform(std::string const & uniformName, Vector3f * uniformVal
 	}
 
 	//update the data
-	else if(m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName])
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector3f) * uniformSize;
@@ -541,7 +536,7 @@ void Material::SetUniform(std::string const & uniformName, Vector4f * uniformVal
 	}
 
 	//update the data
-	else if(m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName])
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(Vector4f) * uniformSize;
@@ -580,7 +575,7 @@ void Material::SetUniform(std::string const & uniformName, Matrix4f * uniformVal
 	}
 
 	//update the data
-	else if(m_uniforms[uniformName] != nullptr)
+	else if(m_uniforms[uniformName])
 	{
 		int uniformSize = ((Uniform*)m_uniforms[uniformName])->m_size;
 		size_t dataSize = sizeof(Matrix4f) * uniformSize;

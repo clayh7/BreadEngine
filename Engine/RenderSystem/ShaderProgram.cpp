@@ -43,7 +43,7 @@ STATIC void ShaderProgram::DestroyRegistry()
 //-------------------------------------------------------------------------------------------------
 ShaderProgram::ShaderProgram(std::string const &vsFilePath, std::string const &fsFilePath)
 {
-	BRenderSystem * RSystem = BRenderSystem::GetSystem();
+	BRenderSystem * RSystem = BRenderSystem::s_System;
 	if(!RSystem)
 	{
 		return;

@@ -47,7 +47,7 @@ StreamReader::StreamReader(StreamWriter const * writer)
 //-------------------------------------------------------------------------------------------------
 void StreamReader::Read(void * out_data, size_t dataByteCount)
 {
-	ASSERT_OR_DIE(out_data != nullptr, "StreamReader: Cannot output to nullptr.")
+	ASSERT_OR_DIE(out_data, "StreamReader: Cannot output to nullptr.")
 		ASSERT_OR_DIE(m_head + dataByteCount <= m_capacity, "StreamReader: Trying to read outside the buffer.");
 	memcpy(out_data, m_buffer + m_head, dataByteCount);
 	m_head += dataByteCount;
@@ -72,7 +72,7 @@ void StreamReader::SetBuffer(StreamWriter const & writer)
 //-------------------------------------------------------------------------------------------------
 void StreamReader::SetBuffer(StreamWriter const * writer)
 {
-	if(writer != nullptr)
+	if(writer)
 	{
 		SetBuffer(*writer);
 	}

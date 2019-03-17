@@ -204,7 +204,7 @@ STATIC void BProfiler::Render()
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC BProfiler * BProfiler::GetOrCreateInstance()
+STATIC BProfiler * BProfiler::CreateOrGetInstance()
 {
 	if(!s_Instance)
 	{

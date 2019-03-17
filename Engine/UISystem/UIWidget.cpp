@@ -526,7 +526,7 @@ Vector2f UIWidget::GetSizeForChild(UIWidget const * forChild /*= nullptr */) con
 	Vector2f currentSize = GetSize();
 
 	//Shrink space for docking
-	if(forChild != nullptr)
+	if(forChild)
 	{
 		for(UIWidget * child : m_children)
 		{
@@ -635,7 +635,7 @@ Vector2f UIWidget::GetWorldPosition(eAnchor const & anchor, UIWidget const * for
 	}
 
 	//Shift position for docking children
-	if(forChild != nullptr)
+	if(forChild)
 	{
 		for(UIWidget * child : m_children)
 		{
@@ -774,13 +774,11 @@ eDock UIWidget::GetDock() const
 //-------------------------------------------------------------------------------------------------
 bool UIWidget::IsSelected() const
 {
-	UISystem * UIS = UISystem::GetSystem();
-	if(UIS)
+	UISystem * system = UISystem::s_System;
+	if(system)
 	{
-		return UIS->GetSelectedWidget() == this;
+		return (system->GetSelectedWidget() == this);
 	}
-	else
-	{
-		return false;
-	}
+
+	return false;
 }

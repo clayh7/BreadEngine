@@ -231,9 +231,6 @@
     <ClCompile Include="RenderSystem\SpriteRenderSystem\ParticleEngine.cpp">
       <Filter>RenderSystem\SpriteRenderSystem</Filter>
     </ClCompile>
-    <ClCompile Include="Threads\JobSystem.cpp">
-      <Filter>Threads</Filter>
-    </ClCompile>
     <ClCompile Include="Threads\Job.cpp">
       <Filter>Threads</Filter>
     </ClCompile>
@@ -369,9 +366,6 @@
     <ClCompile Include="NetworkSystem\UDPIP\UDPSock.cpp">
       <Filter>Net\UDPIP</Filter>
     </ClCompile>
-    <ClCompile Include="NetworkSystem\NetworkSystem.cpp">
-      <Filter>Net</Filter>
-    </ClCompile>
     <ClCompile Include="InputSystem\BInputSystem.cpp">
       <Filter>InputSystem</Filter>
     </ClCompile>
@@ -390,6 +384,12 @@
     </ClCompile>
     <ClCompile Include="RenderSystem\SpriteRenderSystem\BSpriteGameRenderer.cpp">
       <Filter>RenderSystem\SpriteRenderSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkSystem\BNetworkSystem.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="Threads\BJobSystem.cpp">
+      <Filter>Threads</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -585,9 +585,6 @@
     <ClInclude Include="RenderSystem\SpriteRenderSystem\ParticleEngine.hpp">
       <Filter>RenderSystem\SpriteRenderSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Threads\JobSystem.hpp">
-      <Filter>Threads</Filter>
-    </ClInclude>
     <ClInclude Include="Threads\Job.hpp">
       <Filter>Threads</Filter>
     </ClInclude>
@@ -748,6 +745,9 @@
     <ClInclude Include="RenderSystem\SpriteRenderSystem\BSpriteGameRenderer.hpp">
       <Filter>RenderSystem\SpriteRenderSystem</Filter>
     </ClInclude>
+    <ClInclude Include="Threads\BJobSystem.hpp">
+      <Filter>Threads</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\ThirdParty\fmod\fmodex_vc.lib">
@@ -755,7 +755,7 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <None Include="NetworkSystem\NetworkSystem.hpp">
+    <None Include="NetworkSystem\BNetworkSystem.hpp">
       <Filter>Net</Filter>
     </None>
   </ItemGroup>
