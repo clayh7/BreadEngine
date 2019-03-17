@@ -14,17 +14,10 @@
 
 //-------------------------------------------------------------------------------------------------
 typedef void (EventCallback)(NamedProperties &);
-class Console;
 class Command;
-class Mesh;
-class Material;
 class MeshRenderer;
 class NamedProperties;
 class TextRenderer;
-
-
-//-------------------------------------------------------------------------------------------------
-extern Console * g_ConsoleSystem;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -40,7 +33,17 @@ void ServerEchoCommand(Command const &);
 class CommandBase
 {
 public:
+	char * m_description;
+
+public:
 	virtual void Execute(Command &) const = 0;
+
+public:
+	~CommandBase()
+	{
+		delete m_description;
+		m_description = nullptr;
+	}
 };
 
 
@@ -128,7 +131,7 @@ public:
 
 
 //-------------------------------------------------------------------------------------------------
-class Console
+class BConsoleSystem
 {
 	//-------------------------------------------------------------------------------------------------
 	// Static Members
@@ -144,38 +147,37 @@ private:
 	static float CONSOLE_LEFT_PADDING;
 	static int NUM_LOGS_TO_VIEW;
 
-	//Static Memory Allocations
-	static std::vector<ConsoleLog*, UntrackedAllocator<ConsoleLog*>> s_consoleLogs;
-	static std::vector<TextRenderer*, UntrackedAllocator<TextRenderer*>> s_consoleTextRenderers;
-
 public:
 	static Color GOOD;
 	static Color BAD;
 	static Color DEFAULT;
 	static Color INFO;
 	static Color REMOTE;
-
-	static bool s_serverEchoEnabled;
+	static BConsoleSystem * s_System;
 
 	//-------------------------------------------------------------------------------------------------
 	// Members
 	//-------------------------------------------------------------------------------------------------
+public:
+	bool m_serverEchoEnabled;
+
 private:
 	bool m_open;
-	float m_openAmount;
-	int m_currentLog;
-	int m_logCount;
-	float m_blinkTimer;
 	bool m_showCursor;
 	bool m_shiftActive;
+	int m_currentLog;
+	int m_logCount;
+	float m_openAmount;
+	float m_blinkTimer;
 	unsigned char m_shadowAmount;
 	std::string m_consoleLine;
 	TextRenderer * m_consoleLineTextRenderer;
 	MeshRenderer * m_consoleBox;
 	MeshRenderer * m_consoleBoxBottom;
 
+	std::vector<ConsoleLog*> m_consoleLogs;
+	std::vector<TextRenderer*> m_consoleTextRenderers;
 	std::map<size_t, CommandBase*> m_commands;
-	std::map<std::string, char*> m_commandDescriptions;
 
 	//-------------------------------------------------------------------------------------------------
 	// Static Functions
@@ -183,26 +185,29 @@ private:
 public:
 	static void Startup();
 	static void Shutdown();
-	static void RegisterCommand(std::string const & commandName, CommandCallback * callback, std::string const & commandDescription);
+	static void Update();
+	static void Render();
+	static BConsoleSystem * CreateOrGetSystem();
+	static void Register(std::string const & commandName, CommandCallback * callback, std::string const & commandDescription);
+	static void Register(std::string const & commandName, EventCallback * callback, std::string const & commandDescription);
+	static void AddLog(std::string const & log, Color const & color = DEFAULT, bool remote = false, bool debug = true);
 
 	//-------------------------------------------------------------------------------------------------
 	// Functions
 	//-------------------------------------------------------------------------------------------------
 public:
-	Console();
-	~Console();
-	void Update();
-	void Render() const;
-	void Register(std::string const & commandName, CommandCallback * callback, std::string const & commandDescription);
-	void RegisterCommandEvent(std::string const & commandName, EventCallback * callback, std::string const & commandDescription);
+	BConsoleSystem();
+	~BConsoleSystem();
+	void SystemUpdate();
+	void SystemRender() const;
+	void RegisterCommand(std::string const & commandName, CommandCallback * callback, std::string const & commandDescription);
+	void RegisterEvent(std::string const & commandName, EventCallback * callback, std::string const & commandDescription);
 	void RunCommand(std::string const & commandString, bool remote = false);
-	void AddLog(std::string const & log, Color const & color = DEFAULT, bool remote = false, bool debug = true);
+	void SystemAddLog(std::string const & log, Color const & color = DEFAULT, bool remote = false, bool debug = true);
 	void ClearConsoleLogs();
 	std::string const BuildLogFile();
-
 	void ShowHelp();
 	void SetShadow(unsigned char shadowAmount);
-
 	int GetLogSize() const;
 	bool IsOpen() const { return m_open; }
 
@@ -220,7 +225,7 @@ private:
 	//-------------------------------------------------------------------------------------------------
 public:
 	template<typename T_ObjectType, typename T_FunctionType>
-	void RegisterCommand(std::string const & commandName, T_ObjectType * object, T_FunctionType function, std::string const & commandDescription)
+	void Register(std::string const & commandName, T_ObjectType * object, T_FunctionType function, std::string const & commandDescription)
 	{
 		//Make new command
 		CommandObjectFunction<T_ObjectType, T_FunctionType> * registerCommand = new CommandObjectFunction<T_ObjectType, T_FunctionType>();
@@ -238,7 +243,7 @@ public:
 	}
 
 	template<typename T_ObjectType, typename T_FunctionType>
-	void RegisterCommandEvent(std::string const & commandName, T_ObjectType * object, T_FunctionType function, std::string const & commandDescription)
+	void RegisterEvent(std::string const & commandName, T_ObjectType * object, T_FunctionType function, std::string const & commandDescription)
 	{
 		//Make new command
 		EventObjectFunction<T_ObjectType, T_FunctionType> * registerCommand = new EventObjectFunction<T_ObjectType, T_FunctionType>();

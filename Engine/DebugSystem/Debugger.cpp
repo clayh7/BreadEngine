@@ -4,7 +4,7 @@
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/Time.hpp"
 #include "Engine/DebugSystem/BProfiler.hpp"
-#include "Engine/DebugSystem/Console.hpp"
+#include "Engine/DebugSystem/BConsoleSystem.hpp"
 #include "Engine/DebugSystem/Logger.hpp"
 #include "Engine/InputSystem/BInputSystem.hpp"
 #include "Engine/Math/Vector2i.hpp"
@@ -24,7 +24,7 @@ STATIC float const Debugger::DEBUG_LINE_SPACING = 25.f;
 //-------------------------------------------------------------------------------------------------
 void DebugFPSCommand(Command const &)
 {
-	g_ConsoleSystem->AddLog("Toggling FPS debug.", Console::GOOD);
+	BConsoleSystem::AddLog("Toggling FPS debug.", BConsoleSystem::GOOD);
 	g_DebugSystem->ToggleDebugFPS();
 }
 
@@ -32,7 +32,7 @@ void DebugFPSCommand(Command const &)
 //-------------------------------------------------------------------------------------------------
 void DebugUnitCommand(Command const &)
 {
-	g_ConsoleSystem->AddLog("Toggling unit debug.", Console::GOOD);
+	BConsoleSystem::AddLog("Toggling unit debug.", BConsoleSystem::GOOD);
 	g_DebugSystem->ToggleDebugUnit();
 }
 
@@ -40,7 +40,7 @@ void DebugUnitCommand(Command const &)
 //-------------------------------------------------------------------------------------------------
 void DebugMemoryCommand(Command const &)
 {
-	g_ConsoleSystem->AddLog("Toggling memory debug.", Console::GOOD);
+	BConsoleSystem::AddLog("Toggling memory debug.", BConsoleSystem::GOOD);
 	g_DebugSystem->ToggleDebugMemory();
 }
 
@@ -48,7 +48,7 @@ void DebugMemoryCommand(Command const &)
 //-------------------------------------------------------------------------------------------------
 void DebugFlushCommand(Command const &)
 {
-	g_ConsoleSystem->AddLog("Flushing memory callstack.", Console::GOOD);
+	BConsoleSystem::AddLog("Flushing memory callstack.", BConsoleSystem::GOOD);
 	g_DebugSystem->DebugFlushMemory();
 }
 
@@ -60,8 +60,8 @@ Debugger::Debugger()
 	, m_showMemoryDebug(false)
 	, m_lineCount(14)
 {
-	g_ConsoleSystem->RegisterCommand("debug_fps", &DebugFPSCommand, " : Show/Hide FPS info.");
-	g_ConsoleSystem->RegisterCommand("debug_unit", &DebugUnitCommand, " : Show/Hide frame breakdown info.");
+	BConsoleSystem::Register("debug_fps", &DebugFPSCommand, " : Show/Hide FPS info.");
+	BConsoleSystem::Register("debug_unit", &DebugUnitCommand, " : Show/Hide frame breakdown info.");
 
 	Vector2i windowDimensions = GetWindowDimensions();
 	float topOfWindow = static_cast<float>(windowDimensions.y - 15.f);
@@ -72,14 +72,15 @@ Debugger::Debugger()
 		m_debugTexts.push_back(new TextRenderer(" ", linePosition));
 	}
 
+	//#TODO: this?
 	//LoggingSystem = new Logger( );
 	//LoggingSystem->Begin( );
 
 	BProfiler::Startup();
 
 #if MEMORY_TRACKING >= 1
-	g_ConsoleSystem->RegisterCommand("debug_memory", &DebugMemoryCommand, " : Show/Hide memory allocation info.");
-	g_ConsoleSystem->RegisterCommand("debug_flush", &DebugFlushCommand, " : Print memory callstack to the debug log.");
+	BConsoleSystem::Register("debug_memory", &DebugMemoryCommand, " : Show/Hide memory allocation info.");
+	BConsoleSystem::Register("debug_flush", &DebugFlushCommand, " : Print memory callstack to the debug log.");
 #endif // MEMORY_TRACKING >= 1
 }
 

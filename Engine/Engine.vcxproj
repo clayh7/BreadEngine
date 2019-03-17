@@ -33,7 +33,7 @@
     <ClCompile Include="DebugSystem\BProfilerSample.cpp" />
     <ClCompile Include="DebugSystem\BProfilerScopedSample.cpp" />
     <ClCompile Include="DebugSystem\Command.cpp" />
-    <ClCompile Include="DebugSystem\Console.cpp" />
+    <ClCompile Include="DebugSystem\BConsoleSystem.cpp" />
     <ClCompile Include="DebugSystem\Debugger.cpp" />
     <ClCompile Include="DebugSystem\DebugLog.cpp" />
     <ClCompile Include="DebugSystem\DebugRenderCommand.cpp" />
@@ -166,7 +166,7 @@
     <ClInclude Include="DebugSystem\BProfilerSample.hpp" />
     <ClInclude Include="DebugSystem\BProfilerScopedSample.hpp" />
     <ClInclude Include="DebugSystem\Command.hpp" />
-    <ClInclude Include="DebugSystem\Console.hpp" />
+    <ClInclude Include="DebugSystem\BConsoleSystem.hpp" />
     <ClInclude Include="DebugSystem\Debugger.hpp" />
     <ClInclude Include="DebugSystem\DebugLog.hpp" />
     <ClInclude Include="DebugSystem\DebugRenderCommand.hpp" />

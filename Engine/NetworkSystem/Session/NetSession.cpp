@@ -3,7 +3,7 @@
 #include "Engine/DebugSystem/BProfiler.hpp"
 #include "Engine/Core/NamedProperties.hpp"
 #include "Engine/Core/Time.hpp"
-#include "Engine/DebugSystem/Console.hpp"
+#include "Engine/DebugSystem/BConsoleSystem.hpp"
 #include "Engine/EventSystem/EventSystem.hpp"
 #include "Engine/NetworkSystem/NetworkSystem.hpp"
 #include "Engine/NetworkSystem/Session/NetMessage.hpp"
@@ -42,7 +42,7 @@ void OnPing(NetSender const & sender, NetMessage const & message)
 	message.ReadString(&(sent));
 	sent = sent == nullptr ? "[null]" : sent;
 	sockaddr_in addr = sender.fromAddress;
-	g_ConsoleSystem->AddLog(Stringf("Received Ping from %s: %s", StringFromSockAddr(&addr), sent), Console::GOOD);
+	BConsoleSystem::AddLog(Stringf("Received Ping from %s: %s", StringFromSockAddr(&addr), sent), BConsoleSystem::GOOD);
 
 	NetMessage pong(eNetMessageType_PONG);
 	sender.session->SendDirect(addr, pong);
@@ -60,14 +60,14 @@ class Pong
 void OnPong(NetSender const & sender, NetMessage const &)
 {
 	sockaddr_in addr = sender.fromAddress;
-	g_ConsoleSystem->AddLog(Stringf("Received Pong from %s", StringFromSockAddr(&addr)), Console::GOOD);
+	BConsoleSystem::AddLog(Stringf("Received Pong from %s", StringFromSockAddr(&addr)), BConsoleSystem::GOOD);
 }
 
 
 //-------------------------------------------------------------------------------------------------
 void OnJoinRequest(NetSender const & sender, NetMessage const & message)
 {
-	g_ConsoleSystem->AddLog(Stringf("Join Request Received: %s", StringFromSockAddr(&sender.fromAddress)), Console::REMOTE);
+	BConsoleSystem::AddLog(Stringf("Join Request Received: %s", StringFromSockAddr(&sender.fromAddress)), BConsoleSystem::REMOTE);
 	NetSession * currentSession = sender.session;
 
 	JoinRequest request;
@@ -148,7 +148,7 @@ public:
 void OnJoinDeny(NetSender const & sender, NetMessage const & message)
 {
 	EventSystem::TriggerEvent(NetSession::ON_JOIN_DENY_EVENT);
-	g_ConsoleSystem->AddLog(Stringf("Join Deny Received: %s", StringFromSockAddr(&sender.fromAddress)), Console::REMOTE);
+	BConsoleSystem::AddLog(Stringf("Join Deny Received: %s", StringFromSockAddr(&sender.fromAddress)), BConsoleSystem::REMOTE);
 	uint32_t nuonce;
 	message.Read<uint32_t>(&nuonce);
 
@@ -183,7 +183,7 @@ public:
 //-------------------------------------------------------------------------------------------------
 void OnJoinAccept(NetSender const & sender, NetMessage const & message)
 {
-	g_ConsoleSystem->AddLog(Stringf("Join Accept Received: %s", StringFromSockAddr(&sender.fromAddress)), Console::REMOTE);
+	BConsoleSystem::AddLog(Stringf("Join Accept Received: %s", StringFromSockAddr(&sender.fromAddress)), BConsoleSystem::REMOTE);
 	NetSession * currentSession = sender.session;
 
 	//Must be in joining state
@@ -235,7 +235,7 @@ void OnJoinAccept(NetSender const & sender, NetMessage const & message)
 //-------------------------------------------------------------------------------------------------
 void OnLeave(NetSender const & sender, NetMessage const &)
 {
-	g_ConsoleSystem->AddLog(Stringf("Leave Received: %s", StringFromSockAddr(&sender.fromAddress)), Console::REMOTE);
+	BConsoleSystem::AddLog(Stringf("Leave Received: %s", StringFromSockAddr(&sender.fromAddress)), BConsoleSystem::REMOTE);
 	NetConnection * connection = sender.session->GetNetConnection(sender.connection->GetIndex());
 
 	//Host left, so I should leave
@@ -381,7 +381,7 @@ void NetSession::CheckForDisconnect()
 		float timeElapsed = (float)(Time::TOTAL_SECONDS - m_host->m_timeLastRecv);
 		if(timeElapsed > DISCONNECT_INTERVAL_SECONDS && m_connectionTimeouts)
 		{
-			g_ConsoleSystem->AddLog("Connection to host timed out", Console::BAD);
+			BConsoleSystem::AddLog("Connection to host timed out", BConsoleSystem::BAD);
 			ChangeState(eNetSessionState_DISCONNECTED);
 		}
 	}
@@ -396,7 +396,7 @@ void NetSession::CheckForDisconnect()
 		float timeElapsed = (float)(Time::TOTAL_SECONDS - m_connections[index]->m_timeLastRecv);
 		if(timeElapsed > DISCONNECT_INTERVAL_SECONDS && m_connectionTimeouts)
 		{
-			g_ConsoleSystem->AddLog(Stringf("Connection %d timed out", index), Console::BAD);
+			BConsoleSystem::AddLog(Stringf("Connection %d timed out", index), BConsoleSystem::BAD);
 			Disconnect(&m_connections[index]);
 		}
 	}
@@ -408,7 +408,7 @@ void NetSession::RegisterMessage(eNetMessageType const & type, MessageCallback *
 {
 	if(GetState() != eNetSessionState_INVALID)
 	{
-		g_ConsoleSystem->AddLog("Can only register messages before starting", Console::BAD);
+		BConsoleSystem::AddLog("Can only register messages before starting", BConsoleSystem::BAD);
 		return;
 	}
 
@@ -429,7 +429,7 @@ bool NetSession::Start(unsigned int port, unsigned int range /*= PORT_RANGE*/)
 {
 	if(GetState() != eNetSessionState_INVALID)
 	{
-		g_ConsoleSystem->AddLog("Net Session already started", Console::BAD);
+		BConsoleSystem::AddLog("Net Session already started", BConsoleSystem::BAD);
 		return false;
 	}
 
@@ -441,7 +441,7 @@ bool NetSession::Start(unsigned int port, unsigned int range /*= PORT_RANGE*/)
 	{
 		//Set our state to ready, but no host connection
 		ChangeState(eNetSessionState_DISCONNECTED);
-		g_ConsoleSystem->AddLog(Stringf("Net Session: %s", GetAddressString()), Console::GOOD);
+		BConsoleSystem::AddLog(Stringf("Net Session: %s", GetAddressString()), BConsoleSystem::GOOD);
 
 		//#TODO: Unique identifier for the definitions registered
 		m_definitionHash = m_definitionCount;
@@ -451,7 +451,7 @@ bool NetSession::Start(unsigned int port, unsigned int range /*= PORT_RANGE*/)
 	{
 		m_lastError = eNetSessionError_SOCKET_CREATION_FAILED;
 		ChangeState(eNetSessionState_INVALID);
-		g_ConsoleSystem->AddLog("Start Net Session failed", Console::BAD);
+		BConsoleSystem::AddLog("Start Net Session failed", BConsoleSystem::BAD);
 		return false;
 	}
 }
@@ -462,18 +462,18 @@ void NetSession::Stop()
 {
 	if(GetState() == eNetSessionState_INVALID)
 	{
-		g_ConsoleSystem->AddLog("Net Session not currently running", Console::BAD);
+		BConsoleSystem::AddLog("Net Session not currently running", BConsoleSystem::BAD);
 		return;
 	}
 	else if(GetState() != eNetSessionState_DISCONNECTED)
 	{
-		g_ConsoleSystem->AddLog("Must be disconnected to stop", Console::BAD);
+		BConsoleSystem::AddLog("Must be disconnected to stop", BConsoleSystem::BAD);
 		return;
 	}
 
 	m_channel.Unbind();
 	ChangeState(eNetSessionState_INVALID);
-	g_ConsoleSystem->AddLog("Successfully stopped Net Session", Console::GOOD);
+	BConsoleSystem::AddLog("Successfully stopped Net Session", BConsoleSystem::GOOD);
 }
 
 
@@ -482,7 +482,7 @@ void NetSession::Host(char const * username, size_t password /*= 0*/)
 {
 	if(GetState() != eNetSessionState_DISCONNECTED)
 	{
-		g_ConsoleSystem->AddLog("Must be disconnected to host", Console::BAD);
+		BConsoleSystem::AddLog("Must be disconnected to host", BConsoleSystem::BAD);
 		return;
 	}
 
@@ -493,7 +493,7 @@ void NetSession::Host(char const * username, size_t password /*= 0*/)
 	{
 		m_host->SetPassword(password);
 		ChangeState(eNetSessionState_CONNECTED);
-		g_ConsoleSystem->AddLog(Stringf("Hosting: %s", GetAddressString()), Console::GOOD);
+		BConsoleSystem::AddLog(Stringf("Hosting: %s", GetAddressString()), BConsoleSystem::GOOD);
 		m_self = m_host;
 		Connect(m_host);
 	}
@@ -510,11 +510,11 @@ void NetSession::Join(sockaddr_in const & hostAddress, char const * username, si
 {
 	if(GetState() != eNetSessionState_DISCONNECTED)
 	{
-		g_ConsoleSystem->AddLog("Must be disconnected to join a host", Console::BAD);
+		BConsoleSystem::AddLog("Must be disconnected to join a host", BConsoleSystem::BAD);
 		return;
 	}
 
-	g_ConsoleSystem->AddLog(Stringf("Joining: %s", StringFromSockAddr(&hostAddress)), Console::GOOD);
+	BConsoleSystem::AddLog(Stringf("Joining: %s", StringFromSockAddr(&hostAddress)), BConsoleSystem::GOOD);
 	m_host = CreateConnection(HOST_INDEX, hostAddress, StringFromSockAddr(&hostAddress), " ");
 	if(m_host)
 	{
@@ -546,7 +546,7 @@ void NetSession::Leave()
 {
 	if(GetState() != eNetSessionState_CONNECTED)
 	{
-		g_ConsoleSystem->AddLog("Must be connected to a host to leave", Console::BAD);
+		BConsoleSystem::AddLog("Must be connected to a host to leave", BConsoleSystem::BAD);
 		return;
 	}
 
@@ -565,7 +565,7 @@ void NetSession::Leave()
 	//Disconnect self & others & host
 	ChangeState(eNetSessionState_DISCONNECTED);
 
-	g_ConsoleSystem->AddLog("Successful leave", Console::GOOD);
+	BConsoleSystem::AddLog("Successful leave", BConsoleSystem::GOOD);
 }
 
 
@@ -581,23 +581,23 @@ NetConnection * NetSession::CreateConnection(byte_t index, sockaddr_in const & a
 {
 	if(GetState() == eNetSessionState_INVALID)
 	{
-		g_ConsoleSystem->AddLog("Net Session not currently running", Console::BAD);
+		BConsoleSystem::AddLog("Net Session not currently running", BConsoleSystem::BAD);
 		return nullptr;
 	}
 
 	if(m_connections[index])
 	{
-		g_ConsoleSystem->AddLog("Connection index already exists", Console::BAD);
+		BConsoleSystem::AddLog("Connection index already exists", BConsoleSystem::BAD);
 		return nullptr;
 	}
 
 	if(IsDuplicateGUID(guid))
 	{
-		g_ConsoleSystem->AddLog("GUID already exists", Console::BAD);
+		BConsoleSystem::AddLog("GUID already exists", BConsoleSystem::BAD);
 		return nullptr;
 	}
 
-	g_ConsoleSystem->AddLog(Stringf("Connection %u created", index), Console::GOOD);
+	BConsoleSystem::AddLog(Stringf("Connection %u created", index), BConsoleSystem::GOOD);
 	return new NetConnection(index, address, guid, username, this);
 }
 
@@ -628,7 +628,7 @@ void NetSession::Connect(NetConnection * connection)
 {
 	if(m_connections[connection->GetIndex()])
 	{
-		g_ConsoleSystem->AddLog("Connection already exists", Console::BAD);
+		BConsoleSystem::AddLog("Connection already exists", BConsoleSystem::BAD);
 		return;
 	}
 
@@ -640,7 +640,7 @@ void NetSession::Connect(NetConnection * connection)
 	netEvent.Set("connection", connection);
 	EventSystem::TriggerEvent(ON_CONNECTION_JOIN_EVENT, netEvent);
 
-	g_ConsoleSystem->AddLog(Stringf("Connection %u established", connection->GetIndex()), Console::GOOD);
+	BConsoleSystem::AddLog(Stringf("Connection %u established", connection->GetIndex()), BConsoleSystem::GOOD);
 }
 
 
@@ -677,7 +677,7 @@ void NetSession::Disconnect(NetConnection ** connection)
 	{
 		delete *connection;
 		*connection = nullptr;
-		g_ConsoleSystem->AddLog("Connection not established", Console::BAD);
+		BConsoleSystem::AddLog("Connection not established", BConsoleSystem::BAD);
 		return;
 	}
 
@@ -691,7 +691,7 @@ void NetSession::Disconnect(NetConnection ** connection)
 	m_connections[index] = nullptr;
 	*connection = nullptr;
 
-	g_ConsoleSystem->AddLog(Stringf("Connection %u disconnected", index), Console::GOOD);
+	BConsoleSystem::AddLog(Stringf("Connection %u disconnected", index), BConsoleSystem::GOOD);
 }
 
 
@@ -715,7 +715,7 @@ void NetSession::SendDirect(sockaddr_in const & address, NetMessage & message) c
 {
 	if(GetState() == eNetSessionState_INVALID)
 	{
-		g_ConsoleSystem->AddLog("Start session first", Console::BAD);
+		BConsoleSystem::AddLog("Start session first", BConsoleSystem::BAD);
 		return;
 	}
 
@@ -723,7 +723,7 @@ void NetSession::SendDirect(sockaddr_in const & address, NetMessage & message) c
 
 	if(definition->IsReliable())
 	{
-		g_ConsoleSystem->AddLog("Cannot send direct a message that is reliable", Console::BAD);
+		BConsoleSystem::AddLog("Cannot send direct a message that is reliable", BConsoleSystem::BAD);
 		return;
 	}
 
@@ -736,7 +736,7 @@ void NetSession::SendDirect(sockaddr_in const & address, NetMessage & message) c
 //-------------------------------------------------------------------------------------------------
 void NetSession::SendDeny(sockaddr_in const & address, eNetSessionError const & reason, uint32_t nuonce) const
 {
-	g_ConsoleSystem->AddLog(Stringf("Deny Sent: %s", StringFromSockAddr(&address)), Console::REMOTE);
+	BConsoleSystem::AddLog(Stringf("Deny Sent: %s", StringFromSockAddr(&address)), BConsoleSystem::REMOTE);
 	NetMessage deny(eNetMessageType_JOIN_DENY);
 	deny.Write<uint32_t>(nuonce);
 	deny.Write<uint8_t>((uint8_t)reason);
@@ -747,7 +747,7 @@ void NetSession::SendDeny(sockaddr_in const & address, eNetSessionError const & 
 //-------------------------------------------------------------------------------------------------
 void NetSession::SendAccept(NetConnection * connection, uint32_t nuonce) const
 {
-	g_ConsoleSystem->AddLog(Stringf("Accept Sent: %s", StringFromSockAddr(&connection->GetAddress())), Console::REMOTE);
+	BConsoleSystem::AddLog(Stringf("Accept Sent: %s", StringFromSockAddr(&connection->GetAddress())), BConsoleSystem::REMOTE);
 	NetMessage accept(eNetMessageType_JOIN_ACCEPT);
 
 	accept.Write<uint32_t>(nuonce);
@@ -889,25 +889,25 @@ void NetSession::PrintError(eNetSessionError const & error)
 	switch(error)
 	{
 	case eNetSessionError_JOIN_HOST_TIMEOUT:
-		g_ConsoleSystem->AddLog("Join host timed out", Console::BAD);
+		BConsoleSystem::AddLog("Join host timed out", BConsoleSystem::BAD);
 		break;
 	case eNetSessionError_JOIN_DENIED_WRONG_VERSION:
-		g_ConsoleSystem->AddLog("Join denied: Wrong version", Console::BAD);
+		BConsoleSystem::AddLog("Join denied: Wrong version", BConsoleSystem::BAD);
 		break;
 	case eNetSessionError_JOIN_DENIED_NOT_ACCEPTING_NEW_CONNECTIONS:
-		g_ConsoleSystem->AddLog("Join denied: Not accepting new connections", Console::BAD);
+		BConsoleSystem::AddLog("Join denied: Not accepting new connections", BConsoleSystem::BAD);
 		break;
 	case eNetSessionError_JOIN_DENIED_NOT_HOST:
-		g_ConsoleSystem->AddLog("Join denied: Not host", Console::BAD);
+		BConsoleSystem::AddLog("Join denied: Not host", BConsoleSystem::BAD);
 		break;
 	case eNetSessionError_JOIN_DENIED_FULL:
-		g_ConsoleSystem->AddLog("Join denied: Host full", Console::BAD);
+		BConsoleSystem::AddLog("Join denied: Host full", BConsoleSystem::BAD);
 		break;
 	case eNetSessionError_JOIN_DENIED_GUID_IN_USE:
-		g_ConsoleSystem->AddLog("Join denied: GUID already in use", Console::BAD);
+		BConsoleSystem::AddLog("Join denied: GUID already in use", BConsoleSystem::BAD);
 		break;
 	default:
-		g_ConsoleSystem->AddLog("Unknown Error", Console::BAD);
+		BConsoleSystem::AddLog("Unknown Error", BConsoleSystem::BAD);
 		break;
 	}
 }

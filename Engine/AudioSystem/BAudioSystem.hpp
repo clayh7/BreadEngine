@@ -32,8 +32,7 @@ public:
 	static int const MAX_AUDIO_DEVICE_NAME_LEN = 256;
 	static unsigned int const MISSING_SOUND_ID = 0xffffffff;
 
-private:
-	static BAudioSystem * s_AudioSystem;
+	static BAudioSystem * s_System;
 
 	//-------------------------------------------------------------------------------------------------
 	// Members
@@ -49,8 +48,10 @@ private:
 public:
 	static void Startup();
 	static void Shutdown();
-	static void Update(); // Must be called at regular intervals (e.g. every frame)
-	static BAudioSystem * GetSystem();
+	// Must be called at regular intervals (e.g. every frame)
+	static void Update();
+	// Creates a new one if it doesn't exist
+	static BAudioSystem * CreateOrGetSystem();
 	static void ValidateResult(FMOD_RESULT result);
 	static SoundID CreateOrGetSound(std::string const & soundFileName);
 	static AudioChannelHandle PlaySound(SoundID soundID, float volumeLevel = 1.f, bool looping = false);

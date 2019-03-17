@@ -3,7 +3,7 @@
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Core/Time.hpp"
 #include "Engine/DebugSystem/Command.hpp"
-#include "Engine/DebugSystem/Console.hpp"
+#include "Engine/DebugSystem/BConsoleSystem.hpp"
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
 #include "Engine/DebugSystem/Logger.hpp"
 #include "Engine/RenderSystem/Color.hpp"
@@ -21,8 +21,11 @@ Logger * LoggingSystem = nullptr;
 void LogLevelCommand(Command const & command)
 {
 	int level = command.GetArg(0, (int)WarningLevel_EVERY_FRAME);
-	LoggingSystem->SetLogLevel(level);
-	g_ConsoleSystem->AddLog(Stringf("Log Level Set: %d", level), Color::GREEN);
+	if(LoggingSystem)
+	{
+		LoggingSystem->SetLogLevel(level);
+	}
+	BConsoleSystem::AddLog(Stringf("Log Level Set: %d", level), Color::GREEN);
 }
 
 
@@ -30,21 +33,27 @@ void LogLevelCommand(Command const & command)
 void DebugLevelCommand(Command const & command)
 {
 	int level = command.GetArg(0, (int)WarningLevel_EVERY_FRAME);
-	LoggingSystem->SetDebugLevel(level);
-	g_ConsoleSystem->AddLog(Stringf("Log Level Set: %d", level), Color::GREEN);
+	if(LoggingSystem)
+	{
+		LoggingSystem->SetDebugLevel(level);
+	}
+	BConsoleSystem::AddLog(Stringf("Log Level Set: %d", level), Color::GREEN);
 }
 
 
 //-------------------------------------------------------------------------------------------------
 void HandleMessage(LogMessage * message)
 {
-	if(message->warningLevel <= LoggingSystem->m_logLevelThreshold)
+	if(LoggingSystem && message)
 	{
-		fwrite(message->messageString, sizeof(char), message->messageSize, LoggingSystem->GetFileHandle());
-	}
-	if(message->warningLevel <= LoggingSystem->m_debugLevelThreshold)
-	{
-		DebuggerPrintf(message->messageString);
+		if(message->warningLevel <= LoggingSystem->m_logLevelThreshold)
+		{
+			fwrite(message->messageString, sizeof(char), message->messageSize, LoggingSystem->GetFileHandle());
+		}
+		if(message->warningLevel <= LoggingSystem->m_debugLevelThreshold)
+		{
+			DebuggerPrintf(message->messageString);
+		}
 	}
 }
 
@@ -53,7 +62,7 @@ void HandleMessage(LogMessage * message)
 void HandleRemainingMessages()
 {
 	LogMessage * msg;
-	while(LoggingSystem->m_messages->PopFront(&msg))
+	while(LoggingSystem && LoggingSystem->m_messages->PopFront(&msg))
 	{
 		HandleMessage(msg);
 		delete msg;
@@ -64,20 +73,23 @@ void HandleRemainingMessages()
 //-------------------------------------------------------------------------------------------------
 void LoggerThreadEntry(void *)
 {
-	LoggingSystem->OpenFile();
-	while(!g_isQuitting && !LoggingSystem->IsFlushReady())
+	if(LoggingSystem)
 	{
-		LogMessage * msg;
-		while(LoggingSystem->m_messages->PopFront(&msg))
+		LoggingSystem->OpenFile();
+		while(!g_isQuitting && !LoggingSystem->IsFlushReady())
 		{
-			HandleMessage(msg);
-			delete msg;
+			LogMessage * msg;
+			while(LoggingSystem->m_messages->PopFront(&msg))
+			{
+				HandleMessage(msg);
+				delete msg;
+			}
+			std::this_thread::yield();
 		}
-		std::this_thread::yield();
+		HandleRemainingMessages();
+		fflush(LoggingSystem->GetFileHandle());
+		LoggingSystem->CloseFile();
 	}
-	HandleRemainingMessages();
-	fflush(LoggingSystem->GetFileHandle());
-	LoggingSystem->CloseFile();
 }
 
 
@@ -111,8 +123,8 @@ Logger::Logger()
 	m_logFilename = Stringf("Data/Logs/%.4d%.2d%.2d_%.2d%.2d%.2d.Log.txt", now.tm_year + 1900, now.tm_mon + 1, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec);
 	m_messages = new BQueue<LogMessage*>();
 
-	g_ConsoleSystem->RegisterCommand("log_level", LogLevelCommand, " [num] : Print all warning levels num or lower to log file.");
-	g_ConsoleSystem->RegisterCommand("debug_level", DebugLevelCommand, " [num] : Print all warning levels num or lower to debug output window.");
+	BConsoleSystem::Register("log_level", LogLevelCommand, " [num] : Print all warning levels num or lower to log file.");
+	BConsoleSystem::Register("debug_level", DebugLevelCommand, " [num] : Print all warning levels num or lower to debug output window.");
 
 #ifdef LOG_WARNING_LEVEL
 	m_logLevelThreshold = LOG_WARNING_LEVEL;

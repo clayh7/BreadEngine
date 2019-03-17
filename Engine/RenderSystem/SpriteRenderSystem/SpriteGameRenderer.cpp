@@ -1,7 +1,7 @@
 #include "Engine/RenderSystem/SpriteRenderSystem/SpriteGameRenderer.hpp"
 
 #include "Engine/DebugSystem/BProfiler.hpp"
-#include "Engine/DebugSystem/Console.hpp"
+#include "Engine/DebugSystem/BConsoleSystem.hpp"
 #include "Engine/Utils/StringUtils.hpp"
 #include "Engine/Core/Time.hpp"
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
@@ -24,11 +24,11 @@ void EnableLayerCommand(Command const & command)
 	int layer = command.GetArg(0, 0);
 	if(g_SpriteRenderSystem->SetLayerEnabled(layer, true))
 	{
-		g_ConsoleSystem->AddLog(Stringf("Layer %d enabled", layer), Console::GOOD);
+		BConsoleSystem::AddLog(Stringf("Layer %d enabled", layer), BConsoleSystem::GOOD);
 	}
 	else
 	{
-		g_ConsoleSystem->AddLog(Stringf("Layer %d does not exist", layer), Console::BAD);
+		BConsoleSystem::AddLog(Stringf("Layer %d does not exist", layer), BConsoleSystem::BAD);
 	}
 }
 
@@ -39,11 +39,11 @@ void DisableLayerCommand(Command const & command)
 	int layer = command.GetArg(0, 0);
 	if(g_SpriteRenderSystem->SetLayerEnabled(layer, false))
 	{
-		g_ConsoleSystem->AddLog(Stringf("Layer %d disabled", layer), Console::GOOD);
+		BConsoleSystem::AddLog(Stringf("Layer %d disabled", layer), BConsoleSystem::GOOD);
 	}
 	else
 	{
-		g_ConsoleSystem->AddLog(Stringf("Layer %d does not exist", layer), Console::BAD);
+		BConsoleSystem::AddLog(Stringf("Layer %d does not exist", layer), BConsoleSystem::BAD);
 	}
 }
 
@@ -53,7 +53,7 @@ void ExportSpritesCommand(Command const & command)
 {
 	std::string filename = command.GetArg(0, "SpriteDatabase");
 	g_SpriteRenderSystem->ExportSpriteDatabase(filename);
-	g_ConsoleSystem->AddLog(Stringf("Exported sprite resource database to %s.Sprite.xml", filename.c_str()), Console::GOOD);
+	BConsoleSystem::AddLog(Stringf("Exported sprite resource database to %s.Sprite.xml", filename.c_str()), BConsoleSystem::GOOD);
 }
 
 
@@ -102,9 +102,9 @@ SpriteGameRenderer::SpriteGameRenderer()
 	m_screenMesh = Mesh::GetMeshShape(eMeshShape_QUAD);
 	m_screenEffect = new MeshRenderer(m_screenMesh, m_screenMaterials[eMaterialEffect_NOTHING], Transform(Vector3f::ZERO, Matrix4f::IDENTITY, 2.f), RenderState::BASIC_2D);
 
-	g_ConsoleSystem->RegisterCommand("sprite_layer_enable", EnableLayerCommand, " [num] : Enables sprite layer, allowing it to render. Default = 0");
-	g_ConsoleSystem->RegisterCommand("sprite_layer_disable", DisableLayerCommand, " [num] : Disable sprite layer, stopping it from rendering. Default = 0");
-	g_ConsoleSystem->RegisterCommand("sprite_export", ExportSpritesCommand, " [filename] : Save sprite resource database to an xml file. Delfault = SpriteDatabase");
+	BConsoleSystem::Register("sprite_layer_enable", EnableLayerCommand, " [num] : Enables sprite layer, allowing it to render. Default = 0");
+	BConsoleSystem::Register("sprite_layer_disable", DisableLayerCommand, " [num] : Disable sprite layer, stopping it from rendering. Default = 0");
+	BConsoleSystem::Register("sprite_export", ExportSpritesCommand, " [filename] : Save sprite resource database to an xml file. Delfault = SpriteDatabase");
 }
 
 

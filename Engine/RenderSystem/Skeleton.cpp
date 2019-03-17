@@ -1,6 +1,6 @@
 #include "Engine/RenderSystem/Skeleton.hpp"
 
-#include "Engine/DebugSystem/Console.hpp"
+#include "Engine/DebugSystem/BConsoleSystem.hpp"
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
 #include "Engine/Utils/FileUtils.hpp"
 #include "Engine/Utils/StringUtils.hpp"
@@ -36,7 +36,7 @@ void Skeleton::ReadFromFile(std::string const & filename)
 	}
 	else
 	{
-		g_ConsoleSystem->AddLog(Stringf("Cannot read: %s", filename.c_str()), Color::RED);
+		BConsoleSystem::AddLog(Stringf("Cannot read: %s", filename.c_str()), Color::RED);
 	}
 	reader.Close();
 }
@@ -52,7 +52,7 @@ void Skeleton::WriteToFile(std::string const & filename) const
 	}
 	else
 	{
-		g_ConsoleSystem->AddLog(Stringf("Cannot write to: %s", filename.c_str()), Color::RED);
+		BConsoleSystem::AddLog(Stringf("Cannot write to: %s", filename.c_str()), Color::RED);
 	}
 	writer.Close();
 }

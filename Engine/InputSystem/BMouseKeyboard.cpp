@@ -4,7 +4,7 @@
 #include <Windows.h>
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/EngineCommon.hpp"
-#include "Engine/DebugSystem/Console.hpp"
+#include "Engine/DebugSystem/BConsoleSystem.hpp"
 //#include "Engine/EventSystem/EventSystem.hpp"
 //#include "Engine/InputSystem/BXboxController.hpp"
 //#include "Engine/Math/Vector2i.hpp"
@@ -30,7 +30,7 @@ STATIC char const * BMouseKeyboard::PARAM_KEY = "Key";
 LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam)
 {
 	//Only run if these both exist
-	if(!g_ConsoleSystem)
+	if(!BConsoleSystem::s_System)
 	{
 		return DefWindowProc(windowHandle, wmMessageCode, wParam, lParam);
 	}

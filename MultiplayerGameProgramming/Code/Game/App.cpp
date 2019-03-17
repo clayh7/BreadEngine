@@ -3,7 +3,7 @@
 #include "Engine/Utils/StringUtils.hpp"
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/DebugSystem/BProfiler.hpp"
-#include "Engine/DebugSystem/Console.hpp"
+#include "Engine/DebugSystem/BConsoleSystem.hpp"
 #include "Engine/InputSystem/BMouseKeyboard.hpp"
 #include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Game/Game.hpp"
@@ -17,7 +17,7 @@ App * g_AppSystem = nullptr;
 //-------------------------------------------------------------------------------------------------
 App::App()
 {
-	g_ConsoleSystem->AddLog(Stringf("Project: %s", APP_NAME), Console::INFO);
+	BConsoleSystem::AddLog(Stringf("Project: %s", APP_NAME), BConsoleSystem::INFO);
 
 	//Create Game
 	g_GameSystem = new Game();

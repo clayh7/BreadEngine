@@ -126,9 +126,6 @@
     <ClCompile Include="DebugSystem\Command.cpp">
       <Filter>DebugSystem</Filter>
     </ClCompile>
-    <ClCompile Include="DebugSystem\Console.cpp">
-      <Filter>DebugSystem</Filter>
-    </ClCompile>
     <ClCompile Include="DebugSystem\Debugger.cpp">
       <Filter>DebugSystem</Filter>
     </ClCompile>
@@ -391,6 +388,9 @@
       <Filter>InputSystem</Filter>
     </ClCompile>
     <ClCompile Include="InputSystem\BMouseKeyboard.cpp" />
+    <ClCompile Include="DebugSystem\BConsoleSystem.cpp">
+      <Filter>DebugSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Time.hpp">
@@ -472,9 +472,6 @@
       <Filter>RenderSystem</Filter>
     </ClInclude>
     <ClInclude Include="DebugSystem\Command.hpp">
-      <Filter>DebugSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugSystem\Console.hpp">
       <Filter>DebugSystem</Filter>
     </ClInclude>
     <ClInclude Include="DebugSystem\Debugger.hpp">
@@ -748,6 +745,9 @@
       <Filter>InputSystem</Filter>
     </ClInclude>
     <ClInclude Include="InputSystem\BMouseKeyboard.hpp" />
+    <ClInclude Include="DebugSystem\BConsoleSystem.hpp">
+      <Filter>DebugSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\ThirdParty\fmod\fmodex_vc.lib">

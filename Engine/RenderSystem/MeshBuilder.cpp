@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Core/Time.hpp"
-#include "Engine/DebugSystem/Console.hpp"
+#include "Engine/DebugSystem/BConsoleSystem.hpp"
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
 #include "Engine/Math/AABB2f.hpp"
 #include "Engine/RenderSystem/Skeleton.hpp"
@@ -641,8 +641,8 @@ void MeshBuilder::MeshReduction()
 			}
 		}
 	}
-	g_ConsoleSystem->AddLog(Stringf("Mesh Start Verts: %d", (int)m_vertexes.size()), Color::LIGHT_GREEN);
-	g_ConsoleSystem->AddLog(Stringf("Mesh Reduced Verts: %d", (int)reducedVerticies.size()), Color::GREEN);
+	BConsoleSystem::AddLog(Stringf("Mesh Start Verts: %d", (int)m_vertexes.size()), Color::LIGHT_GREEN);
+	BConsoleSystem::AddLog(Stringf("Mesh Reduced Verts: %d", (int)reducedVerticies.size()), Color::GREEN);
 	reducedVerticies.shrink_to_fit();
 	m_vertexes = reducedVerticies;
 }
@@ -658,7 +658,7 @@ void MeshBuilder::ReadFromFile(std::string const &filename)
 	}
 	else
 	{
-		g_ConsoleSystem->AddLog(Stringf("Cannot read: %s", filename.c_str()), Color::RED);
+		BConsoleSystem::AddLog(Stringf("Cannot read: %s", filename.c_str()), Color::RED);
 	}
 	reader.Close();
 }

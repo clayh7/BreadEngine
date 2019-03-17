@@ -2,12 +2,12 @@
 
 //-------------------------------------------------------------------------------------------------
 //For TOOLS only
-#if defined(TOOLS_BUILD)
+#ifdef TOOLS_BUILD
 #include <fbxsdk.h>
 #pragma comment(lib, "libfbxsdk-md.lib")
 
 #include "Engine/Core/Time.hpp"
-#include "Engine/DebugSystem/Console.hpp"
+#include "Engine/DebugSystem/BConsoleSystem.hpp"
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
 #include "Engine/Math/Vector4i.hpp"
 #include "Engine/Math/Vector4f.hpp"
@@ -78,14 +78,14 @@ static void PrintAttribute(FbxNodeAttribute *attribute, int depth)
 
 	std::string const typeName = GetAttributeTypeName(type);
 	std::string const attributeName = attribute->GetName();
-	g_ConsoleSystem->AddLog(Stringf("%*s- type='%s', name='%s'", (depth + 1) * 4, " ", &typeName[0], &attributeName[0]), Color::WHITE);
+	BConsoleSystem::AddLog(Stringf("%*s- type='%s', name='%s'", (depth + 1) * 4, " ", &typeName[0], &attributeName[0]), Color::WHITE);
 }
 
 
 //-------------------------------------------------------------------------------------------------
 static void PrintNode(FbxNode *node, int depth)
 {
-	g_ConsoleSystem->AddLog(Stringf("%*sNode [%s]", (depth + 1) * 4, " ", node->GetName()), Color::WHITE);
+	BConsoleSystem::AddLog(Stringf("%*sNode [%s]", (depth + 1) * 4, " ", node->GetName()), Color::WHITE);
 	for(int attributeIndex = 0; attributeIndex < node->GetNodeAttributeCount(); ++attributeIndex)
 	{
 		PrintAttribute(node->GetNodeAttributeByIndex(attributeIndex), depth);
@@ -104,7 +104,7 @@ void FBXListScene(std::string const &filename)
 	FbxManager *fbxManager = FbxManager::Create();
 	if(nullptr == fbxManager)
 	{
-		g_ConsoleSystem->AddLog("Could not create fbx manager.", Color::RED);
+		BConsoleSystem::AddLog("Could not create fbx manager.", Color::RED);
 		return;
 	}
 
@@ -130,7 +130,7 @@ void FBXListScene(std::string const &filename)
 	}
 	else
 	{
-		g_ConsoleSystem->AddLog(Stringf("Could not import scene: %s", &filename[0]), Color::RED);
+		BConsoleSystem::AddLog(Stringf("Could not import scene: %s", &filename[0]), Color::RED);
 	}
 
 	FBX_SAFE_DESTROY(importer);
@@ -942,7 +942,7 @@ SceneImport* FBXLoadSceneFromFile(std::string const &fbxFilename, Matrix4f const
 	FbxManager *fbxManager = FbxManager::Create();
 	if(nullptr == fbxManager)
 	{
-		g_ConsoleSystem->AddLog("Could not create fbx manager.", Color::RED);
+		s_System->AddLog("Could not create fbx manager.", Color::RED);
 		return nullptr;
 	}
 
@@ -954,7 +954,7 @@ SceneImport* FBXLoadSceneFromFile(std::string const &fbxFilename, Matrix4f const
 	bool result = importer->Initialize(&fbxFilename[0], -1, fbxManager->GetIOSettings());
 	if(!result)
 	{
-		g_ConsoleSystem->AddLog(Stringf("Could not initialize scene: %s", &fbxFilename[0]), Color::RED);
+		s_System->AddLog(Stringf("Could not initialize scene: %s", &fbxFilename[0]), Color::RED);
 		return nullptr;
 	}
 
@@ -963,7 +963,7 @@ SceneImport* FBXLoadSceneFromFile(std::string const &fbxFilename, Matrix4f const
 	bool importSuccess = importer->Import(scene);
 	if(!importSuccess)
 	{
-		g_ConsoleSystem->AddLog(Stringf("Could not import scene: %s", &fbxFilename[0]), Color::RED);
+		s_System->AddLog(Stringf("Could not import scene: %s", &fbxFilename[0]), Color::RED);
 	}
 
 	SceneImport *import = new SceneImport();
@@ -1000,14 +1000,14 @@ SceneImport* FBXLoadSceneFromFile(std::string const &fbxFilename, Matrix4f const
 #else
 
 #include <string>
-#include "Engine/DebugSystem/Console.hpp"
+#include "Engine/DebugSystem/BConsoleSystem.hpp"
 #include "Engine/Core/EngineCommon.hpp"
 
 //-------------------------------------------------------------------------------------------------
 void FBXListScene(std::string const & filename)
 {
 	UNREFERENCED(filename);
-	g_ConsoleSystem->AddLog("TOOLS_BUILD does not exist.", Color::RED);
+	BConsoleSystem::AddLog("TOOLS_BUILD does not exist.", Color::RED);
 }
 
 
@@ -1015,7 +1015,7 @@ void FBXListScene(std::string const & filename)
 SceneImport * FBXLoadSceneFromFile(std::string const * fbxFilename)
 {
 	UNREFERENCED(fbxFilename);
-	g_ConsoleSystem->AddLog("TOOLS_BUILD does not exist.", Color::RED);
+	BConsoleSystem::AddLog("TOOLS_BUILD does not exist.", Color::RED);
 	return nullptr;
 }
 

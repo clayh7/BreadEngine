@@ -3,7 +3,7 @@
 #include "Engine/Core/BuildConfig.hpp"
 #include "Engine/Core/Time.hpp"
 #include "Engine/DebugSystem/BProfiler.hpp"
-#include "Engine/DebugSystem/Console.hpp"
+#include "Engine/DebugSystem/BConsoleSystem.hpp"
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
 #include "Engine/Utils/StringUtils.hpp"
 #include "Engine/Utils/MathUtils.hpp"

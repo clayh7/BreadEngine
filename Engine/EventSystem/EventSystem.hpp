@@ -3,7 +3,7 @@
 #include <string>
 #include <map>
 #include <vector>
-#include "Engine/DebugSystem/Console.hpp"
+#include "Engine/DebugSystem/BConsoleSystem.hpp"
 
 
 //-------------------------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ public:
 	template <typename T_ObjectType, typename T_FunctionType>
 	static void RegisterEventAndCommand(std::string const & eventName, std::string const & usage, T_ObjectType * object, T_FunctionType function)
 	{
-		g_ConsoleSystem->RegisterCommandEvent(eventName, object, function, usage);
+		BConsoleSystem::Register(eventName, object, function, usage);
 		RegisterEvent(eventName, object, function);
 	}
 

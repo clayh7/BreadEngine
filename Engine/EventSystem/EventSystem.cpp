@@ -41,7 +41,7 @@ STATIC void EventSystem::Shutdown()
 //-------------------------------------------------------------------------------------------------
 STATIC void EventSystem::RegisterEventAndCommand(std::string const & eventName, std::string const & usage, EventCallback * callback)
 {
-	g_ConsoleSystem->RegisterCommandEvent(eventName, callback, usage);
+	BConsoleSystem::Register(eventName, callback, usage);
 	RegisterEvent(eventName, callback);
 }
 

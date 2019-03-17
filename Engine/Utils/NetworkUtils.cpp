@@ -2,7 +2,7 @@
 
 #include <string>
 #include "Engine/Core/EngineCommon.hpp"
-#include "Engine/DebugSystem/Console.hpp"
+#include "Engine/DebugSystem/BConsoleSystem.hpp"
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
 #include "Engine/Utils/StringUtils.hpp"
 #include "Engine/NetworkSystem/Sockets/SocketAddress.hpp"
@@ -108,7 +108,7 @@ STATIC int NetworkUtils::ReportError(bool printLog /*= true*/)
 		{
 			errorLog = Stringf("%s%d", "Network System error code: ", errorCode);
 		}
-		g_ConsoleSystem->AddLog(errorLog, Console::BAD);
+		BConsoleSystem::AddLog(errorLog, BConsoleSystem::BAD);
 	}
 	return errorCode;
 }

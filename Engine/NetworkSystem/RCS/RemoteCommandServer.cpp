@@ -21,24 +21,24 @@ void RCSHost(Command const &)
 	RemoteCommandServer const * rcs = RemoteCommandServer::Get();
 	if(rcs->IsHost())
 	{
-		g_ConsoleSystem->AddLog("Already hosting.", Console::BAD);
+		BConsoleSystem::AddLog("Already hosting.", BConsoleSystem::BAD);
 		return;
 	}
 
 	if(rcs->IsClient())
 	{
-		g_ConsoleSystem->AddLog("Clients can not also host.", Console::BAD);
+		BConsoleSystem::AddLog("Clients can not also host.", BConsoleSystem::BAD);
 		return;
 	}
 
 	if(RemoteCommandServer::Host())
 	{
 		std::string success = Stringf("Host successful. Listening on %s", rcs->GetListenAddress().c_str());
-		g_ConsoleSystem->AddLog(success, Console::GOOD);
+		BConsoleSystem::AddLog(success, BConsoleSystem::GOOD);
 	}
 	else
 	{
-		g_ConsoleSystem->AddLog("Failed to host.", Console::BAD);
+		BConsoleSystem::AddLog("Failed to host.", BConsoleSystem::BAD);
 	}
 }
 
@@ -49,7 +49,7 @@ void RCSJoin(Command const & command)
 	RemoteCommandServer const * rcs = RemoteCommandServer::Get();
 	if(rcs->IsConnected())
 	{
-		g_ConsoleSystem->AddLog("Already connected to host.", Console::BAD);
+		BConsoleSystem::AddLog("Already connected to host.", BConsoleSystem::BAD);
 		return;
 	}
 
@@ -67,11 +67,11 @@ void RCSJoin(Command const & command)
 	if(RemoteCommandServer::Join(address.c_str()))
 	{
 		std::string success = Stringf("Joined server: %s", address.c_str());
-		g_ConsoleSystem->AddLog(success, Console::GOOD);
+		BConsoleSystem::AddLog(success, BConsoleSystem::GOOD);
 	}
 	else
 	{
-		g_ConsoleSystem->AddLog("Failed to join server.", Console::BAD);
+		BConsoleSystem::AddLog("Failed to join server.", BConsoleSystem::BAD);
 	}
 }
 
@@ -82,20 +82,20 @@ void RCSLeave(Command const &)
 	RemoteCommandServer const * rcs = RemoteCommandServer::Get();
 	if(!rcs->IsConnected())
 	{
-		g_ConsoleSystem->AddLog("Nothing to leave.", Console::BAD);
+		BConsoleSystem::AddLog("Nothing to leave.", BConsoleSystem::BAD);
 		return;
 	}
 
 	if(rcs->IsHost())
 	{
 		RemoteCommandServer::Leave();
-		g_ConsoleSystem->AddLog("Stopped hosting.", Console::GOOD);
+		BConsoleSystem::AddLog("Stopped hosting.", BConsoleSystem::GOOD);
 	}
 
 	if(rcs->IsClient())
 	{
 		RemoteCommandServer::Leave();
-		g_ConsoleSystem->AddLog("Disconnected from host.", Console::GOOD);
+		BConsoleSystem::AddLog("Disconnected from host.", BConsoleSystem::GOOD);
 	}
 }
 
@@ -106,28 +106,28 @@ void RCSInfo(Command const &)
 	RemoteCommandServer const * rcs = RemoteCommandServer::Get();
 	if(rcs->IsHost())
 	{
-		g_ConsoleSystem->AddLog("Status: Host", Console::INFO);
+		BConsoleSystem::AddLog("Status: Host", BConsoleSystem::INFO);
 		std::string hostString = Stringf("Host: %s", rcs->GetListenAddress().c_str());
-		g_ConsoleSystem->AddLog(hostString, Console::GOOD);
+		BConsoleSystem::AddLog(hostString, BConsoleSystem::GOOD);
 
 		std::vector<std::string> connectionAddressList = rcs->GetConnectionAddresses();
-		g_ConsoleSystem->AddLog(Stringf("Connections: %u", connectionAddressList.size()), Console::GOOD);
+		BConsoleSystem::AddLog(Stringf("Connections: %u", connectionAddressList.size()), BConsoleSystem::GOOD);
 		for(size_t clientIndex = 0; clientIndex < connectionAddressList.size(); ++clientIndex)
 		{
 			std::string clientString = Stringf("[%u] %s", clientIndex, connectionAddressList[clientIndex].c_str());
-			g_ConsoleSystem->AddLog(clientString, Console::GOOD);
+			BConsoleSystem::AddLog(clientString, BConsoleSystem::GOOD);
 		}
 	}
 	else if(rcs->IsClient())
 	{
-		g_ConsoleSystem->AddLog("Status: Client", Console::INFO);
+		BConsoleSystem::AddLog("Status: Client", BConsoleSystem::INFO);
 		std::vector<std::string> connectionAddressList = rcs->GetConnectionAddresses();
 		std::string clientString = Stringf("Client: %s", connectionAddressList[0].c_str());
-		g_ConsoleSystem->AddLog(clientString, Console::GOOD);
+		BConsoleSystem::AddLog(clientString, BConsoleSystem::GOOD);
 	}
 	else
 	{
-		g_ConsoleSystem->AddLog("Status: Disconnected", Console::INFO);
+		BConsoleSystem::AddLog("Status: Disconnected", BConsoleSystem::INFO);
 	}
 }
 
@@ -138,7 +138,7 @@ void RCSSend(Command const & command)
 	RemoteCommandServer const * rcs = RemoteCommandServer::Get();
 	if(!rcs->IsConnected())
 	{
-		g_ConsoleSystem->AddLog("Not connected.", Console::BAD);
+		BConsoleSystem::AddLog("Not connected.", BConsoleSystem::BAD);
 		return;
 	}
 
@@ -204,9 +204,10 @@ STATIC bool RemoteCommandServer::Join(char const * host, uint32_t port /*= RCS_P
 //-------------------------------------------------------------------------------------------------
 STATIC bool RemoteCommandServer::Send(eRCSMessageType const & type, std::string const & message)
 {
-	if(s_remoteCommandServer->IsConnected())
+	if(s_remoteCommandServer && s_remoteCommandServer->IsConnected())
 	{
 		s_remoteCommandServer->SendRCSMessage(type, message);
+		return true;
 	}
 
 	//Not connected
@@ -234,11 +235,11 @@ RemoteCommandServer::RemoteCommandServer()
 	EventSystem::RegisterEvent(NetworkSystem::NETWORK_UPDATE_EVENT, this, &RemoteCommandServer::OnUpdate);
 	EventSystem::RegisterEvent(RCS_MESSAGE_EVENT, this, &RemoteCommandServer::OnMessage);
 
-	Console::RegisterCommand("rcs_host", RCSHost, ": Host a local server.");
-	Console::RegisterCommand("rcs_join", RCSJoin, " [host address] : Join server.");
-	Console::RegisterCommand("rcs_leave", RCSLeave, ": Leave current server.");
-	Console::RegisterCommand("rcs_info", RCSInfo, ": Prints current network state.");
-	Console::RegisterCommand("rcs_send", RCSSend, " [cmd] : Sends command to all connections.");
+	BConsoleSystem::Register("rcs_host", RCSHost, ": Host a local server.");
+	BConsoleSystem::Register("rcs_join", RCSJoin, " [host address] : Join server.");
+	BConsoleSystem::Register("rcs_leave", RCSLeave, ": Leave current server.");
+	BConsoleSystem::Register("rcs_info", RCSInfo, ": Prints current network state.");
+	BConsoleSystem::Register("rcs_send", RCSSend, " [cmd] : Sends command to all connections.");
 }
 
 
@@ -277,11 +278,14 @@ void RemoteCommandServer::OnMessage(NamedProperties & params)
 
 	if(messageType == eRCSMessageType_COMMAND)
 	{
-		g_ConsoleSystem->RunCommand(message, true);
+		if(BConsoleSystem::s_System)
+		{
+			BConsoleSystem::s_System->RunCommand(message, true);
+		}
 	}
 	else if(messageType == eRCSMessageType_ECHO)
 	{
-		g_ConsoleSystem->AddLog(Stringf("REMOTE: %s", message.c_str()), Console::REMOTE, true);
+		BConsoleSystem::AddLog(Stringf("REMOTE: %s", message.c_str()), BConsoleSystem::REMOTE, true);
 	}
 }
 
@@ -386,7 +390,7 @@ void RemoteCommandServer::AcceptNewConnections()
 	if(tcpSocket != nullptr)
 	{
 		CreateRCSConnection(tcpSocket);
-		g_ConsoleSystem->AddLog("Client connected: " + tcpSocket->GetAddressString(), Console::REMOTE);
+		BConsoleSystem::AddLog("Client connected: " + tcpSocket->GetAddressString(), BConsoleSystem::REMOTE);
 	}
 }
 
@@ -468,12 +472,12 @@ void RemoteCommandServer::HandleDisconnect(RCSConnection * conn)
 {
 	if(IsHost())
 	{
-		g_ConsoleSystem->AddLog(Stringf("Client left: %s", conn->GetAddress().c_str()), Console::REMOTE);
+		BConsoleSystem::AddLog(Stringf("Client left: %s", conn->GetAddress().c_str()), BConsoleSystem::REMOTE);
 	}
 
 	if(IsClient())
 	{
-		g_ConsoleSystem->AddLog(Stringf("Host disconnected."), Console::REMOTE);
+		BConsoleSystem::AddLog(Stringf("Host disconnected."), BConsoleSystem::REMOTE);
 		m_state = eRCSState_DISCONNECTED;
 	}
 

@@ -13,7 +13,7 @@
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Core/Time.hpp"
 #include "Engine/DebugSystem/BProfiler.hpp"
-#include "Engine/DebugSystem/Console.hpp"
+#include "Engine/DebugSystem/BConsoleSystem.hpp"
 #include "Engine/DebugSystem/Debugger.hpp"
 #include "Engine/EventSystem/EventSystem.hpp"
 #include "Engine/InputSystem/BInputSystem.hpp"
@@ -64,7 +64,7 @@ Engine::Engine(HINSTANCE applicationInstanceHandle)
 	BAudioSystem::Startup();
 	BInputSystem::Startup();
 	BRenderSystem::Startup();
-	Console::Startup();
+	BConsoleSystem::Startup();
 	g_SpriteRenderSystem = new SpriteGameRenderer();
 	UISystem::Startup();
 	g_DebugSystem = new Debugger();
@@ -86,12 +86,10 @@ Engine::~Engine()
 	//delete g_JobSystem;
 	//g_JobSystem = nullptr;
 
-	delete g_ConsoleSystem;
-	g_ConsoleSystem = nullptr;
-
 	delete g_DebugSystem;
 	g_DebugSystem = nullptr;
-
+	
+	BConsoleSystem::Shutdown();
 	UISystem::Shutdown();
 
 	delete g_SpriteRenderSystem;
@@ -121,7 +119,7 @@ void Engine::Update()
 	BMemorySystem::Update();
 	BAudioSystem::Update();
 	g_DebugSystem->Update();
-	g_ConsoleSystem->Update();
+	BConsoleSystem::Update();
 
 	EventSystem::TriggerEvent(ENGINE_UPDATE_EVENT);
 
@@ -177,7 +175,7 @@ void Engine::Render() const
 	EventSystem::TriggerEvent(ENGINE_RENDER_EVENT);
 	UISystem::Render();
 	g_DebugSystem->Render();
-	g_ConsoleSystem->Render();
+	BConsoleSystem::Render();
 
 	//Double Buffer | Also known as FlipAndPresent
 	SwapBuffers(g_displayDeviceContext);
@@ -356,13 +354,6 @@ double Engine::GetTargetFPS() const
 }
 
 
-//-------------------------------------------------------------------------------------------------
-void Engine::ConsolePrint(std::string const & consoleLog, Color const & color /*= Rgba::WHITE */)
-{
-	g_ConsoleSystem->AddLog(consoleLog, color);
-}
-
-
 //-----------------------------------------------------------------------------------------------
 // Function By: Squirrel Eiserloh (from StringUtils.cpp)
 const int STRINGF_STACK_LOCAL_TEMP_LENGTH = 2048;
@@ -375,7 +366,7 @@ void Engine::ConsolePrintf(const char* format, ...)
 	va_end(variableArgumentList);
 	textLiteral[STRINGF_STACK_LOCAL_TEMP_LENGTH - 1] = '\0'; // In case vsnprintf overran (doesn't auto-terminate)
 
-	ConsolePrint(std::string(textLiteral), Color::WHITE);
+	BConsoleSystem::AddLog(std::string(textLiteral), Color::WHITE);
 }
 
 
@@ -390,7 +381,7 @@ void Engine::ConsolePrintf(Color const & color, const char* format, ...)
 	va_end(variableArgumentList);
 	textLiteral[STRINGF_STACK_LOCAL_TEMP_LENGTH - 1] = '\0'; // In case vsnprintf overran (doesn't auto-terminate)
 
-	ConsolePrint(std::string(textLiteral), color);
+	BConsoleSystem::AddLog(std::string(textLiteral), color);
 }
 
 

@@ -5,7 +5,7 @@
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC BAudioSystem * BAudioSystem::s_AudioSystem = nullptr;
+STATIC BAudioSystem * BAudioSystem::s_System = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -13,9 +13,9 @@ STATIC BAudioSystem * BAudioSystem::s_AudioSystem = nullptr;
 // from the FMOD programming API at http://www.fmod.org/download/
 STATIC void BAudioSystem::Startup()
 {
-	if(!s_AudioSystem)
+	if(!s_System)
 	{
-		s_AudioSystem = new BAudioSystem();
+		s_System = new BAudioSystem();
 	}
 }
 
@@ -23,10 +23,10 @@ STATIC void BAudioSystem::Startup()
 //-------------------------------------------------------------------------------------------------
 STATIC void BAudioSystem::Shutdown()
 {
-	if(s_AudioSystem)
+	if(s_System)
 	{
-		delete s_AudioSystem;
-		s_AudioSystem = nullptr;
+		delete s_System;
+		s_System = nullptr;
 	}
 }
 
@@ -34,18 +34,22 @@ STATIC void BAudioSystem::Shutdown()
 //---------------------------------------------------------------------------
 STATIC void BAudioSystem::Update()
 {
-	if(s_AudioSystem && s_AudioSystem->m_fmodSystem)
+	if(s_System && s_System->m_fmodSystem)
 	{
-		FMOD_RESULT result = s_AudioSystem->m_fmodSystem->update();
+		FMOD_RESULT result = s_System->m_fmodSystem->update();
 		ValidateResult(result);
 	}
 }
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC BAudioSystem * BAudioSystem::GetSystem()
+STATIC BAudioSystem * BAudioSystem::CreateOrGetSystem()
 {
-	return s_AudioSystem;
+	if(!s_System)
+	{
+		Startup();
+	}
+	return s_System;
 }
 
 
@@ -63,9 +67,9 @@ STATIC void BAudioSystem::ValidateResult(FMOD_RESULT result)
 //-------------------------------------------------------------------------------------------------
 STATIC SoundID BAudioSystem::CreateOrGetSound(std::string const & soundFileName)
 {
-	if(s_AudioSystem)
+	if(s_System)
 	{
-		return s_AudioSystem->SystemCreateOrGetSound(soundFileName);
+		return s_System->SystemCreateOrGetSound(soundFileName);
 	}
 	return MISSING_SOUND_ID;
 }
@@ -74,9 +78,9 @@ STATIC SoundID BAudioSystem::CreateOrGetSound(std::string const & soundFileName)
 //-------------------------------------------------------------------------------------------------
 STATIC AudioChannelHandle BAudioSystem::PlaySound(SoundID soundID, float volumeLevel /*= 1.f*/, bool looping /*= false*/)
 {
-	if(s_AudioSystem)
+	if(s_System)
 	{
-		return s_AudioSystem->SystemPlaySound(soundID, volumeLevel, looping);
+		return s_System->SystemPlaySound(soundID, volumeLevel, looping);
 	}
 	return nullptr;
 }
@@ -85,9 +89,9 @@ STATIC AudioChannelHandle BAudioSystem::PlaySound(SoundID soundID, float volumeL
 //-------------------------------------------------------------------------------------------------
 STATIC void BAudioSystem::StopSound(AudioChannelHandle channel)
 {
-	if(s_AudioSystem)
+	if(s_System)
 	{
-		s_AudioSystem->SystemStopSound(channel);
+		s_System->SystemStopSound(channel);
 	}
 }
 
@@ -180,7 +184,7 @@ BAudioSystem::~BAudioSystem()
 //---------------------------------------------------------------------------
 SoundID BAudioSystem::SystemCreateOrGetSound(std::string const & soundFileName)
 {
-	if(!s_AudioSystem || !m_fmodSystem)
+	if(!s_System || !m_fmodSystem)
 	{
 		return MISSING_SOUND_ID;
 	}
@@ -211,7 +215,7 @@ SoundID BAudioSystem::SystemCreateOrGetSound(std::string const & soundFileName)
 //---------------------------------------------------------------------------
 AudioChannelHandle BAudioSystem::SystemPlaySound(SoundID soundID, float volumeLevel /*= 1.f*/, bool looping /*= false*/)
 {
-	if(!s_AudioSystem || !m_fmodSystem)
+	if(!s_System || !m_fmodSystem)
 	{
 		return nullptr;
 	}

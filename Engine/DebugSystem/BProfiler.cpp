@@ -4,7 +4,7 @@
 #include "Engine/Core/Time.hpp"
 #include "Engine/DebugSystem/BProfilerReport.hpp"
 #include "Engine/DebugSystem/BProfilerSample.hpp"
-#include "Engine/DebugSystem/Console.hpp"
+#include "Engine/DebugSystem/BConsoleSystem.hpp"
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
 #include "Engine/InputSystem/BInputSystem.hpp"
 #include "Engine/RenderSystem/BitmapFont.hpp"
@@ -31,7 +31,7 @@ STATIC std::vector<TextRenderer*, UntrackedAllocator<TextRenderer*>> BProfiler::
 //-------------------------------------------------------------------------------------------------
 void PingProfilerCommand(Command const &)
 {
-	g_ConsoleSystem->AddLog("Profiler pinged.", Console::GOOD);
+	BConsoleSystem::AddLog("Profiler pinged.", BConsoleSystem::GOOD);
 	BProfiler::SetPing();
 	BProfiler::SetProfilerVisible(true);
 }
@@ -40,7 +40,7 @@ void PingProfilerCommand(Command const &)
 //-------------------------------------------------------------------------------------------------
 void EnableProfilerCommand(Command const &)
 {
-	g_ConsoleSystem->AddLog("Profiler enabled.", Console::GOOD);
+	BConsoleSystem::AddLog("Profiler enabled.", BConsoleSystem::GOOD);
 	BProfiler::SetEnabled(true);
 	BProfiler::SetProfilerVisible(true);
 }
@@ -49,7 +49,7 @@ void EnableProfilerCommand(Command const &)
 //-------------------------------------------------------------------------------------------------
 void DisableProfilerCommand(Command const &)
 {
-	g_ConsoleSystem->AddLog("Profiler disabled.", Console::GOOD);
+	BConsoleSystem::AddLog("Profiler disabled.", BConsoleSystem::GOOD);
 	BProfiler::SetEnabled(false);
 	BProfiler::SetProfilerVisible(false);
 }
@@ -58,7 +58,7 @@ void DisableProfilerCommand(Command const &)
 //-------------------------------------------------------------------------------------------------
 void ToggleReportLayoutCommand(Command const &)
 {
-	g_ConsoleSystem->AddLog("Profiler layout changed.", Console::GOOD);
+	BConsoleSystem::AddLog("Profiler layout changed.", BConsoleSystem::GOOD);
 	BProfiler::ToggleLayout();
 }
 
@@ -72,10 +72,10 @@ STATIC void BProfiler::Startup()
 		return;
 	}
 	s_profilerFont = BitmapFont::CreateOrGetFont("Data/Fonts/ClayFont.png");
-	g_ConsoleSystem->RegisterCommand("profiler_enable", EnableProfilerCommand, " : Tracks samples injected in code and reports on screen.");
-	g_ConsoleSystem->RegisterCommand("profiler_disable", DisableProfilerCommand, " : Stops tracking samples injected in code and reports on screen.");
-	g_ConsoleSystem->RegisterCommand("profiler_ping", PingProfilerCommand, " : Tracks one sample.");
-	g_ConsoleSystem->RegisterCommand("profiler_layout", ToggleReportLayoutCommand, " : Change the profiler's report layout. List/Flat");
+	BConsoleSystem::Register("profiler_enable", EnableProfilerCommand, " : Tracks samples injected in code and reports on screen.");
+	BConsoleSystem::Register("profiler_disable", DisableProfilerCommand, " : Stops tracking samples injected in code and reports on screen.");
+	BConsoleSystem::Register("profiler_ping", PingProfilerCommand, " : Tracks one sample.");
+	BConsoleSystem::Register("profiler_layout", ToggleReportLayoutCommand, " : Change the profiler's report layout. List/Flat");
 	s_profilerLines.reserve(LINE_COUNT);
 	for(int lineIndex = 0; lineIndex < LINE_COUNT; ++lineIndex)
 	{

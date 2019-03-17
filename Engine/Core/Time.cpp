@@ -5,7 +5,7 @@
 #include <iostream>
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-#include "Engine/DebugSystem/Console.hpp"
+#include "Engine/DebugSystem/BConsoleSystem.hpp"
 #include "Engine/Utils/StringUtils.hpp"
 #include "Engine/Core/EngineCommon.hpp"
 
@@ -108,11 +108,11 @@ void StopWatch::PrintLap(std::string const & label /*= "" */)
 	lapTime = currentTime;
 	if(strcmp(label.c_str(), "") == 0)
 	{
-		g_ConsoleSystem->AddLog(Stringf("%s: %.6f", stopWatchName.c_str(), elapsedTime), Color::WHITE);
+		BConsoleSystem::AddLog(Stringf("%s: %.6f", stopWatchName.c_str(), elapsedTime), Color::WHITE);
 	}
 	else
 	{
-		g_ConsoleSystem->AddLog(Stringf("%s: %.6f", label.c_str(), elapsedTime), Color::WHITE);
+		BConsoleSystem::AddLog(Stringf("%s: %.6f", label.c_str(), elapsedTime), Color::WHITE);
 	}
 }
 
@@ -124,11 +124,11 @@ void StopWatch::PrintTime(std::string const & label /*= "" */)
 	float elapsedTime = lapTime - startTime;
 	if(strcmp(label.c_str(), "") == 0)
 	{
-		g_ConsoleSystem->AddLog(Stringf("%s: %.6f", stopWatchName.c_str(), elapsedTime), Color::WHITE);
+		BConsoleSystem::AddLog(Stringf("%s: %.6f", stopWatchName.c_str(), elapsedTime), Color::WHITE);
 	}
 	else
 	{
-		g_ConsoleSystem->AddLog(Stringf("%s: %.6f", label.c_str(), elapsedTime), Color::WHITE);
+		BConsoleSystem::AddLog(Stringf("%s: %.6f", label.c_str(), elapsedTime), Color::WHITE);
 	}
 }
 
