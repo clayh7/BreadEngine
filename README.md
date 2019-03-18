@@ -1,5 +1,7 @@
 # BreadEngine v1.0
-This is the Engine I made while in Guildhall
+by Clay Howell
+Website: http://clayh7.wixsite.com/clay-howell
+LinkedIn: https://www.linkedin.com/in/clay-howell/
 
 Features:
 - Audio System
