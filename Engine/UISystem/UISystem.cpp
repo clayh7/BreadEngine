@@ -82,26 +82,6 @@ STATIC void UISystem::Shutdown()
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::Update()
-{
-	if(s_System)
-	{
-		s_System->UpdateSystem();
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
-void UISystem::Render()
-{
-	if(s_System)
-	{
-		s_System->RenderSystem();
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
 STATIC UISystem * UISystem::CreateOrGetSystem()
 {
 	if(!s_System)
@@ -186,12 +166,16 @@ UISystem::UISystem()
 	m_root->SetProperty(UIWidget::PROPERTY_HEIGHT, (float)VIRTUAL_HEIGHT);
 	BEventSystem::RegisterEvent(BMouseKeyboard::EVENT_MOUSE_DOWN, this, &UISystem::OnMouseDown);
 	BEventSystem::RegisterEvent(BMouseKeyboard::EVENT_MOUSE_UP, this, &UISystem::OnMouseUp);
+	BEventSystem::RegisterEvent(EVENT_ENGINE_UPDATE_LATE, this, &UISystem::OnUpdate);
+	BEventSystem::RegisterEvent(EVENT_ENGINE_RENDER, this, &UISystem::OnRender, -10);
 }
 
 
 //-------------------------------------------------------------------------------------------------
 UISystem::~UISystem()
 {
+	BEventSystem::Unregister(this);
+
 	delete m_root;
 	m_root = nullptr;
 
@@ -215,7 +199,7 @@ UISystem::~UISystem()
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::UpdateSystem()
+void UISystem::OnUpdate(NamedProperties &)
 {
 	//Update root dimensions to match screen
 	//Only update if they've changed so we don't dirty everything every frame
@@ -253,7 +237,7 @@ void UISystem::UpdateSystem()
 
 
 //-------------------------------------------------------------------------------------------------
-void UISystem::RenderSystem() const
+void UISystem::OnRender(NamedProperties &) const
 {
 	m_root->Render();
 	if(m_heldItem)

@@ -2,6 +2,7 @@
 
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 
 
 //-------------------------------------------------------------------------------------------------
@@ -27,17 +28,6 @@ STATIC void BAudioSystem::Shutdown()
 	{
 		delete s_System;
 		s_System = nullptr;
-	}
-}
-
-
-//---------------------------------------------------------------------------
-STATIC void BAudioSystem::Update()
-{
-	if(s_System && s_System->m_fmodSystem)
-	{
-		FMOD_RESULT result = s_System->m_fmodSystem->update();
-		ValidateResult(result);
 	}
 }
 
@@ -171,13 +161,27 @@ BAudioSystem::BAudioSystem()
 		result = m_fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
 		ValidateResult(result);
 	}
+
+	BEventSystem::RegisterEvent(EVENT_ENGINE_UPDATE, this, &BAudioSystem::OnUpdate);
 }
 
 
 //-------------------------------------------------------------------------------------------------
 BAudioSystem::~BAudioSystem()
 {
-	// Nothing
+	BEventSystem::Unregister(this);
+}
+
+
+//-------------------------------------------------------------------------------------------------
+void BAudioSystem::OnUpdate(NamedProperties &)
+{
+	if(m_fmodSystem)
+	{
+		// Must be called at regular intervals (e.g. every frame)
+		FMOD_RESULT result = m_fmodSystem->update();
+		ValidateResult(result);
+	}
 }
 
 

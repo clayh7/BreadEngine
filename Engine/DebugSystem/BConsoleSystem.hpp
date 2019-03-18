@@ -185,8 +185,6 @@ private:
 public:
 	static void Startup();
 	static void Shutdown();
-	static void Update();
-	static void Render();
 	static BConsoleSystem * CreateOrGetSystem();
 	static void Register(std::string const & commandName, CommandCallback * callback, std::string const & commandDescription);
 	static void Register(std::string const & commandName, EventCallback * callback, std::string const & commandDescription);
@@ -198,8 +196,8 @@ public:
 public:
 	BConsoleSystem();
 	~BConsoleSystem();
-	void SystemUpdate();
-	void SystemRender() const;
+	void OnUpdate(NamedProperties & params);
+	void OnRender(NamedProperties & params) const;
 	void RegisterCommand(std::string const & commandName, CommandCallback * callback, std::string const & commandDescription);
 	void RegisterEvent(std::string const & commandName, EventCallback * callback, std::string const & commandDescription);
 	void RunCommand(std::string const & commandString, bool remote = false);

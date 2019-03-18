@@ -12,9 +12,9 @@
 #include "Engine/Core/Time.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 #include "Engine/Math/Vector2f.hpp"
 #include "Engine/Math/AABB3.hpp"
-#include "Engine/Utils/MathUtils.hpp"
 #include "Engine/Math/Vector4f.hpp"
 #include "Engine/Math/Matrix4f.hpp"
 #include "Engine/RenderSystem/Attribute.hpp"
@@ -31,6 +31,7 @@
 #include "Engine/RenderSystem/Uniform.hpp"
 #include "Engine/RenderSystem/Vertex.hpp"
 #include "Engine/Utils/FileUtils.hpp"
+#include "Engine/Utils/MathUtils.hpp"
 #include "Engine/Utils/StringUtils.hpp"
 #include "Engine/Core/EngineCommon.hpp"
 
@@ -62,6 +63,7 @@ STATIC void BRenderSystem::Startup()
 		Mesh::InitializeDefaultMeshes();
 		Material::InitializeDefaultMaterials();
 		BitmapFont::CreateOrGetFont(DEFAULT_FONT);
+		BEventSystem::RegisterEvent(EVENT_ENGINE_UPDATE, &BRenderSystem::OnUpdate);
 	}
 }
 
@@ -84,7 +86,7 @@ STATIC void BRenderSystem::Shutdown()
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void BRenderSystem::Update()
+STATIC void BRenderSystem::OnUpdate(NamedProperties &)
 {
 	if(s_System && s_System->m_activeCamera)
 	{

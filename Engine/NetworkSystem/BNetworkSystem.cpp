@@ -6,7 +6,7 @@
 
 //-------------------------------------------------------------------------------------------------
 STATIC size_t BNetworkSystem::GAME_PORT = 4334;
-STATIC char const * BNetworkSystem::EVENT_NETWORK_STARTUP = " NetworkStartup";
+STATIC char const * BNetworkSystem::EVENT_NETWORK_STARTUP = "NetworkStartup";
 STATIC char const * BNetworkSystem::EVENT_NETWORK_SHUTDOWN = "NetworkShutdown";
 STATIC char const * BNetworkSystem::EVENT_NETWORK_UPDATE = "NetworkUpdateEvent";
 
@@ -23,7 +23,7 @@ STATIC bool BNetworkSystem::Startup()
 		NetworkUtils::ReportError();
 	}
 
-	BEventSystem::RegisterEvent(EVENT_ENGINE_UPDATE, &BNetworkSystem::OnUpdate);
+	BEventSystem::RegisterEvent(EVENT_ENGINE_UPDATE, &BNetworkSystem::OnUpdate, -10);
 	BEventSystem::TriggerEvent(EVENT_NETWORK_STARTUP);
 
 	return true;

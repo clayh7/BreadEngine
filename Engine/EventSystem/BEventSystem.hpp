@@ -15,6 +15,9 @@ typedef void (EventCallback)(NamedProperties &);
 class SubscriberBase
 {
 public:
+	int m_priority;
+
+public:
 	virtual void Execute(NamedProperties &) const = 0;
 	virtual void * GetObject() const = 0;
 };
@@ -85,8 +88,8 @@ public:
 	static void Startup();
 	static void Shutdown();
 	static BEventSystem * CreateOrGetSystem();
-	static void RegisterEventAndCommand(std::string const & eventName, std::string const & usage, EventCallback * callback);
-	static void RegisterEvent(std::string const & eventName, EventCallback * callback);
+	static void RegisterEventAndCommand(std::string const & eventName, std::string const & usage, EventCallback * callback, int priority = 0);
+	static void RegisterEvent(std::string const & eventName, EventCallback * callback, int priority = 0);
 	static void TriggerEvent(std::string const & eventName);
 	static void TriggerEvent(std::string const & eventName, NamedProperties & eventData);
 	static void TriggerEventForFilesFound(std::string const & eventName, std::string const & baseFolder, std::string const & filePattern);
@@ -103,14 +106,14 @@ public:
 	//-------------------------------------------------------------------------------------------------
 public:
 	template <typename T_ObjectType, typename T_FunctionType>
-	static void RegisterEventAndCommand(std::string const & eventName, std::string const & usage, T_ObjectType * object, T_FunctionType function)
+	static void RegisterEventAndCommand(std::string const & eventName, std::string const & usage, T_ObjectType * object, T_FunctionType function, int priority = 0)
 	{
 		BConsoleSystem::Register(eventName, object, function, usage);
-		RegisterEvent(eventName, object, function);
+		RegisterEvent(eventName, object, function, priority);
 	}
 
 	template <typename T_ObjectType, typename T_FunctionType>
-	static void RegisterEvent(std::string const & eventName, T_ObjectType * object, T_FunctionType function)
+	static void RegisterEvent(std::string const & eventName, T_ObjectType * object, T_FunctionType function, int priority = 0)
 	{
 		BEventSystem * system = BEventSystem::CreateOrGetSystem();
 		SubscriberMap & subscribers = system->m_registeredSubscribers;
@@ -121,6 +124,7 @@ public:
 
 		//Create subscriber
 		SubscriberObjectFunction<T_ObjectType, T_FunctionType> * subscriber = new SubscriberObjectFunction<T_ObjectType, T_FunctionType>();
+		subscriber->m_priority = priority;
 		subscriber->m_object = object;
 		subscriber->m_function = function;
 
@@ -144,7 +148,11 @@ public:
 	template <typename T_ObjectType>
 	static void BEventSystem::Unregister(T_ObjectType * subscriber)
 	{
-		BEventSystem * system = BEventSystem::CreateOrGetSystem();
+		BEventSystem * system = BEventSystem::s_System;
+		if(!system)
+		{
+			return;
+		}
 		SubscriberMap & subscribers = system->m_registeredSubscribers;
 
 		for(auto & eventSubscriptionPair : subscribers)

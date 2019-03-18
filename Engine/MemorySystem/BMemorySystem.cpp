@@ -171,6 +171,7 @@ STATIC void BMemorySystem::Startup()
 		g_SkipTracking = true;
 		s_System = new BMemorySystem();
 		g_SkipTracking = false;
+		BEventSystem::RegisterEvent(EVENT_ENGINE_UPDATE, s_System, &BMemorySystem::OnUpdate);
 	}
 }
 
@@ -180,18 +181,9 @@ STATIC void BMemorySystem::Shutdown()
 {
 	if(s_System)
 	{
+		BEventSystem::Unregister(s_System);
 		delete s_System;
 		s_System = nullptr;
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
-STATIC void BMemorySystem::Update()
-{
-	if(s_System)
-	{
-		s_System->SystemUpdate();
 	}
 }
 
@@ -321,7 +313,7 @@ BMemorySystem::BMemorySystem()
 	, m_deallocationsInTheLastSecond(0)
 	, m_averageDeallocationsPerSecond(0.f)
 {
-	//Nothing
+	// Nothing
 }
 
 
@@ -340,7 +332,6 @@ BMemorySystem::~BMemorySystem()
 	DebuggerPrintf("Leaks: %u \n", m_numAllocations);
 	DebuggerPrintf("Bytes Leaked: %u \n", m_totalAllocated);
 	DebuggerPrintf("//=============================================================================================\n\n");
-	DebuggerPrintf("Stack over time:");
 	CallstackSystem::Shutdown();
 #endif
 	g_SkipTracking = true;
@@ -348,7 +339,7 @@ BMemorySystem::~BMemorySystem()
 
 
 //-------------------------------------------------------------------------------------------------
-void BMemorySystem::SystemUpdate()
+void BMemorySystem::OnUpdate(NamedProperties &)
 {
 	//Run once every second
 	float elapsedTime = Time::TOTAL_SECONDS - m_timeStampOfPreviousAnalysis;

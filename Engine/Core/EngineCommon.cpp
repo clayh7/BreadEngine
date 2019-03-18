@@ -10,7 +10,8 @@
 bool g_isQuitting = false;
 bool g_limitFPS = true;
 int DRAW_CALLS = 0;
-char const * const EVENT_ENGINE_UPDATE = "NetworkUpdate";
+char const * const EVENT_ENGINE_UPDATE = "EngineUpdate";
+char const * const EVENT_ENGINE_UPDATE_LATE = "EngineUpdateLate";
 char const * const EVENT_ENGINE_RENDER = "EngineRender";
 
 

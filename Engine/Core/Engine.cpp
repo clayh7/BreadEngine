@@ -79,7 +79,7 @@ Engine::~Engine()
 {
 	RemoteCommandServer::Shutdown();
 	BNetworkSystem::Shutdown();
-	//BJobSystem::Shutdown();
+	BJobSystem::Shutdown();
 	BDebugSystem::Shutdown();
 	BConsoleSystem::Shutdown();
 	UISystem::Shutdown();
@@ -100,16 +100,7 @@ void Engine::Update()
 	UpdateTime();
 
 	BProfiler::StartSample("UPDATE ENGINE");
-
-	BInputSystem::Update();
-	BRenderSystem::Update();
-	BMemorySystem::Update();
-	BAudioSystem::Update();
-	BDebugSystem::Update();
-	BConsoleSystem::Update();
 	BEventSystem::TriggerEvent(EVENT_ENGINE_UPDATE);
-
-	//Reset Variables
 	BProfiler::StopSample();
 }
 
@@ -118,9 +109,7 @@ void Engine::Update()
 void Engine::LateUpdate()
 {
 	BProfiler::StartSample("UPDATE ENGINE LATE");
-
-	UISystem::Update();
-
+	BEventSystem::TriggerEvent(EVENT_ENGINE_UPDATE_LATE);
 	BProfiler::StopSample();
 }
 
@@ -164,9 +153,6 @@ void Engine::Render() const
 	BProfiler::StartSample("RENDER ENGINE");
 
 	BEventSystem::TriggerEvent(EVENT_ENGINE_RENDER);
-	UISystem::Render();
-	BDebugSystem::Render();
-	BConsoleSystem::Render();
 
 	//Double Buffer | Also known as FlipAndPresent
 	SwapBuffers(g_displayDeviceContext);

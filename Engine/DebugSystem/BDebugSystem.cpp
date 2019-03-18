@@ -87,26 +87,6 @@ void BDebugSystem::Shutdown()
 
 
 //-------------------------------------------------------------------------------------------------
-void BDebugSystem::Update()
-{
-	if(s_System)
-	{
-		s_System->SystemUpdate();
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
-void BDebugSystem::Render()
-{
-	if(s_System)
-	{
-		s_System->SystemRender();
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
 BDebugSystem * BDebugSystem::CreateOrGetSystem()
 {
 	if(!s_System)
@@ -147,12 +127,17 @@ BDebugSystem::BDebugSystem()
 	BConsoleSystem::Register("debug_memory", &DebugMemoryCommand, " : Show/Hide memory allocation info.");
 	BConsoleSystem::Register("debug_flush", &DebugFlushCommand, " : Print memory callstack to the debug log.");
 #endif // MEMORY_TRACKING >= 1
+
+	BEventSystem::RegisterEvent(EVENT_ENGINE_UPDATE, this, &BDebugSystem::OnUpdate);
+	BEventSystem::RegisterEvent(EVENT_ENGINE_RENDER, this, &BDebugSystem::OnRender);
 }
 
 
 //-------------------------------------------------------------------------------------------------
 BDebugSystem::~BDebugSystem()
 {
+	BEventSystem::Unregister(this);
+
 	for(TextRenderer * textRenderer : m_debugTexts)
 	{
 		delete textRenderer;
@@ -168,7 +153,7 @@ BDebugSystem::~BDebugSystem()
 
 
 //-------------------------------------------------------------------------------------------------
-void BDebugSystem::SystemUpdate()
+void BDebugSystem::OnUpdate(NamedProperties &)
 {
 	int currentLine = 0;
 
@@ -338,8 +323,7 @@ void BDebugSystem::ClearTextRemaining(int & currentLine)
 
 
 //-------------------------------------------------------------------------------------------------
-//#TODO: Make the Debug renders a single draw call each
-void BDebugSystem::SystemRender() const
+void BDebugSystem::OnRender(NamedProperties &) const
 {
 	if(m_showFPSDebug || m_showUnitDebug || m_showMemoryDebug)
 	{

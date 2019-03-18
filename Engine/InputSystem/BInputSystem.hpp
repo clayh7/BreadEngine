@@ -3,6 +3,7 @@
 //-------------------------------------------------------------------------------------------------
 class BMouseKeyboard;
 class BXboxController;
+class NamedProperties;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -15,19 +16,11 @@ public:
 	static BInputSystem * s_System;
 
 	//-------------------------------------------------------------------------------------------------
-	// Members
-	//-------------------------------------------------------------------------------------------------
-public:
-	//BMouseKeyboard * m_mouseKeyboard;
-	//BXboxController * m_xboxController;
-	
-	//-------------------------------------------------------------------------------------------------
 	// Static Functions
 	//-------------------------------------------------------------------------------------------------
 public:
 	static void Startup();
 	static void Shutdown();
-	static void Update();
 	static BInputSystem * CreateOrGetSystem();
 
 	//-------------------------------------------------------------------------------------------------
@@ -36,5 +29,5 @@ public:
 public:
 	BInputSystem();
 	~BInputSystem();
-	void SystemUpdate();
+	void OnUpdate(NamedProperties & params);
 };

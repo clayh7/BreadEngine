@@ -9,6 +9,10 @@
 
 
 //-------------------------------------------------------------------------------------------------
+class NamedProperties;
+
+
+//-------------------------------------------------------------------------------------------------
 class CallstackStats
 {
 	//-------------------------------------------------------------------------------------------------
@@ -77,7 +81,6 @@ private:
 public:
 	static void Startup();
 	static void Shutdown();
-	static void Update();
 	static void Flush();
 	static BMemorySystem * GetOrCreateSystem();
 	static void GetMemoryAllocationsString(std::string & allocationString);
@@ -94,7 +97,7 @@ private:
 	BMemorySystem();
 	~BMemorySystem();
 
-	void SystemUpdate();
+	void OnUpdate(NamedProperties & params);
 	void SystemGetMemoryAllocationString(std::string & allocationString);
 	void SystemGetMemoryAveragesString(std::string & averageString);
 	void SystemFlush();

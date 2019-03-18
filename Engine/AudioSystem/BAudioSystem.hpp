@@ -15,6 +15,7 @@
 
 //-------------------------------------------------------------------------------------------------
 class BAudioSystem;
+class NamedProperties;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -48,8 +49,6 @@ private:
 public:
 	static void Startup();
 	static void Shutdown();
-	// Must be called at regular intervals (e.g. every frame)
-	static void Update();
 	// Creates a new one if it doesn't exist
 	static BAudioSystem * CreateOrGetSystem();
 	static void ValidateResult(FMOD_RESULT result);
@@ -63,6 +62,7 @@ public:
 private:
 	BAudioSystem();
 	~BAudioSystem();
+	void OnUpdate(NamedProperties & params);
 	SoundID SystemCreateOrGetSound(std::string const & soundFileName);
 	AudioChannelHandle SystemPlaySound(SoundID soundID, float volumeLevel = 1.f, bool looping = false);
 	void SystemStopSound(AudioChannelHandle channel);

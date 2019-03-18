@@ -1,6 +1,7 @@
 #include "Engine/InputSystem/BInputSystem.hpp"
 
 #include "Engine/Core/EngineCommon.hpp"
+#include "Engine/EventSystem/BEventSystem.hpp"
 #include "Engine/InputSystem/BMouseKeyboard.hpp"
 #include "Engine/InputSystem/BXboxController.hpp"
 
@@ -31,16 +32,6 @@ STATIC void BInputSystem::Shutdown()
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void BInputSystem::Update()
-{
-	if(s_System)
-	{
-		s_System->SystemUpdate();
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
 STATIC BInputSystem * BInputSystem::CreateOrGetSystem()
 {
 	if(!s_System)
@@ -54,6 +45,7 @@ STATIC BInputSystem * BInputSystem::CreateOrGetSystem()
 //-------------------------------------------------------------------------------------------------
 BInputSystem::BInputSystem()
 {
+	BEventSystem::RegisterEvent(EVENT_ENGINE_UPDATE, this, &BInputSystem::OnUpdate, 10);
 	BMouseKeyboard::s_Instance = new BMouseKeyboard();
 	BXboxController::s_Instance = new BXboxController();
 }
@@ -62,6 +54,7 @@ BInputSystem::BInputSystem()
 //-------------------------------------------------------------------------------------------------
 BInputSystem::~BInputSystem()
 {
+	BEventSystem::Unregister(this);
 	if(BMouseKeyboard::s_Instance)
 	{
 		delete BMouseKeyboard::s_Instance;
@@ -76,7 +69,7 @@ BInputSystem::~BInputSystem()
 
 
 //-------------------------------------------------------------------------------------------------
-void BInputSystem::SystemUpdate()
+void BInputSystem::OnUpdate(NamedProperties &)
 {
 	BMouseKeyboard::Update();
 	BXboxController::Update();

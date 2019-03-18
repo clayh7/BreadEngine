@@ -57,8 +57,6 @@ private:
 public:
 	static void Startup();
 	static void Shutdown();
-	static void Update();
-	static void Render();
 	static UISystem * CreateOrGetSystem();
 	static Vector2f ClipToUISystemPosition(Vector3f const & screenVector);
 	static void RegisterWidget(std::string const & widgetName, WidgetCreationFunc * creationFunc);
@@ -72,8 +70,8 @@ public:
 	UISystem();
 	~UISystem();
 	//void UpdateUISpriteRenderer();
-	void UpdateSystem();
-	void RenderSystem() const;
+	void OnUpdate(NamedProperties & params);
+	void OnRender(NamedProperties & params) const;
 	void LoadUIFromXML();
 	UIWidget * CreateWidget();
 	void RemoveWidget(UIWidget * widget);

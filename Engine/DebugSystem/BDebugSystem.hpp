@@ -5,8 +5,9 @@
 
 //-------------------------------------------------------------------------------------------------
 class BDebugSystem;
-class TextRenderer;
 class Command;
+class NamedProperties;
+class TextRenderer;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -44,8 +45,6 @@ private:
 public:
 	static void Startup();
 	static void Shutdown();
-	static void Update();
-	static void Render();
 	static BDebugSystem * CreateOrGetSystem();
 
 	//-------------------------------------------------------------------------------------------------
@@ -54,13 +53,13 @@ public:
 public:
 	BDebugSystem();
 	~BDebugSystem();
-	void SystemUpdate();
+	void OnUpdate(NamedProperties & params);
 	void UpdateTextFPS(int & currentLine);
 	void UpdateTextUnit(int & currentLine);
 	void UpdateTextMemory(int & currentLine);
 	void UpdateTextMemoryVerbose(int & currentLine);
 	void ClearTextRemaining(int & currentLine);
-	void SystemRender() const;
+	void OnRender(NamedProperties & params) const;
 
 	void ToggleDebugFPS();
 	void ToggleDebugUnit();

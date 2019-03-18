@@ -174,26 +174,6 @@ STATIC void BConsoleSystem::Shutdown()
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void BConsoleSystem::Update()
-{
-	if(s_System)
-	{
-		s_System->SystemUpdate();
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
-STATIC void BConsoleSystem::Render()
-{
-	if(s_System)
-	{
-		s_System->SystemRender();
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
 STATIC BConsoleSystem * BConsoleSystem::CreateOrGetSystem()
 {
 	if(!s_System)
@@ -255,6 +235,9 @@ BConsoleSystem::BConsoleSystem()
 	m_consoleBox->SetUniform("uColor", Color(0, 0, 0, 50));
 	m_consoleBoxBottom = new MeshRenderer(eMeshShape_QUAD, Transform(Vector3f(0.f, -0.5f, 0.f), Matrix4f::IDENTITY, Vector3f(2.f, 1.f, 1.f)), RenderState::BASIC_2D);
 	m_consoleBoxBottom->SetUniform("uColor", Color(0, 0, 0, 50));
+
+	BEventSystem::RegisterEvent(EVENT_ENGINE_UPDATE, this, &BConsoleSystem::OnUpdate);
+	BEventSystem::RegisterEvent(EVENT_ENGINE_RENDER, this, &BConsoleSystem::OnRender, -10);
 }
 
 
@@ -299,7 +282,7 @@ BConsoleSystem::~BConsoleSystem()
 
 
 //-------------------------------------------------------------------------------------------------
-void BConsoleSystem::SystemUpdate()
+void BConsoleSystem::OnUpdate(NamedProperties &)
 {
 	//Opening Effect Timer
 	if(m_open)
@@ -361,7 +344,7 @@ void BConsoleSystem::SystemUpdate()
 
 
 //-------------------------------------------------------------------------------------------------
-void BConsoleSystem::SystemRender() const
+void BConsoleSystem::OnRender(NamedProperties &) const
 {
 	if(m_openAmount <= 0.f)
 	{

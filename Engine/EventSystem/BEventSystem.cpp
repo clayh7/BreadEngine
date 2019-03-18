@@ -4,6 +4,7 @@
 #include "Engine/Core/NamedProperties.hpp"
 #include "Engine/Utils/FileUtils.hpp"
 #include "Engine/Utils/StringUtils.hpp"
+#include <algorithm>
 
 
 //-------------------------------------------------------------------------------------------------
@@ -44,15 +45,15 @@ STATIC BEventSystem * BEventSystem::CreateOrGetSystem()
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void BEventSystem::RegisterEventAndCommand(std::string const & eventName, std::string const & usage, EventCallback * callback)
+STATIC void BEventSystem::RegisterEventAndCommand(std::string const & eventName, std::string const & usage, EventCallback * callback, int priority /*= 0*/)
 {
 	BConsoleSystem::Register(eventName, callback, usage);
-	RegisterEvent(eventName, callback);
+	RegisterEvent(eventName, callback, priority);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void BEventSystem::RegisterEvent(std::string const & eventName, EventCallback * callback)
+void BEventSystem::RegisterEvent(std::string const & eventName, EventCallback * callback, int priority /*= 0*/)
 {
 	if(!s_System)
 	{
@@ -67,12 +68,23 @@ STATIC void BEventSystem::RegisterEvent(std::string const & eventName, EventCall
 
 	//Create subscriber
 	SubscriberStaticFunction * subscriber = new SubscriberStaticFunction();
+	subscriber->m_priority = priority;
 	subscriber->m_function = callback;
 
 	//If subscription exists, add to it
 	if(foundEventSubscription != subscribers.end())
 	{
 		std::vector<SubscriberBase*> & eventSubscription = foundEventSubscription->second;
+		// Don't allow duplicate static function subscribers
+		for(size_t index = 0; index < eventSubscription.size(); ++index)
+		{
+			SubscriberStaticFunction const * currentSub = dynamic_cast<SubscriberStaticFunction*>(eventSubscription[index]);
+			if(currentSub && currentSub->m_function == callback)
+			{
+				delete subscriber;
+				return;
+			}
+		}
 		eventSubscription.push_back(subscriber);
 	}
 
@@ -100,18 +112,23 @@ STATIC void BEventSystem::TriggerEvent(std::string const & eventName, NamedPrope
 	size_t eventNameHash = std::hash<std::string>{}(eventName);
 	SubscriberMap & subscribers = s_System->m_registeredSubscribers;
 
-	//Event exists
+	// Event exists
 	auto foundEventSubscription = subscribers.find(eventNameHash);
 	if(foundEventSubscription != subscribers.end())
 	{
 		std::vector<SubscriberBase*> & eventSubscription = foundEventSubscription->second;
+		// Execute in order of priority, same priority can have random order
+		std::sort(eventSubscription.begin(), eventSubscription.end(), [](SubscriberBase* a, SubscriberBase* b)
+		{
+			return a->m_priority > b->m_priority;
+		});
 		for(SubscriberBase const * subscriber : eventSubscription)
 		{
 			subscriber->Execute(eventData);
 		}
 	}
 
-	//Event does not exist, so do nothing
+	// Event does not exist, so do nothing
 	else
 	{
 		return;

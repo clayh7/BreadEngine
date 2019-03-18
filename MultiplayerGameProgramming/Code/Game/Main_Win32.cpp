@@ -15,6 +15,7 @@ void Update()
 
 	g_EngineSystem->Update(); //Needs to run first to update Input/Audio/etc...
 	g_AppSystem->Update();
+	g_EngineSystem->LateUpdate();
 
 	BProfiler::StopSample();
 }

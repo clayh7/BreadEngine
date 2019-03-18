@@ -15,19 +15,20 @@
 
 
 //-------------------------------------------------------------------------------------------------
-class Texture;
+class AABB3;
 class BitmapFont;
 class Camera3D;
-class MeshRenderer;
 class Framebuffer;
-class Mesh;
+class Texture;
 class Material;
-class AABB3;
 class Matrix4f;
+class Mesh;
+class MeshRenderer;
+class NamedProperties;
+class Uniform;
 class Vertex_PCU;
 class Vertex_PC;
 class VertexDefinition;
-class Uniform;
 typedef unsigned int GLenum;
 
 
@@ -62,7 +63,7 @@ private:
 public:
 	static void Startup();
 	static void Shutdown();
-	static void Update();
+	static void OnUpdate(NamedProperties & params);
 	static BRenderSystem * CreateOrGetSystem();
 	static void ClearScreen(const Color& clearColor);
 
