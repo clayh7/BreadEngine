@@ -32,7 +32,12 @@ Features:
   - File Utils
   - String Utils
 
-As I continue to use it, more is added. There is not a list of planned features, but more of what I find interesting.
+As I continue to use it, more is added. There is not a list of planned features, basically I add more of what I find interesting.
+
+Third Party:
+- fmod
+- stb_image
+- XMLParser
 
 # Multiplayer Game Programming
 While I'm reading this book, I need a place to implement the examples the book talks about so I can learn it better.
