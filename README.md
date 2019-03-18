@@ -1,6 +1,8 @@
 # BreadEngine v1.0
 by Clay Howell
+
 Website: http://clayh7.wixsite.com/clay-howell
+
 LinkedIn: https://www.linkedin.com/in/clay-howell/
 
 Features:
