@@ -1,6 +1,7 @@
 # Always built
 *.suo
 *.VC.db
+.vs/
 
 # Temporary Output
 Temporary/
