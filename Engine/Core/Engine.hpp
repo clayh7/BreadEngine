@@ -80,7 +80,6 @@ public:
 	HWND GetWindowHandle() const;
 	double GetTargetFPS() const;
 
-	void ConsolePrint(std::string const & consoleLog, Color const & color = Color::WHITE);
 	void ConsolePrintf(const char* format, ...);
 	void ConsolePrintf(Color const & color, const char* format, ...);
 };

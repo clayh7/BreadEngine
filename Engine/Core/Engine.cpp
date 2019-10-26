@@ -1,8 +1,8 @@
 //-------------------------------------------------------------------------------------------------
 //"All the best weapons have names"
-//This Engine is named: Bread
-//Author: Clay Howell
+//This Engine's name is: Bread
 // - Use with game jam
+//Author: Clay Howell
 #include "Engine/Core/Engine.hpp"
 
 #define WIN32_LEAN_AND_MEAN
@@ -33,9 +33,12 @@ extern Engine * g_EngineSystem = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
-//Name on top game window
 STATIC float const Engine::PERCENT_OF_SCREEN = 0.8f;
 STATIC float const Engine::ASPECT_RATIO = 16.f / 9.f;
+
+
+//-------------------------------------------------------------------------------------------------
+const int STRINGF_STACK_LOCAL_TEMP_LENGTH = 2048;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -79,7 +82,7 @@ Engine::~Engine()
 {
 	RemoteCommandServer::Shutdown();
 	BNetworkSystem::Shutdown();
-	BJobSystem::Shutdown();
+	//BJobSystem::Shutdown();
 	BDebugSystem::Shutdown();
 	BConsoleSystem::Shutdown();
 	UISystem::Shutdown();
@@ -126,9 +129,7 @@ void Engine::UpdateTime()
 
 	if(g_limitFPS && elapsedTime < totalFrameTime)
 	{
-		// Make the sleep stop juuust before desired fps
-		double const timeOffset = 0.7;
-		double waitTime = (totalFrameTime - elapsedTime) * 1000.0 - timeOffset;
+		double waitTime = (totalFrameTime - elapsedTime) * 1000.0;
 		std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(waitTime));
 	}
 	BProfiler::StopSample();
@@ -319,7 +320,6 @@ double Engine::GetTargetFPS() const
 
 //-----------------------------------------------------------------------------------------------
 // Function By: Squirrel Eiserloh (from StringUtils.cpp)
-const int STRINGF_STACK_LOCAL_TEMP_LENGTH = 2048;
 void Engine::ConsolePrintf(const char* format, ...)
 {
 	char textLiteral[STRINGF_STACK_LOCAL_TEMP_LENGTH];
