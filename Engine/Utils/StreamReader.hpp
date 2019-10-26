@@ -38,8 +38,8 @@ public:
 	//-------------------------------------------------------------------------------------------------
 public:
 	template<typename DataType>
-	void Read(DataType * out_data)
+	void Read(DataType & out_data)
 	{
-		Read(out_data, sizeof(DataType));
+		Read(&out_data, sizeof(DataType));
 	}
 };
