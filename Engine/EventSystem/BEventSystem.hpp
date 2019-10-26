@@ -146,7 +146,7 @@ public:
 
 	//Remove the subscriber from all of their Registered Events
 	template <typename T_ObjectType>
-	static void BEventSystem::Unregister(T_ObjectType * subscriber)
+	static void Unregister(T_ObjectType * subscriber)
 	{
 		BEventSystem * system = BEventSystem::s_System;
 		if(!system)
