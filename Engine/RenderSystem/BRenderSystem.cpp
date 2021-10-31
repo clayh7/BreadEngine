@@ -41,14 +41,14 @@ STATIC BRenderSystem * BRenderSystem::s_System = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
-//STATIC char const * Renderer::DEFAULT_FONT = "Data/Fonts/ConsoleFont.fnt";
+STATIC char const * BRenderSystem::DEFAULT_FONT = "Data/Fonts/ConsoleFont.fnt";
+//STATIC char const * BRenderSystem::DEFAULT_FONT = "Data/Fonts/MainFrame.fnt";
+//STATIC char const * BRenderSystem::DEFAULT_FONT = "Data/Fonts/ClayFont.png";
 //STATIC char const * Renderer::DEFAULT_FONT = "Data/Fonts/OCR.fnt";
 //STATIC char const * Renderer::DEFAULT_FONT = "Data/Fonts/Basica.fnt";
 //STATIC char const * Renderer::DEFAULT_FONT = "Data/Fonts/GalaxyMonkey.fnt";
-STATIC char const * BRenderSystem::DEFAULT_FONT = "Data/Fonts/MainFrame.fnt";
 //STATIC char const * Renderer::DEFAULT_FONT = "Data/Fonts/PressStart.fnt";
 //STATIC char const * Renderer::DEFAULT_FONT = "Data/Fonts/DesignerBlock.fnt";
-//STATIC char const * Renderer::DEFAULT_FONT = "Data/Fonts/ClayFont.png";
 //STATIC char const * Renderer::DEFAULT_FONT = "Data/Fonts/RetroFont.png";
 
 

@@ -131,7 +131,7 @@ void SetupColor()
 	BConsoleSystem::GOOD	= Color::GREEN;
 	BConsoleSystem::BAD		= Color::RED;
 	BConsoleSystem::DEFAULT = Color::WHITE;
-	BConsoleSystem::INFO	= Color::BLUE;
+	BConsoleSystem::INFO	= Color::LIGHT_GREY;
 	BConsoleSystem::REMOTE	= Color::ORANGE;
 }
 
