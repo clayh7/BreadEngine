@@ -3,6 +3,9 @@
 *.VC.db
 .vs/
 
+# User
+*.user
+
 # Temporary Output
 Temporary/
 
@@ -41,3 +44,4 @@ Logs/
 # Executables
 *.out
 *.app
+*.exe
