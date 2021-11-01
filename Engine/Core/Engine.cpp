@@ -8,6 +8,8 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <stdarg.h>
+#include <mmsystem.h>				// These two lines are used for timeBeginPeriod/timeEndPeriod
+#pragma comment(lib, "winmm.lib")	// These functions allow us to have a more accurate sleep function
 
 #include "Engine/AudioSystem/BAudioSystem.hpp"
 #include "Engine/Core/EngineCommon.hpp"
@@ -120,7 +122,6 @@ void Engine::LateUpdate()
 //-------------------------------------------------------------------------------------------------
 void Engine::UpdateTime()
 {
-	//#TODO: Find a nicer way to limit FPS
 	BProfiler::StartSample("WAIT FOR FRAME");
 	double targetFPS = m_targetFPS;
 	double timeThisFrameBegan = Time::GetCurrentTimeSeconds();
@@ -130,7 +131,9 @@ void Engine::UpdateTime()
 	if(g_limitFPS && elapsedTime < totalFrameTime)
 	{
 		double waitTime = (totalFrameTime - elapsedTime) * 1000.0;
+		timeBeginPeriod(1); //makes the sleep function have a milisecond period of 1, instead of its default which is too large
 		std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(waitTime));
+		timeEndPeriod(1);
 	}
 	BProfiler::StopSample();
 

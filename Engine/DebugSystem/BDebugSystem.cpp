@@ -100,7 +100,7 @@ BDebugSystem * BDebugSystem::CreateOrGetSystem()
 
 //-------------------------------------------------------------------------------------------------
 BDebugSystem::BDebugSystem()
-	: m_showFPSDebug(false)
+	: m_showFPSDebug(true)
 	, m_showUnitDebug(false)
 	, m_showMemoryDebug(false)
 	, m_lineCount(14)
