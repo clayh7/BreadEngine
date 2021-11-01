@@ -11,40 +11,41 @@
 
 
 //-------------------------------------------------------------------------------------------------
+STATIC int const NetworkUtils::ALREADY_IN_USE_ERROR = 10048;
 STATIC int const NetworkUtils::WOULD_BLOCK_ERROR = 10035;
+STATIC int const NetworkUtils::CONNECTION_REFUSED_ERROR = 10061;
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC SocketAddressPtr NetworkUtils::CreateIPv4FromString(std::string const & addressString)
+STATIC SocketAddressPtr NetworkUtils::CreateIPv4FromString(const std::string& addressString)
 {
 	size_t portPosition = addressString.find_last_of(':');
-	std::string host, service;
+	std::string host, port;
 	if(portPosition != std::string::npos)
 	{
 		host = addressString.substr(0, portPosition);
-		service = addressString.substr(portPosition + 1);
+		port = addressString.substr(portPosition + 1);
 	}
 	else
 	{
 		host = addressString;
 		//use default port...
-		service = "0";
+		port = "0";
 	}
-	return NetworkUtils::CreateIPv4FromString(host, service);
+	return NetworkUtils::CreateIPv4FromString(host, port);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC SocketAddressPtr NetworkUtils::CreateIPv4FromString(std::string const & host, uint32_t port)
+STATIC SocketAddressPtr NetworkUtils::CreateIPv4FromString(const std::string& host, uint32_t port)
 {
-	std::string service = Stringf("%u", port);
-	return NetworkUtils::CreateIPv4FromString(host, service);
+	std::string portString = Stringf("%u", port);
+	return NetworkUtils::CreateIPv4FromString(host, portString);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-// port and service mean the same thing
-STATIC SocketAddressPtr NetworkUtils::CreateIPv4FromString(std::string const & host, std::string const & service)
+STATIC SocketAddressPtr NetworkUtils::CreateIPv4FromString(const std::string& host, const std::string& port)
 {
 	addrinfo hint;
 	//Clear it out
@@ -52,9 +53,10 @@ STATIC SocketAddressPtr NetworkUtils::CreateIPv4FromString(std::string const & h
 	//IPv4
 	hint.ai_family = AF_INET;
 
-	addrinfo * result;
-	int error = getaddrinfo(host.c_str(), service.c_str(), &hint, &result);
-	addrinfo * start = result;
+	addrinfo* result;
+	// port and service mean the same thing
+	int error = getaddrinfo(host.c_str(), port.c_str(), &hint, &result);
+	addrinfo* start = result;
 	if(error == SOCKET_ERROR && result)
 	{
 		freeaddrinfo(start);
@@ -67,13 +69,13 @@ STATIC SocketAddressPtr NetworkUtils::CreateIPv4FromString(std::string const & h
 	}
 
 	//Keep searching for a non-nullptr entry
-	while(result->ai_addr == nullptr && result->ai_next)
+	while(result && result->ai_addr == nullptr)
 	{
 		result = result->ai_next;
 	}
 
 	//Last entry is nullptr, return
-	if(result->ai_addr == nullptr)
+	if(result == nullptr)
 	{
 		freeaddrinfo(start);
 		return nullptr;
@@ -92,7 +94,7 @@ STATIC int NetworkUtils::ReportError(bool printLog /*= true*/)
 	if(printLog)
 	{
 		std::string errorLog;
-		if(errorCode == 10048)
+		if(errorCode == ALREADY_IN_USE_ERROR)
 		{
 			errorLog = "Socket address already in use.";
 		}
@@ -100,7 +102,7 @@ STATIC int NetworkUtils::ReportError(bool printLog /*= true*/)
 		{
 			errorLog = "Resource temporarily unavailable. Non-blocking empty recv or connect.";
 		}
-		else if(errorCode == 10061)
+		else if(errorCode == CONNECTION_REFUSED_ERROR)
 		{
 			errorLog = "Connection refused. Address probably isn't hosting.";
 		}
@@ -160,7 +162,6 @@ STATIC char const * NetworkUtils::GetLocalHostName()
 		return "localhost";
 	}
 }
-
 
 //-------------------------------------------------------------------------------------------------
 // Old stuff

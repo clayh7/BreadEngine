@@ -73,7 +73,7 @@ TCPSocketPtr TCPSocket::Accept()
 
 
 //-------------------------------------------------------------------------------------------------
-int TCPSocket::Send(void const * data, int length)
+int TCPSocket::Send(const void* data, int length)
 {
 	int bytesSentCount = send(m_socket, static_cast<char const *>(data), length, 0);
 	if(bytesSentCount < 0)
@@ -85,7 +85,7 @@ int TCPSocket::Send(void const * data, int length)
 
 
 //-------------------------------------------------------------------------------------------------
-int TCPSocket::Receive(void * buffer, int length)
+int TCPSocket::Receive(void* buffer, int length)
 {
 	int bytesReceivedCount = recv(m_socket, static_cast<char*>(buffer), length, 0);
 	if(bytesReceivedCount < 0)
@@ -125,7 +125,7 @@ TCPSocket::TCPSocket(SOCKET inSocket)
 
 
 //-------------------------------------------------------------------------------------------------
-void TCPSocket::SetAddress(SocketAddress const & address)
+void TCPSocket::SetAddress(const SocketAddress& address)
 {
 	m_address = std::make_shared<SocketAddress>(address);
 }

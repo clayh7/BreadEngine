@@ -49,18 +49,6 @@
     <Filter Include="Memory">
       <UniqueIdentifier>{465b69b8-96ac-4f69-bcd3-82dc6392fd85}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Net">
-      <UniqueIdentifier>{a71a7666-5401-48fa-aad3-50a9469a4c25}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Net\TCPIP">
-      <UniqueIdentifier>{a7c42714-a22f-4b1d-b647-288828c2a2d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Net\UDPIP">
-      <UniqueIdentifier>{167d3564-85b1-412f-9669-3bc37c8cc2f2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Net\Session">
-      <UniqueIdentifier>{674ddf66-d4a8-4708-a900-1a01bdbae869}</UniqueIdentifier>
-    </Filter>
     <Filter Include="RenderSystem\Materials">
       <UniqueIdentifier>{92a8dff6-7cc9-497a-8a5a-7bf146a871c9}</UniqueIdentifier>
     </Filter>
@@ -69,6 +57,21 @@
     </Filter>
     <Filter Include="UISystem">
       <UniqueIdentifier>{464893e6-e197-44dc-a93b-be484e510c20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetworkSystem">
+      <UniqueIdentifier>{a71a7666-5401-48fa-aad3-50a9469a4c25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetworkSystem\UDPIP">
+      <UniqueIdentifier>{167d3564-85b1-412f-9669-3bc37c8cc2f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetworkSystem\Session">
+      <UniqueIdentifier>{674ddf66-d4a8-4708-a900-1a01bdbae869}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetworkSystem\RCS">
+      <UniqueIdentifier>{b6a2ca43-8b60-4811-9925-b5299fdb61c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetworkSystem\Sockets">
+      <UniqueIdentifier>{fa253215-4413-45ea-8135-4ca9b33327ae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -328,22 +331,22 @@
       <Filter>RenderSystem</Filter>
     </ClCompile>
     <ClCompile Include="NetworkSystem\Session\NetConnection.cpp">
-      <Filter>Net\Session</Filter>
+      <Filter>NetworkSystem\Session</Filter>
     </ClCompile>
     <ClCompile Include="NetworkSystem\Session\NetMessage.cpp">
-      <Filter>Net\Session</Filter>
+      <Filter>NetworkSystem\Session</Filter>
     </ClCompile>
     <ClCompile Include="NetworkSystem\Session\NetPacket.cpp">
-      <Filter>Net\Session</Filter>
+      <Filter>NetworkSystem\Session</Filter>
     </ClCompile>
     <ClCompile Include="NetworkSystem\Session\NetSession.cpp">
-      <Filter>Net\Session</Filter>
+      <Filter>NetworkSystem\Session</Filter>
     </ClCompile>
     <ClCompile Include="NetworkSystem\Session\PacketChannel.cpp">
-      <Filter>Net\Session</Filter>
+      <Filter>NetworkSystem\Session</Filter>
     </ClCompile>
     <ClCompile Include="NetworkSystem\UDPIP\UDPSock.cpp">
-      <Filter>Net\UDPIP</Filter>
+      <Filter>NetworkSystem\UDPIP</Filter>
     </ClCompile>
     <ClCompile Include="InputSystem\BInputSystem.cpp">
       <Filter>InputSystem</Filter>
@@ -364,7 +367,7 @@
       <Filter>RenderSystem\SpriteRenderSystem</Filter>
     </ClCompile>
     <ClCompile Include="NetworkSystem\BNetworkSystem.cpp">
-      <Filter>Net</Filter>
+      <Filter>NetworkSystem</Filter>
     </ClCompile>
     <ClCompile Include="Threads\BJobSystem.cpp">
       <Filter>Threads</Filter>
@@ -379,7 +382,7 @@
       <Filter>UISystem</Filter>
     </ClCompile>
     <ClCompile Include="NetworkSystem\Session\AckBundle.cpp">
-      <Filter>Net\Session</Filter>
+      <Filter>NetworkSystem\Session</Filter>
     </ClCompile>
     <ClCompile Include="InputSystem\BMouseKeyboard.cpp">
       <Filter>InputSystem</Filter>
@@ -397,13 +400,7 @@
       <Filter>DebugSystem</Filter>
     </ClCompile>
     <ClCompile Include="NetworkSystem\Session\ConnectionInfo.cpp">
-      <Filter>Net\Session</Filter>
-    </ClCompile>
-    <ClCompile Include="NetworkSystem\Sockets\UDPSocket.cpp">
-      <Filter>Net\UDPIP</Filter>
-    </ClCompile>
-    <ClCompile Include="NetworkSystem\Sockets\TCPSocket.cpp">
-      <Filter>Net\TCPIP</Filter>
+      <Filter>NetworkSystem\Session</Filter>
     </ClCompile>
     <ClCompile Include="Utils\StreamReader.cpp">
       <Filter>Utils</Filter>
@@ -418,22 +415,28 @@
       <Filter>RenderSystem</Filter>
     </ClCompile>
     <ClCompile Include="NetworkSystem\Session\NetMessageDefinition.cpp">
-      <Filter>Net\Session</Filter>
+      <Filter>NetworkSystem\Session</Filter>
     </ClCompile>
     <ClCompile Include="RenderSystem\SpriteRenderSystem\SpriteSheetResource.cpp">
       <Filter>RenderSystem</Filter>
     </ClCompile>
-    <ClCompile Include="NetworkSystem\Sockets\SocketAddress.cpp">
-      <Filter>Net</Filter>
-    </ClCompile>
-    <ClCompile Include="NetworkSystem\RCS\RCSConnection.cpp">
-      <Filter>Net</Filter>
-    </ClCompile>
-    <ClCompile Include="NetworkSystem\RCS\RemoteCommandServer.cpp">
-      <Filter>Net</Filter>
-    </ClCompile>
     <ClCompile Include="RenderSystem\Kerning.cpp">
       <Filter>RenderSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkSystem\RCS\RCSConnection.cpp">
+      <Filter>NetworkSystem\RCS</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkSystem\RCS\RemoteCommandServer.cpp">
+      <Filter>NetworkSystem\RCS</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkSystem\Sockets\UDPSocket.cpp">
+      <Filter>NetworkSystem\Sockets</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkSystem\Sockets\SocketAddress.cpp">
+      <Filter>NetworkSystem\Sockets</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkSystem\Sockets\TCPSocket.cpp">
+      <Filter>NetworkSystem\Sockets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -732,22 +735,22 @@
       <Filter>RenderSystem</Filter>
     </ClInclude>
     <ClInclude Include="NetworkSystem\Session\NetConnection.hpp">
-      <Filter>Net\Session</Filter>
+      <Filter>NetworkSystem\Session</Filter>
     </ClInclude>
     <ClInclude Include="NetworkSystem\Session\NetMessage.hpp">
-      <Filter>Net\Session</Filter>
+      <Filter>NetworkSystem\Session</Filter>
     </ClInclude>
     <ClInclude Include="NetworkSystem\Session\NetPacket.hpp">
-      <Filter>Net\Session</Filter>
+      <Filter>NetworkSystem\Session</Filter>
     </ClInclude>
     <ClInclude Include="NetworkSystem\Session\NetSession.hpp">
-      <Filter>Net\Session</Filter>
+      <Filter>NetworkSystem\Session</Filter>
     </ClInclude>
     <ClInclude Include="NetworkSystem\Session\PacketChannel.hpp">
-      <Filter>Net\Session</Filter>
+      <Filter>NetworkSystem\Session</Filter>
     </ClInclude>
     <ClInclude Include="NetworkSystem\UDPIP\UDPSock.hpp">
-      <Filter>Net\UDPIP</Filter>
+      <Filter>NetworkSystem\UDPIP</Filter>
     </ClInclude>
     <ClInclude Include="InputSystem\BInputSystem.hpp">
       <Filter>InputSystem</Filter>
@@ -780,7 +783,7 @@
       <Filter>UISystem</Filter>
     </ClInclude>
     <ClInclude Include="NetworkSystem\Session\AckBundle.hpp">
-      <Filter>Net\Session</Filter>
+      <Filter>NetworkSystem\Session</Filter>
     </ClInclude>
     <ClInclude Include="InputSystem\BMouseKeyboard.hpp">
       <Filter>InputSystem</Filter>
@@ -795,13 +798,7 @@
       <Filter>DebugSystem</Filter>
     </ClInclude>
     <ClInclude Include="NetworkSystem\Session\ConnectionInfo.hpp">
-      <Filter>Net\Session</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkSystem\Sockets\UDPSocket.hpp">
-      <Filter>Net\UDPIP</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkSystem\Sockets\TCPSocket.hpp">
-      <Filter>Net\TCPIP</Filter>
+      <Filter>NetworkSystem\Session</Filter>
     </ClInclude>
     <ClInclude Include="Utils\StreamReader.hpp">
       <Filter>Utils</Filter>
@@ -816,7 +813,7 @@
       <Filter>RenderSystem</Filter>
     </ClInclude>
     <ClInclude Include="NetworkSystem\Session\NetMessageDefinition.hpp">
-      <Filter>Net\Session</Filter>
+      <Filter>NetworkSystem\Session</Filter>
     </ClInclude>
     <ClInclude Include="MemorySystem\UntrackedAllocator.hpp">
       <Filter>Memory</Filter>
@@ -824,17 +821,23 @@
     <ClInclude Include="RenderSystem\SpriteRenderSystem\SpriteSheetResource.hpp">
       <Filter>RenderSystem</Filter>
     </ClInclude>
-    <ClInclude Include="NetworkSystem\Sockets\SocketAddress.hpp">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkSystem\RCS\RCSConnection.hpp">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkSystem\RCS\RemoteCommandServer.hpp">
-      <Filter>Net</Filter>
-    </ClInclude>
     <ClInclude Include="RenderSystem\Kerning.hpp">
       <Filter>RenderSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkSystem\RCS\RCSConnection.hpp">
+      <Filter>NetworkSystem\RCS</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkSystem\RCS\RemoteCommandServer.hpp">
+      <Filter>NetworkSystem\RCS</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkSystem\Sockets\UDPSocket.hpp">
+      <Filter>NetworkSystem\Sockets</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkSystem\Sockets\SocketAddress.hpp">
+      <Filter>NetworkSystem\Sockets</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkSystem\Sockets\TCPSocket.hpp">
+      <Filter>NetworkSystem\Sockets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -844,7 +847,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="NetworkSystem\BNetworkSystem.hpp">
-      <Filter>Net</Filter>
+      <Filter>NetworkSystem</Filter>
     </None>
   </ItemGroup>
 </Project>

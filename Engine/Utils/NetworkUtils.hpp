@@ -42,15 +42,17 @@ class NetworkUtils
 	// Static Members
 	//-------------------------------------------------------------------------------------------------
 public:
+	static int const ALREADY_IN_USE_ERROR;
 	static int const WOULD_BLOCK_ERROR;
+	static int const CONNECTION_REFUSED_ERROR;
 
 	//-------------------------------------------------------------------------------------------------
 	// Static Functions
 	//-------------------------------------------------------------------------------------------------
 public:
-	static SocketAddressPtr CreateIPv4FromString(std::string const & addressString);
-	static SocketAddressPtr CreateIPv4FromString(std::string const & host, uint32_t port);
-	static SocketAddressPtr CreateIPv4FromString(std::string const & host, std::string const & service);
+	static SocketAddressPtr CreateIPv4FromString(const std::string& addressString);
+	static SocketAddressPtr CreateIPv4FromString(const std::string& host, uint32_t port);
+	static SocketAddressPtr CreateIPv4FromString(const std::string& host, const std::string& service);
 	static TCPSocketPtr CreateTCPSocket(eSocketAddressFamily family);
 	static UDPSocketPtr CreateUDPSocket(eSocketAddressFamily family);
 
@@ -58,7 +60,6 @@ public:
 
 	static int ReportError(bool printLog = true);
 };
-
 
 //-------------------------------------------------------------------------------------------------
 // Old Stuff

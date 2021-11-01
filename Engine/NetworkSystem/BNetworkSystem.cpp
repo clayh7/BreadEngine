@@ -6,9 +6,9 @@
 
 //-------------------------------------------------------------------------------------------------
 STATIC size_t BNetworkSystem::GAME_PORT = 4334;
-STATIC char const * BNetworkSystem::EVENT_NETWORK_STARTUP = "NetworkStartup";
-STATIC char const * BNetworkSystem::EVENT_NETWORK_SHUTDOWN = "NetworkShutdown";
-STATIC char const * BNetworkSystem::EVENT_NETWORK_UPDATE = "NetworkUpdateEvent";
+STATIC const char * BNetworkSystem::EVENT_NETWORK_STARTUP = "NetworkStartup";
+STATIC const char * BNetworkSystem::EVENT_NETWORK_SHUTDOWN = "NetworkShutdown";
+STATIC const char * BNetworkSystem::EVENT_NETWORK_UPDATE = "NetworkUpdateEvent";
 
 
 //-------------------------------------------------------------------------------------------------

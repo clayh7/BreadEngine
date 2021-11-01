@@ -20,11 +20,12 @@ private:
 	//-------------------------------------------------------------------------------------------------
 public:
 	SocketAddress(uint32_t address, uint16_t port);
-	SocketAddress(sockaddr const & sockAddr);
+	SocketAddress(const sockaddr& sockAddr);
 
 	size_t GetSize() const;
-	char const * GetAddress();
+	const char* GetAddress();
 
 private:
-	sockaddr_in * GetAsSockAddrIn();
+	sockaddr_in* GetAsSockAddrIn();
 };
+typedef std::shared_ptr<SocketAddress> SocketAddressPtr;

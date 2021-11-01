@@ -25,9 +25,9 @@ int UDPSocket::Bind(SocketAddressPtr address)
 
 
 //-------------------------------------------------------------------------------------------------
-int UDPSocket::SendTo(void const * data, int length, SocketAddressPtr toAddress)
+int UDPSocket::SendTo(const void* data, int length, SocketAddressPtr toAddress)
 {
-	int byteSentCount = sendto(m_socket, static_cast<char const *>(data), length, 0, &(toAddress->m_sockAddr), toAddress->GetSize());
+	int byteSentCount = sendto(m_socket, static_cast<const char*>(data), length, 0, &(toAddress->m_sockAddr), toAddress->GetSize());
 	if(byteSentCount >= 0)
 	{
 		return byteSentCount;
@@ -40,7 +40,7 @@ int UDPSocket::SendTo(void const * data, int length, SocketAddressPtr toAddress)
 
 
 //-------------------------------------------------------------------------------------------------
-int UDPSocket::ReceiveFrom(void * buffer, int length, SocketAddressPtr out_fromAddress)
+int UDPSocket::ReceiveFrom(void* buffer, int length, SocketAddressPtr out_fromAddress)
 {
 	sockaddr fromAddress;
 	int fromLength = sizeof(fromAddress);
@@ -52,7 +52,8 @@ int UDPSocket::ReceiveFrom(void * buffer, int length, SocketAddressPtr out_fromA
 	}
 	else
 	{
-		return NetworkUtils::ReportError();
+		NetworkUtils::ReportError();
+		return readByteCount;
 	}
 }
 
@@ -60,7 +61,7 @@ int UDPSocket::ReceiveFrom(void * buffer, int length, SocketAddressPtr out_fromA
 //-------------------------------------------------------------------------------------------------
 void UDPSocket::SetBlocking(bool isBlocking)
 {
-	u_long blocking = isBlocking ? 1 : 0;
+	u_long blocking = isBlocking ? 0 : 1;
 	int error = ioctlsocket(m_socket, FIONBIO, &blocking);
 	if(error == SOCKET_ERROR)
 	{

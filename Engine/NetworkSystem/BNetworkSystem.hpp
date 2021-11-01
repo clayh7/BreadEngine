@@ -13,9 +13,9 @@ class BNetworkSystem
 	//-------------------------------------------------------------------------------------------------
 public:
 	static size_t GAME_PORT;
-	static char const * EVENT_NETWORK_STARTUP;
-	static char const * EVENT_NETWORK_SHUTDOWN;
-	static char const * EVENT_NETWORK_UPDATE;
+	static const char * EVENT_NETWORK_STARTUP;
+	static const char * EVENT_NETWORK_SHUTDOWN;
+	static const char * EVENT_NETWORK_UPDATE;
 
 	//-------------------------------------------------------------------------------------------------
 	// Static Functions

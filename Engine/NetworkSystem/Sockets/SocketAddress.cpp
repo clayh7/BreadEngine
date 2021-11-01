@@ -2,10 +2,10 @@
 
 
 //-------------------------------------------------------------------------------------------------
-//This is for IPv4, #TODO: make a IPv6 constructor
+//This is for IPv4, #TODO: make a IPv6 constructor (AF_INET6)
 SocketAddress::SocketAddress(uint32_t address, uint16_t port)
 {
-	sockaddr_in * addr = GetAsSockAddrIn();
+	sockaddr_in* addr = GetAsSockAddrIn();
 	addr->sin_family = AF_INET; //IPv4
 	addr->sin_addr.S_un.S_addr = htonl(address);
 	addr->sin_port = htons(port);
@@ -13,7 +13,7 @@ SocketAddress::SocketAddress(uint32_t address, uint16_t port)
 
 
 //-------------------------------------------------------------------------------------------------
-SocketAddress::SocketAddress(sockaddr const & sockAddr)
+SocketAddress::SocketAddress(const sockaddr& sockAddr)
 {
 	memcpy(&m_sockAddr, &sockAddr, sizeof(sockaddr));
 }
@@ -27,14 +27,14 @@ size_t SocketAddress::GetSize() const
 
 
 //-------------------------------------------------------------------------------------------------
-char const * SocketAddress::GetAddress()
+const char* SocketAddress::GetAddress()
 {
 	int const tempBufferSize = 256;
 
 	// buffer is static - so will not go out of scope, but that means this is not thread safe.
 	static char buffer[tempBufferSize];
 	char hostname[tempBufferSize];
-	sockaddr_in * addr = GetAsSockAddrIn();
+	sockaddr_in* addr = GetAsSockAddrIn();
 
 	// inet_ntop converts an address type to a human readable string
 	inet_ntop(addr->sin_family, &(addr->sin_addr), hostname, tempBufferSize);
@@ -47,7 +47,7 @@ char const * SocketAddress::GetAddress()
 
 
 //-------------------------------------------------------------------------------------------------
-sockaddr_in * SocketAddress::GetAsSockAddrIn()
+sockaddr_in* SocketAddress::GetAsSockAddrIn()
 {
 	return reinterpret_cast<sockaddr_in*>(&m_sockAddr);
 }

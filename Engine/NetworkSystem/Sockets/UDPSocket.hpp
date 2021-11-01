@@ -24,8 +24,8 @@ private:
 public:
 	~UDPSocket();
 	int Bind(SocketAddressPtr address);
-	int SendTo(void const * data, int length, SocketAddressPtr toAddress);
-	int ReceiveFrom(void * buffer, int length, SocketAddressPtr out_fromAddress);
+	int SendTo(const void* data, int length, SocketAddressPtr toAddress);
+	int ReceiveFrom(void* buffer, int length, SocketAddressPtr out_fromAddress);
 	void SetBlocking(bool isBlocking);
 
 private:
