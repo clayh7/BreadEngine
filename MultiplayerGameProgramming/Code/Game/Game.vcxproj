@@ -18,7 +18,7 @@
     <ProjectGuid>{F8E773DE-4F53-46C9-8A73-B3C0E59556D3}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Protogame</RootNamespace>
-    <ProjectName>ProtoGame</ProjectName>
+    <ProjectName>Game</ProjectName>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -150,11 +150,17 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameNetworkSystem.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="INetworkedObject.cpp" />
     <ClCompile Include="Main_Win32.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp" />
     <ClInclude Include="Game.hpp" />
+    <ClInclude Include="GameNetworkSystem.hpp" />
+    <ClInclude Include="GameObject.hpp" />
+    <ClInclude Include="INetworkedObject.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Run_Win32\Data\Fonts\ConsoleFont.fnt" />

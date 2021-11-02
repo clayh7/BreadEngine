@@ -27,12 +27,30 @@
     <ClCompile Include="Game.cpp">
       <Filter>Main</Filter>
     </ClCompile>
+    <ClCompile Include="GameNetworkSystem.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="INetworkedObject.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="Game.hpp">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="GameNetworkSystem.hpp">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.hpp">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="INetworkedObject.hpp">
       <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>

@@ -230,15 +230,15 @@ public:
 		CommandObjectFunction<T_ObjectType, T_FunctionType> * registerCommand = new CommandObjectFunction<T_ObjectType, T_FunctionType>();
 		registerCommand->m_object = object;
 		registerCommand->m_function = function;
+		
+		//Add command description
+		std::string fullDescription = Stringf("%s%s", commandName.c_str(), commandDescription.c_str());
+		char * descriptionString = CreateNewCString(fullDescription);
+		registerCommand->m_description = descriptionString;
 
 		//Add new command
 		size_t commandHash = std::hash<std::string>{}(commandName);
 		m_commands.insert(std::pair<size_t, CommandBase*>(commandHash, registerCommand));
-
-		//Add command description
-		std::string fullDescription = Stringf("%s%s", commandName.c_str(), commandDescription.c_str());
-		char * descriptionString = CreateNewCString(fullDescription);
-		m_commandDescriptions.insert(std::pair<std::string, char*>(commandName, descriptionString));
 	}
 
 	template<typename T_ObjectType, typename T_FunctionType>
@@ -249,13 +249,13 @@ public:
 		registerCommand->m_object = object;
 		registerCommand->m_function = function;
 
-		//Add new command
-		size_t commandHash = std::hash<std::string>{}(commandName);
-		m_commands.insert(std::pair<size_t, CommandBase*>(commandHash, registerCommand));
-
 		//Add command description
 		std::string fullDescription = Stringf("%s%s", commandName.c_str(), commandDescription.c_str());
 		char * descriptionString = CreateNewCString(fullDescription);
-		m_commandDescriptions.insert(std::pair<std::string, char*>(commandName, descriptionString));
+		registerCommand->m_description = descriptionString;
+
+		//Add new command
+		size_t commandHash = std::hash<std::string>{}(commandName);
+		m_commands.insert(std::pair<size_t, CommandBase*>(commandHash, registerCommand));
 	}
 };

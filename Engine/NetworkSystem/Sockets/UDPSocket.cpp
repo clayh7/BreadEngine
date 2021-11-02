@@ -52,7 +52,12 @@ int UDPSocket::ReceiveFrom(void* buffer, int length, SocketAddressPtr out_fromAd
 	}
 	else
 	{
-		NetworkUtils::ReportError();
+		// WOULD_BLOCK_ERROR is expected if we're not blocking
+		int errorCode = WSAGetLastError();
+		if (errorCode != NetworkUtils::WOULD_BLOCK_ERROR)
+		{
+			NetworkUtils::ReportError();
+		}
 		return readByteCount;
 	}
 }

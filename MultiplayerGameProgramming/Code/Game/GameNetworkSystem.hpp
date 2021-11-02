@@ -1,18 +1,11 @@
 #pragma once
 
-#include "Game/GameNetworkSystem.hpp"
+#include "Engine/Utils/NetworkUtils.hpp"
+#include "Engine/DebugSystem/Command.hpp"
 
 
 //-------------------------------------------------------------------------------------------------
-class Game;
-
-
-//-------------------------------------------------------------------------------------------------
-extern Game * g_GameSystem;
-
-
-//-------------------------------------------------------------------------------------------------
-class Game
+class GameNetworkSystem
 {
 	//-------------------------------------------------------------------------------------------------
 	// Static Members
@@ -23,7 +16,11 @@ public:
 	// Members
 	//-------------------------------------------------------------------------------------------------
 public:
-	GameNetworkSystem m_networkSystem;
+	SocketAddressPtr m_ipaddress = nullptr;
+	UDPSocketPtr m_listeningSocket = nullptr;
+	const size_t PORT_START = 4325;
+	const size_t PORT_RETRY_RANGE = 10;
+	//const int PACKET_MAX_SIZE = 1300;
 
 	//-------------------------------------------------------------------------------------------------
 	// Static Functions
@@ -34,8 +31,9 @@ public:
 	// Functions
 	//-------------------------------------------------------------------------------------------------
 public:
-	Game();
-	~Game();
+	GameNetworkSystem();
+	~GameNetworkSystem();
 	void Update();
-	void Render() const;
+
+	void Test(const Command& command);
 };
