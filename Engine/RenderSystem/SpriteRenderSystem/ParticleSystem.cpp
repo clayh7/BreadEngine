@@ -105,10 +105,10 @@ void ParticleSystem::UpdateParticles()
 	{
 		particle->age += Time::DELTA_SECONDS;
 		particle->velocity += particle->acceleration * Time::DELTA_SECONDS;
-		particle->sprite->m_position += particle->velocity * Time::DELTA_SECONDS;
-		particle->sprite->m_scale = Lerp(particle->startScale, particle->endScale, particle->age / particle->maxAge);
+		particle->sprite.m_position += particle->velocity * Time::DELTA_SECONDS;
+		particle->sprite.m_scale = Lerp(particle->startScale, particle->endScale, particle->age / particle->maxAge);
 		float percentAge = (particle->age / particle->maxAge);
-		particle->sprite->m_color = Color::Lerp(particle->startColor, particle->endColor, percentAge);
+		particle->sprite.m_color = Color::Lerp(particle->startColor, particle->endColor, percentAge);
 	}
 }
 

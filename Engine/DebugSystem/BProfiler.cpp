@@ -251,7 +251,7 @@ BProfiler::BProfiler()
 	, m_currentSample(nullptr)
 	, m_currentSampleSet(nullptr)
 	, m_previousSampleSet(nullptr)
-	, m_samplePool(POOL_SIZE)
+	, m_samplePool(POOL_SIZE, "m_samplePool")
 	, m_profilerLines()
 {
 	m_profilerFont = BitmapFont::CreateOrGetFont("Data/Fonts/ClayFont.png");

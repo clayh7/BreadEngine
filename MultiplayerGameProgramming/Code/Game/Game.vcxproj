@@ -149,18 +149,30 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Ender.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameCommon.cpp" />
     <ClCompile Include="GameNetworkSystem.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="INetworkedObject.cpp" />
+    <ClCompile Include="Level.cpp" />
     <ClCompile Include="Main_Win32.cpp" />
+    <ClCompile Include="Pusher.cpp" />
+    <ClCompile Include="Slot.cpp" />
+    <ClCompile Include="Starter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp" />
+    <ClInclude Include="Ender.hpp" />
     <ClInclude Include="Game.hpp" />
+    <ClInclude Include="GameCommon.hpp" />
     <ClInclude Include="GameNetworkSystem.hpp" />
     <ClInclude Include="GameObject.hpp" />
     <ClInclude Include="INetworkedObject.hpp" />
+    <ClInclude Include="Level.hpp" />
+    <ClInclude Include="Pusher.hpp" />
+    <ClInclude Include="Slot.hpp" />
+    <ClInclude Include="Starter.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Run_Win32\Data\Fonts\ConsoleFont.fnt" />

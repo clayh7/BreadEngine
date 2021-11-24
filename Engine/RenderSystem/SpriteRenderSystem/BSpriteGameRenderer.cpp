@@ -90,26 +90,6 @@ STATIC void BSpriteGameRenderer::Shutdown()
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC void BSpriteGameRenderer::Update()
-{
-	if(s_System)
-	{
-		s_System->UpdateMaterialEffects();
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
-STATIC void BSpriteGameRenderer::Render()
-{
-	if(s_System)
-	{
-		s_System->SystemRender();
-	}
-}
-
-
-//-------------------------------------------------------------------------------------------------
 STATIC BSpriteGameRenderer * BSpriteGameRenderer::CreateOrGetSystem()
 {
 	if(!s_System)
@@ -118,17 +98,6 @@ STATIC BSpriteGameRenderer * BSpriteGameRenderer::CreateOrGetSystem()
 	}
 
 	return s_System;
-}
-
-
-//-------------------------------------------------------------------------------------------------
-//Higher layer on top
-STATIC Sprite * BSpriteGameRenderer::Create(std::string const & spriteID, int layer /*= 0*/, bool ignoreView /*= false*/)
-{
-	Sprite * newSprite = new Sprite(spriteID, layer, ignoreView);
-	SpriteLayer * spriteLayer = s_System->CreateOrGetLayer(layer);
-	spriteLayer->AddSprite(newSprite);
-	return newSprite;
 }
 
 
@@ -153,6 +122,7 @@ BSpriteGameRenderer::BSpriteGameRenderer()
 	SetupMaterialEffects();
 	m_spriteMesh = new Mesh(eVertexType_SPRITE);
 	m_spriteMeshRenderer = new MeshRenderer(Transform(), RenderState::BASIC_2D);
+	//SetClearColor(Color::WHITE);
 
 	//Create Nothing Shader PostProcessFX
 	m_fboCurrent = new Framebuffer();
@@ -160,9 +130,12 @@ BSpriteGameRenderer::BSpriteGameRenderer()
 	m_screenMesh = Mesh::GetMeshShape(eMeshShape_QUAD);
 	m_screenEffect = new MeshRenderer(m_screenMesh, m_screenMaterials[eMaterialEffect_NOTHING], Transform(Vector3f::ZERO, Matrix4f::IDENTITY, 2.f), RenderState::BASIC_2D);
 
+
 	BConsoleSystem::Register("sprite_layer_enable", EnableLayerCommand, " [num] : Enables sprite layer, allowing it to render. Default = 0");
 	BConsoleSystem::Register("sprite_layer_disable", DisableLayerCommand, " [num] : Disable sprite layer, stopping it from rendering. Default = 0");
 	BConsoleSystem::Register("sprite_export", ExportSpritesCommand, " [filename] : Save sprite resource database to an xml file. Delfault = SpriteDatabase");
+	BEventSystem::RegisterEvent(EVENT_ENGINE_UPDATE, this, &BSpriteGameRenderer::OnUpdate);
+	BEventSystem::RegisterEvent(EVENT_ENGINE_RENDER, this, &BSpriteGameRenderer::OnRender);
 }
 
 
@@ -211,6 +184,31 @@ BSpriteGameRenderer::~BSpriteGameRenderer()
 		deleteLayer.second = nullptr;
 	}
 	m_spriteLayers.clear();
+}
+
+
+//-------------------------------------------------------------------------------------------------
+void BSpriteGameRenderer::OnUpdate(NamedProperties&)
+{
+	Vector2i windowDimensions = GetWindowDimensions();
+	SetAspectRatio((float)windowDimensions.x, (float)windowDimensions.y);
+	SetVirtualSize((float)windowDimensions.y);
+	SetImportSize((float)windowDimensions.x);
+
+	if (s_System)
+	{
+		s_System->UpdateMaterialEffects();
+	}
+}
+
+
+//-------------------------------------------------------------------------------------------------
+void BSpriteGameRenderer::OnRender(NamedProperties&) const
+{
+	if (s_System)
+	{
+		s_System->SystemRender();
+	}
 }
 
 

@@ -1,12 +1,13 @@
 #include "Engine/RenderSystem/Material.hpp"
 
 #include "Engine/DebugSystem/ErrorWarningAssert.hpp"
+#include "Engine/Math/Matrix4f.hpp"
 #include "Engine/RenderSystem/BRenderSystem.hpp"
 #include "Engine/RenderSystem/Attribute.hpp"
 #include "Engine/RenderSystem/Uniform.hpp"
 #include "Engine/RenderSystem/Texture.hpp"
 #include "Engine/RenderSystem/ShaderProgram.hpp"
-#include "Engine/Math/Matrix4f.hpp"
+#include "Engine/Utils/StringUtils.hpp"
 
 
 //-------------------------------------------------------------------------------------------------
@@ -155,53 +156,55 @@ Material::Material(ShaderProgram const *program)
 		{
 			uName = uName.substr(0, foundIndex);
 		}
+		char* nameString = CreateNewCString(uName);
+		m_uniformNames.push_back(nameString);
 
 		switch(type)
 		{
 		case GL_INT:
 		{
 			int * temp = new int[size];
-			m_uniforms[uName] = new Uniform(loc, length, size, type, uName, temp);
+			m_uniforms[nameString] = new Uniform(loc, length, size, type, uName, temp);
 			break;
 		}
 		case GL_FLOAT:
 		{
 			float * temp = new float[size];
-			m_uniforms[uName] = new Uniform(loc, length, size, type, uName, temp);
+			m_uniforms[nameString] = new Uniform(loc, length, size, type, uName, temp);
 			break;
 		}
 		case GL_FLOAT_VEC2:
 		{
 			Vector2f * temp = new Vector2f[size];
-			m_uniforms[uName] = new Uniform(loc, length, size, type, uName, temp);
+			m_uniforms[nameString] = new Uniform(loc, length, size, type, uName, temp);
 			break;
 		}
 		case GL_FLOAT_VEC3:
 		{
 			Vector3f * temp = new Vector3f[size];
-			m_uniforms[uName] = new Uniform(loc, length, size, type, uName, temp);
+			m_uniforms[nameString] = new Uniform(loc, length, size, type, uName, temp);
 			break;
 		}
 		case GL_FLOAT_VEC4:
 		{
 			Vector4f * temp = new Vector4f[size];
-			m_uniforms[uName] = new Uniform(loc, length, size, type, uName, temp);
+			m_uniforms[nameString] = new Uniform(loc, length, size, type, uName, temp);
 			break;
 		}
 		case GL_INT_VEC4:
 		{
 			Vector4i * temp = new Vector4i[size];
-			m_uniforms[uName] = new Uniform(loc, length, size, type, uName, temp);
+			m_uniforms[nameString] = new Uniform(loc, length, size, type, uName, temp);
 			break;
 		}
 		case GL_FLOAT_MAT4:
 		{
 			Matrix4f * temp = new Matrix4f[size];
-			m_uniforms[uName] = new Uniform(loc, length, size, type, uName, temp);
+			m_uniforms[nameString] = new Uniform(loc, length, size, type, uName, temp);
 			break;
 		}
 		case GL_SAMPLER_2D:
-			m_uniforms[uName] = new Uniform(loc, length, size, type, uName, new unsigned int(0));
+			m_uniforms[nameString] = new Uniform(loc, length, size, type, uName, new unsigned int(0));
 			break;
 		}
 	}
@@ -215,6 +218,12 @@ Material::~Material()
 	{
 		delete deleteUniform.second;
 		deleteUniform.second = nullptr;
+	}
+
+	for (auto deleteName : m_uniformNames)
+	{
+		delete deleteName;
+		deleteName = nullptr;
 	}
 
 	for(auto deleteMe : m_attributes)
@@ -233,7 +242,7 @@ std::map<size_t, Attribute*> const & Material::GetAttributeList() const
 
 
 //-------------------------------------------------------------------------------------------------
-std::map<std::string, Uniform*> const & Material::GetUniformList() const
+const UniformMap& Material::GetUniformList() const
 {
 	return m_uniforms;
 }
@@ -254,7 +263,7 @@ unsigned int Material::GetSamplerID() const
 
 
 //-------------------------------------------------------------------------------------------------
-void Material::SetUniform(std::string const & uniformName, int uniformValue)
+void Material::SetUniform(const char* uniformName, int uniformValue)
 {
 	auto uniformIter = m_uniforms.find(uniformName);
 	ASSERT_RECOVERABLE(uniformIter != m_uniforms.end(), "Uniform not found.");
@@ -265,7 +274,7 @@ void Material::SetUniform(std::string const & uniformName, int uniformValue)
 
 
 //-------------------------------------------------------------------------------------------------
-void Material::SetUniform(std::string const & uniformName, float uniformValue)
+void Material::SetUniform(const char* uniformName, float uniformValue)
 {
 	auto uniformIter = m_uniforms.find(uniformName);
 	ASSERT_RECOVERABLE(uniformIter != m_uniforms.end(), "Uniform not found.");
@@ -276,7 +285,7 @@ void Material::SetUniform(std::string const & uniformName, float uniformValue)
 
 
 //-------------------------------------------------------------------------------------------------
-void Material::SetUniform(std::string const & uniformName, Vector3f const & uniformValue)
+void Material::SetUniform(const char* uniformName, Vector3f const & uniformValue)
 {
 	auto uniformIter = m_uniforms.find(uniformName);
 	ASSERT_RECOVERABLE(uniformIter != m_uniforms.end(), "Uniform not found.");
@@ -287,7 +296,7 @@ void Material::SetUniform(std::string const & uniformName, Vector3f const & unif
 
 
 //-------------------------------------------------------------------------------------------------
-void Material::SetUniform(std::string const & uniformName, Vector4f const & uniformValue)
+void Material::SetUniform(const char* uniformName, Vector4f const & uniformValue)
 {
 	auto uniformIter = m_uniforms.find(uniformName);
 	ASSERT_RECOVERABLE(uniformIter != m_uniforms.end(), "Uniform not found.");
@@ -298,7 +307,7 @@ void Material::SetUniform(std::string const & uniformName, Vector4f const & unif
 
 
 //-------------------------------------------------------------------------------------------------
-void Material::SetUniform(std::string const & uniformName, Vector4i const & uniformValue)
+void Material::SetUniform(const char* uniformName, Vector4i const & uniformValue)
 {
 	auto uniformIter = m_uniforms.find(uniformName);
 	ASSERT_RECOVERABLE(uniformIter != m_uniforms.end(), "Uniform not found.");
@@ -309,7 +318,7 @@ void Material::SetUniform(std::string const & uniformName, Vector4i const & unif
 
 
 //-------------------------------------------------------------------------------------------------
-void Material::SetUniform(std::string const & uniformName, Matrix4f const & uniformValue)
+void Material::SetUniform(const char* uniformName, Matrix4f const & uniformValue)
 {
 	auto uniformIter = m_uniforms.find(uniformName);
 	ASSERT_RECOVERABLE(uniformIter != m_uniforms.end(), "Uniform not found.");
@@ -320,7 +329,7 @@ void Material::SetUniform(std::string const & uniformName, Matrix4f const & unif
 
 
 //-------------------------------------------------------------------------------------------------
-void Material::SetUniform(std::string const & uniformName, Color const & uniformValue)
+void Material::SetUniform(const char* uniformName, Color const & uniformValue)
 {
 	Vector4f convertedValue = uniformValue.GetVector4f();
 	SetUniform(uniformName, convertedValue);
@@ -328,7 +337,7 @@ void Material::SetUniform(std::string const & uniformName, Color const & uniform
 
 
 //-------------------------------------------------------------------------------------------------
-void Material::SetUniform(std::string const & uniformName, std::string const & uniformValue)
+void Material::SetUniform(const char* uniformName, std::string const & uniformValue)
 {
 	Texture const *generatedTexture = Texture::CreateOrLoadTexture(uniformValue);
 	auto uniformIter = m_uniforms.find(uniformName);
@@ -340,7 +349,7 @@ void Material::SetUniform(std::string const & uniformName, std::string const & u
 
 
 //-------------------------------------------------------------------------------------------------
-void Material::SetUniform(std::string const & uniformName, unsigned int uniformValue)
+void Material::SetUniform(const char* uniformName, unsigned int uniformValue)
 {
 	auto uniformIter = m_uniforms.find(uniformName);
 	ASSERT_RECOVERABLE(uniformIter != m_uniforms.end(), "Uniform not found.");
@@ -351,7 +360,7 @@ void Material::SetUniform(std::string const & uniformName, unsigned int uniformV
 
 
 //-------------------------------------------------------------------------------------------------
-void Material::SetUniform(std::string const & uniformName, Texture const * uniformValue)
+void Material::SetUniform(const char* uniformName, Texture const * uniformValue)
 {
 	auto uniformIter = m_uniforms.find(uniformName);
 	ASSERT_RECOVERABLE(uniformIter != m_uniforms.end(), "Uniform not found.");
@@ -362,7 +371,7 @@ void Material::SetUniform(std::string const & uniformName, Texture const * unifo
 
 
 //-------------------------------------------------------------------------------------------------
-void Material::SetUniform(std::string const & uniformName, int * uniformValue)
+void Material::SetUniform(const char* uniformName, int * uniformValue)
 {
 	//Doesn't exist yet, lets make space for it and assign it to the data
 	if(m_uniforms[uniformName] == nullptr)
@@ -400,7 +409,7 @@ void Material::SetUniform(std::string const & uniformName, int * uniformValue)
 
 
 //-------------------------------------------------------------------------------------------------
-void Material::SetUniform(std::string const & uniformName, float * uniformValue)
+void Material::SetUniform(const char* uniformName, float * uniformValue)
 {
 	//Doesn't exist yet, lets make space for it and assign it to the data
 	if(m_uniforms[uniformName] == nullptr)
@@ -438,7 +447,7 @@ void Material::SetUniform(std::string const & uniformName, float * uniformValue)
 
 
 //-------------------------------------------------------------------------------------------------
-void Material::SetUniform(std::string const & uniformName, Vector2f * uniformValue)
+void Material::SetUniform(const char* uniformName, Vector2f * uniformValue)
 {
 	//Doesn't exist yet, lets make space for it and assign it to the data
 	if(m_uniforms[uniformName] == nullptr)
@@ -476,7 +485,7 @@ void Material::SetUniform(std::string const & uniformName, Vector2f * uniformVal
 
 
 //-------------------------------------------------------------------------------------------------
-void Material::SetUniform(std::string const & uniformName, Vector3f * uniformValue)
+void Material::SetUniform(const char* uniformName, Vector3f * uniformValue)
 {
 	//Doesn't exist yet, lets make space for it and assign it to the data
 	if(m_uniforms[uniformName] == nullptr)
@@ -514,7 +523,7 @@ void Material::SetUniform(std::string const & uniformName, Vector3f * uniformVal
 
 
 //-------------------------------------------------------------------------------------------------
-void Material::SetUniform(std::string const & uniformName, Vector4f * uniformValue)
+void Material::SetUniform(const char* uniformName, Vector4f * uniformValue)
 {
 	//Doesn't exist yet, lets make space for it and assign it to the data
 	if(m_uniforms[uniformName] == nullptr)
@@ -553,7 +562,7 @@ void Material::SetUniform(std::string const & uniformName, Vector4f * uniformVal
 
 //-------------------------------------------------------------------------------------------------
 //#TODO: Continue Work here
-void Material::SetUniform(std::string const & uniformName, Matrix4f * uniformValue)
+void Material::SetUniform(const char* uniformName, Matrix4f * uniformValue)
 {
 	//Doesn't exist yet, lets make space for it and assign it to the data
 	if(m_uniforms[uniformName] == nullptr)
@@ -591,7 +600,7 @@ void Material::SetUniform(std::string const & uniformName, Matrix4f * uniformVal
 
 
 //-------------------------------------------------------------------------------------------------
-void Material::SetUniform(std::vector<Light> const &uniformLights, int lightCount)
+void Material::SetUniform(std::vector<Light> const & uniformLights, int lightCount)
 {
 	SetUniform("uLightCount", lightCount);
 	Vector4f lightColor[16];
@@ -764,7 +773,7 @@ void Material::UpdateBindpoints()
 			uName = uName.substr(0, foundIndex);
 		}
 
-		auto foundUniform = m_uniforms.find(uName);
+		auto foundUniform = m_uniforms.find(uName.c_str());
 		//Update existing bindpoints
 		if(foundUniform != m_uniforms.end())
 		{
@@ -773,48 +782,51 @@ void Material::UpdateBindpoints()
 		//Create new attributes
 		else
 		{
+			char* nameString = CreateNewCString(uName);
+			m_uniformNames.push_back(nameString);
+
 			switch(type)
 			{
 			case GL_INT:
 			{
 				int* temp = new int[size];
-				m_uniforms[uName] = new Uniform(loc, length, size, type, uName, temp);
+				m_uniforms[nameString] = new Uniform(loc, length, size, type, nameString, temp);
 				break;
 			}
 			case GL_FLOAT:
 			{
 				float* temp = new float[size];
-				m_uniforms[uName] = new Uniform(loc, length, size, type, uName, temp);
+				m_uniforms[nameString] = new Uniform(loc, length, size, type, nameString, temp);
 				break;
 			}
 			case GL_FLOAT_VEC2:
 			{
 				Vector2f* temp = new Vector2f[size];
-				m_uniforms[uName] = new Uniform(loc, length, size, type, uName, temp);
+				m_uniforms[nameString] = new Uniform(loc, length, size, type, nameString, temp);
 				break;
 			}
 			case GL_FLOAT_VEC3:
 			{
 				Vector3f* temp = new Vector3f[size];
-				m_uniforms[uName] = new Uniform(loc, length, size, type, uName, temp);
+				m_uniforms[nameString] = new Uniform(loc, length, size, type, nameString, temp);
 				break;
 			}
 			case GL_FLOAT_VEC4:
 			{
 				Vector4f* temp = new Vector4f[size];
-				m_uniforms[uName] = new Uniform(loc, length, size, type, uName, temp);
+				m_uniforms[nameString] = new Uniform(loc, length, size, type, nameString, temp);
 				break;
 			}
 			case GL_FLOAT_MAT4:
 			{
 				Matrix4f* temp = new Matrix4f[size];
-				m_uniforms[uName] = new Uniform(loc, length, size, type, uName, temp);
+				m_uniforms[nameString] = new Uniform(loc, length, size, type, nameString, temp);
 				break;
 			}
 			case GL_SAMPLER_2D:
 			{
 				unsigned int * temp = new unsigned int(0);
-				m_uniforms[uName] = new Uniform(loc, length, size, type, uName, temp);
+				m_uniforms[nameString] = new Uniform(loc, length, size, type, nameString, temp);
 				break;
 			}
 			}

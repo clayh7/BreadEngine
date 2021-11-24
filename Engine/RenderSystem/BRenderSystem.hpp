@@ -12,6 +12,7 @@
 #include "Engine/Math/Vector3f.hpp"
 #include "Engine/Math/Vector4f.hpp"
 #include "Engine/Core/EngineCommon.hpp"
+#include "Engine/RenderSystem/Uniform.hpp"
 
 
 //-------------------------------------------------------------------------------------------------
@@ -25,7 +26,6 @@ class Matrix4f;
 class Mesh;
 class MeshRenderer;
 class NamedProperties;
-class Uniform;
 class Vertex_PCU;
 class Vertex_PC;
 class VertexDefinition;
@@ -93,7 +93,7 @@ public:
 
 	Camera3D const * GetActiveCamera() const { return m_activeCamera; }
 	GLenum GetVertexDataType(VertexDataType const & type) const;
-	void SetShaderProgramUniforms(GLuint samplerID, std::map<std::string, Uniform*> const &meshRenderer);
+	void SetShaderProgramUniforms(GLuint samplerID, const UniformMap& meshRenderer);
 	void SetMatrixUniforms(MeshRenderer* setMeshRenderer);
 	void MeshRender(MeshRenderer const *meshRenderer);
 

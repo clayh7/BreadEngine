@@ -15,7 +15,7 @@
 //-------------------------------------------------------------------------------------------------
 Sprite::Sprite(std::string const & spriteID, int layer /*= 0*/, bool ignoreView /*= false*/)
 	: m_enabled(true)
-	, m_layerID(layer)
+	, m_layerID(layer) // Larger numbers are on top of smaller numbers
 	, m_spriteResource(nullptr)
 	, m_renderer(BSpriteGameRenderer::s_System)
 	, m_spriteID(spriteID)
@@ -31,6 +31,8 @@ Sprite::Sprite(std::string const & spriteID, int layer /*= 0*/, bool ignoreView 
 	if(BSpriteGameRenderer::s_System)
 	{
 		m_spriteResource = BSpriteGameRenderer::s_System->GetSpriteResource(spriteID);
+		SpriteLayer* spriteLayer = BSpriteGameRenderer::s_System->CreateOrGetLayer(layer);
+		spriteLayer->AddSprite(this);
 	}
 }
 

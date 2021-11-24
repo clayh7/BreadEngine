@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 
 
 //-------------------------------------------------------------------------------------------------
@@ -27,3 +28,15 @@ public:
 
 	int GetBindPoint() const { return m_bindPoint; }
 };
+
+// This fancy struct is so I can use strings as keys in a map, and compare their contents instead
+// of their pointers.
+struct CompareCharPointers
+{
+	bool operator()(char const *a, char const *b) const
+	{
+		return std::strcmp(a, b) < 0;
+	}
+};
+
+typedef std::map<const char*, Uniform*, CompareCharPointers> UniformMap;

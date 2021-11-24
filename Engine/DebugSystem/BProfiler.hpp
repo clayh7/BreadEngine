@@ -28,7 +28,7 @@ class BProfiler
 	// Static Members
 	//-------------------------------------------------------------------------------------------------
 public:
-	static int const POOL_SIZE = 100000;
+	static int const POOL_SIZE = 64;
 	static int const LINE_COUNT = 40;
 	static char const * ROOT_SAMPLE;
 	static BProfiler * s_Instance;

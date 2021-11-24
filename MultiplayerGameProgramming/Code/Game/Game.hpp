@@ -1,10 +1,11 @@
 #pragma once
 
-#include "Game/GameNetworkSystem.hpp"
+#include "GameCommon.hpp"
 
 
 //-------------------------------------------------------------------------------------------------
 class Game;
+class Level;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -23,7 +24,7 @@ public:
 	// Members
 	//-------------------------------------------------------------------------------------------------
 public:
-	GameNetworkSystem m_networkSystem;
+	std::shared_ptr<Level> m_currentLevel;
 
 	//-------------------------------------------------------------------------------------------------
 	// Static Functions
@@ -36,6 +37,7 @@ public:
 public:
 	Game();
 	~Game();
+	void OnKeyPressed(NamedProperties& params);
 	void Update();
 	void Render() const;
 };

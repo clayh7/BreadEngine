@@ -11,7 +11,7 @@ class NamedProperties
 	// Members
 	//-------------------------------------------------------------------------------------------------
 private:
-	std::map< size_t, NamedPropertyBase* > m_properties;
+	std::map<size_t, NamedPropertyBase*> m_properties;
 
 	//-------------------------------------------------------------------------------------------------
 	// Functions

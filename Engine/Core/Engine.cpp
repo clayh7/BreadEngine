@@ -35,7 +35,7 @@ extern Engine * g_EngineSystem = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
-STATIC float const Engine::PERCENT_OF_SCREEN = 0.8f;
+STATIC float const Engine::PERCENT_OF_SCREEN = 0.5f;
 STATIC float const Engine::ASPECT_RATIO = 16.f / 9.f;
 
 

@@ -541,7 +541,7 @@ GLenum BRenderSystem::GetVertexDataType(VertexDataType const & type) const
 
 
 //-------------------------------------------------------------------------------------------------
-void BRenderSystem::SetShaderProgramUniforms(GLuint samplerID, std::map<std::string, Uniform*> const & uniformList)
+void BRenderSystem::SetShaderProgramUniforms(GLuint samplerID, const UniformMap& uniformList)
 {
 	GLuint textureID = NULL;
 	unsigned int textureIndexPort = 0;
@@ -572,7 +572,6 @@ void BRenderSystem::SetShaderProgramUniforms(GLuint samplerID, std::map<std::str
 			textureID = *((unsigned int*)currentUniform->m_data);
 			if(textureID != NULL)
 			{
-				std::string uniformName = currentUniform->m_name;
 				BindTextureSampler(samplerID, textureID, textureIndexPort, currentUniform->m_bindPoint);
 			}
 			++textureIndexPort; //#TODO: Increment even if NULL, is this correct?

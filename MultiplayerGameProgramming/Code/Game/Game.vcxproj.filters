@@ -16,6 +16,9 @@
     <Filter Include="Data\Shaders">
       <UniqueIdentifier>{bdf8ae62-5dca-498c-a10b-c4d1a98161bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Main\GameObjects">
+      <UniqueIdentifier>{cb4e0cc1-f9d3-4e36-b5e7-5f4f689d8c36}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main_Win32.cpp">
@@ -30,10 +33,28 @@
     <ClCompile Include="GameNetworkSystem.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
+    <ClCompile Include="INetworkedObject.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="INetworkedObject.cpp">
+    <ClCompile Include="GameCommon.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Main\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Starter.cpp">
+      <Filter>Main\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Ender.cpp">
+      <Filter>Main\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Pusher.cpp">
+      <Filter>Main\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Level.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Slot.cpp">
       <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,10 +68,28 @@
     <ClInclude Include="GameNetworkSystem.hpp">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.hpp">
+    <ClInclude Include="INetworkedObject.hpp">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="INetworkedObject.hpp">
+    <ClInclude Include="GameCommon.hpp">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.hpp">
+      <Filter>Main\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Starter.hpp">
+      <Filter>Main\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Ender.hpp">
+      <Filter>Main\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Pusher.hpp">
+      <Filter>Main\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Level.hpp">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Slot.hpp">
       <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>

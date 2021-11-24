@@ -4,6 +4,8 @@
 #include "Engine/Math/Transform.hpp"
 #include "Engine/RenderSystem/Mesh.hpp" //Need MeshShape enum
 #include "Engine/RenderSystem/RenderState.hpp"
+#include "Engine/RenderSystem/Uniform.hpp"
+#include "Engine/DebugSystem/ErrorWarningAssert.hpp"
 
 
 //-------------------------------------------------------------------------------------------------
@@ -11,7 +13,6 @@ class Color;
 class Material;
 class Texture;
 class Matrix4f;
-class Uniform;
 class Attribute;
 class Light;
 
@@ -29,7 +30,9 @@ protected:
 	Mesh const * m_mesh;
 	Material const * m_material;
 	//#TODO: Replace all uniforms with NamedProperties (here and in Materials)
-	std::map<std::string, Uniform*> m_uniforms; //Uniforms individual to this MeshRenderer. Overwrites Material
+
+protected:
+	UniformMap m_uniforms; //Uniforms individual to this MeshRenderer. Overwrites Material
 
 //-------------------------------------------------------------------------------------------------
 // Functions
@@ -57,8 +60,8 @@ public:
 	unsigned int GetVAOID() const;
 	unsigned int GetIBOID() const;
 	std::vector<DrawInstruction> const & GetDrawInstructions() const;
-	std::map<std::string, Uniform*> const & GetUniformList() const;
-	std::map<std::string, Uniform*> const & GetMaterialUniformList() const;
+	const UniformMap& GetUniformList() const;
+	const UniformMap& GetMaterialUniformList() const;
 	std::map<size_t, Attribute*> const & GetMaterialAttributeList() const;
 	Vector3f GetPosition();
 
@@ -72,24 +75,81 @@ public:
 	void RebindMeshAndMaterialToVAO();//#TODO: Maybe make a force rebind
 	void UpdateUniformBindpoints();
 
-	void SetUniform(std::string const & uniformName, uint32_t uniformValue);
-	void SetUniform(std::string const & uniformName, int uniformValue);
-	void SetUniform(std::string const & uniformName, float uniformValue);
-	void SetUniform(std::string const & uniformName, Vector2f const & uniformValue);
-	void SetUniform(std::string const & uniformName, Vector3f const & uniformValue);
-	void SetUniform(std::string const & uniformName, Vector4f const & uniformValue);
-	void SetUniform(std::string const & uniformName, Vector4i const & uniformValue);
-	void SetUniform(std::string const & uniformName, Matrix4f const & uniformValue);
-	void SetUniform(std::string const & uniformName, Color const & uniformValue);
-	void SetUniform(std::string const & uniformName, std::string const & uniformValue);
-	void SetUniform(std::string const & uniformName, Texture const * uniformValue);
-
-	void SetUniform(std::string const & uniformName, int * uniformValue);
-	void SetUniform(std::string const & uniformName, float * uniformValue);
-	void SetUniform(std::string const & uniformName, Vector2f * uniformValue);
-	void SetUniform(std::string const & uniformName, Vector3f * uniformValue);
-	void SetUniform(std::string const & uniformName, Vector4f * uniformValue);
-	void SetUniform(std::string const & uniformName, Matrix4f * uniformValue);
-
+	void SetUniform(const char* uniformName, const Color& uniformValue);
+	void SetUniform(const char* uniformName, const Texture* uniformValue);
 	void SetUniform(std::vector<Light> const & uniformLights, int lightCount);
+
+	//-------------------------------------------------------------------------------------------------
+	template<typename Type>
+	void SetUniform(const char* uniformName, const Type& uniformValue)
+	{
+		//Get Uniform Map
+		const UniformMap& matUniformList = m_material->GetUniformList();
+
+		//Find uniform on material
+		auto foundMatUniform = matUniformList.find(uniformName);
+		if (foundMatUniform == matUniformList.end())
+		{
+			ERROR_AND_DIE("Uniform doesn't exist on Material");
+		}
+
+		//Find uniform on meshrenderer
+		auto foundUniform = m_uniforms.find(uniformName);
+		if (foundUniform == m_uniforms.end())
+		{
+			Type* newData = new Type[foundMatUniform->second->m_size];
+			newData[0] = (uniformValue);
+			Uniform* addUniform = new Uniform(*foundMatUniform->second, newData);
+			m_uniforms.insert(std::pair<const char*, Uniform*>(uniformName, addUniform));
+		}
+		else
+		{
+			//Update data
+			*((Type*)m_uniforms[uniformName]->m_data) = uniformValue;
+		}
+	}
+
+
+	//-------------------------------------------------------------------------------------------------
+	template<typename Type>
+	void SetUniform(const char* uniformName, Type* uniformValue)
+	{
+		const UniformMap& uniformList = m_material->GetUniformList();
+		auto foundUniformIter = uniformList.find(uniformName);
+
+		//Doesn't exist yet, lets make space for it and assign it to the data
+		if (foundUniformIter != uniformList.end() && m_uniforms[uniformName] == nullptr)
+		{
+			const Uniform* foundUniform = foundUniformIter->second;
+			int uniformSize = foundUniform->m_size;
+			size_t dataSize = sizeof(Type) * uniformSize;
+			Type* data = (Type*)malloc(dataSize);
+			memcpy(data, uniformValue, dataSize);
+
+			m_uniforms[uniformName] = new Uniform
+			(
+				foundUniform->m_bindPoint,
+				foundUniform->m_length,
+				uniformSize,
+				foundUniform->m_type,
+				foundUniform->m_name,
+				data //Setting new value
+			);
+		}
+
+		//update the data
+		else if (foundUniformIter != uniformList.end() && m_uniforms[uniformName])
+		{
+			const Uniform* foundUniform = foundUniformIter->second;
+			int uniformSize = foundUniform->m_size;
+			size_t dataSize = sizeof(Type) * uniformSize;
+			memcpy(m_uniforms[uniformName]->m_data, uniformValue, dataSize);
+		}
+
+		//That's not real
+		else
+		{
+			ERROR_AND_DIE("Uniform doesn't exist on Material");
+		}
+	}
 };

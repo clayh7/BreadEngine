@@ -48,8 +48,7 @@ ParticleEmitter::~ParticleEmitter()
 //-------------------------------------------------------------------------------------------------
 Particle * ParticleEmitter::SpawnParticle(Vector2f const & position) const
 {
-	Particle * spawn = new Particle();
-	spawn->sprite = BSpriteGameRenderer::Create(m_particleEmitterResource->spriteID, layerID);
+	Particle* spawn = new Particle(m_particleEmitterResource->spriteID, layerID);
 	spawn->startScale = m_particleEmitterResource->startScale.GetRandom();
 	if(m_particleEmitterResource->constantScale)
 	{
@@ -59,10 +58,10 @@ Particle * ParticleEmitter::SpawnParticle(Vector2f const & position) const
 	{
 		spawn->endScale = m_particleEmitterResource->endScale.GetRandom();
 	}
-	spawn->sprite->m_scale = spawn->startScale;
-	spawn->sprite->m_position = position + m_particleEmitterResource->offsetPosition.GetRandom();
-	spawn->sprite->m_color = m_particleEmitterResource->startColor;
-	spawn->sprite->SetEnabled(true);
+	spawn->sprite.m_scale = spawn->startScale;
+	spawn->sprite.m_position = position + m_particleEmitterResource->offsetPosition.GetRandom();
+	spawn->sprite.m_color = m_particleEmitterResource->startColor;
+	spawn->sprite.SetEnabled(true);
 	spawn->acceleration = Vector2f::ZERO;
 	float directionDegrees = m_particleEmitterResource->startDirectionDegrees.GetRandom();
 	spawn->velocity = UnitVectorFromDegrees(directionDegrees) * m_particleEmitterResource->startSpeed.GetRandom();

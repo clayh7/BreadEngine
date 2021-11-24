@@ -127,7 +127,7 @@ STATIC size_t BJobSystem::GetCoreCount()
 
 //-------------------------------------------------------------------------------------------------
 BJobSystem::BJobSystem()
-	: m_jobMemoryPool(MAX_JOBS)
+	: m_jobMemoryPool(MAX_JOBS, "m_jobMemoryPool")
 	, m_isRunning(true)
 {
 	for(size_t jobCategoryIndex = 0; jobCategoryIndex < eJobCategory_COUNT; ++jobCategoryIndex)

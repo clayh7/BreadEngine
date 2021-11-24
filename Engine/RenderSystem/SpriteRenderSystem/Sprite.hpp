@@ -41,6 +41,11 @@ public:
 	// Functions
 	//-------------------------------------------------------------------------------------------------
 public:
+	// Every time a sprite is created, it is added to the SpriteGameRenderer.
+	// We don't want to accidentally make a new duplicate and add it to the SpriteGameRenderer.
+	// Therefore, not copy constructors.
+	Sprite(const Sprite&) = delete;
+	Sprite& operator= (const Sprite&) = delete;
 	Sprite(std::string const & spriteID, int layer = 0, bool ignoreView = false);
 	~Sprite();
 	void Render() const;

@@ -8,6 +8,7 @@
 #include "Engine/Math/Vector4i.hpp"
 #include "Engine/RenderSystem/Color.hpp"
 #include "Engine/RenderSystem/Light.hpp"
+#include "Engine/RenderSystem/Uniform.hpp"
 
 
 //-------------------------------------------------------------------------------------------------
@@ -16,7 +17,6 @@ class ShaderProgram;
 class Color;
 class Attribute;
 class Matrix4f;
-class Uniform;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -45,9 +45,11 @@ private:
 	unsigned int m_samplerID;
 	ShaderProgram const * m_program;
 
-	//Uniforms
+private:
+	// Uniforms
 	std::map<size_t, Attribute*> m_attributes;
-	std::map<std::string, Uniform*> m_uniforms;
+	std::vector<char*> m_uniformNames;
+	UniformMap m_uniforms;
 
 	//-------------------------------------------------------------------------------------------------
 	// Functions
@@ -60,29 +62,29 @@ public:
 
 	//Get Uniforms
 	std::map<size_t, Attribute*> const & GetAttributeList() const;
-	std::map<std::string, Uniform*> const & GetUniformList() const;
+	const UniformMap& GetUniformList() const;
 	unsigned int GetGPUProgramID() const;
 	unsigned int GetSamplerID() const;
 
 	//#TODO: Refactor to use templates
 	//Set Uniforms
-	void SetUniform(std::string const & uniformName, int uniformValue);
-	void SetUniform(std::string const & uniformName, float uniformValue);
-	void SetUniform(std::string const & uniformName, Vector3f const & uniformValue);
-	void SetUniform(std::string const & uniformName, Vector4f const & uniformValue);
-	void SetUniform(std::string const & uniformName, Vector4i const & uniformValue);
-	void SetUniform(std::string const & uniformName, Matrix4f const & uniformValue);
-	void SetUniform(std::string const & uniformName, Color const & uniformValue);
-	void SetUniform(std::string const & uniformName, std::string const & uniformValue);
-	void SetUniform(std::string const & uniformName, unsigned int uniformValue);
-	void SetUniform(std::string const & uniformName, Texture const * uniformValue);
+	void SetUniform(const char* uniformName, int uniformValue);
+	void SetUniform(const char* uniformName, float uniformValue);
+	void SetUniform(const char* uniformName, Vector3f const & uniformValue);
+	void SetUniform(const char* uniformName, Vector4f const & uniformValue);
+	void SetUniform(const char* uniformName, Vector4i const & uniformValue);
+	void SetUniform(const char* uniformName, Matrix4f const & uniformValue);
+	void SetUniform(const char* uniformName, Color const & uniformValue);
+	void SetUniform(const char* uniformName, std::string const & uniformValue);
+	void SetUniform(const char* uniformName, unsigned int uniformValue);
+	void SetUniform(const char* uniformName, Texture const * uniformValue);
 
-	void SetUniform(std::string const & uniformName, int * uniformValue);
-	void SetUniform(std::string const & uniformName, float * uniformValue);
-	void SetUniform(std::string const & uniformName, Vector2f * uniformValue);
-	void SetUniform(std::string const & uniformName, Vector3f * uniformValue);
-	void SetUniform(std::string const & uniformName, Vector4f * uniformValue);
-	void SetUniform(std::string const & uniformName, Matrix4f * uniformValue);
+	void SetUniform(const char* uniformName, int * uniformValue);
+	void SetUniform(const char* uniformName, float * uniformValue);
+	void SetUniform(const char* uniformName, Vector2f * uniformValue);
+	void SetUniform(const char* uniformName, Vector3f * uniformValue);
+	void SetUniform(const char* uniformName, Vector4f * uniformValue);
+	void SetUniform(const char* uniformName, Matrix4f * uniformValue);
 
 	//Custom Uniform Arrays
 	void SetUniform(std::vector<Light> const &uniformLights, int lightCount);

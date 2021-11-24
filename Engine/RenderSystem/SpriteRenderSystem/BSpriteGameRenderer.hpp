@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <map>
+#include "Engine/Core/NamedProperties.hpp"
 #include "Engine/Math/Vector2f.hpp"
 #include "Engine/Math/Matrix4f.hpp"
 #include "Engine/RenderSystem/Color.hpp"
@@ -78,10 +79,7 @@ private:
 public:
 	static void Startup();
 	static void Shutdown();
-	static void Update();
-	static void Render();
 	static BSpriteGameRenderer * CreateOrGetSystem();
-	static Sprite * Create(std::string const & spriteID, int layer = 0, bool ignoreView = false);
 
 //-------------------------------------------------------------------------------------------------
 // Functions
@@ -90,6 +88,8 @@ public:
 	BSpriteGameRenderer();
 	~BSpriteGameRenderer();
 
+	void OnUpdate(NamedProperties&);
+	void OnRender(NamedProperties&) const;
 	void UpdateMaterialEffects();
 	//Not const because you have to swap FBOs (#TODO: may make them mutable later?)
 	void SystemRender();
